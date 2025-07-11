@@ -38,6 +38,7 @@ def parse_cv(cv_text):
             # - University
             # - Location
             # - Duration
+            # - Courses
     # - Certifications
         # - Certification X
             # - Certification Name
@@ -147,9 +148,6 @@ def parse_cv(cv_text):
                 parent_field = field_key
                 current_list = cv_data[field_key]
                 last_entry = None
-            elif field_key == 'skills':
-                # Remove skills as a parent field
-                continue
             elif field_key == 'languages':
                 cv_data[field_key] = [s.strip() for s in value.split(',') if s.strip()]
                 parent_field = field_key
@@ -165,8 +163,16 @@ def parse_cv(cv_text):
             field_key = field.lower().replace(' ', '_')
             if parent_field == 'contact_information':
                 cv_data[parent_field][field_key] = value
-            elif parent_field in ['education', 'certifications', 'awards_and_scholarships']:
-                if field_key in ['degree', 'certification_name', 'award_name', 'role', 'job_title', 'project_title'] or last_entry is None:
+            elif parent_field == 'education':
+                if field_key == 'degree' or last_entry is None:
+                    last_entry = {}
+                    current_list.append(last_entry)
+                if field_key == 'courses':
+                    last_entry['courses'] = [c.strip() for c in value.split(',') if c.strip()]
+                else:
+                    last_entry[field_key] = value
+            elif parent_field in ['certifications', 'awards_and_scholarships']:
+                if field_key in ['certification_name', 'award_name'] or last_entry is None:
                     last_entry = {}
                     current_list.append(last_entry)
                 last_entry[field_key] = value

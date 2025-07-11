@@ -21,10 +21,12 @@ class TestCVParser(unittest.TestCase):
     [1]University: University of Example
     [1]Location: City, Country
     [1]Duration: 2015 - 2019
+    [1]Courses: Algorithms, Data Structures, Operating Systems
     [1]Degree: Master of Science in Software Engineering
     [1]University: Example University
     [1]Location: City, Country
     [1]Duration: 2019 - 2021
+    [1]Courses: Software Architecture, Cloud Computing, Agile Development
 [0]Certifications:
     [1]Certification Name: AWS Certified Solutions Architect
     [1]Issuing Organization: Amazon
@@ -95,13 +97,15 @@ class TestCVParser(unittest.TestCase):
                     'degree': 'Bachelor of Science in Computer Science',
                     'university': 'University of Example',
                     'location': 'City, Country',
-                    'duration': '2015 - 2019'
+                    'duration': '2015 - 2019',
+                    'courses': ['Algorithms', 'Data Structures', 'Operating Systems']
                 },
                 {
                     'degree': 'Master of Science in Software Engineering',
                     'university': 'Example University',
                     'location': 'City, Country',
-                    'duration': '2019 - 2021'
+                    'duration': '2019 - 2021',
+                    'courses': ['Software Architecture', 'Cloud Computing', 'Agile Development']
                 }
             ],
             'certifications': [
