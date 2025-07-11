@@ -160,6 +160,7 @@ def parse_cv(cv_text):
                     current_list.append(last_entry)
                 last_entry[field_key] = value
             elif parent_field == 'skills':
-                cv_data[parent_field][field_key] = value
+                # Split skills by comma and strip whitespace
+                cv_data[parent_field][field_key] = [s.strip() for s in value.split(',') if s.strip()]
             continue
     return cv_data

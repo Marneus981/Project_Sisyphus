@@ -172,10 +172,10 @@ class TestCVParser(unittest.TestCase):
                 }
             ],
             'skills': {
-                'languages': 'English, Spanish',
-                'programming_languages': 'Python, JavaScript',
-                'technical_skills': 'Web Development, Cloud Computing',
-                'soft_skills': 'Leadership, Communication'
+                'languages': ['English', 'Spanish'],
+                'programming_languages': ['Python', 'JavaScript'],
+                'technical_skills': ['Web Development', 'Cloud Computing'],
+                'soft_skills': ['Leadership', 'Communication']
             }
         }
         result = cvParser.parse_cv(sample_cv)
