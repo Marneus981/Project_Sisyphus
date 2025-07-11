@@ -22,6 +22,7 @@ def parse_cv(cv_text):
 
     # Fields to parse:
     # - Name
+    # - Languages
     # - Contact Information
         # - Address
         # - Phone
@@ -54,6 +55,10 @@ def parse_cv(cv_text):
             # - Location
             # - Duration
             # - Description
+            # - Skills
+                # - Programming Languages
+                # - Technical Skills
+                # - Soft Skills
     # - Work Experience
         # - Work Experience X
             # - Job Title
@@ -61,17 +66,21 @@ def parse_cv(cv_text):
             # - Location
             # - Duration
             # - Description
+            # - Skills
+                # - Programming Languages
+                # - Technical Skills
+                # - Soft Skills
     # - Projects
         # - Project X
             # - Project Title
             # - Type (e.g., Personal, Academic, Professional)
             # - Duration
             # - Description
-    # - Skills
-        # - Languages
-        # - Programming Languages
-        # - Technical Skills
-        # - Soft Skills
+            # - Skills     
+                # - Programming Languages
+                # - Technical Skills
+                # - Soft Skills
+
 
     # - To make parsing simpler, every field will have [X]field_name at the start of the line; X represents the parent order.
     # - The first field will be [0]Name, followed by [0]Contact Information, and so on.
@@ -139,7 +148,10 @@ def parse_cv(cv_text):
                 current_list = cv_data[field_key]
                 last_entry = None
             elif field_key == 'skills':
-                cv_data[field_key] = {}
+                # Remove skills as a parent field
+                continue
+            elif field_key == 'languages':
+                cv_data[field_key] = [s.strip() for s in value.split(',') if s.strip()]
                 parent_field = field_key
                 current_list = None
             else:
@@ -153,14 +165,25 @@ def parse_cv(cv_text):
             field_key = field.lower().replace(' ', '_')
             if parent_field == 'contact_information':
                 cv_data[parent_field][field_key] = value
-            elif parent_field in ['education', 'certifications', 'awards_and_scholarships', 'volunteering_and_leadership', 'work_experience', 'projects']:
-                # If starting a new entry (first field in group), create new dict
+            elif parent_field in ['education', 'certifications', 'awards_and_scholarships']:
                 if field_key in ['degree', 'certification_name', 'award_name', 'role', 'job_title', 'project_title'] or last_entry is None:
                     last_entry = {}
                     current_list.append(last_entry)
                 last_entry[field_key] = value
-            elif parent_field == 'skills':
-                # Split skills by comma and strip whitespace
-                cv_data[parent_field][field_key] = [s.strip() for s in value.split(',') if s.strip()]
+            elif parent_field in ['volunteering_and_leadership', 'work_experience', 'projects']:
+                if field_key in ['role', 'job_title', 'project_title'] or last_entry is None:
+                    last_entry = {}
+                    current_list.append(last_entry)
+                if field_key == 'skills':
+                    skills_dict = {}
+                    for skill_line in value.split(';'):
+                        if ':' in skill_line:
+                            cat, vals = skill_line.split(':', 1)
+                            cat_key = cat.strip().lower().replace(' ', '_')
+                            if cat_key != 'languages':
+                                skills_dict[cat_key] = [s.strip() for s in vals.split(',') if s.strip()]
+                    last_entry['skills'] = skills_dict
+                else:
+                    last_entry[field_key] = value
             continue
     return cv_data
