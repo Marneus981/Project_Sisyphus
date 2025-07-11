@@ -2,7 +2,10 @@ import requests
 import subprocess
 import time
 
-def is_ollama_running(ollama_url="http://localhost:11434"):
+DEFAULT_MODEL = "llama3:8b"
+DEFAULT_URL = "http://localhost:11434"
+
+def is_ollama_running(ollama_url=DEFAULT_URL):
     try:
         response = requests.get(f"{ollama_url}/api/tags", timeout=2)
         return response.status_code == 200
@@ -29,7 +32,7 @@ def wait_for_ollama(timeout=30):
     print("Ollama did not start in time.")
     return False
 
-def print_available_ollama_models(ollama_url="http://localhost:11434"):
+def print_available_ollama_models(ollama_url=DEFAULT_URL):
     """
     Prints out available Ollama models by querying the /api/tags endpoint.
     """

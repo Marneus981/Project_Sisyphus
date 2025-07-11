@@ -212,3 +212,95 @@ def parse_cv(cv_text):
                     last_entry[field_key] = value
             continue
     return cv_data
+
+def inv_parse_cv(cv_dict):
+    """
+    Converts a cv_dict dictionary back to multiline text in the format expected by parse_cv.
+    Each field/subfield is written on a new line, with [0] for parent fields and [1] for subfields.
+    """
+    def format_key(key):
+        return key.replace('_', ' ').title()
+
+    lines = []
+    for parent_key, parent_value in cv_dict.items():
+        parent_field = format_key(parent_key)
+        if isinstance(parent_value, dict):
+            lines.append(f"[0]{parent_field}:")
+            for sub_key, sub_value in parent_value.items():
+                sub_field = format_key(sub_key)
+                lines.append(f"[1]{sub_field}: {sub_value}")
+        elif isinstance(parent_value, list):
+            #List of Dictionaries or List of Strings
+            if parent_key in ['education', 'certifications', 'awards_and_scholarships', 'volunteering_and_leadership', 'work_experience', 'projects']:
+                lines.append(f"[0]{parent_field}:")
+                for entry in parent_value:
+                    if isinstance(entry, dict):
+                        for sub_key, sub_value in entry.items():
+                            sub_field = format_key(sub_key)
+                            if isinstance(sub_value, list):
+                                # For lists (e.g., courses, languages, skills)
+                                lines.append(f"[1]{sub_field}: {', '.join(str(v) for v in sub_value)}")
+                            elif isinstance(sub_value, dict):
+                                # For skills dict
+                                skill_lines = []
+                                for skill_cat, skill_list in sub_value.items():
+                                    skill_cat_field = format_key(skill_cat)
+                                    skill_lines.append(f"{skill_cat_field}: {', '.join(str(s) for s in skill_list)}")
+                                lines.append(f"[1]{sub_field}: {'; '.join(skill_lines)}")
+                            else:
+                                lines.append(f"[1]{sub_field}: {sub_value}")
+
+            else:
+                lines.append(f"[0]{parent_field}: {', '.join(str(v) for v in parent_value)}")
+
+        else:
+            lines.append(f"[0]{parent_field}: {parent_value}")
+    return '\n'.join(lines)
+
+def dict_spliter(cv_dict):
+    """
+    Splits a cv_dict dictionary into multiple dictionaries, each containing one field.
+    
+    Args:
+        cv_dict (dict): The CV dictionary to split.
+        
+    Returns:
+        list: A list of dictionaries, each containing one field from the CV.
+    """
+    split_dicts = []
+    for key, value in cv_dict.items():
+        if isinstance(value, dict):
+            # Convert sub-dictionary to a single dictionary with the parent key
+            new_dict = {key: value}
+            split_dicts.append(new_dict)
+        elif isinstance(value, list):
+            # Convert list to a dictionary with the parent key
+            new_dict = {key: value}
+            split_dicts.append(new_dict)
+        else:
+            # Single value case
+            new_dict = {key: value}
+            split_dicts.append(new_dict)
+    return split_dicts
+
+def dict_grafter(split_dicts):
+    """
+    Grafts a list of dictionaries back into a single CV dictionary.
+    
+    Args:
+        split_dicts (list): A list of dictionaries to graft.
+        
+    Returns:
+        dict: A single dictionary containing all fields from the split dictionaries.
+    """
+    cv_dict = {}
+    for d in split_dicts:
+        for key, value in d.items():
+            if key in cv_dict:
+                if isinstance(cv_dict[key], list):
+                    cv_dict[key].append(value)
+                else:
+                    cv_dict[key] = [cv_dict[key], value]
+            else:
+                cv_dict[key] = value
+    return cv_dict

@@ -1,6 +1,6 @@
 # Example test for module1
 import unittest
-from Sisyphus import cvParser
+from Sisyphus import parsers
 
 class TestCVParser(unittest.TestCase):
     def test_parse_cv_simple(self):
@@ -207,7 +207,7 @@ class TestCVParser(unittest.TestCase):
                 }
             ]
         }
-        result = cvParser.parse_cv(sample_cv)
+        result = parsers.parse_cv(sample_cv)
         self.assertEqual(result['name'], expected['name'])
         self.assertEqual(result['contact_information'], expected['contact_information'])
         self.assertEqual(result['title'], expected['title'])
@@ -223,7 +223,7 @@ class TestCVParser(unittest.TestCase):
     def test_empty_cv(self):
         sample_cv = ""
         expected = {}
-        result = cvParser.parse_cv(sample_cv)
+        result = parsers.parse_cv(sample_cv)
         self.assertEqual(result, expected)
 
     def test_missing_parent_fields(self):
@@ -250,7 +250,7 @@ class TestCVParser(unittest.TestCase):
                 }
             ]
         }
-        result = cvParser.parse_cv(sample_cv)
+        result = parsers.parse_cv(sample_cv)
         self.assertEqual(result, expected)
 
     def test_missing_subfields(self):
@@ -274,7 +274,7 @@ class TestCVParser(unittest.TestCase):
                 }
             ]
         }
-        result = cvParser.parse_cv(sample_cv)
+        result = parsers.parse_cv(sample_cv)
         self.assertEqual(result, expected)
 
     def test_missing_values(self):
@@ -298,7 +298,7 @@ class TestCVParser(unittest.TestCase):
                 }
             ]
         }
-        result = cvParser.parse_cv(sample_cv)
+        result = parsers.parse_cv(sample_cv)
         self.assertEqual(result, expected)
 
     def test_extra_parent_fields(self):
@@ -331,7 +331,7 @@ class TestCVParser(unittest.TestCase):
                 }
             ]
         }
-        result = cvParser.parse_cv(sample_cv)
+        result = parsers.parse_cv(sample_cv)
         self.assertEqual(result, expected)
 
     def run(self, result=None):
