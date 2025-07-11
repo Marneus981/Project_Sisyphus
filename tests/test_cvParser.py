@@ -220,5 +220,128 @@ class TestCVParser(unittest.TestCase):
         self.assertEqual(result['work_experience'], expected['work_experience'])
         self.assertEqual(result['projects'], expected['projects'])
 
+    def test_empty_cv(self):
+        sample_cv = ""
+        expected = {}
+        result = cvParser.parse_cv(sample_cv)
+        self.assertEqual(result, expected)
+
+    def test_missing_parent_fields(self):
+        sample_cv = """
+[0]Name: John Doe
+[0]Languages: English, Spanish
+[0]Education:
+    [1]Degree: Bachelor of Science in Computer Science
+    [1]University: University of Example
+    [1]Location: City, Country
+    [1]Duration: 2015 - 2019
+    [1]Courses: Algorithms, Data Structures, Operating Systems
+"""
+        expected = {
+            'name': 'John Doe',
+            'languages': ['English', 'Spanish'],
+            'education': [
+                {
+                    'degree': 'Bachelor of Science in Computer Science',
+                    'university': 'University of Example',
+                    'location': 'City, Country',
+                    'duration': '2015 - 2019',
+                    'courses': ['Algorithms', 'Data Structures', 'Operating Systems']
+                }
+            ]
+        }
+        result = cvParser.parse_cv(sample_cv)
+        self.assertEqual(result, expected)
+
+    def test_missing_subfields(self):
+        sample_cv = """
+[0]Name: John Doe
+[0]Languages: English, Spanish
+[0]Contact Information:
+    [1]Address: 123 Main St, City, Country
+[0]Education:
+    [1]Degree: Bachelor of Science in Computer Science
+"""
+        expected = {
+            'name': 'John Doe',
+            'languages': ['English', 'Spanish'],
+            'contact_information': {
+                'address': '123 Main St, City, Country'
+            },
+            'education': [
+                {
+                    'degree': 'Bachelor of Science in Computer Science'
+                }
+            ]
+        }
+        result = cvParser.parse_cv(sample_cv)
+        self.assertEqual(result, expected)
+
+    def test_missing_values(self):
+        sample_cv = """
+[0]Name:
+[0]Languages:
+[0]Contact Information:
+    [1]Address:
+[0]Education:
+    [1]Degree:
+"""
+        expected = {
+            'name': '',
+            'languages': [],
+            'contact_information': {
+                'address': ''
+            },
+            'education': [
+                {
+                    'degree': ''
+                }
+            ]
+        }
+        result = cvParser.parse_cv(sample_cv)
+        self.assertEqual(result, expected)
+
+    def test_extra_parent_fields(self):
+        sample_cv = """
+[0]Name: John Doe
+[0]Languages: English, Spanish
+[0]Contact Information:
+    [1]Address: 123 Main St, City, Country
+[0]Education:
+    [1]Degree: Bachelor of Science in Computer Science
+    [1]University: University of Example
+    [1]Location: City, Country
+    [1]Duration: 2015 - 2019
+    [1]Courses: Algorithms, Data Structures, Operating Systems
+[0]Hobbies: Chess, Painting
+"""
+        expected = {
+            'name': 'John Doe',
+            'languages': ['English', 'Spanish'],
+            'contact_information': {
+                'address': '123 Main St, City, Country'
+            },
+            'education': [
+                {
+                    'degree': 'Bachelor of Science in Computer Science',
+                    'university': 'University of Example',
+                    'location': 'City, Country',
+                    'duration': '2015 - 2019',
+                    'courses': ['Algorithms', 'Data Structures', 'Operating Systems']
+                }
+            ]
+        }
+        result = cvParser.parse_cv(sample_cv)
+        self.assertEqual(result, expected)
+
+    def run(self, result=None):
+        test_name = self._testMethodName
+        try:
+            super().run(result)
+            print(f"Test {test_name}: PASS")
+        except Exception:
+            print(f"Test {test_name}: FAIL")
+            raise
+
 if __name__ == "__main__":
     unittest.main()

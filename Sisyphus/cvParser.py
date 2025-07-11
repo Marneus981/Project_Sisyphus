@@ -131,6 +131,20 @@ def parse_cv(cv_text):
     parent_field = None
     current_list = None
     last_entry = None
+    allowed_parents = [
+        'name', 'languages', 'contact_information', 'title', 'summary',
+        'education', 'certifications', 'awards_and_scholarships',
+        'volunteering_and_leadership', 'work_experience', 'projects'
+    ]
+    allowed_subfields = {
+        'contact_information': ['address', 'phone', 'email', 'linkedin', 'github', 'portfolio'],
+        'education': ['degree', 'university', 'location', 'duration', 'courses'],
+        'certifications': ['certification_name', 'issuing_organization', 'issue_date'],
+        'awards_and_scholarships': ['award_name', 'issuing_organization', 'issue_date'],
+        'volunteering_and_leadership': ['role', 'organization', 'location', 'duration', 'description', 'skills'],
+        'work_experience': ['job_title', 'company', 'location', 'duration', 'description', 'skills'],
+        'projects': ['project_title', 'type', 'duration', 'description', 'skills']
+    }
     for line in lines:
         line = line.strip()
         if not line:
@@ -139,6 +153,8 @@ def parse_cv(cv_text):
         if parent_match:
             field, value = parent_match.groups()
             field_key = field.lower().replace(' ', '_')
+            if field_key not in allowed_parents:
+                continue
             if field_key == 'contact_information':
                 cv_data[field_key] = {}
                 parent_field = field_key
@@ -161,6 +177,9 @@ def parse_cv(cv_text):
         if sub_match:
             field, value = sub_match.groups()
             field_key = field.lower().replace(' ', '_')
+            if parent_field in allowed_subfields:
+                if field_key not in allowed_subfields[parent_field]:
+                    continue
             if parent_field == 'contact_information':
                 cv_data[parent_field][field_key] = value
             elif parent_field == 'education':
@@ -186,7 +205,7 @@ def parse_cv(cv_text):
                         if ':' in skill_line:
                             cat, vals = skill_line.split(':', 1)
                             cat_key = cat.strip().lower().replace(' ', '_')
-                            if cat_key != 'languages':
+                            if cat_key in ['programming_languages', 'technical_skills', 'soft_skills']:
                                 skills_dict[cat_key] = [s.strip() for s in vals.split(',') if s.strip()]
                     last_entry['skills'] = skills_dict
                 else:
