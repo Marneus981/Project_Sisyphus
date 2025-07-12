@@ -32,22 +32,20 @@ def wait_for_ollama(timeout=30):
     print("Ollama did not start in time.")
     return False
 
-def print_available_ollama_models(ollama_url=DEFAULT_URL):
+
+def fetch_available_ollama_models(ollama_url=DEFAULT_URL):
     """
-    Prints out available Ollama models by querying the /api/tags endpoint.
+    Fetches available Ollama models by querying the /api/tags endpoint and returns a list of model names.
     """
+    models_list = []
     try:
         response = requests.get(f"{ollama_url}/api/tags", timeout=5)
         if response.status_code == 200:
             data = response.json()
             models = data.get("models", [])
             if models:
-                print("Available Ollama models:")
                 for model in models:
-                    print(f"- {model.get('name', 'unknown')}")
-            else:
-                print("No models found.")
-        else:
-            print(f"Failed to get models. Status code: {response.status_code}")
-    except Exception as e:
-        print(f"Error fetching models: {e}")
+                    models_list.append(model.get('name', 'unknown'))
+    except Exception:
+        pass
+    return models_list

@@ -33,9 +33,14 @@ def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system="", ollama_ur
         "prompt": prompt,
         "stream": False
     }
-    response = requests.post(ollama_url, json=payload)
-    result = response.json()
-    return result.get("response", "")
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    try:
+        result = response.json()
+        return result.get("response", "")
+    except Exception:
+        print("Ollama response was not valid JSON:")
+        print(response.text)
+        return "Error: Ollama response was not valid JSON."
 
 def tailor_work_experience(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", job_description="", section="Work Experience"):
     
@@ -70,9 +75,14 @@ def tailor_work_experience(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_UR
         "prompt": prompt,
         "stream": False
     }
-    response = requests.post(ollama_url, json=payload)
-    result = response.json()
-    return result.get("response", "")
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    try:
+        result = response.json()
+        return result.get("response", "")
+    except Exception:
+        print("Ollama response was not valid JSON:")
+        print(response.text)
+        return "Error: Ollama response was not valid JSON."
 
 def tailor_projects(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", job_description="", section="Projects"):
     
@@ -106,12 +116,14 @@ def tailor_projects(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_d
         "prompt": prompt,
         "stream": False
     }
-    response = requests.post(ollama_url, json=payload)
-    result = response.json()
-    return result.get("response", "")
-
-
-
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    try:
+        result = response.json()
+        return result.get("response", "")
+    except Exception:
+        print("Ollama response was not valid JSON:")
+        print(response.text)
+        return "Error: Ollama response was not valid JSON."
 
 def tailor_summary(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", job_description="", section="Summary"):
     
@@ -121,7 +133,7 @@ def tailor_summary(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_da
     Tailors the summary section based on the job description using Ollama.
     """
     prompt = f"""
-    Given the following already tailored CV:
+    Given the following already tailored CV, with no summary section:
     {cv_data}
     And the following job description:
     {job_description}
@@ -134,7 +146,12 @@ def tailor_summary(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_da
         "prompt": prompt,
         "stream": False
     }
-    response = requests.post(ollama_url, json=payload)
-    result = response.json()
-    return result.get("response", "")
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    try:
+        result = response.json()
+        return result.get("response", "")
+    except Exception:
+        print("Ollama response was not valid JSON:")
+        print(response.text)
+        return "Error: Ollama response was not valid JSON."
 
