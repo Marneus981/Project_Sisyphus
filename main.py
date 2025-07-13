@@ -167,9 +167,12 @@ def main():
         if not run:
             print("Failed to start Ollama server.")
             return 1
-    models = runLocalModel.fetch_available_ollama_models()
-    systems = helpers.list_text_files("Sisyphus/systems")
-    cvs = helpers.list_text_files("Sisyphus/cvs")
+    
+    options = helpers.refresh_options()
+    models = options[0]
+    systems = options[1]
+    cvs = options[2]
+    
     # Initialize the main application window
     root = tk.Tk()
     root.title("Sisyphus Resume Tailor")
@@ -230,9 +233,16 @@ def main():
     #3. 1 Buttons:
         #Tailor CV
 
-    # Button
+    #Button
+
+    #Tailor Button
     tailor_button = ttk.Button(root, text="Tailor CV", command=lambda: tailor_cv(root))
     tailor_button.grid(row=4, column=1)
+
+    #Refresh Options Button
+    refresh_button = ttk.Button(root, text="Refresh Options", command=lambda: helpers.refresh_options())
+    refresh_button.grid(row=0, column=2)
+
 
     #Show the window
     root.mainloop()

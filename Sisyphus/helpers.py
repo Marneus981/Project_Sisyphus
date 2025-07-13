@@ -1,5 +1,5 @@
 import os
-from Sisyphus import parsers
+from Sisyphus import parsers, runLocalModel
 def read_text_file(file_path):
     """
     Reads a text file from the given file location and returns its contents as a string.
@@ -48,3 +48,16 @@ def format_output(dict):
             output +=  parsers.inv_parse_cv({key: dict[key]})
             output += "\n"
     return output
+
+def refresh_options():
+    print("Refreshing options...")
+    # Fetch available models, systems, and CVs
+    models = runLocalModel.fetch_available_ollama_models()
+    systems = list_text_files("Sisyphus/systems")
+    cvs = list_text_files("Sisyphus/cvs")
+    print("Options refreshed:")
+    print("Models:", models)
+    print("Systems:", systems)
+    print("CVs:", cvs)
+    return [models, systems, cvs]
+    

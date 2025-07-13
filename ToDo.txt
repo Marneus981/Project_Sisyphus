@@ -11,6 +11,7 @@ Prompt engineer:
         Skills:Max 6
 Fixed repeating titles
 Mention languages known in summary
+Add refresh button to search for more files
 
 [WIP]
 
@@ -19,14 +20,16 @@ Make a second cv, with long summaries 10 skills per sub section and 5 examples p
 
 
 
+
 [TO_DO]
-Add refresh button to search for more files
+
 Save output to pdf (need to format it as well).
-Prompt engineer: more??
 Make all other generated descriptions a list.
-Make a format checking function
+Make format checking functions.
+
 
 [???]
+Prompt engineer: more??
 Make it a single window?
 Use bigger model?
 Multiple resumes at once?
