@@ -18,7 +18,7 @@ def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system="", ollama_ur
             # - Soft Skills
     
     prompt = f"""
-    Given the following section on all volunteering and leadership experiences:
+    Given the following section on all volunteering and leadership experiences for a resume:
     {cv_data}
     And the following job description:
     {job_description}
@@ -60,7 +60,7 @@ def tailor_work_experience(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_UR
     Tailors the work experience section based on the job description using Ollama.
     """
     prompt = f"""
-    Given the following section on all work experiences:
+    Given the following section on all work experiences for a resume:
     {cv_data}
     And the following job description:
     {job_description}
@@ -101,7 +101,7 @@ def tailor_projects(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_d
     Tailors the projects section based on the job description using Ollama.
     """
     prompt = f"""
-    Given the following section on all projects:
+    Given the following section on all projects for a resume:
     {cv_data}
     And the following job description:
     {job_description}

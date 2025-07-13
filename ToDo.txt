@@ -1,17 +1,25 @@
 [DONE]
 Organize resume printout (maybe stop using dicts for final output).
+Make it able to be executed several times despite errors in finding files
 
 
 [WIP]
-Save output to pdf (need to format it as well).
 Prompt engineer:
     Verbose is not included in model answers.
     Make summaries small (add word limit).
     Make all other generated descriptions a list.
     Put numerical limit on vignettes and list items.
-Maybe use bigger model
-Make it able to be executed several times despite errors in finding files
+        Lists:Max 3 
+        Skills:Max 5
 
+Make a second cv0, with long summaries 10 skills per sub section and 5 examples per section
+
+
+[TO_DO]
+Save output to pdf (need to format it as well).
+Prompt engineer: more??
 
 [???]
 Make it a single window?
+Use bigger model?
+Multiple resumes at once?

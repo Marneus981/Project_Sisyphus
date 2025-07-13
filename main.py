@@ -8,11 +8,27 @@ SISYPHUS_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus"
 def tailor_cv(root):
     selected_model = model_var.get()
     cv_file = cv_var.get()
-    system_file = system_var.get()
-    cv_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "cvs", cv_file)) if cv_file else ""
-    system_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", system_file)) if system_file else ""
-    
+    system_file = system_var.get()    
     job_desc = job_desc_textbox.get("1.0", tk.END)
+
+    if not job_desc.strip():
+        print("Job description is empty. Please enter a job description.")
+        return
+    if not selected_model:
+        print("No model selected. Please select a model.")
+        return
+    if not cv_file:
+        print("No CV file selected. Please select a CV file.")
+        return
+    if not system_file:
+        print("No system file selected. Please select a system file.")
+        return
+
+
+
+    cv_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "cvs", cv_file))
+    system_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", system_file))
+
     print("Selected Model:", selected_model)
     print("CV Text:", cv_text)
     print("System:", system_text)
