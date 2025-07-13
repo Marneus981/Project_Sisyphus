@@ -1,4 +1,8 @@
+[DONE]
 Organize resume printout (maybe stop using dicts for final output).
+
+
+[WIP]
 Save output to pdf (need to format it as well).
 Prompt engineer:
     Verbose is not included in model answers.
@@ -7,3 +11,7 @@ Prompt engineer:
     Put numerical limit on vignettes and list items.
 Maybe use bigger model
 Make it able to be executed several times despite errors in finding files
+
+
+[???]
+Make it a single window?
