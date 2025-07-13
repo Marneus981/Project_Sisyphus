@@ -10,12 +10,13 @@ Prompt engineer:
         Lists:Max 3 
         Skills:Max 6
 Fixed repeating titles
+Mention languages known in summary
 
 [WIP]
 
 
 Make a second cv, with long summaries 10 skills per sub section and 5 examples per section
-Mention languages known in summary
+
 
 
 [TO_DO]
