@@ -25,7 +25,25 @@ def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system="", ollama_ur
     Tailor a '{section}' section for a resume to best match the job description; 
     make sure to rank the experiences and their respective skills from most relevant to least 
     (ordering them in descending order will sufice, no need for explicitly saying the ranking). 
-    Return only the revised section.
+    Return only the revised section and strictly follow the format:
+
+    [0]Volunteering and Leadership:
+    [1]Role: Role Name 1
+    [1]Organization: Organization Name 1
+    [1]Location: Location Name 1
+    [1]Duration: Start Year 1 - End Year 1
+    [1]Description: Brief description of the role and responsibilities for Role 1.
+    [1]Skills: Programming Languages: Programming Language 1, Programming Language 2; Technical Skills: Event Technical Skill 1, Techincal Skill 2; Soft Skills: Soft Skill 1, Soft Skill 2
+    [1]Role: Role Name 2
+    [1]Organization: Organization Name 2
+    [1]Location: Location Name 2
+    [1]Duration: Start Year 2 - End Year 2
+    [1]Description: Brief description of the role and responsibilities for Role 2.
+    [1]Skills: Programming Languages: Programming Language 3, Programming Language 4; Technical Skills: Event Technical Skill 3, Techincal Skill 4; Soft Skills: Soft Skill 3, Soft Skill 4
+    
+    Be mindful not to include any line breaks in any of the sections.
+    Do note that the section may not exist in the CV, in which case you should return an empty section. Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
+    
     """
     payload = {
         "model": model,
@@ -67,7 +85,24 @@ def tailor_work_experience(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_UR
     Tailor a '{section}' section for a resume to best match the job description;
     make sure to rank the experiences and their respective skills from most relevant to least
     (ordering them in descending order will suffice, no need for explicitly saying the ranking).
-    Return only the revised section.
+    Return only the revised section and strictly follow the format:
+
+    [0]Work Experience:
+    [1]Job Title: Job Title 1
+    [1]Company: Company 1
+    [1]Location: Location Name 1
+    [1]Duration: Start Year 1 - End Year 1
+    [1]Description: Brief description of the role and responsibilities for Role 1.
+    [1]Skills: Programming Languages: Programming Language 1, Programming Language 2; Technical Skills: Event Technical Skill 1, Techincal Skill 2; Soft Skills: Soft Skill 1, Soft Skill 2
+    [1]Job Title: Job Title 2
+    [1]Company: Company 2
+    [1]Location: Location Name 2
+    [1]Duration: Start Year 2 - End Year 2
+    [1]Description: Brief description of the role and responsibilities for Role 2.
+    [1]Skills: Programming Languages: Programming Language 3, Programming Language 4; Technical Skills: Event Technical Skill 3, Techincal Skill 4; Soft Skills: Soft Skill 3, Soft Skill 4
+
+    Be mindful not to include any line breaks in any of the sections.
+    Do note that the section may not exist in the CV, in which case you should return an empty section. Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
     """
     payload = {
         "model": model,
@@ -108,7 +143,22 @@ def tailor_projects(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_d
     Tailor a '{section}' section for a resume to best match the job description;
     make sure to rank the projects and their respective skills from most relevant to least
     (ordering them in descending order will suffice, no need for explicitly saying the ranking).
-    Return only the revised section.
+    Return only the revised section and strictly follow the format:
+
+    [0]Projects:
+    [1]Project Title: Project Title 1
+    [1]Type: Type of Project 1 (e.g., Personal, Academic, Professional)
+    [1]Duration: Start Year 1 - End Year 1
+    [1]Description: Brief description of the role and responsibilities for Role 1.
+    [1]Skills: Programming Languages: Programming Language 1, Programming Language 2; Technical Skills: Event Technical Skill 1, Techincal Skill 2; Soft Skills: Soft Skill 1, Soft Skill 2
+    [1]Project Title: Project Title 2
+    [1]Type: Type of Project 2 (e.g., Personal, Academic, Professional)
+    [1]Duration: Start Year 2 - End Year 2
+    [1]Description: Brief description of the role and responsibilities for Role 2.
+    [1]Skills: Programming Languages: Programming Language 3, Programming Language 4; Technical Skills: Event Technical Skill 3, Techincal Skill 4; Soft Skills: Soft Skill 3, Soft Skill 4
+
+    Be mindful not to include any line breaks in any of the sections.
+    Do note that the section may not exist in the CV, in which case you should return an empty section. Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
     """
     payload = {
         "model": model,
@@ -138,7 +188,13 @@ def tailor_summary(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_da
     And the following job description:
     {job_description}
     Tailor a '{section}' section for a resume to best match the job description;
-    Return only the revised section.
+    Make sure to mention the most relevant skills and experiences from the CV that match the job description, as well as the amount of languages known.
+    Return only the revised section and strictly follow the format:
+
+    [0]Summary: Brief summary of the candidate's qualifications, skills, and experiences relevant to the job description.
+    
+    Do not line break the summary section, it should be a continuous block of text.
+    Do note that the section may not exist in the CV, in which case you should return an empty section. Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
     """
     payload = {
         "model": model,

@@ -91,7 +91,8 @@ def tailor_cv(root):
         )
         if tailored_v_and_l:
             print("Tailored volunteering and leadership section:", tailored_v_and_l)
-        tailored_list.append({'volunteering_and_leadership': tailored_v_and_l})
+            tailored_list.append(parsers.parse_cv(tailored_v_and_l))
+            # tailored_list.append({'volunteering_and_leadership': tailored_v_and_l})
     if w_section:
         print("Tailoring work experience section...")
         w_text = parsers.inv_parse_cv(w_section)
@@ -103,7 +104,8 @@ def tailor_cv(root):
         )
         if tailored_w:
             print("Tailored work experience section:", tailored_w)
-        tailored_list.append({'work_experience': tailored_w})
+            tailored_list.append(parsers.parse_cv(tailored_w))
+            # tailored_list.append({'work_experience': tailored_w})
     if p_section:
         print("Tailoring projects section...")
         p_text = parsers.inv_parse_cv(p_section)
@@ -115,13 +117,18 @@ def tailor_cv(root):
         )
         if tailored_p:
             print("Tailored projects section:", tailored_p)
-        tailored_list.append({'projects': tailored_p})
+            tailored_list.append(parsers.parse_cv(tailored_p))
+            # tailored_list.append({'projects': tailored_p})
     tailored_dict = parsers.dict_grafter(tailored_list)
     # Merge unchanged fields back into the tailored dict
     for key, value in unchanged_dict.items():
         tailored_dict[key] = value
-    # Convert the tailored dict back to text
+
+
+    # Convert the tailored dict back to text (no summary section yet)
     s_text = parsers.inv_parse_cv(tailored_dict)
+
+    #Tailor summary section if it exists
     if s_section:
         print("Tailoring summary section...")
         tailored_s = tailor.tailor_summary(
@@ -132,8 +139,14 @@ def tailor_cv(root):
         )
         if tailored_s:
             print("Tailored summary section:", tailored_s)
-        tailored_dict['summary'] = tailored_s
-    final_cv_text = helpers.format_output(tailored_dict)
+            # Add the tailored summary to the dict
+            tailored_list.append(parsers.parse_cv(tailored_s))
+            #tailored_dict['summary'] = tailored_s
+    final_tailored_dict = parsers.dict_grafter(tailored_list)
+    #Merge unchanged fields back into the final tailored dict
+    for key, value in unchanged_dict.items():
+        final_tailored_dict[key] = value
+    final_cv_text = helpers.format_output(final_tailored_dict)
     print("The climb has ended, the CV is tailored!")
     # Show the tailored CV text in a new window
     result_window = tk.Toplevel(root)
