@@ -1,12 +1,17 @@
-from Sisyphus import runLocalModel, parsers, tailor
-
+from Sisyphus import runLocalModel, parsers, tailor, helpers
+import os
 import tkinter as tk
 from tkinter import ttk
 
+SISYPHUS_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus"
+
 def tailor_cv(root):
     selected_model = model_var.get()
-    cv_text = cv_textbox.get("1.0", tk.END)
-    system_text = system_textbox.get("1.0", tk.END)
+    cv_file = cv_var.get()
+    system_file = system_var.get()
+    cv_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "cvs", cv_file)) if cv_file else ""
+    system_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", system_file)) if system_file else ""
+    
     job_desc = job_desc_textbox.get("1.0", tk.END)
     print("Selected Model:", selected_model)
     print("CV Text:", cv_text)
@@ -112,7 +117,7 @@ def tailor_cv(root):
         if tailored_s:
             print("Tailored summary section:", tailored_s)
         tailored_dict['summary'] = tailored_s
-    final_cv_text = parsers.inv_parse_cv(tailored_dict)
+    final_cv_text = helpers.format_output(tailored_dict)
     print("The climb has ended, the CV is tailored!")
     # Show the tailored CV text in a new window
     result_window = tk.Toplevel(root)
@@ -134,36 +139,57 @@ def main():
             print("Failed to start Ollama server.")
             return 1
     models = runLocalModel.fetch_available_ollama_models()
-
+    systems = helpers.list_text_files("Sisyphus/systems")
+    cvs = helpers.list_text_files("Sisyphus/cvs")
     # Initialize the main application window
     root = tk.Tk()
     root.title("Sisyphus Resume Tailor")
 
     #On start up show a window with the following:
-
+    global model_var, cv_var, system_var, job_desc_textbox
     #1. Dropdown to select Ollama model (must detect initialize server and scan for available models)
     # Dropdown for models
-    global model_var, cv_textbox, system_textbox, job_desc_textbox
+    
     model_var = tk.StringVar()
+    if model_var:
+        model_var.set(models[0])
     model_dropdown = ttk.Combobox(root, textvariable=model_var, values=models)
     model_dropdown.grid(row=0, column=1)
     ttk.Label(root, text="Select Model:").grid(row=0, column=0)
+
+    #Dropdown for system
+    
+    system_var = tk.StringVar()
+    if system_var:
+        system_var.set(systems[0])
+    system_dropdown = ttk.Combobox(root, textvariable=system_var, values=systems)
+    system_dropdown.grid(row=1, column=1)
+    ttk.Label(root, text="Select System:").grid(row=1, column=0)
+    
+
+    #Dropdown for cv
+
+    cv_var = tk.StringVar()
+    if cv_var:
+        cv_var.set(cvs[0])
+    cv_dropdown = ttk.Combobox(root, textvariable=cv_var, values=cvs)
+    cv_dropdown.grid(row=2, column=1)
+    ttk.Label(root, text="Select CV File:").grid(row=2, column=0)
     
 
 
 
-    #2. 3 Text fields:
-        #CV Text
-        #System (To be used as system parameter in prompts)
+
+    #2. 1 Text fields:
         #Job Description
     # Text fields
-    ttk.Label(root, text="CV Text:").grid(row=1, column=0)
-    cv_textbox = tk.Text(root, height=5, width=40)
-    cv_textbox.grid(row=1, column=1)
+    # ttk.Label(root, text="CV Text:").grid(row=2, column=0)
+    # cv_textbox = tk.Text(root, height=5, width=40)
+    # cv_textbox.grid(row=2, column=1)
 
-    ttk.Label(root, text="System:").grid(row=2, column=0)
-    system_textbox = tk.Text(root, height=2, width=40)
-    system_textbox.grid(row=2, column=1)
+    # ttk.Label(root, text="System:").grid(row=2, column=0)
+    # system_textbox = tk.Text(root, height=2, width=40)
+    # system_textbox.grid(row=2, column=1)
 
     ttk.Label(root, text="Job Description:").grid(row=3, column=0)
     job_desc_textbox = tk.Text(root, height=5, width=40)
