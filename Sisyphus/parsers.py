@@ -218,8 +218,19 @@ def inv_parse_cv(cv_dict):
     Converts a cv_dict dictionary back to multiline text in the format expected by parse_cv.
     Each field/subfield is written on a new line, with [0] for parent fields and [1] for subfields.
     """
-    def format_key(key):
-        return key.replace('_', ' ').title()
+    def format_key(key, parent_key=None):
+        # Special case for LinkedIn under Contact Information
+        if parent_key == 'contact_information' and key.lower() == 'linkedin':
+            return 'LinkedIn'
+        # Title-case except for 'and' (keep lowercase)
+        words = key.replace('_', ' ').split()
+        formatted = []
+        for w in words:
+            if w.lower() == 'and':
+                formatted.append('and')
+            else:
+                formatted.append(w.capitalize())
+        return ' '.join(formatted)
 
     lines = []
     for parent_key, parent_value in cv_dict.items():
@@ -227,7 +238,7 @@ def inv_parse_cv(cv_dict):
         if isinstance(parent_value, dict):
             lines.append(f"[0]{parent_field}:")
             for sub_key, sub_value in parent_value.items():
-                sub_field = format_key(sub_key)
+                sub_field = format_key(sub_key, parent_key)
                 lines.append(f"[1]{sub_field}: {sub_value}")
         elif isinstance(parent_value, list):
             #List of Dictionaries or List of Strings

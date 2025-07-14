@@ -44,6 +44,7 @@ def tailor_cv(root):
     for key in [
         'name',
         'contact_information',
+        'title',
         'languages',
         'education',
         'certifications',
@@ -92,7 +93,7 @@ def tailor_cv(root):
             job_description=job_desc
         )
         if tailored_v_and_l:
-            print("Tailored volunteering and leadership section:", tailored_v_and_l)
+            print("Tailored volunteering and leadership section")
             tailored_list.append(parsers.parse_cv(tailored_v_and_l))
             # tailored_list.append({'volunteering_and_leadership': tailored_v_and_l})
     if w_section:
@@ -105,7 +106,7 @@ def tailor_cv(root):
             job_description=job_desc
         )
         if tailored_w:
-            print("Tailored work experience section:", tailored_w)
+            print("Tailored work experience section")
             tailored_list.append(parsers.parse_cv(tailored_w))
             # tailored_list.append({'work_experience': tailored_w})
     if p_section:
@@ -118,7 +119,7 @@ def tailor_cv(root):
             job_description=job_desc
         )
         if tailored_p:
-            print("Tailored projects section:", tailored_p)
+            print("Tailored projects section")
             tailored_list.append(parsers.parse_cv(tailored_p))
             # tailored_list.append({'projects': tailored_p})
     tailored_dict = parsers.dict_grafter(tailored_list)
@@ -148,7 +149,7 @@ def tailor_cv(root):
     #Merge unchanged fields back into the final tailored dict
     for key, value in unchanged_dict.items():
         final_tailored_dict[key] = value
-    final_cv_text = helpers.format_output(final_tailored_dict)
+    final_cv_text = helpers.format_output(parsers.inv_parse_cv(final_tailored_dict))
     current_cv_text = final_cv_text
 
     # Prepare CV analysis output as a string

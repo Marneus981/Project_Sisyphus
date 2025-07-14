@@ -15,9 +15,9 @@ def list_text_files(folder_path):
     """
     return [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f)) and f.lower().endswith('.txt')]
 
-def format_output(dict):
+def format_output(cv_text):
     """
-    Formats keys in cv dict in the following order, returning a string:
+    Takes a CV text string, parses it to a dict, and formats keys in the following order, returning a string:
     [0]Name
     [0]Contact Information
     [0]Title
@@ -30,6 +30,7 @@ def format_output(dict):
     [0]Work Experience
     [0]Projects
     """
+    cv_dict = parsers.parse_cv(cv_text)
     output = ""
     for key in [
         'name',
@@ -44,8 +45,9 @@ def format_output(dict):
         'work_experience',
         'projects'
     ]:
-        if key in dict:
-            output +=  parsers.inv_parse_cv({key: dict[key]})
+        if key in cv_dict:
+            print(f"Processing section: {key}")
+            output += parsers.inv_parse_cv({key: cv_dict[key]})
             output += "\n"
     return output
 
@@ -125,6 +127,19 @@ def format_checker(cv_text):
         if not section_lines:
             missing_sections.append(section)
         else:
+            # Special handling for sections without subsections
+            if section in ['[0]Name:', '[0]Title:', '[0]Summary:', '[0]Languages:']:
+                # Check if the section line contains a non-empty string after the colon
+                non_empty = False
+                for l in section_lines:
+                    # Remove header and check if anything remains
+                    content = l[len(section):].strip()
+                    if content:
+                        non_empty = True
+                        break
+                if not non_empty:
+                    empty_sections.append(section)
+                continue
             # For multi-entry sections, count expected occurrences
             entry_counts = {}
             if section == '[0]Education:':
