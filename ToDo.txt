@@ -12,12 +12,13 @@ Prompt engineer:
 Fixed repeating titles
 Mention languages known in summary
 Add refresh button to search for more files
+Make a second cv, with long summaries 10 skills per sub section and 5 examples per section
 
 [WIP]
 
 
-Make a second cv, with long summaries 10 skills per sub section and 5 examples per section
-
+Figure out how to make deepseek not output all its thoughts
+Make format checking functions.
 
 
 
@@ -25,7 +26,7 @@ Make a second cv, with long summaries 10 skills per sub section and 5 examples p
 
 Save output to pdf (need to format it as well).
 Make all other generated descriptions a list.
-Make format checking functions.
+
 
 
 [???]

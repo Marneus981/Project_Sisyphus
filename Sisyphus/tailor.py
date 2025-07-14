@@ -31,13 +31,13 @@ def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system="", ollama_ur
     [1]Role: Role Name 1
     [1]Organization: Organization Name 1
     [1]Location: Location Name 1
-    [1]Duration: Start Year 1 - End Year 1
+    [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
     [1]Description: Brief description of the role and responsibilities for Role 1.
     [1]Skills: Programming Languages: Programming Language 1, Programming Language 2; Technical Skills: Event Technical Skill 1, Techincal Skill 2; Soft Skills: Soft Skill 1, Soft Skill 2
     [1]Role: Role Name 2
     [1]Organization: Organization Name 2
     [1]Location: Location Name 2
-    [1]Duration: Start Year 2 - End Year 2
+    [1]Duration: Start Year 2/Start Month 2 - End Year 2/End Month 2
     [1]Description: Brief description of the role and responsibilities for Role 2.
     [1]Skills: Programming Languages: Programming Language 3, Programming Language 4; Technical Skills: Event Technical Skill 3, Techincal Skill 4; Soft Skills: Soft Skill 3, Soft Skill 4
     
@@ -91,13 +91,13 @@ def tailor_work_experience(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_UR
     [1]Job Title: Job Title 1
     [1]Company: Company 1
     [1]Location: Location Name 1
-    [1]Duration: Start Year 1 - End Year 1
+    [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
     [1]Description: Brief description of the role and responsibilities for Role 1.
     [1]Skills: Programming Languages: Programming Language 1, Programming Language 2; Technical Skills: Event Technical Skill 1, Techincal Skill 2; Soft Skills: Soft Skill 1, Soft Skill 2
     [1]Job Title: Job Title 2
     [1]Company: Company 2
     [1]Location: Location Name 2
-    [1]Duration: Start Year 2 - End Year 2
+    [1]Duration: Start Year 2/Start Month 2 - End Year 2/End Month 2
     [1]Description: Brief description of the role and responsibilities for Role 2.
     [1]Skills: Programming Languages: Programming Language 3, Programming Language 4; Technical Skills: Event Technical Skill 3, Techincal Skill 4; Soft Skills: Soft Skill 3, Soft Skill 4
 
@@ -148,12 +148,12 @@ def tailor_projects(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_d
     [0]Projects:
     [1]Project Title: Project Title 1
     [1]Type: Type of Project 1 (e.g., Personal, Academic, Professional)
-    [1]Duration: Start Year 1 - End Year 1
+    [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
     [1]Description: Brief description of the role and responsibilities for Role 1.
     [1]Skills: Programming Languages: Programming Language 1, Programming Language 2; Technical Skills: Event Technical Skill 1, Techincal Skill 2; Soft Skills: Soft Skill 1, Soft Skill 2
     [1]Project Title: Project Title 2
     [1]Type: Type of Project 2 (e.g., Personal, Academic, Professional)
-    [1]Duration: Start Year 2 - End Year 2
+    [1]Duration: Start Year 2/Start Month 2 - End Year 2/End Month 2
     [1]Description: Brief description of the role and responsibilities for Role 2.
     [1]Skills: Programming Languages: Programming Language 3, Programming Language 4; Technical Skills: Event Technical Skill 3, Techincal Skill 4; Soft Skills: Soft Skill 3, Soft Skill 4
 
