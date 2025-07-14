@@ -20,9 +20,9 @@ Bugs "Fixed":
     Name, Title, Summary and Languages are incorrectly labeled as empty
     Missing sections on output:Title, Awards and Scholarships, Volunteering and Leadership
 [WIP]
+Show Output CV Button
+
 Bugs:
-    Format Check Output button Missing
-    Filter button Missing
     Deepseekr1:8b chokes and dies while generating Summary section
 
 
@@ -30,15 +30,17 @@ Bugs:
 
 
 [TO_DO]
-
+Make filter input?? And add it to refresh [Greyed out if not]
+Check if format check button becomes avaialable after we scan for cv files
 Save output to pdf (need to format it as well).
 Make all other generated descriptions a list.
 Move console ouput to a window
+Make use of word counters to check format of summary and descriptions
 
 
 
 [???]
-Make filter input??
+
 Make program more robust:
     Give it the ability to arrange unarranged cv Formats
     Make it detect unarranged cv formats

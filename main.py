@@ -8,6 +8,7 @@ import sys
 SISYPHUS_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus"
 
 def tailor_cv(root):
+    global format_check_current_cv_button, filter_output_cv_button, current_cv_text
     selected_model = model_var.get()
     cv_file = cv_var.get()
     system_file = system_var.get()    
@@ -152,6 +153,10 @@ def tailor_cv(root):
     final_cv_text = helpers.format_output(parsers.inv_parse_cv(final_tailored_dict))
     current_cv_text = final_cv_text
 
+    # Enable the format check and filter buttons for output CV
+    format_check_current_cv_button.config(state="normal")
+    filter_output_cv_button.config(state="normal")
+
     # Prepare CV analysis output as a string
     analysis_stream = io.StringIO()
     old_stdout = sys.stdout
@@ -231,7 +236,7 @@ def filter_output_cv_text(root):
         if result_window.winfo_exists():
             result_window.title("Tailored CV (Filtered)")
             result_textbox.delete("1.0", tk.END)
-            result_textbox.insert(tk.END, filtered_text)
+            result_textbox.insert(tk.END, current_cv_text)
             result_window.lift()
         else:
             raise Exception
@@ -240,11 +245,12 @@ def filter_output_cv_text(root):
         result_window = tk.Toplevel(root)
         result_window.title("Tailored CV (Filtered)")
         result_textbox = tk.Text(result_window, height=20, width=80)
-        result_textbox.insert(tk.END, filtered_text)
+        result_textbox.insert(tk.END, current_cv_text)
         result_textbox.pack(expand=True, fill=tk.BOTH)
 
-def main():
 
+def main():
+    global model_var, cv_var, system_var, job_desc_textbox, current_cv_text, format_check_current_cv_button, filter_output_cv_button
     
 
     run = runLocalModel.wait_for_ollama()
@@ -266,7 +272,7 @@ def main():
     root.title("Sisyphus Resume Tailor")
 
     #On start up show a window with the following:
-    global model_var, cv_var, system_var, job_desc_textbox, current_cv_text
+    
     current_cv_text = ""
     #1. Dropdown to select Ollama model (must detect initialize server and scan for available models)
     # Dropdown for models
@@ -337,14 +343,15 @@ def main():
         format_check_input_cv_button = ttk.Button(root, text="Format Check Input CV", command=lambda: format_check_input_cv_file(root, cv_var.get()))
         format_check_input_cv_button.grid(row=0, column=3)
 
-    #Format Check Current CV Text Button
-    if current_cv_text != "":
-        format_check_current_cv_button = ttk.Button(root, text="Format Check Current CV Text", command=lambda: format_check_current_cv_text(root))
-        format_check_current_cv_button.grid(row=4, column=2)
-    #Filter Output CV Text Button
-    if current_cv_text != "":
-        filter_output_cv_button = ttk.Button(root, text="Filter Output CV Text", command=lambda: filter_output_cv_text(root))
-        filter_output_cv_button.grid(row=4, column=3)
+    # Format Check Current CV Text Button (initially disabled)
+    format_check_current_cv_button = ttk.Button(root, text="Format Check Current CV Text", command=lambda: format_check_current_cv_text(root), state="disabled")
+    format_check_current_cv_button.grid(row=4, column=3)
+
+    # Filter Output CV Text Button (initially disabled)
+    filter_output_cv_button = ttk.Button(root, text="Filter Output CV Text", command=lambda: filter_output_cv_text(root), state="disabled")
+    filter_output_cv_button.grid(row=4, column=2)
+
+
 
     #Show the window
     root.mainloop()
