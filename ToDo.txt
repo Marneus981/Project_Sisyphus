@@ -13,12 +13,18 @@ Fixed repeating titles
 Mention languages known in summary
 Add refresh button to search for more files
 Make a second cv, with long summaries 10 skills per sub section and 5 examples per section
-
-[WIP]
-
-
 Figure out how to make deepseek not output all its thoughts
 Make format checking functions.
+Create Filter function to increase consistency
+[WIP]
+Bugs:
+    Name, Title, Summary and Languages are incorrectly labeled as empty
+    Missing sections on output:Title, Awards and Scholarships, Volunteering and Leadership
+    Format Check Output button Missing
+    Filter button Missing
+    Deepseekr1:8b chokes and dies while generating Summary section
+
+
 
 
 
@@ -26,10 +32,15 @@ Make format checking functions.
 
 Save output to pdf (need to format it as well).
 Make all other generated descriptions a list.
+Move console ouput to a window
 
 
 
 [???]
+Make filter input??
+Make program more robust:
+    Give it the ability to arrange unarranged cv Formats
+    Make it detect unarranged cv formats
 Prompt engineer: more??
 Make it a single window?
 Use bigger model?

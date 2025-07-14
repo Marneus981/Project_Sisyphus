@@ -2,6 +2,8 @@ from Sisyphus import runLocalModel, parsers, tailor, helpers
 import os
 import tkinter as tk
 from tkinter import ttk
+import io
+import sys
 
 SISYPHUS_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus"
 
@@ -147,13 +149,98 @@ def tailor_cv(root):
     for key, value in unchanged_dict.items():
         final_tailored_dict[key] = value
     final_cv_text = helpers.format_output(final_tailored_dict)
+    current_cv_text = final_cv_text
+
+    # Prepare CV analysis output as a string
+    analysis_stream = io.StringIO()
+    old_stdout = sys.stdout
+    sys.stdout = analysis_stream
+    helpers.read_format_checker(helpers.format_checker(current_cv_text))
+    sys.stdout = old_stdout
+    analysis_text = analysis_stream.getvalue()
+
     print("The climb has ended, the CV is tailored!")
     # Show the tailored CV text in a new window
+    global result_window, result_textbox
     result_window = tk.Toplevel(root)
     result_window.title("Tailored CV")
     result_textbox = tk.Text(result_window, height=20, width=80)
     result_textbox.insert(tk.END, final_cv_text)
     result_textbox.pack(expand=True, fill=tk.BOTH)
+
+    # Show the CV analysis in a new window
+    analysis_window = tk.Toplevel(root)
+    analysis_window.title("Output CV Analysis:")
+    analysis_label = tk.Label(analysis_window, text="Output CV Analysis:")
+    analysis_label.pack()
+    analysis_textbox = tk.Text(analysis_window, height=20, width=80)
+    analysis_textbox.insert(tk.END, analysis_text)
+    analysis_textbox.pack(expand=True, fill=tk.BOTH)
+
+def format_check_input_cv_file(root, cv_file):
+    """
+    Reads a CV file and checks its format.
+    Returns True if the format is correct, False otherwise.
+    """
+    cv_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "cvs", cv_file))
+    
+    # Prepare CV analysis output as a string
+    analysis_stream = io.StringIO()
+    old_stdout = sys.stdout
+    sys.stdout = analysis_stream
+    helpers.read_format_checker(helpers.format_checker(cv_text))
+    sys.stdout = old_stdout
+    analysis_text = analysis_stream.getvalue()
+
+    # Show the CV analysis in a new window
+    analysis_window = tk.Toplevel(root)
+    analysis_window.title("Input CV Analysis:")
+    analysis_label = tk.Label(analysis_window, text="Input CV Analysis:")
+    analysis_label.pack()
+    analysis_textbox = tk.Text(analysis_window, height=20, width=80)
+    analysis_textbox.insert(tk.END, analysis_text)
+    analysis_textbox.pack(expand=True, fill=tk.BOTH)
+
+def format_check_current_cv_text(root):
+    cv_text = current_cv_text
+
+    # Prepare CV analysis output as a string
+    analysis_stream = io.StringIO()
+    old_stdout = sys.stdout
+    sys.stdout = analysis_stream
+    helpers.read_format_checker(helpers.format_checker(cv_text))
+    sys.stdout = old_stdout
+    analysis_text = analysis_stream.getvalue()
+
+    # Show the CV analysis in a new window
+    analysis_window = tk.Toplevel(root)
+    analysis_window.title("Current Output CV Analysis:")
+    analysis_label = tk.Label(analysis_window, text="Current Output CV Analysis:")
+    analysis_label.pack()
+    analysis_textbox = tk.Text(analysis_window, height=20, width=80)
+    analysis_textbox.insert(tk.END, analysis_text)
+    analysis_textbox.pack(expand=True, fill=tk.BOTH)
+
+def filter_output_cv_text(root):
+    global current_cv_text, result_window, result_textbox
+    filtered_text = helpers.filter_output(current_cv_text)
+    current_cv_text = filtered_text
+    try:
+        # If window exists and is open, update it
+        if result_window.winfo_exists():
+            result_window.title("Tailored CV (Filtered)")
+            result_textbox.delete("1.0", tk.END)
+            result_textbox.insert(tk.END, filtered_text)
+            result_window.lift()
+        else:
+            raise Exception
+    except:
+        # If window doesn't exist or is closed, create a new one
+        result_window = tk.Toplevel(root)
+        result_window.title("Tailored CV (Filtered)")
+        result_textbox = tk.Text(result_window, height=20, width=80)
+        result_textbox.insert(tk.END, filtered_text)
+        result_textbox.pack(expand=True, fill=tk.BOTH)
 
 def main():
 
@@ -178,7 +265,8 @@ def main():
     root.title("Sisyphus Resume Tailor")
 
     #On start up show a window with the following:
-    global model_var, cv_var, system_var, job_desc_textbox
+    global model_var, cv_var, system_var, job_desc_textbox, current_cv_text
+    current_cv_text = ""
     #1. Dropdown to select Ollama model (must detect initialize server and scan for available models)
     # Dropdown for models
     
@@ -243,6 +331,19 @@ def main():
     refresh_button = ttk.Button(root, text="Refresh Options", command=lambda: helpers.refresh_options())
     refresh_button.grid(row=0, column=2)
 
+    #Format Check Input CV Button
+    if cv_var.get():
+        format_check_input_cv_button = ttk.Button(root, text="Format Check Input CV", command=lambda: format_check_input_cv_file(root, cv_var.get()))
+        format_check_input_cv_button.grid(row=0, column=3)
+
+    #Format Check Current CV Text Button
+    if current_cv_text != "":
+        format_check_current_cv_button = ttk.Button(root, text="Format Check Current CV Text", command=lambda: format_check_current_cv_text(root))
+        format_check_current_cv_button.grid(row=4, column=2)
+    #Filter Output CV Text Button
+    if current_cv_text != "":
+        filter_output_cv_button = ttk.Button(root, text="Filter Output CV Text", command=lambda: filter_output_cv_text(root))
+        filter_output_cv_button.grid(row=4, column=3)
 
     #Show the window
     root.mainloop()
