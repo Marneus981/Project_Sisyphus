@@ -334,8 +334,23 @@ def main():
     tailor_button = ttk.Button(root, text="Tailor CV", command=lambda: tailor_cv(root))
     tailor_button.grid(row=4, column=1)
 
+    def refresh_options_callback():
+        options = helpers.refresh_options()
+        models = options[0]
+        systems = options[1]
+        cvs = options[2]
+        model_dropdown['values'] = models
+        if models:
+            model_var.set(models[0])
+        system_dropdown['values'] = systems
+        if systems:
+            system_var.set(systems[0])
+        cv_dropdown['values'] = cvs
+        if cvs:
+            cv_var.set(cvs[0])
+
     #Refresh Options Button
-    refresh_button = ttk.Button(root, text="Refresh Options", command=lambda: helpers.refresh_options())
+    refresh_button = ttk.Button(root, text="Refresh Options", command=refresh_options_callback)
     refresh_button.grid(row=0, column=2)
 
     #Format Check Input CV Button

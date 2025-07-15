@@ -21,6 +21,9 @@ Bugs "Fixed":
     Missing sections on output:Title, Awards and Scholarships, Volunteering and Leadership
 [WIP]
 Show Output CV Button
+Save output to pdf (need to format it as well).
+Make all other generated descriptions a list.
+Make use of word counters to check format of summary and descriptions
 
 Bugs:
     Deepseekr1:8b chokes and dies while generating Summary section
@@ -32,10 +35,8 @@ Bugs:
 [TO_DO]
 Make filter input?? And add it to refresh [Greyed out if not]
 Check if format check button becomes avaialable after we scan for cv files
-Save output to pdf (need to format it as well).
-Make all other generated descriptions a list.
 Move console ouput to a window
-Make use of word counters to check format of summary and descriptions
+
 
 
 
