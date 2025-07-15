@@ -19,11 +19,20 @@ Create Filter function to increase consistency
 Bugs "Fixed":
     Name, Title, Summary and Languages are incorrectly labeled as empty
     Missing sections on output:Title, Awards and Scholarships, Volunteering and Leadership
-[WIP]
 Show Output CV Button
+
+Make use of word counters to check format of summary and descriptions
+Fixed Bugs:
+    Show Output not ungreying
+    Volunteering and Leadership empty [Fixed???]
+    
+[WIP]
+
+
+
 Save output to pdf (need to format it as well).
 Make all other generated descriptions a list.
-Make use of word counters to check format of summary and descriptions
+
 
 Bugs:
     Deepseekr1:8b chokes and dies while generating Summary section

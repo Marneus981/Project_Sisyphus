@@ -167,12 +167,14 @@ def tailor_cv(root):
 
     print("The climb has ended, the CV is tailored!")
     # Show the tailored CV text in a new window
-    global result_window, result_textbox
+    global result_window, result_textbox, show_output_cv_button
+    
     result_window = tk.Toplevel(root)
     result_window.title("Tailored CV")
     result_textbox = tk.Text(result_window, height=20, width=80)
     result_textbox.insert(tk.END, final_cv_text)
     result_textbox.pack(expand=True, fill=tk.BOTH)
+    show_output_cv_button.config(state="normal")
 
     # Show the CV analysis in a new window
     analysis_window = tk.Toplevel(root)
@@ -248,9 +250,45 @@ def filter_output_cv_text(root):
         result_textbox.insert(tk.END, current_cv_text)
         result_textbox.pack(expand=True, fill=tk.BOTH)
 
+def refresh_options_callback():
+        global model_dropdown, cv_dropdown, system_dropdown, model_var, models, cv_var, cvs, system_var, systems
+        options = helpers.refresh_options()
+        models = options[0]
+        systems = options[1]
+        cvs = options[2]
+        model_dropdown['values'] = models
+        if models:
+            model_var.set(models[0])
+        system_dropdown['values'] = systems
+        if systems:
+            system_var.set(systems[0])
+        cv_dropdown['values'] = cvs
+        if cvs:
+            format_check_input_cv_button.config(state="normal")
+            cv_var.set(cvs[0])
+
+
+def show_output_cv(root):
+    global result_window, result_textbox, current_cv_text
+    try:
+        # If window exists and is open, update it
+        if result_window.winfo_exists():
+            result_window.title("Tailored CV")
+            result_textbox.delete("1.0", tk.END)
+            result_textbox.insert(tk.END, current_cv_text)
+            result_window.lift()
+        else:
+            raise Exception
+    except:
+        # If window doesn't exist or is closed, create a new one
+        result_window = tk.Toplevel(root)
+        result_window.title("Tailored CV")
+        result_textbox = tk.Text(result_window, height=20, width=80)
+        result_textbox.insert(tk.END, current_cv_text)
+        result_textbox.pack(expand=True, fill=tk.BOTH)
 
 def main():
-    global model_var, cv_var, system_var, job_desc_textbox, current_cv_text, format_check_current_cv_button, filter_output_cv_button
+    global model_dropdown, cv_dropdown, system_dropdown, model_var, models, cv_var,cvs, system_var, systems,job_desc_textbox, current_cv_text, format_check_current_cv_button, filter_output_cv_button
     
 
     run = runLocalModel.wait_for_ollama()
@@ -262,14 +300,23 @@ def main():
             print("Failed to start Ollama server.")
             return 1
     
-    options = helpers.refresh_options()
-    models = options[0]
-    systems = options[1]
-    cvs = options[2]
-    
-    # Initialize the main application window
     root = tk.Tk()
     root.title("Sisyphus Resume Tailor")
+
+    model_var = tk.StringVar()
+    models =[]
+    cv_var = tk.StringVar()
+    system_var = tk.StringVar()
+    systems = []
+    cvs = []
+
+    
+    # models = options[0]
+    # systems = options[1]
+    # cvs = options[2]
+    
+    # Initialize the main application window
+    
 
     #On start up show a window with the following:
     
@@ -277,18 +324,18 @@ def main():
     #1. Dropdown to select Ollama model (must detect initialize server and scan for available models)
     # Dropdown for models
     
-    model_var = tk.StringVar()
-    if model_var:
-        model_var.set(models[0])
+    # model_var = tk.StringVar()
+    # if model_var:
+    #     model_var.set(models[0])
     model_dropdown = ttk.Combobox(root, textvariable=model_var, values=models)
     model_dropdown.grid(row=0, column=1)
     ttk.Label(root, text="Select Model:").grid(row=0, column=0)
 
     #Dropdown for system
     
-    system_var = tk.StringVar()
-    if system_var:
-        system_var.set(systems[0])
+    # system_var = tk.StringVar()
+    # if system_var:
+    #     system_var.set(systems[0])
     system_dropdown = ttk.Combobox(root, textvariable=system_var, values=systems)
     system_dropdown.grid(row=1, column=1)
     ttk.Label(root, text="Select System:").grid(row=1, column=0)
@@ -296,9 +343,9 @@ def main():
 
     #Dropdown for cv
 
-    cv_var = tk.StringVar()
-    if cv_var:
-        cv_var.set(cvs[0])
+    # cv_var = tk.StringVar()
+    # if cv_var:
+    #     cv_var.set(cvs[0])
     cv_dropdown = ttk.Combobox(root, textvariable=cv_var, values=cvs)
     cv_dropdown.grid(row=2, column=1)
     ttk.Label(root, text="Select CV File:").grid(row=2, column=0)
@@ -322,50 +369,43 @@ def main():
     job_desc_textbox = tk.Text(root, height=5, width=40)
     job_desc_textbox.grid(row=3, column=1)
 
+    
 
 
+    #Buttons
 
-    #3. 1 Buttons:
-        #Tailor CV
+    #Format Check Input CV Button
+    global format_check_input_cv_button, show_output_cv_button
+    format_check_input_cv_button = ttk.Button(root, text="Format Check Input CV", command=lambda: format_check_input_cv_file(root, cv_var.get()), state="disabled")
+    format_check_input_cv_button.grid(row=0, column=4)
+    
+    #Refresh Options Button
 
-    #Button
 
+    
+    refresh_button = ttk.Button(root, text="Refresh Options", command=refresh_options_callback)
+    refresh_button.grid(row=0, column=2)
+
+   
+
+    
     #Tailor Button
     tailor_button = ttk.Button(root, text="Tailor CV", command=lambda: tailor_cv(root))
     tailor_button.grid(row=4, column=1)
 
-    def refresh_options_callback():
-        options = helpers.refresh_options()
-        models = options[0]
-        systems = options[1]
-        cvs = options[2]
-        model_dropdown['values'] = models
-        if models:
-            model_var.set(models[0])
-        system_dropdown['values'] = systems
-        if systems:
-            system_var.set(systems[0])
-        cv_dropdown['values'] = cvs
-        if cvs:
-            cv_var.set(cvs[0])
-
-    #Refresh Options Button
-    refresh_button = ttk.Button(root, text="Refresh Options", command=refresh_options_callback)
-    refresh_button.grid(row=0, column=2)
-
-    #Format Check Input CV Button
-    if cv_var.get():
-        format_check_input_cv_button = ttk.Button(root, text="Format Check Input CV", command=lambda: format_check_input_cv_file(root, cv_var.get()))
-        format_check_input_cv_button.grid(row=0, column=3)
+    # Filter Output CV Text Button (initially disabled)
+    filter_output_cv_button = ttk.Button(root, text="Filter Output CV Text", command=lambda: filter_output_cv_text(root), state="disabled")
+    filter_output_cv_button.grid(row=4, column=3)
 
     # Format Check Current CV Text Button (initially disabled)
     format_check_current_cv_button = ttk.Button(root, text="Format Check Current CV Text", command=lambda: format_check_current_cv_text(root), state="disabled")
-    format_check_current_cv_button.grid(row=4, column=3)
+    format_check_current_cv_button.grid(row=4, column=4)
 
-    # Filter Output CV Text Button (initially disabled)
-    filter_output_cv_button = ttk.Button(root, text="Filter Output CV Text", command=lambda: filter_output_cv_text(root), state="disabled")
-    filter_output_cv_button.grid(row=4, column=2)
+    # Show CV Output Button (initially disabled)
+    show_output_cv_button = ttk.Button(root, text="Show Output CV", command=lambda: show_output_cv(root), state="disabled")
+    show_output_cv_button.grid(row=4, column=2)
 
+    refresh_options_callback()
 
 
     #Show the window
