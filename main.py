@@ -4,8 +4,10 @@ import tkinter as tk
 from tkinter import ttk
 import io
 import sys
+import Sisyphus.fileGenerator as fileGenerator
 
 SISYPHUS_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus"
+DOCS_PATH =r"C:\CodeProjects\Sisyphus\Sisyphus\saved_docs"
 
 def tailor_cv(root):
     global format_check_current_cv_button, filter_output_cv_button, current_cv_text
@@ -167,7 +169,7 @@ def tailor_cv(root):
 
     print("The climb has ended, the CV is tailored!")
     # Show the tailored CV text in a new window
-    global result_window, result_textbox, show_output_cv_button
+    global result_window, result_textbox, show_output_cv_button, save_output_cv_button
     
     result_window = tk.Toplevel(root)
     result_window.title("Tailored CV")
@@ -175,6 +177,9 @@ def tailor_cv(root):
     result_textbox.insert(tk.END, final_cv_text)
     result_textbox.pack(expand=True, fill=tk.BOTH)
     show_output_cv_button.config(state="normal")
+
+    # Enable the save button when output is generated
+    save_output_cv_button.config(state="normal")
 
     # Show the CV analysis in a new window
     analysis_window = tk.Toplevel(root)
@@ -267,6 +272,13 @@ def refresh_options_callback():
             format_check_input_cv_button.config(state="normal")
             cv_var.set(cvs[0])
 
+def save_output_cv_callback():
+        global current_cv_text
+        
+        cv_dict = parsers.parse_cv(current_cv_text)
+        template_path = os.path.join(SISYPHUS_PATH, "templates", "cv_template.docx")
+        output_path = os.path.join(SISYPHUS_PATH, "saved_docs", "output_cv.docx")
+        fileGenerator.generate_docx(template_path, cv_dict, output_path)
 
 def show_output_cv(root):
     global result_window, result_textbox, current_cv_text
@@ -288,6 +300,15 @@ def show_output_cv(root):
         result_textbox.pack(expand=True, fill=tk.BOTH)
 
 def main():
+    # Save Output CV Button (initially disabled)
+    def save_output_cv_callback():
+        import Sisyphus.fileGenerator as fileGenerator
+        cv_dict = parsers.parse_cv(current_cv_text)
+        template_path = os.path.join(SISYPHUS_PATH, "templates", "cv_template.docx")
+        output_path = os.path.join(SISYPHUS_PATH, "saved_docs", "output_cv.docx")
+        fileGenerator.generate_docx(template_path, cv_dict, output_path)
+
+    global save_output_cv_button
     global model_dropdown, cv_dropdown, system_dropdown, model_var, models, cv_var,cvs, system_var, systems,job_desc_textbox, current_cv_text, format_check_current_cv_button, filter_output_cv_button
     
 
@@ -404,6 +425,10 @@ def main():
     # Show CV Output Button (initially disabled)
     show_output_cv_button = ttk.Button(root, text="Show Output CV", command=lambda: show_output_cv(root), state="disabled")
     show_output_cv_button.grid(row=4, column=2)
+
+    # Save Output CV Button (initially disabled)
+    save_output_cv_button = ttk.Button(root, text="Save Output CV to DOCX", command=save_output_cv_callback, state="disabled")
+    save_output_cv_button.grid(row=5, column=0)
 
     refresh_options_callback()
 

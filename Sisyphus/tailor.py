@@ -43,7 +43,7 @@ def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system="", ollama_ur
     
     Be mindful not to include any line breaks in any of the sections.
     Do note that the section may not exist in the CV, in which case you should return an empty section. Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
-    
+    The description section should be a continuous block of text, without line breaks, however it must use concise sentences that could be split into lists.
     """
     payload = {
         "model": model,
@@ -103,6 +103,7 @@ def tailor_work_experience(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_UR
 
     Be mindful not to include any line breaks in any of the sections.
     Do note that the section may not exist in the CV, in which case you should return an empty section. Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
+    The description section should be a continuous block of text, without line breaks, however it must use concise sentences that could be split into lists.
     """
     payload = {
         "model": model,
@@ -159,6 +160,7 @@ def tailor_projects(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_d
 
     Be mindful not to include any line breaks in any of the sections.
     Do note that the section may not exist in the CV, in which case you should return an empty section. Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
+    The description section should be a continuous block of text, without line breaks, however it must use concise sentences that could be split into lists.
     """
     payload = {
         "model": model,

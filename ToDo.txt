@@ -25,14 +25,15 @@ Make use of word counters to check format of summary and descriptions
 Fixed Bugs:
     Show Output not ungreying
     Volunteering and Leadership empty [Fixed???]
-    
+
+Save output to docx (need to format it as well).
+
 [WIP]
+Give docxs unique names
+Make convert to pdf button
+Make format more concise and compact
 
-
-
-Save output to pdf (need to format it as well).
-Make all other generated descriptions a list.
-
+Find a way to parse descriptions and turn them into lists.
 
 Bugs:
     Deepseekr1:8b chokes and dies while generating Summary section
