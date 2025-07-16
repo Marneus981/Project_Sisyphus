@@ -35,6 +35,7 @@ Make format more concise and compact
 [WIP]
 Give it a last output memory? or make it save all the outputs
 Make convert to pdf button
+Fix file corruption on output docx save
 
 Refine template further:
     More compact, concise

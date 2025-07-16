@@ -299,6 +299,8 @@ def save_output_cv(template_name,output_name):
         cv_dict = parsers.parse_cv(current_cv_text)
         template_path = os.path.join(SISYPHUS_PATH, "templates", f"{template_n}")
         output_path = os.path.join(SISYPHUS_PATH, "saved_docs", f"{output_n}.docx")
+        if os.path.exists(output_path):
+            print(f"Warning: {output_path} already exists and will be overwritten.")
         fileGenerator.generate_docx(template_path, cv_dict, output_path)
 
 def show_output_cv(root):
