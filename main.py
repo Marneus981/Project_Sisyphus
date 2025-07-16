@@ -5,10 +5,12 @@ from tkinter import ttk
 import io
 import sys
 import Sisyphus.fileGenerator as fileGenerator
+import datetime
 
 
 SISYPHUS_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus"
 DOCS_PATH =r"C:\CodeProjects\Sisyphus\Sisyphus\saved_docs"
+OUT_CV_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\saved_outputs"
 
 def tailor_cv(root):
     global format_check_current_cv_button, filter_output_cv_button, current_cv_text
@@ -170,7 +172,7 @@ def tailor_cv(root):
 
     print("The climb has ended, the CV is tailored!")
     # Show the tailored CV text in a new window
-    global result_window, result_textbox, show_output_cv_button, save_output_cv_button
+    global result_window, result_textbox, show_output_cv_button, save_output_cv_button, save_current_cv_text_button
     
     result_window = tk.Toplevel(root)
     result_window.title("Tailored CV")
@@ -181,6 +183,7 @@ def tailor_cv(root):
 
     # Enable the save button when output is generated
     save_output_cv_button.config(state="normal")
+    save_current_cv_text_button.config(state="normal")
 
     # Show the CV analysis in a new window
     analysis_window = tk.Toplevel(root)
@@ -258,11 +261,13 @@ def filter_output_cv_text(root):
 
 def refresh_options_callback():
         global model_dropdown, cv_dropdown, system_dropdown, model_var, models, cv_var, cvs, system_var, systems, template_dropdown,templates, template_var
+        global saved_out_dropdown, saved_outs, saved_out_var, load_cv_text_button
         options = helpers.refresh_options()
         models = options[0]
         systems = options[1]
         cvs = options[2]
         templates = options[3]
+        saved_outs = options[4]
         model_dropdown['values'] = models
         if models:
             model_var.set(models[0])
@@ -276,6 +281,10 @@ def refresh_options_callback():
         template_dropdown['values'] = templates
         if templates:
             template_var.set(templates[0])
+        saved_out_dropdown['values'] = saved_outs
+        if saved_outs:
+            saved_out_var.set(saved_outs[0])
+            load_cv_text_button.config(state="normal")
         
 
 # def save_output_cv_callback():
@@ -322,12 +331,51 @@ def show_output_cv(root):
         result_textbox.insert(tk.END, current_cv_text)
         result_textbox.pack(expand=True, fill=tk.BOTH)
 
+def save_cv_text(file_name):
+    #On cv output, this function can be used to save the current CV text to a text file as a text file
+    global current_cv_text
+    output_name = f"{file_name.strip()}.txt"
+    if not file_name:
+        date= datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_name = f"out_cv_{date}.txt"
+    #check if file already exists
+    output_path = os.path.join(OUT_CV_PATH, output_name)
+    if os.path.exists(output_path):
+        print(f"Warning: {output_name} already exists.")
+    with open(output_path, 'w', encoding='utf-8') as f:
+        f.write(current_cv_text)
+    print(f"CV saved to {output_path}")
+    return
+
+def load_cv_text(file_name):
+    """
+    Loads CV text from a file and returns it.
+    """
+    global current_cv_text, format_check_current_cv_button, filter_output_cv_button, show_output_cv_button, save_output_cv_button, save_current_cv_text_button
+    file_path = os.path.join(OUT_CV_PATH, file_name)
+    if not os.path.exists(file_path):
+        print(f"File {file_name} does not exist.")
+        return
+    with open(file_path, 'r', encoding='utf-8') as f:
+        #load the text from the file to string
+        current_cv_text = f.read()
+    format_check_current_cv_button.config(state="normal")
+    filter_output_cv_button.config(state="normal")
+    show_output_cv_button.config(state="normal")
+    save_output_cv_button.config(state="normal")
+    save_current_cv_text_button.config(state="normal")
+    print(f"CV loaded from {file_path}")
+    return 
+
 def main():
     # Save Output CV Button (initially disabled)
     
 
     global save_output_cv_button
-    global template_dropdown, templates, model_dropdown, cv_dropdown, system_dropdown, model_var, models, cv_var,cvs, system_var, systems,out_file_textbox,job_desc_textbox, current_cv_text, format_check_current_cv_button, filter_output_cv_button, template_var
+    global saved_outs,saved_out_var,saved_out_dropdown
+    global save_current_cv_text_button
+    global load_cv_text_button
+    global template_dropdown, templates, model_dropdown, cv_dropdown, system_dropdown, model_var, models, cv_var,cvs, system_var, systems,out_file_textbox,save_file_textbox,job_desc_textbox, current_cv_text, format_check_current_cv_button, filter_output_cv_button, template_var
     
 
     run = runLocalModel.wait_for_ollama()
@@ -350,6 +398,8 @@ def main():
     cvs = []
     template_var = tk.StringVar()
     templates = []
+    saved_outs = []
+    saved_out_var = tk.StringVar()
     
     # models = options[0]
     # systems = options[1]
@@ -395,7 +445,10 @@ def main():
     template_dropdown.grid(row=3, column=1)
     ttk.Label(root, text="Select Template:").grid(row=3, column=0)
 
-
+    # Dropdown for saved output CVs
+    saved_out_dropdown = ttk.Combobox(root, textvariable=saved_out_var, values=saved_outs)
+    saved_out_dropdown.grid(row=4, column=1)
+    ttk.Label(root, text="Select Saved Output CV:").grid(row=4, column=0)
 
     #2. 1 Text fields:
         #Job Description
@@ -410,14 +463,20 @@ def main():
 
     # Job Description Textbox
 
-    ttk.Label(root, text="Job Description:").grid(row=4, column=0)
+    ttk.Label(root, text="Job Description:").grid(row=5, column=0)
     job_desc_textbox = tk.Text(root, height=5, width=40)
-    job_desc_textbox.grid(row=4, column=1)
+    job_desc_textbox.grid(row=5, column=1)
 
     #Output file Textbox
-    ttk.Label(root, text="Output File Name:").grid(row=4, column=2)
+    ttk.Label(root, text="Output File Name:").grid(row=5, column=2)
     out_file_textbox = tk.Text(root, height=1, width=20)
-    out_file_textbox.grid(row=4, column=3)
+    out_file_textbox.grid(row=5, column=3)
+
+    #Saved Text File Name
+    ttk.Label(root, text="Saved Text File Name:").grid(row=5, column=4)
+    save_file_textbox = tk.Text(root, height=1, width=20)
+    save_file_textbox.grid(row=5, column=5)
+
 
 
     
@@ -442,24 +501,31 @@ def main():
     
     #Tailor Button
     tailor_button = ttk.Button(root, text="Tailor CV", command=lambda: tailor_cv(root))
-    tailor_button.grid(row=5, column=1)
+    tailor_button.grid(row=6, column=1)
 
     # Filter Output CV Text Button (initially disabled)
     filter_output_cv_button = ttk.Button(root, text="Filter Output CV Text", command=lambda: filter_output_cv_text(root), state="disabled")
-    filter_output_cv_button.grid(row=5, column=3)
+    filter_output_cv_button.grid(row=6, column=3)
 
     # Format Check Current CV Text Button (initially disabled)
     format_check_current_cv_button = ttk.Button(root, text="Format Check Current CV Text", command=lambda: format_check_current_cv_text(root), state="disabled")
-    format_check_current_cv_button.grid(row=5, column=4)
+    format_check_current_cv_button.grid(row=6, column=4)
 
     # Show CV Output Button (initially disabled)
     show_output_cv_button = ttk.Button(root, text="Show Output CV", command=lambda: show_output_cv(root), state="disabled")
-    show_output_cv_button.grid(row=5, column=2)
+    show_output_cv_button.grid(row=6, column=2)
 
     # Save Output CV Button (initially disabled)
     save_output_cv_button = ttk.Button(root, text="Save Output CV to DOCX", command=lambda:save_output_cv(template_name= template_var,output_name= out_file_textbox.get("1.0", tk.END).strip()), state="disabled")
-    save_output_cv_button.grid(row=6, column=0)
+    save_output_cv_button.grid(row=7, column=0)
 
+    # Save Current CV Text Button to text file (disabled if no text in current_cv_text)
+    save_current_cv_text_button = ttk.Button(root, text="Save Current CV Text", command=lambda: save_cv_text(save_file_textbox.get("1.0", tk.END).strip()), state="disabled")
+    save_current_cv_text_button.grid(row=7, column=1)
+    
+    # Load CV Text Button (disabled if no saved output CVs)
+    load_cv_text_button = ttk.Button(root, text="Load CV Text", command=lambda: load_cv_text(saved_out_var.get()), state="disabled")
+    load_cv_text_button.grid(row=7, column=2)
     refresh_options_callback()
 
 

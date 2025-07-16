@@ -64,12 +64,14 @@ def refresh_options():
     systems = list_text_files("Sisyphus/systems")
     cvs = list_text_files("Sisyphus/cvs")
     templates = list_docx_files("Sisyphus/templates")
+    saved_outs = list_text_files("Sisyphus/saved_outputs")
     print("Options refreshed:")
     print("Models:", models)
     print("Systems:", systems)
     print("CVs:", cvs)
     print("Templates:", templates)
-    return [models, systems, cvs, templates]
+    print("Previously Saved Outputs:", saved_outs)
+    return [models, systems, cvs, templates, saved_outs]
 
 def format_checker(cv_text):
     """

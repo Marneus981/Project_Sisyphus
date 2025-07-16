@@ -31,16 +31,12 @@ Save output to docx (need to format it as well).
 Make dropdown for templates
 Give docxs unique names
 Make format more concise and compact
+Make filter input?? And add it to refresh [Greyed out if not]
+Give it a last output memory? or make it save all the outputs
 
 [WIP]
-Give it a last output memory? or make it save all the outputs
-Make convert to pdf button
-Fix file corruption on output docx save
 
-Refine template further:
-    More compact, concise
-    Make bold letters for some fields
-    remove vignettes
+
 Stop docx corruption: Maybe save to a new folder instead?
 
 Find a way to parse descriptions and turn them into lists.
@@ -53,7 +49,16 @@ Bugs:
 
 
 [TO_DO]
-Make filter input?? And add it to refresh [Greyed out if not]
+Allow asking before overwritting documents
+Make convert to pdf button
+Fix file corruption on output docx save
+
+Refine template further:
+    More compact, concise
+    Make bold letters for some fields
+    remove vignettes
+
+
 Check if format check button becomes avaialable after we scan for cv files
 Move console ouput to a window
 
