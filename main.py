@@ -6,6 +6,7 @@ import io
 import sys
 import Sisyphus.fileGenerator as fileGenerator
 
+
 SISYPHUS_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus"
 DOCS_PATH =r"C:\CodeProjects\Sisyphus\Sisyphus\saved_docs"
 
@@ -256,11 +257,12 @@ def filter_output_cv_text(root):
         result_textbox.pack(expand=True, fill=tk.BOTH)
 
 def refresh_options_callback():
-        global model_dropdown, cv_dropdown, system_dropdown, model_var, models, cv_var, cvs, system_var, systems
+        global model_dropdown, cv_dropdown, system_dropdown, model_var, models, cv_var, cvs, system_var, systems, template_dropdown,templates, template_var
         options = helpers.refresh_options()
         models = options[0]
         systems = options[1]
         cvs = options[2]
+        templates = options[3]
         model_dropdown['values'] = models
         if models:
             model_var.set(models[0])
@@ -271,13 +273,32 @@ def refresh_options_callback():
         if cvs:
             format_check_input_cv_button.config(state="normal")
             cv_var.set(cvs[0])
-
-def save_output_cv_callback():
-        global current_cv_text
+        template_dropdown['values'] = templates
+        if templates:
+            template_var.set(templates[0])
         
+
+# def save_output_cv_callback():
+#         global current_cv_text
+        
+#         cv_dict = parsers.parse_cv(current_cv_text)
+#         template_path = os.path.join(SISYPHUS_PATH, "templates", "cv_template.docx")
+#         output_path = os.path.join(SISYPHUS_PATH, "saved_docs", "output_cv.docx")
+#         fileGenerator.generate_docx(template_path, cv_dict, output_path)
+
+def save_output_cv(template_name,output_name):
+        output_n = output_name
+        template_n = template_name.get().strip()
+        if output_n == "":
+            print("Output file name cannot be empty.")
+            return
+        if template_n == "":
+            print("No template selected. Please select a template.")
+            return
+        global current_cv_text
         cv_dict = parsers.parse_cv(current_cv_text)
-        template_path = os.path.join(SISYPHUS_PATH, "templates", "cv_template.docx")
-        output_path = os.path.join(SISYPHUS_PATH, "saved_docs", "output_cv.docx")
+        template_path = os.path.join(SISYPHUS_PATH, "templates", f"{template_n}")
+        output_path = os.path.join(SISYPHUS_PATH, "saved_docs", f"{output_n}.docx")
         fileGenerator.generate_docx(template_path, cv_dict, output_path)
 
 def show_output_cv(root):
@@ -301,15 +322,10 @@ def show_output_cv(root):
 
 def main():
     # Save Output CV Button (initially disabled)
-    def save_output_cv_callback():
-        import Sisyphus.fileGenerator as fileGenerator
-        cv_dict = parsers.parse_cv(current_cv_text)
-        template_path = os.path.join(SISYPHUS_PATH, "templates", "cv_template.docx")
-        output_path = os.path.join(SISYPHUS_PATH, "saved_docs", "output_cv.docx")
-        fileGenerator.generate_docx(template_path, cv_dict, output_path)
+    
 
     global save_output_cv_button
-    global model_dropdown, cv_dropdown, system_dropdown, model_var, models, cv_var,cvs, system_var, systems,job_desc_textbox, current_cv_text, format_check_current_cv_button, filter_output_cv_button
+    global template_dropdown, templates, model_dropdown, cv_dropdown, system_dropdown, model_var, models, cv_var,cvs, system_var, systems,out_file_textbox,job_desc_textbox, current_cv_text, format_check_current_cv_button, filter_output_cv_button, template_var
     
 
     run = runLocalModel.wait_for_ollama()
@@ -330,7 +346,8 @@ def main():
     system_var = tk.StringVar()
     systems = []
     cvs = []
-
+    template_var = tk.StringVar()
+    templates = []
     
     # models = options[0]
     # systems = options[1]
@@ -371,7 +388,10 @@ def main():
     cv_dropdown.grid(row=2, column=1)
     ttk.Label(root, text="Select CV File:").grid(row=2, column=0)
     
-
+    #Dropdown for template
+    template_dropdown = ttk.Combobox(root, textvariable=template_var, values=templates)
+    template_dropdown.grid(row=3, column=1)
+    ttk.Label(root, text="Select Template:").grid(row=3, column=0)
 
 
 
@@ -386,9 +406,17 @@ def main():
     # system_textbox = tk.Text(root, height=2, width=40)
     # system_textbox.grid(row=2, column=1)
 
-    ttk.Label(root, text="Job Description:").grid(row=3, column=0)
+    # Job Description Textbox
+
+    ttk.Label(root, text="Job Description:").grid(row=4, column=0)
     job_desc_textbox = tk.Text(root, height=5, width=40)
-    job_desc_textbox.grid(row=3, column=1)
+    job_desc_textbox.grid(row=4, column=1)
+
+    #Output file Textbox
+    ttk.Label(root, text="Output File Name:").grid(row=4, column=2)
+    out_file_textbox = tk.Text(root, height=1, width=20)
+    out_file_textbox.grid(row=4, column=3)
+
 
     
 
@@ -412,23 +440,23 @@ def main():
     
     #Tailor Button
     tailor_button = ttk.Button(root, text="Tailor CV", command=lambda: tailor_cv(root))
-    tailor_button.grid(row=4, column=1)
+    tailor_button.grid(row=5, column=1)
 
     # Filter Output CV Text Button (initially disabled)
     filter_output_cv_button = ttk.Button(root, text="Filter Output CV Text", command=lambda: filter_output_cv_text(root), state="disabled")
-    filter_output_cv_button.grid(row=4, column=3)
+    filter_output_cv_button.grid(row=5, column=3)
 
     # Format Check Current CV Text Button (initially disabled)
     format_check_current_cv_button = ttk.Button(root, text="Format Check Current CV Text", command=lambda: format_check_current_cv_text(root), state="disabled")
-    format_check_current_cv_button.grid(row=4, column=4)
+    format_check_current_cv_button.grid(row=5, column=4)
 
     # Show CV Output Button (initially disabled)
     show_output_cv_button = ttk.Button(root, text="Show Output CV", command=lambda: show_output_cv(root), state="disabled")
-    show_output_cv_button.grid(row=4, column=2)
+    show_output_cv_button.grid(row=5, column=2)
 
     # Save Output CV Button (initially disabled)
-    save_output_cv_button = ttk.Button(root, text="Save Output CV to DOCX", command=save_output_cv_callback, state="disabled")
-    save_output_cv_button.grid(row=5, column=0)
+    save_output_cv_button = ttk.Button(root, text="Save Output CV to DOCX", command=lambda:save_output_cv(template_name= template_var,output_name= out_file_textbox.get("1.0", tk.END).strip()), state="disabled")
+    save_output_cv_button.grid(row=6, column=0)
 
     refresh_options_callback()
 

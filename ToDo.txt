@@ -28,10 +28,19 @@ Fixed Bugs:
 
 Save output to docx (need to format it as well).
 
-[WIP]
+Make dropdown for templates
 Give docxs unique names
-Make convert to pdf button
 Make format more concise and compact
+
+[WIP]
+Give it a last output memory? or make it save all the outputs
+Make convert to pdf button
+
+Refine template further:
+    More compact, concise
+    Make bold letters for some fields
+    remove vignettes
+Stop docx corruption: Maybe save to a new folder instead?
 
 Find a way to parse descriptions and turn them into lists.
 

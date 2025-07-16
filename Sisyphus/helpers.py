@@ -15,6 +15,12 @@ def list_text_files(folder_path):
     """
     return [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f)) and f.lower().endswith('.txt')]
 
+def list_docx_files(folder_path):
+    """
+    Returns a list of strings denoting the docx files present in the given folder.
+    """
+    return [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f)) and f.lower().endswith('.docx')]
+
 def format_output(cv_text):
     """
     Takes a CV text string, parses it to a dict, and formats keys in the following order, returning a string:
@@ -57,11 +63,13 @@ def refresh_options():
     models = runLocalModel.fetch_available_ollama_models()
     systems = list_text_files("Sisyphus/systems")
     cvs = list_text_files("Sisyphus/cvs")
+    templates = list_docx_files("Sisyphus/templates")
     print("Options refreshed:")
     print("Models:", models)
     print("Systems:", systems)
     print("CVs:", cvs)
-    return [models, systems, cvs]
+    print("Templates:", templates)
+    return [models, systems, cvs, templates]
 
 def format_checker(cv_text):
     """
