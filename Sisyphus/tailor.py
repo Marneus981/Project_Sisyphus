@@ -33,13 +33,13 @@ def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system="", ollama_ur
     [1]Location: Location Name 1
     [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
     [1]Description: Brief description of the role and responsibilities for Role 1.
-    [1]Skills: Programming Languages: Programming Language 1, Programming Language 2; Technical Skills: Event Technical Skill 1, Techincal Skill 2; Soft Skills: Soft Skill 1, Soft Skill 2
+    [1]Skills: Programming Languages: Programming Language 1, Programming Language 2; Technical Skills: Technical Skill 1, Techincal Skill 2; Soft Skills: Soft Skill 1, Soft Skill 2
     [1]Role: Role Name 2
     [1]Organization: Organization Name 2
     [1]Location: Location Name 2
     [1]Duration: Start Year 2/Start Month 2 - End Year 2/End Month 2
     [1]Description: Brief description of the role and responsibilities for Role 2.
-    [1]Skills: Programming Languages: Programming Language 3, Programming Language 4; Technical Skills: Event Technical Skill 3, Techincal Skill 4; Soft Skills: Soft Skill 3, Soft Skill 4
+    [1]Skills: Programming Languages: Programming Language 3, Programming Language 4; Technical Skills: Technical Skill 3, Techincal Skill 4; Soft Skills: Soft Skill 3, Soft Skill 4
     
     Be mindful not to include any line breaks in any of the sections.
     Do note that the section may not exist in the CV, in which case you should return an empty section. Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
@@ -93,13 +93,13 @@ def tailor_work_experience(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_UR
     [1]Location: Location Name 1
     [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
     [1]Description: Brief description of the role and responsibilities for Role 1.
-    [1]Skills: Programming Languages: Programming Language 1, Programming Language 2; Technical Skills: Event Technical Skill 1, Techincal Skill 2; Soft Skills: Soft Skill 1, Soft Skill 2
+    [1]Skills: Programming Languages: Programming Language 1, Programming Language 2; Technical Skills: Technical Skill 1, Techincal Skill 2; Soft Skills: Soft Skill 1, Soft Skill 2
     [1]Job Title: Job Title 2
     [1]Company: Company 2
     [1]Location: Location Name 2
     [1]Duration: Start Year 2/Start Month 2 - End Year 2/End Month 2
     [1]Description: Brief description of the role and responsibilities for Role 2.
-    [1]Skills: Programming Languages: Programming Language 3, Programming Language 4; Technical Skills: Event Technical Skill 3, Techincal Skill 4; Soft Skills: Soft Skill 3, Soft Skill 4
+    [1]Skills: Programming Languages: Programming Language 3, Programming Language 4; Technical Skills: Technical Skill 3, Techincal Skill 4; Soft Skills: Soft Skill 3, Soft Skill 4
 
     Be mindful not to include any line breaks in any of the sections.
     Do note that the section may not exist in the CV, in which case you should return an empty section. Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
@@ -151,12 +151,12 @@ def tailor_projects(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_d
     [1]Type: Type of Project 1 (e.g., Personal, Academic, Professional)
     [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
     [1]Description: Brief description of the role and responsibilities for Role 1.
-    [1]Skills: Programming Languages: Programming Language 1, Programming Language 2; Technical Skills: Event Technical Skill 1, Techincal Skill 2; Soft Skills: Soft Skill 1, Soft Skill 2
+    [1]Skills: Programming Languages: Programming Language 1, Programming Language 2; Technical Skills: Technical Skill 1, Techincal Skill 2; Soft Skills: Soft Skill 1, Soft Skill 2
     [1]Project Title: Project Title 2
     [1]Type: Type of Project 2 (e.g., Personal, Academic, Professional)
     [1]Duration: Start Year 2/Start Month 2 - End Year 2/End Month 2
     [1]Description: Brief description of the role and responsibilities for Role 2.
-    [1]Skills: Programming Languages: Programming Language 3, Programming Language 4; Technical Skills: Event Technical Skill 3, Techincal Skill 4; Soft Skills: Soft Skill 3, Soft Skill 4
+    [1]Skills: Programming Languages: Programming Language 3, Programming Language 4; Technical Skills: Technical Skill 3, Techincal Skill 4; Soft Skills: Soft Skill 3, Soft Skill 4
 
     Be mindful not to include any line breaks in any of the sections.
     Do note that the section may not exist in the CV, in which case you should return an empty section. Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
@@ -213,3 +213,48 @@ def tailor_summary(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_da
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
+def return_text_with_skills(cv_text):
+    #Note: text: comma separated skills, dict: section to subsections to lists
+    return_list = []
+
+    programming_skills = []
+    technical_skills = []
+    soft_skills = []
+
+    lines = cv_text.splitlines()
+    for line in lines:
+        if line.startswith("[1]Skills: "):
+            parts = line.split("; ")
+            part0 = parts[0].split(": ")
+            #[1]Skills
+            #Programming Languages
+            #Programming Language N1, ..., Programming Language NN
+            part0_prog = part0[2]
+            part0_prog_splt = part0_prog.split(", ")
+            programming_skills += part0_prog_splt
+
+            part1 = parts[1].split(": ")
+            #Technical Skills
+            #Technical Skill N1, ..., Techincal Skill NN
+            part1_tech = part1[1]
+            part1_tech_splt = part1_tech.split(", ")
+            technical_skills += part1_tech_splt
+
+            part2 = parts[2].split(": ")
+            #Soft Skills
+            #Soft Skill N1, ..., Soft Skill NN
+            part2_soft = part2[1]
+            part2_soft_splt = part2_soft.split(", ")
+            soft_skills += part2_soft_splt
+        else:
+            return_list.append(line)
+
+    #Join return list into a line break separated string
+    return_text = "\n".join(return_list)
+    #Remove duplicate entries, sort alphabetically, make final lines
+    skill = "[0]Skills:"
+    prog = "[1]Programming Languages: " + ", ".join(list(dict.fromkeys(programming_skills)).sort())
+    tech = "[1]Technical Skills: " + ", ".join(list(dict.fromkeys(technical_skills)).sort())
+    soft = "[1]Soft Skills: " + ", ".join(list(dict.fromkeys(soft_skills)).sort())
+
+    return "\n".join([return_text,skill,prog,tech,soft])

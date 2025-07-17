@@ -35,20 +35,25 @@ Make filter input?? And add it to refresh [Greyed out if not]
 Give it a last output memory? or make it save all the outputs
 
 [WIP]
+Parse descriptions and turn them into lists
+Make a toggle (on by deafault):
+    On toggle make skills a separate field
+Create a template reflecting above changes 
 
 
-Stop docx corruption: Maybe save to a new folder instead?
+Tune template
 
-Find a way to parse descriptions and turn them into lists.
-
-Bugs:
-    Deepseekr1:8b chokes and dies while generating Summary section
 
 
 
 
 
 [TO_DO]
+Stop docx corruption: Maybe save to a new folder instead?
+Find a way to parse descriptions and turn them into lists.
+
+Bugs:
+    Deepseekr1:8b chokes and dies while generating Summary section
 Allow asking before overwritting documents
 Make convert to pdf button
 Fix file corruption on output docx save
