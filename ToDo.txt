@@ -33,15 +33,20 @@ Give docxs unique names
 Make format more concise and compact
 Make filter input?? And add it to refresh [Greyed out if not]
 Give it a last output memory? or make it save all the outputs
+Descriptions into lists implemented:
+    Modified parsers:
+        Impact:
+            [DONE]Update context
+            [FIXED]Description gets duplicated when displayed as text
+            [DONE]Update template
+
 
 [WIP]
-Parse descriptions and turn them into lists
-Make a toggle (on by deafault):
-    On toggle make skills a separate field
-Create a template reflecting above changes 
-
-
+Skill implementation
+    Modify all open functions
 Tune template
+Tune prompts
+    Shorten summary.
 
 
 

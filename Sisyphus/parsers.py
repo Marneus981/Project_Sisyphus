@@ -14,117 +14,6 @@ def parse_cv(cv_text):
         dict: A dictionary containing parsed CV data.
     """
     cv_data = {}
-    
-    # Example parsing logic
-    #name_match = re.search(r'Name:\s*(.*)', cv_text)
-    #if name_match:
-        #cv_data['name'] = name_match.group(1).strip()
-
-    # Fields to parse:
-    # - Name
-    # - Languages
-    # - Contact Information
-        # - Address
-        # - Phone
-        # - Email
-        # - LinkedIn
-        # - Github
-        # - Portfolio
-    # - Title
-    # - Summary
-    # - Education
-        # - Education X
-            # - Degree
-            # - University
-            # - Location
-            # - Duration
-            # - Courses
-    # - Certifications
-        # - Certification X
-            # - Certification Name
-            # - Issuing Organization
-            # - Issue Date
-    # - Awards and Scholarships
-        # - Award X
-            # - Award Name
-            # - Issuing Organization
-            # - Issue Date
-    # - Volunteering and Leadership
-        # - Volunteering X
-            # - Role
-            # - Organization
-            # - Location
-            # - Duration
-            # - Description
-            # - Skills
-                # - Programming Languages
-                # - Technical Skills
-                # - Soft Skills
-    # - Work Experience
-        # - Work Experience X
-            # - Job Title
-            # - Company
-            # - Location
-            # - Duration
-            # - Description
-            # - Skills
-                # - Programming Languages
-                # - Technical Skills
-                # - Soft Skills
-    # - Projects
-        # - Project X
-            # - Project Title
-            # - Type (e.g., Personal, Academic, Professional)
-            # - Duration
-            # - Description
-            # - Skills     
-                # - Programming Languages
-                # - Technical Skills
-                # - Soft Skills
-
-
-    # - To make parsing simpler, every field will have [X]field_name at the start of the line; X represents the parent order.
-    # - The first field will be [0]Name, followed by [0]Contact Information, and so on.
-    # - Each Field and Subfield will start on a new line.
-    # - Each field will be followed by a colon and the content.
-    # - Example:
-    #   [0]Name: John Doe
-    #   [0]Contact Information:
-        #   [1]Address: 123 Main St, City, Country
-        #   [1]Phone: +1234567890
-        #   [1]Email: jd@hotmail.com
-        #   [1]LinkedIn: https://linkedin.com/in/johndoe
-        #   [1]Github: https://github.com/johndoe
-        #   [1]Portfolio: https://johndoe.com
-
-    # - The output will be a dictionary with the following structure:
-    #   {
-    #       'name': 'John Doe',
-    #       'contact_information': {
-    #           'address': '123 Main St, City, Country',
-    #           'phone': '+1234567890',
-    #           'email': '
-    #           'linkedin': 'https://linkedin.com/in/johndoe',
-    #           'github': '
-    #           'portfolio': 'https://johndoe.com'
-    #       },
-    #       'title': 'Software Engineer',
-    #       'summary': 'Experienced software engineer with a passion for developing innovative solutions.',
-    #       'education': [
-    #           {
-    #               'degree': 'Bachelor of Science in Computer Science',
-    #               'university': 'University of Example',
-    #               'location': 'City, Country',
-    #               'duration': '2015 - 2019'
-    #           },
-    #           {
-    #               'degree': 'Master of Science in Software Engineering',
-    #               'university': 'Example University',
-    #               'location': 'City, Country',
-    #               'duration': '2019 - 2021'
-    #           }
-    #       ],
-    #       ETC.
 
     #Code to parse the CV text
     lines = cv_text.splitlines()
@@ -208,6 +97,11 @@ def parse_cv(cv_text):
                             if cat_key in ['programming_languages', 'technical_skills', 'soft_skills']:
                                 skills_dict[cat_key] = [s.strip() for s in vals.split(',') if s.strip()]
                     last_entry['skills'] = skills_dict
+
+                elif field_key == 'description':
+                    # Convert description to a list of sentences
+                    description_sentences = [s.strip() for s in value.split('.') if s.strip()]
+                    last_entry['description'] = description_sentences
                 else:
                     last_entry[field_key] = value
             continue
@@ -250,7 +144,11 @@ def inv_parse_cv(cv_dict):
                             sub_field = format_key(sub_key)
                             if isinstance(sub_value, list):
                                 # For lists (e.g., courses, languages, skills)
-                                lines.append(f"[1]{sub_field}: {', '.join(str(v) for v in sub_value)}")
+                                if sub_field == 'Description':
+                                    # Convert description list back to a string
+                                    lines.append(f"[1]{sub_field}: {'. '.join(sub_value)}")
+                                else:
+                                    lines.append(f"[1]{sub_field}: {', '.join(str(v) for v in sub_value)}")
                             elif isinstance(sub_value, dict):
                                 # For skills dict
                                 skill_lines = []
