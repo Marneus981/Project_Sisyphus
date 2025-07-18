@@ -40,10 +40,21 @@ Descriptions into lists implemented:
             [FIXED]Description gets duplicated when displayed as text
             [DONE]Update template
 
+Skill implementation
+    Modified tailor_cv
+        Impact:
+            [DONE]format_check_current_cv_text
+                [DONE]format_checker (add new function)
+            [DONE]save_output_cv
+                [DONE]parse_cv (add new function)
+            [DONE]Template
+            [FIXED]First instance of format_check uses the wrong function
+            [FIXED]On Doc Generation: An error occurred while generating the document: 'skills' is undefined
+            [FIXED]First showing of cv_text displays unmodded skills
+
 
 [WIP]
-Skill implementation
-    Modify all open functions
+Prune skills (10?)
 Tune template
 Tune prompts
     Shorten summary.

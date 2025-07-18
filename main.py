@@ -156,7 +156,9 @@ def tailor_cv(root):
     for key, value in unchanged_dict.items():
         final_tailored_dict[key] = value
     final_cv_text = helpers.format_output(parsers.inv_parse_cv(final_tailored_dict))
-    current_cv_text = final_cv_text
+    
+    current_cv_text = tailor.return_text_with_skills(final_cv_text)
+    # current_cv_text = final_cv_text
 
     # Enable the format check and filter buttons for output CV
     format_check_current_cv_button.config(state="normal")
@@ -166,7 +168,7 @@ def tailor_cv(root):
     analysis_stream = io.StringIO()
     old_stdout = sys.stdout
     sys.stdout = analysis_stream
-    helpers.read_format_checker(helpers.format_checker(current_cv_text))
+    helpers.read_format_checker(helpers.format_checker_out(current_cv_text))
     sys.stdout = old_stdout
     analysis_text = analysis_stream.getvalue()
 
@@ -177,7 +179,7 @@ def tailor_cv(root):
     result_window = tk.Toplevel(root)
     result_window.title("Tailored CV")
     result_textbox = tk.Text(result_window, height=20, width=80)
-    result_textbox.insert(tk.END, final_cv_text)
+    result_textbox.insert(tk.END, current_cv_text)
     result_textbox.pack(expand=True, fill=tk.BOTH)
     show_output_cv_button.config(state="normal")
 
@@ -225,7 +227,7 @@ def format_check_current_cv_text(root):
     analysis_stream = io.StringIO()
     old_stdout = sys.stdout
     sys.stdout = analysis_stream
-    helpers.read_format_checker(helpers.format_checker(cv_text))
+    helpers.read_format_checker(helpers.format_checker_out(cv_text))
     sys.stdout = old_stdout
     analysis_text = analysis_stream.getvalue()
 
@@ -305,7 +307,7 @@ def save_output_cv(template_name,output_name):
             print("No template selected. Please select a template.")
             return
         global current_cv_text
-        cv_dict = parsers.parse_cv(current_cv_text)
+        cv_dict = parsers.parse_cv_out(current_cv_text)
         template_path = os.path.join(SISYPHUS_PATH, "templates", f"{template_n}")
         output_path = os.path.join(SISYPHUS_PATH, "saved_docs", f"{output_n}.docx")
         if os.path.exists(output_path):

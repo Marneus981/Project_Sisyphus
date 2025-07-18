@@ -255,8 +255,14 @@ def return_text_with_skills(cv_text):
     return_text = "\n".join(return_list)
     #Remove duplicate entries, sort alphabetically, make final lines
     skill = "[0]Skills:"
-    prog = "[1]Programming Languages: " + ", ".join(list(dict.fromkeys(programming_skills)).sort())
-    tech = "[1]Technical Skills: " + ", ".join(list(dict.fromkeys(technical_skills)).sort())
-    soft = "[1]Soft Skills: " + ", ".join(list(dict.fromkeys(soft_skills)).sort())
+    prog_list = list(dict.fromkeys(programming_skills))
+    prog_list.sort()
+    prog = "[1]Programming Languages: " + ", ".join(prog_list)
+    tech_list = list(dict.fromkeys(technical_skills))
+    tech_list.sort()
+    tech = "[1]Technical Skills: " + ", ".join(tech_list)
+    soft_list = list(dict.fromkeys(soft_skills))
+    soft_list.sort()
+    soft = "[1]Soft Skills: " + ", ".join(soft_list)
 
     return "\n".join([return_text,skill,prog,tech,soft])

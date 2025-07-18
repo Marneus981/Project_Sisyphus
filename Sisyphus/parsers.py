@@ -213,3 +213,109 @@ def dict_grafter(split_dicts):
             else:
                 cv_dict[key] = value
     return cv_dict
+
+#New parse_cv_out to take into account the addition of skills as a section rather than a subsection
+def parse_cv_out(cv_text):
+    """
+    inout us a cv_text with skills as a section in the format:
+    [0]Skills:
+    [1]Programming Languages: Python, Java
+    [1]Technical Skills: Docker, Git
+    [1]Soft Skills: Communication, Teamwork
+    """
+    cv_data = {}
+
+    #Code to parse the CV text
+    lines = cv_text.splitlines()
+    parent_field = None
+    current_list = None
+    last_entry = None
+    allowed_parents = [
+        'name', 'languages', 'contact_information', 'title', 'summary',
+        'education', 'certifications', 'awards_and_scholarships',
+        'volunteering_and_leadership', 'work_experience', 'projects','skills'
+    ]
+    allowed_subfields = {
+        'contact_information': ['address', 'phone', 'email', 'linkedin', 'github', 'portfolio'],
+        'education': ['degree', 'university', 'location', 'duration', 'courses'],
+        'certifications': ['certification_name', 'issuing_organization', 'issue_date'],
+        'awards_and_scholarships': ['award_name', 'issuing_organization', 'issue_date'],
+        'volunteering_and_leadership': ['role', 'organization', 'location', 'duration', 'description'],
+        'work_experience': ['job_title', 'company', 'location', 'duration', 'description'],
+        'projects': ['project_title', 'type', 'duration', 'description'],
+        'skills': ['programming_languages', 'technical_skills', 'soft_skills']
+    }
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+        parent_match = re.match(r'\[0\](\w[\w ]*):\s*(.*)', line)
+        if parent_match:
+            field, value = parent_match.groups()
+            field_key = field.lower().replace(' ', '_')
+            if field_key not in allowed_parents:
+                continue
+            if field_key in ['contact_information', 'skills']:
+                cv_data[field_key] = {}
+                parent_field = field_key
+                current_list = None
+            elif field_key in ['education', 'certifications', 'awards_and_scholarships', 'volunteering_and_leadership', 'work_experience', 'projects']:
+                cv_data[field_key] = []
+                parent_field = field_key
+                current_list = cv_data[field_key]
+                last_entry = None
+            elif field_key == 'languages':
+                cv_data[field_key] = [s.strip() for s in value.split(',') if s.strip()]
+                parent_field = field_key
+                current_list = None
+            else:
+                cv_data[field_key] = value
+                parent_field = field_key
+                current_list = None
+            continue
+        sub_match = re.match(r'\[1\](\w[\w ]*):\s*(.*)', line)
+        if sub_match:
+            field, value = sub_match.groups()
+            field_key = field.lower().replace(' ', '_')
+            if parent_field in allowed_subfields:
+                if field_key not in allowed_subfields[parent_field]:
+                    continue
+            if parent_field == 'contact_information':
+                cv_data[parent_field][field_key] = value
+            elif parent_field == 'skills':
+                cv_data[parent_field][field_key] = [s.strip() for s in value.split(',') if s.strip()]
+            elif parent_field == 'education':
+                if field_key == 'degree' or last_entry is None:
+                    last_entry = {}
+                    current_list.append(last_entry)
+                if field_key == 'courses':
+                    last_entry['courses'] = [c.strip() for c in value.split(',') if c.strip()]
+                else:
+                    last_entry[field_key] = value
+            elif parent_field in ['certifications', 'awards_and_scholarships']:
+                if field_key in ['certification_name', 'award_name'] or last_entry is None:
+                    last_entry = {}
+                    current_list.append(last_entry)
+                last_entry[field_key] = value
+            elif parent_field in ['volunteering_and_leadership', 'work_experience', 'projects']:
+                if field_key in ['role', 'job_title', 'project_title'] or last_entry is None:
+                    last_entry = {}
+                    current_list.append(last_entry)
+                if field_key == 'skills':
+                    skills_dict = {}
+                    for skill_line in value.split(';'):
+                        if ':' in skill_line:
+                            cat, vals = skill_line.split(':', 1)
+                            cat_key = cat.strip().lower().replace(' ', '_')
+                            if cat_key in ['programming_languages', 'technical_skills', 'soft_skills']:
+                                skills_dict[cat_key] = [s.strip() for s in vals.split(',') if s.strip()]
+                    last_entry['skills'] = skills_dict
+
+                elif field_key == 'description':
+                    # Convert description to a list of sentences
+                    description_sentences = [s.strip() for s in value.split('.') if s.strip()]
+                    last_entry['description'] = description_sentences
+                else:
+                    last_entry[field_key] = value
+            continue
+    return cv_data
