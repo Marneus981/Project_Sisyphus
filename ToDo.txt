@@ -1,102 +1,83 @@
 [DONE]
-Organize resume printout (maybe stop using dicts for final output).
-Make it able to be executed several times despite errors in finding files
-Prompt engineer:
-    Verbose is not included in model answers.
-    Add explicit formatting
-    Make summaries small (add word limit).
-    
-    Put numerical limit on vignettes and list items.
-        Lists:Max 3 
-        Skills:Max 6
-Fixed repeating titles
-Mention languages known in summary
-Add refresh button to search for more files
-Make a second cv, with long summaries 10 skills per sub section and 5 examples per section
-Figure out how to make deepseek not output all its thoughts
-Make format checking functions.
-Create Filter function to increase consistency
-Bugs "Fixed":
-    Name, Title, Summary and Languages are incorrectly labeled as empty
-    Missing sections on output:Title, Awards and Scholarships, Volunteering and Leadership
-Show Output CV Button
+    Organize resume printout (maybe stop using dicts for final output).
+    Make it able to be executed several times despite errors in finding files
+    Prompt engineer:
+        Verbose is not included in model answers.
+        Add explicit formatting
+        Make summaries small (add word limit).
+        
+        Put numerical limit on vignettes and list items.
+            Lists:Max 3 
+            Skills:Max 6
+    Fixed repeating titles
+    Mention languages known in summary
+    Add refresh button to search for more files
+    Make a second cv, with long summaries 10 skills per sub section and 5 examples per section
+    Figure out how to make deepseek not output all its thoughts
+    Make format checking functions.
+    Create Filter function to increase consistency
+    Bugs "Fixed":
+        Name, Title, Summary and Languages are incorrectly labeled as empty
+        Missing sections on output:Title, Awards and Scholarships, Volunteering and Leadership
+    Show Output CV Button
 
-Make use of word counters to check format of summary and descriptions
-Fixed Bugs:
-    Show Output not ungreying
-    Volunteering and Leadership empty [Fixed???]
+    Make use of word counters to check format of summary and descriptions
+    Fixed Bugs:
+        Show Output not ungreying
+        Volunteering and Leadership empty [Fixed???]
 
-Save output to docx (need to format it as well).
+    Save output to docx (need to format it as well).
 
-Make dropdown for templates
-Give docxs unique names
-Make format more concise and compact
-Make filter input?? And add it to refresh [Greyed out if not]
-Give it a last output memory? or make it save all the outputs
-Descriptions into lists implemented:
-    Modified parsers:
-        Impact:
-            [DONE]Update context
-            [FIXED]Description gets duplicated when displayed as text
-            [DONE]Update template
+    Make dropdown for templates
+    Give docxs unique names
+    Make format more concise and compact
+    Make filter input?? And add it to refresh [Greyed out if not]
+    Give it a last output memory? or make it save all the outputs
+    Descriptions into lists implemented:
+        Modified parsers:
+            Impact:
+                [DONE]Update context
+                [FIXED]Description gets duplicated when displayed as text
+                [DONE]Update template
 
-Skill implementation
-    Modified tailor_cv
-        Impact:
-            [DONE]format_check_current_cv_text
-                [DONE]format_checker (add new function)
-            [DONE]save_output_cv
-                [DONE]parse_cv (add new function)
-            [DONE]Template
-            [FIXED]First instance of format_check uses the wrong function
-            [FIXED]On Doc Generation: An error occurred while generating the document: 'skills' is undefined
-            [FIXED]First showing of cv_text displays unmodded skills
+    Skill implementation
+        Modified tailor_cv
+            Impact:
+                [DONE]format_check_current_cv_text
+                    [DONE]format_checker (add new function)
+                [DONE]save_output_cv
+                    [DONE]parse_cv (add new function)
+                [DONE]Template
+                [FIXED]First instance of format_check uses the wrong function
+                [FIXED]On Doc Generation: An error occurred while generating the document: 'skills' is undefined
+                [FIXED]First showing of cv_text displays unmodded skills
 
 
+[1.0 RELEASE CHECKBOX]
+    []Fit entire resume in 1 page
+    []Add consistency chcker + report
+    []Reduce needed text in prompts, add filter on every model output
 [WIP]
-Add filter on each output
-    Remove unneeded verbose on prompts
-Change format checker?
-
-Add consistency checker
-Tune template
-Tune prompts
-
-
-
-
-
+    []Enforce 2 sentence limit in description
+    []Enforce 100 word limit on summary
+    []Add filter on each output
+        []Remove unneeded verbose on prompts
 
 [TO_DO]
-Stop docx corruption: Maybe save to a new folder instead?
-Find a way to parse descriptions and turn them into lists.
 
-Bugs:
-    Deepseekr1:8b chokes and dies while generating Summary section
-Allow asking before overwritting documents
-Make convert to pdf button
-Fix file corruption on output docx save
-
-Refine template further:
-    More compact, concise
-    Make bold letters for some fields
-    remove vignettes
-
-
-Check if format check button becomes avaialable after we scan for cv files
-Move console ouput to a window
-
-
-
+    Change format checker
+    Add consistency checker
+    Tune template,prompts
+    Stop docx corruption: Maybe save to a new folder instead?
+    Fix: Deepseekr1:8b chokes and dies while generating Summary section
+    Allow asking before overwritting documents
+    Make convert to pdf button
+    Move console ouput to a window
 
 [???]
-
-Make program more robust:
-    Give it the ability to arrange unarranged cv Formats
-    Make it detect unarranged cv formats
-Prompt engineer: more??
-Make it a single window?
-Use bigger model?
-Multiple resumes at once?
-Climb flavor text??
-Add example to prompts?
+    Make program more robust:
+        Give it the ability to arrange unarranged cv Formats
+        Make it detect unarranged cv formats
+    Make it a single window?
+    Multiple resumes at once?
+    Climb flavor text??
