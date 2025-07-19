@@ -98,6 +98,7 @@ def tailor_cv(root):
             cv_data=v_and_l_text,
             job_description=job_desc
         )
+        tailored_v_and_l = helpers.filter_output(tailored_v_and_l)
         if tailored_v_and_l:
             print("Tailored volunteering and leadership section")
             tailored_list.append(parsers.parse_cv(tailored_v_and_l))
@@ -111,6 +112,7 @@ def tailor_cv(root):
             cv_data=w_text,
             job_description=job_desc
         )
+        tailored_w = helpers.filter_output(tailored_w)
         if tailored_w:
             print("Tailored work experience section")
             tailored_list.append(parsers.parse_cv(tailored_w))
@@ -124,6 +126,7 @@ def tailor_cv(root):
             cv_data=p_text,
             job_description=job_desc
         )
+        tailored_p = helpers.filter_output(tailored_p)
         if tailored_p:
             print("Tailored projects section")
             tailored_list.append(parsers.parse_cv(tailored_p))
@@ -146,6 +149,7 @@ def tailor_cv(root):
             cv_data=s_text,
             job_description=job_desc
         )
+        tailored_s = helpers.filter_output(tailored_s)
         if tailored_s:
             print("Tailored summary section:", tailored_s)
             # Add the tailored summary to the dict
@@ -161,15 +165,15 @@ def tailor_cv(root):
     # print('Checking tailor.return_text_with_skills output:')
     # print(final_final_cv_text)
 
-################################
+
     #Attempt to tailor skills section
     p_cv_out = parsers.parse_cv_out(final_final_cv_text)
-    print("p_cv_out: ", p_cv_out)
+    #print("p_cv_out: ", p_cv_out)
     final_final_split_dicts = parsers.dict_spliter(p_cv_out)
-    print("final_final_split_dicts: ", final_final_split_dicts)
+    #print("final_final_split_dicts: ", final_final_split_dicts)
     sk_text = parsers.inv_parse_cv_out(final_final_split_dicts[-1])
-    print("sk_text:", sk_text)
-######################
+    #print("sk_text:", sk_text)
+
     
     print("Tailoring skills section...")
     tailored_sk = tailor.tailor_skills(
@@ -178,6 +182,7 @@ def tailor_cv(root):
         cv_data=sk_text,
         job_description=job_desc
     )
+    tailored_sk = helpers.filter_output(tailored_sk)
     if tailored_sk:
         print("Tailored skills section")
         final_final_split_dicts[-1]= parsers.parse_cv_out(tailored_sk)

@@ -54,27 +54,23 @@
 
 
 [1.0 RELEASE CHECKBOX]
-    []Fit entire resume in 1 page
-    []Add consistency chcker + report
-    []Reduce needed text in prompts, add filter on every model output
+    []Fit entire resume in 1 page (or close to)
+    []Add consistency chcker
+    [DONE]Reduce needed text in prompts, add filter on every model output
+    []Convert to PDF button
+    []Generate Cover Letter Button
 [WIP]
-    []Enforce 2 sentence limit in description
-    []Enforce 100 word limit on summary
-    []Add filter on each output
-        []Remove unneeded verbose on prompts
-
-[TO_DO]
-
-    Change format checker
-    Add consistency checker
-    Tune template,prompts
-    Stop docx corruption: Maybe save to a new folder instead?
-    Fix: Deepseekr1:8b chokes and dies while generating Summary section
-    Allow asking before overwritting documents
-    Make convert to pdf button
-    Move console ouput to a window
+    []Check if deepseek doesnt choke no more
+    []Add consistency checker
+    []Convert to PDF button
+    []Generate Cover Letter Button
 
 [???]
+    Maybe add tailored courses under education?
+    Change format checker
+    Stop docx corruption: Maybe save to a new folder instead?
+    Allow asking before overwritting documents
+    Move console ouput to a window
     Make program more robust:
         Give it the ability to arrange unarranged cv Formats
         Make it detect unarranged cv formats

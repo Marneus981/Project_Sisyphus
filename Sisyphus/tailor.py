@@ -42,8 +42,8 @@ def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system="", ollama_ur
     [1]Skills: Programming Languages: Programming Language 3, Programming Language 4; Technical Skills: Technical Skill 3, Techincal Skill 4; Soft Skills: Soft Skill 3, Soft Skill 4
     
     Be mindful not to include any line breaks in any of the sections.
-    Do note that the section may not exist in the CV, in which case you should return an empty section. Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
-    The description section should be a continuous block of text, without line breaks, however it must use concise sentences that could be split into the elements of a list; the number of sentences in the description should be less than or equal to 2.
+    Do note that the section may not exist in the CV, in which case you should return an empty section.
+    The description section should be a continuous block of text, without line breaks, composed of 1 or 2 sentences that concisely highlight the achievements and relevant skills attained at each role.
     The description section should not include the ":" character.
     """
     payload = {
@@ -103,8 +103,8 @@ def tailor_work_experience(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_UR
     [1]Skills: Programming Languages: Programming Language 3, Programming Language 4; Technical Skills: Technical Skill 3, Techincal Skill 4; Soft Skills: Soft Skill 3, Soft Skill 4
 
     Be mindful not to include any line breaks in any of the sections.
-    Do note that the section may not exist in the CV, in which case you should return an empty section. Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
-    The description section should be a continuous block of text, without line breaks, however it must use concise sentences that could be split into the elements of a list; the number of sentences in the description should be less than or equal to 2.
+    Do note that the section may not exist in the CV, in which case you should return an empty section.
+    The description section should be a continuous block of text, without line breaks, composed of 1 or 2 sentences that concisely highlight the achievements and relevant skills attained at each role.
     The description section should not include the ":" character.
     """
     payload = {
@@ -161,8 +161,8 @@ def tailor_projects(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_d
     [1]Skills: Programming Languages: Programming Language 3, Programming Language 4; Technical Skills: Technical Skill 3, Techincal Skill 4; Soft Skills: Soft Skill 3, Soft Skill 4
 
     Be mindful not to include any line breaks in any of the sections.
-    Do note that the section may not exist in the CV, in which case you should return an empty section. Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
-    The description section should be a continuous block of text, without line breaks, however it must use concise sentences that could be split into the elements of a list; the number of sentences in the description should be less than or equal to 2.
+    Do note that the section may not exist in the CV, in which case you should return an empty section.
+    The description section should be a continuous block of text, without line breaks, composed of 1 or 2 sentences that concisely highlight the achievements and relevant skills attained at each role.
     The description section should not include the ":" character.
     """
     payload = {
