@@ -43,7 +43,7 @@ def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system="", ollama_ur
     
     Be mindful not to include any line breaks in any of the sections.
     Do note that the section may not exist in the CV, in which case you should return an empty section. Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
-    The description section should be a continuous block of text, without line breaks, however it must use concise sentences that could be split into the elements of a list; the number of sentences in the description should be 3.
+    The description section should be a continuous block of text, without line breaks, however it must use concise sentences that could be split into the elements of a list; the number of sentences in the description should be less than or equal to 2.
     The description section should not include the ":" character.
     """
     payload = {
@@ -104,7 +104,7 @@ def tailor_work_experience(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_UR
 
     Be mindful not to include any line breaks in any of the sections.
     Do note that the section may not exist in the CV, in which case you should return an empty section. Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
-    The description section should be a continuous block of text, without line breaks, however it must use concise sentences that could be split into the elements of a list; the number of sentences in the description should be 3.
+    The description section should be a continuous block of text, without line breaks, however it must use concise sentences that could be split into the elements of a list; the number of sentences in the description should be less than or equal to 2.
     The description section should not include the ":" character.
     """
     payload = {
@@ -162,7 +162,7 @@ def tailor_projects(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_d
 
     Be mindful not to include any line breaks in any of the sections.
     Do note that the section may not exist in the CV, in which case you should return an empty section. Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
-    The description section should be a continuous block of text, without line breaks, however it must use concise sentences that could be split into the elements of a list; the number of sentences in the description should be 3.
+    The description section should be a continuous block of text, without line breaks, however it must use concise sentences that could be split into the elements of a list; the number of sentences in the description should be less than or equal to 2.
     The description section should not include the ":" character.
     """
     payload = {
@@ -266,3 +266,47 @@ def return_text_with_skills(cv_text):
     soft = "[1]Soft Skills: " + ", ".join(soft_list)
 
     return "\n".join([return_text,skill,prog,tech,soft])
+
+def tailor_skills(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", job_description="", section="Skills"):
+    """
+    Given a cv_data containing text pertaining to all the skills considered 
+    to be relevant in the previous steps of the resume-generating algorithm,
+    and a job description: Return a pruned "Skills" description with:
+        3 MAX entries in "Programming Languages"
+        5 MAX entries in "Technical Skills"
+        4 MAX entries in "Soft Skills"
+    """
+
+    prompt = f"""
+    Given the following list of "Programming Languages", "Technical Skills" and "Soft Skills" considered to be relevant for the job description below them:
+    {cv_data}
+    And the following job description:
+    {job_description}
+    Prune a '{section}' section to best match the job description , following the guidelines below:
+        Return 3 MAXIMUM entries under "Programming Languages" (MINIMUM 0 entries)
+        Return 5 MAXIMUM entries under "Technical Skills" (MINIMUM 0 entries)
+        Return 4 MAXIMUM entries under "Soft Skills" (MINIMUM 0 entries)
+        Do not line break any line containing the relevant skills, it should follow the format below strictly.
+        Do note that the section may not exist in the CV, in which case you should return an empty section. 
+        Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
+        Return only the revised section and strictly follow the format:
+
+        [0]Skills:
+        [1]Programming Languages: Programming Language 1, Programming Language 2, Programming Language 3
+        [1]Technical Skills: Technical Skill 1, Technical Skill 2, Technical Skill 3, Technical Skill 4, Technical Skill 5
+        [1]Soft Skills: Soft Skill 1, Soft Skill 2, Soft Skill 3, Soft Skill 4
+    """
+    payload = {
+        "model": model,
+        "system": system,
+        "prompt": prompt,
+        "stream": False
+    }
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    try:
+        result = response.json()
+        return result.get("response", "")
+    except Exception:
+        print("Ollama response was not valid JSON:")
+        print(response.text)
+        return "Error: Ollama response was not valid JSON."

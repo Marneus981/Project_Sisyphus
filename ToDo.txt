@@ -54,10 +54,13 @@ Skill implementation
 
 
 [WIP]
-Prune skills (10?)
+Add filter on each output
+    Remove unneeded verbose on prompts
+Change format checker?
+
+Add consistency checker
 Tune template
 Tune prompts
-    Shorten summary.
 
 
 

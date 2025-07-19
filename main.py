@@ -156,8 +156,37 @@ def tailor_cv(root):
     for key, value in unchanged_dict.items():
         final_tailored_dict[key] = value
     final_cv_text = helpers.format_output(parsers.inv_parse_cv(final_tailored_dict))
+    final_final_cv_text = tailor.return_text_with_skills(final_cv_text)
+    #Print final_final_cv_text
+    # print('Checking tailor.return_text_with_skills output:')
+    # print(final_final_cv_text)
+
+################################
+    #Attempt to tailor skills section
+    p_cv_out = parsers.parse_cv_out(final_final_cv_text)
+    print("p_cv_out: ", p_cv_out)
+    final_final_split_dicts = parsers.dict_spliter(p_cv_out)
+    print("final_final_split_dicts: ", final_final_split_dicts)
+    sk_text = parsers.inv_parse_cv_out(final_final_split_dicts[-1])
+    print("sk_text:", sk_text)
+######################
     
-    current_cv_text = tailor.return_text_with_skills(final_cv_text)
+    print("Tailoring skills section...")
+    tailored_sk = tailor.tailor_skills(
+        model=selected_model,
+        system=system_text,
+        cv_data=sk_text,
+        job_description=job_desc
+    )
+    if tailored_sk:
+        print("Tailored skills section")
+        final_final_split_dicts[-1]= parsers.parse_cv_out(tailored_sk)
+        current_cv_text = parsers.inv_parse_cv_out(parsers.dict_grafter(final_final_split_dicts))
+    else:
+        print("No skills section tailored, using original skills section")
+        current_cv_text = final_final_cv_text
+    
+
     # current_cv_text = final_cv_text
 
     # Enable the format check and filter buttons for output CV

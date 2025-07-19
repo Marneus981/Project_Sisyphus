@@ -6,5 +6,5 @@ Use simple to understand language when possible, unless direct technical termino
 Do not explain your choices.
 Do not add any text before or after the desired resume sections.
 If present, "Description" sections are to have a maximum of 100 words.
-If present, a "Summary" section may have up to 200 words.
+If present, a "Summary" section may have up to 150 words.
 If present, a "Skills" section may have up to 6 skills, only the most relevant
