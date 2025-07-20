@@ -51,21 +51,26 @@
                 [FIXED]First instance of format_check uses the wrong function
                 [FIXED]On Doc Generation: An error occurred while generating the document: 'skills' is undefined
                 [FIXED]First showing of cv_text displays unmodded skills
-
+    [DONE]Add consistency checker
+    [DONE]Convert to PDF button (same as docx)
 
 [1.0 RELEASE CHECKBOX]
-    []Fit entire resume in 1 page (or close to)
-    []Add consistency chcker
-    [DONE]Reduce needed text in prompts, add filter on every model output
-    []Convert to PDF button
-    []Generate Cover Letter Button
+    [][1.0]Fit entire resume in 1 page (or close to)
+    [][0.9]Generate Cover Letter Button
+
+    [DONE][0.85]Convert to PDF button
+    [DONE][0.8]Add consistency chcker  
+
 [WIP]
-    []Check if deepseek doesnt choke no more
-    []Add consistency checker
-    []Convert to PDF button
-    []Generate Cover Letter Button
+
+    []Check if pdf conversion work
+    []Check if correct inputs are used for consistency checks since outputs differ a lot
+
 
 [???]
+    Make consistency check exclusive button
+        Give program ability to take in user input to modify tailored resumes for eeasier consistency check iterating
+    Unchoke deepseek
     Maybe add tailored courses under education?
     Change format checker
     Stop docx corruption: Maybe save to a new folder instead?

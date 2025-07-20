@@ -10,6 +10,7 @@ import datetime
 
 SISYPHUS_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus"
 DOCS_PATH =r"C:\CodeProjects\Sisyphus\Sisyphus\saved_docs"
+PDFS_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\saved_pdfs"
 OUT_CV_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\saved_outputs"
 
 def tailor_cv(root):
@@ -206,6 +207,27 @@ def tailor_cv(root):
     sys.stdout = old_stdout
     analysis_text = analysis_stream.getvalue()
 
+    #Consistency check
+    con_systemm_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", "system_consistency.txt"))
+    con_vs_job_desc = tailor.consistency_checker_vs_job_desc(
+        model=selected_model,
+        system=con_systemm_text,
+        cv_data=current_cv_text,
+        job_description=job_desc
+    )
+    con_vs_cv = tailor.consistency_checker_vs_cv(
+        model=selected_model,
+        system=con_systemm_text,
+        cv_data=current_cv_text,
+        cv_data_orig=cv_text
+    )
+
+    #Append consistency check results to analysis text
+    analysis_text += "\n\nConsistency Checker Vs Job Description:\n"
+    analysis_text += helpers.filter_output(con_vs_job_desc) + "\n\n"
+    analysis_text += "Consistency Checker Vs CV:\n"
+    analysis_text += helpers.filter_output(con_vs_cv) + "\n\n"
+
     print("The climb has ended, the CV is tailored!")
     # Show the tailored CV text in a new window
     global result_window, result_textbox, show_output_cv_button, save_output_cv_button, save_current_cv_text_button
@@ -264,6 +286,28 @@ def format_check_current_cv_text(root):
     helpers.read_format_checker(helpers.format_checker_out(cv_text))
     sys.stdout = old_stdout
     analysis_text = analysis_stream.getvalue()
+    cv_text_og = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "cvs", cv_var.get()))
+    selected_model = model_var.get()
+    job_desc = job_desc_textbox.get("1.0", tk.END)
+    con_systemm_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", "system_consistency.txt"))
+    con_vs_job_desc = tailor.consistency_checker_vs_job_desc(
+        model=selected_model,
+        system=con_systemm_text,
+        cv_data=cv_text,
+        job_description=job_desc
+    )
+    con_vs_cv = tailor.consistency_checker_vs_cv(
+        model=selected_model,
+        system=con_systemm_text,
+        cv_data=cv_text,
+        cv_data_orig=cv_text_og
+    )
+
+    #Append consistency check results to analysis text
+    analysis_text += "\n\nConsistency Checker Vs Job Description:\n"
+    analysis_text += helpers.filter_output(con_vs_job_desc) + "\n\n"
+    analysis_text += "Consistency Checker Vs CV:\n"
+    analysis_text += helpers.filter_output(con_vs_cv) + "\n\n"
 
     # Show the CV analysis in a new window
     analysis_window = tk.Toplevel(root)
@@ -347,6 +391,7 @@ def save_output_cv(template_name,output_name):
         if os.path.exists(output_path):
             print(f"Warning: {output_path} already exists and will be overwritten.")
         fileGenerator.generate_docx(template_path, cv_dict, output_path)
+        fileGenerator.convert_docx_to_pdf(output_path, PDFS_PATH)
 
 def show_output_cv(root):
     global result_window, result_textbox, current_cv_text
