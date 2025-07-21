@@ -1,4 +1,6 @@
 import requests
+from Sisyphus import helpers
+from Sisyphus import parsers
 DEFAULT_MODEL = "llama3:8b"
 DEFAULT_URL = "http://localhost:11434"
 
@@ -391,3 +393,76 @@ def consistency_checker_vs_cv(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT
         print("Ollama response was not valid JSON:")
         print(response.text)
         return "Error: Ollama response was not valid JSON."
+    
+def make_cover_letter_text(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", job_description="", section="Cover Letter"):
+    """
+    Given a tailored resume containing education, experiences, projects and skills considered 
+    to be relevant a job description: Return a cover letter tailored to the job description.
+    """
+
+    prompt = f"""
+    Given the following already-tailored resume:
+    {cv_data}
+    And the following job description:
+    {job_description}
+    Write a cover letter tailored to the job description, following the guidelines below:
+        1.The cover letter should be concise, no more than 400 words.
+        2.It should highlight the most relevant skills and experiences from the CV that match the job description.
+        3.It should be written in a professional tone.
+        4.It should include line breaks if deemed necessary to maintain good readability.
+        5.Whenever a line break occurs, it should start with "[1]New ParagraphX: " and then the text of the new paragraph.
+        6.Strictly follow the format:
+
+        [0]Cover Letter: 
+        [1]New Paragraph0: Brief cover letter tailored to the job description.
+        [1]New Paragraph1: Additional information or closing statement.
+        ..
+        [1]New ParagraphN: Last paragraph of text
+
+    """
+    
+    payload = {
+        "model": model,
+        "system": system,
+        "prompt": prompt,
+        "stream": False
+    }
+    
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    
+    try:
+        result = response.json()
+        return result.get("response", "")
+    except Exception:
+        print("Ollama response was not valid JSON:")
+        print(response.text)
+        return "Error: Ollama response was not valid JSON."
+    
+def compose_cover_letter_dictionary(model,cv_text, job_description):
+    """
+    Given a resume containing education, experiences, projects and skills considered 
+    to be relevant a job description: Return a cover letter tailored to the job description.
+    """
+
+    
+
+    #Extract the following sections and their subsections from the cv_text input: [0]Name, [0]Contact Information, [0]Title, [0]Languages using dict_splitter
+    cv_dict = parsers.parse_cv_out(cv_text)
+    split_dicts = parsers.dict_splitter(cv_dict)
+    #Extract the name, contact information, title and languages from the split_dict
+    name = split_dicts[0]
+    title = split_dicts[2]
+    languages =split_dicts[4]
+    contact_info = split_dicts[1]
+    #Make the cover letter text
+    system = helpers.read_text_file("C:\CodeProjects\Sisyphus\Sisyphus\systems\system_cover_letter.txt")
+    cover_letter_text = make_cover_letter_text(model = model, system=system,cv_data=cv_text,job_description=job_description)
+    clean_cover_letter_text = helpers.filter_output(cover_letter_text)
+    clean_cover_letter_dict = parsers.parse_cv_out(clean_cover_letter_text)
+    #Make a list of dicts with name, title, languages, contact_info and clean_cover_letter_dict
+    dict_list = [name,title,languages,contact_info,clean_cover_letter_dict]
+    output_dict = parsers.dict_grafter(dict_list)
+    #Return the output_dict
+    return output_dict
+
+    

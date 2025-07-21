@@ -14,6 +14,7 @@ PDFS_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\saved_pdfs"
 OUT_CV_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\saved_outputs"
 
 def tailor_cv(root):
+    global tailor_cl_button
     global format_check_current_cv_button, filter_output_cv_button, current_cv_text
     selected_model = model_var.get()
     cv_file = cv_var.get()
@@ -198,6 +199,7 @@ def tailor_cv(root):
     # Enable the format check and filter buttons for output CV
     format_check_current_cv_button.config(state="normal")
     filter_output_cv_button.config(state="normal")
+    tailor_cl_button.config(state="normal")
 
     # Prepare CV analysis output as a string
     analysis_stream = io.StringIO()
@@ -251,6 +253,41 @@ def tailor_cv(root):
     analysis_textbox = tk.Text(analysis_window, height=20, width=80)
     analysis_textbox.insert(tk.END, analysis_text)
     analysis_textbox.pack(expand=True, fill=tk.BOTH)
+
+def tailor_cl(root):
+    #Assumes existing system
+    global current_cv_text
+    global current_cl_text
+    selected_model = model_var.get()  
+    job_desc = job_desc_textbox.get("1.0", tk.END)
+
+    if not job_desc.strip():
+        print("Job description is empty. Please enter a job description.")
+        return
+    if not selected_model:
+        print("No model selected. Please select a model.")
+        return
+    if not current_cv_text:
+        print("No CV text available. Please tailor a CV first.")
+        return
+    
+    print("Tailoring cover letter with model:", selected_model)
+
+    # Compose cover letter dictionary
+    cover_letter_dict = tailor.compose_cover_letter_dictionary(
+        model=selected_model,
+        cv_text=current_cv_text,
+        job_description=job_desc
+    )
+    cover_letter_text = parsers.inv_parse_cv_out(cover_letter_dict)
+    current_cl_text = cover_letter_text
+    global cl_window, cl_textbox
+    
+    cl_window = tk.Toplevel(root)
+    cl_window.title("Tailored Cover Letter")
+    cl_textbox = tk.Text(cl_window, height=20, width=80)
+    cl_textbox.insert(tk.END, cover_letter_text)
+    cl_textbox.pack(expand=True, fill=tk.BOTH)
 
 def format_check_input_cv_file(root, cv_file):
     """
@@ -366,15 +403,6 @@ def refresh_options_callback():
             saved_out_var.set(saved_outs[0])
             load_cv_text_button.config(state="normal")
         
-
-# def save_output_cv_callback():
-#         global current_cv_text
-        
-#         cv_dict = parsers.parse_cv(current_cv_text)
-#         template_path = os.path.join(SISYPHUS_PATH, "templates", "cv_template.docx")
-#         output_path = os.path.join(SISYPHUS_PATH, "saved_docs", "output_cv.docx")
-#         fileGenerator.generate_docx(template_path, cv_dict, output_path)
-
 def save_output_cv(template_name,output_name):
         output_n = output_name
         template_n = template_name.get().strip()
@@ -432,6 +460,7 @@ def load_cv_text(file_name):
     """
     Loads CV text from a file and returns it.
     """
+    global tailor_cl_button
     global current_cv_text, format_check_current_cv_button, filter_output_cv_button, show_output_cv_button, save_output_cv_button, save_current_cv_text_button
     file_path = os.path.join(OUT_CV_PATH, file_name)
     if not os.path.exists(file_path):
@@ -445,13 +474,17 @@ def load_cv_text(file_name):
     show_output_cv_button.config(state="normal")
     save_output_cv_button.config(state="normal")
     save_current_cv_text_button.config(state="normal")
+    tailor_cl_button.config(state="normal")
     print(f"CV loaded from {file_path}")
     return 
 
+
+
+
 def main():
     # Save Output CV Button (initially disabled)
-    
-
+    global current_cl_text
+    global tailor_cl_button
     global save_output_cv_button
     global saved_outs,saved_out_var,saved_out_dropdown
     global save_current_cv_text_button
@@ -490,7 +523,7 @@ def main():
     
 
     #On start up show a window with the following:
-    
+    current_cl_text = "" 
     current_cv_text = ""
     #1. Dropdown to select Ollama model (must detect initialize server and scan for available models)
     # Dropdown for models
@@ -582,19 +615,25 @@ def main():
     
     #Tailor Button
     tailor_button = ttk.Button(root, text="Tailor CV", command=lambda: tailor_cv(root))
-    tailor_button.grid(row=6, column=1)
+    tailor_button.grid(row=6, column=0)
 
-    # Filter Output CV Text Button (initially disabled)
-    filter_output_cv_button = ttk.Button(root, text="Filter Output CV Text", command=lambda: filter_output_cv_text(root), state="disabled")
-    filter_output_cv_button.grid(row=6, column=3)
-
-    # Format Check Current CV Text Button (initially disabled)
-    format_check_current_cv_button = ttk.Button(root, text="Format Check Current CV Text", command=lambda: format_check_current_cv_text(root), state="disabled")
-    format_check_current_cv_button.grid(row=6, column=4)
+    #Tailor Cover Letter Button (Initially disabled)
+    tailor_cl_button =ttk.Button(root, text="Tailor Cover Letter", command=lambda: tailor_cl(root), state="disabled")
+    tailor_cl_button.grid(row=6, column=1)
 
     # Show CV Output Button (initially disabled)
     show_output_cv_button = ttk.Button(root, text="Show Output CV", command=lambda: show_output_cv(root), state="disabled")
-    show_output_cv_button.grid(row=6, column=2)
+    show_output_cv_button.grid(row=6, column=3)
+
+    # Filter Output CV Text Button (initially disabled)
+    filter_output_cv_button = ttk.Button(root, text="Filter Output CV Text", command=lambda: filter_output_cv_text(root), state="disabled")
+    filter_output_cv_button.grid(row=6, column=4)
+
+    # Format Check Current CV Text Button (initially disabled)
+    format_check_current_cv_button = ttk.Button(root, text="Format Check Current CV Text", command=lambda: format_check_current_cv_text(root), state="disabled")
+    format_check_current_cv_button.grid(row=6, column=5)
+
+    
 
     # Save Output CV Button (initially disabled)
     save_output_cv_button = ttk.Button(root, text="Save Output CV to DOCX", command=lambda:save_output_cv(template_name= template_var,output_name= out_file_textbox.get("1.0", tk.END).strip()), state="disabled")
