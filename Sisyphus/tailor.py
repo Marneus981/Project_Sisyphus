@@ -448,14 +448,14 @@ def compose_cover_letter_dictionary(model,cv_text, job_description):
 
     #Extract the following sections and their subsections from the cv_text input: [0]Name, [0]Contact Information, [0]Title, [0]Languages using dict_splitter
     cv_dict = parsers.parse_cv_out(cv_text)
-    split_dicts = parsers.dict_splitter(cv_dict)
+    split_dicts = parsers.dict_spliter(cv_dict)
     #Extract the name, contact information, title and languages from the split_dict
     name = split_dicts[0]
     title = split_dicts[2]
     languages =split_dicts[4]
     contact_info = split_dicts[1]
     #Make the cover letter text
-    system = helpers.read_text_file("C:\CodeProjects\Sisyphus\Sisyphus\systems\system_cover_letter.txt")
+    system = helpers.read_text_file(r"C:\CodeProjects\Sisyphus\Sisyphus\systems\system_cover_letter.txt")
     cover_letter_text = make_cover_letter_text(model = model, system=system,cv_data=cv_text,job_description=job_description)
     clean_cover_letter_text = helpers.filter_output(cover_letter_text)
     clean_cover_letter_dict = parsers.parse_cv_out(clean_cover_letter_text)

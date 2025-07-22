@@ -7,7 +7,7 @@
 [1]Github: github.com/janedoe
 [1]Portfolio: janedoe.dev
 [0]Title: Senior Software Engineer
-[0]Summary: As a seasoned Senior Backend Engineer with experience leading scalable microservices architecture and managing teams, I am excited to bring my skills to DoorDash's 24x7 global infrastructure system. With proficiency in Python, Go, and Docker, I can leverage my expertise to build and maintain a large-scale global infrastructure that powers DoorDash's 3-sided marketplace. Additionally, my experience with cloud computing, machine learning, and data analysis will enable me to contribute to the development of innovative logistics solutions.
+[0]Summary: As a highly experienced Senior Backend Engineer with expertise in building scalable microservices architecture using Python, Go, and Docker, I am well-suited for DoorDash's 24x7 global infrastructure system. With a strong background in API development, database design, and cloud integration, I can leverage my knowledge of Kubernetes to ensure seamless deployment and management of systems. Additionally, as a skilled leader, I have successfully mentored junior staff and managed teams of engineers to deliver high-quality products. Proficient in multiple programming languages including Python, Go, Java, and JavaScript, with strong technical skills in data visualization, machine learning, and web development, making me an ideal candidate for this role.
 [0]Languages: English, Spanish, French
 [0]Education:
 [1]Degree: B.Sc. Computer Science
@@ -35,32 +35,37 @@
 [1]Issuing Organization: Capital Tech
 [1]Issue Date: 2017/09
 [0]Volunteering and Leadership:
-[1]Role: Youth Robotics Coach
-[1]Organization: RoboSpring
-[1]Location: Springfield, USA
-[1]Duration: 2023/07 - Present
-[1]Description: Coached middle school robotics teams, preparing them for competitions and fostering teamwork
+[1]Role: Workshop Presenter
+[1]Organization: Women in Tech
+[1]Location: Capital City, USA
+[1]Duration: 2023/05 - Present
+[1]Description: Presented workshops on Python programming and career development for women in technology, delivering sessions to 80+ attendees and receiving positive feedback for clarity and motivation
 [1]Role: Community Tech Educator
 [1]Organization: Springfield Library
 [1]Location: Springfield, USA
 [1]Duration: 2022/07 - 2023/06
-[1]Description: Led free coding classes for adults, focusing on digital literacy and basic programming
-[1]Role: Event Coordinator
-[1]Organization: Springfield Tech Expo
+[1]Description: Led free coding classes for adults, focusing on digital literacy and basic programming, improving participant confidence with technology by 60%
+[1]Role: STEM Volunteer
+[1]Organization: Girls Who Code
 [1]Location: Springfield, USA
-[1]Duration: 2023/03 - Present
-[1]Description: Coordinated logistics and managed volunteers for the annual Springfield Tech Expo, increasing event efficiency by 25%
+[1]Duration: 2021/02 - 2022/06
+[1]Description: Assisted in organizing workshops and mentoring high school students in programming basics, increasing STEM participation by 40%
 [0]Work Experience:
 [1]Job Title: Senior Backend Engineer
 [1]Company: FinTech Solutions
 [1]Location: Springfield, USA
 [1]Duration: 2019/07 - Present
-[1]Description: Led the design and implementation of scalable microservices architecture using Python, Go, and Docker, reducing system downtime by 40% and increasing transaction throughput by 25%. Managed a team of 5 engineers, mentored junior staff, and fostered a culture of continuous improvement
+[1]Description: Led design and implementation of scalable microservices architecture using Python, Go, and Docker, reducing system downtime by 40% and increasing transaction throughput by 25%. Managed team of 5 engineers, mentored junior staff, and fostered culture of continuous improvement
 [1]Job Title: Software Engineer
 [1]Company: WebApps Inc.
 [1]Location: Capital City, USA
 [1]Duration: 2016/07 - 2019/06
 [1]Description: Developed RESTful APIs and optimized database queries, improving application performance by 30%. Collaborated with cross-functional teams to deliver web products, implemented microservices, and contributed to Docker and Kubernetes adoption
+[1]Job Title: Junior Developer
+[1]Company: StartUp Hub
+[1]Location: Springfield, USA
+[1]Duration: 2015/06 - 2016/06
+[1]Description: Assisted in developing MVPs for startup clients, wrote unit tests, and maintained project documentation. Improved code coverage by 20% and contributed to successful product launches
 [0]Projects:
 [1]Project Title: Chatbot for Customer Support
 [1]Type: Professional
@@ -76,5 +81,5 @@
 [1]Description: Created a web-based employee scheduling application for a small business, integrating calendar APIs and notifications. Reduced scheduling conflicts by 40% and improved staff satisfaction
 [0]Skills:
 [1]Programming Languages: Python, Java, JavaScript
-[1]Technical Skills: API Development, Cloud Computing, Data Analysis, Machine Learning, Microservices
-[1]Soft Skills: Adaptability, Communication, Leadership, Problem Solving
+[1]Technical Skills: API Development, REST APIs, Database Design, Kubernetes
+[1]Soft Skills: Adaptability, Collaboration, Communication, Leadership

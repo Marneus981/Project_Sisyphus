@@ -57,23 +57,20 @@
 [1.0 RELEASE CHECKBOX]
     [][1.0]Fit entire resume in 1 page (or close to)
     [][0.9]Generate Cover Letter Button
-
-    [DONE][0.85]Convert to PDF button
     [DONE][0.8]Add consistency chcker  
     [DONE]Main CL Window, CL Generation and button
 
 [WIP]
+    [???]Convert to PDF button
 New Features:
-    
-        []Functions needed for Cover Letter 
-            []Save text cl
-            []Save doc/pdf cl
-                []Template for cl
-            []Show cl window
-            []Rearrange buttons
+            [DONE]Save text cl
+            []Save doc cl
+            []Template for cl
+            [DONE]Show cl window
+            [DONE]Rearrange buttons
 Hubris tracker:
-    []Check if main CL generating works
-    []Check if pdf conversion work
+    [DONE]Check if main CL generating works
+        []Needs some fixes in logic: probably inv_parse_cv_out
     []Check if correct inputs are used for consistency checks since outputs differ a lot
 
 
