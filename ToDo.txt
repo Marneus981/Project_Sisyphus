@@ -1,3 +1,45 @@
+[1.0 RELEASE CHECKBOX]
+    [][1.0]Fit entire resume in 1 page (or close to)
+    [][0.9]Generate Cover Letter Button
+    [DONE]
+        [DONE][0.8]Add consistency chcker  
+        [DONE]Main CL Window, CL Generation and button
+    
+[WIP GOAL: 0.9]
+
+    [???]Convert to PDF button
+    New Features[+0.1 per implementation]:
+        []Load cl text
+        []Format/consistency check out cl
+            []Do so on tailor
+        []Save doc cl
+            []Template for cl
+
+[Hubris tracker]
+    []Check if correct inputs are used for consistency checks since outputs differ a lot
+
+
+[???]
+    Miggrate to better UI package
+    Wrap app
+    Add reqs description / batch file for install
+    Relabel format check to format and consistency check
+    Give fields a last used memory?
+    Make consistency check exclusive button
+        Give program ability to take in user input to modify tailored resumes for eeasier consistency check iterating
+    Unchoke deepseek
+    Maybe add tailored courses under education?
+    Change format checker
+    Stop docx corruption: Maybe save to a new folder instead?
+    Allow asking before overwritting documents
+    Move console ouput to a window
+    Make program more robust:
+        Give it the ability to arrange unarranged cv Formats
+        Make it detect unarranged cv formats
+    Make it a single window?
+    Multiple resumes at once?
+    Climb flavor text??
+
 [DONE]
     Organize resume printout (maybe stop using dicts for final output).
     Make it able to be executed several times despite errors in finding files
@@ -56,35 +98,4 @@
     [DONE]Save text cl
     [DONE]Show cl window
     [DONE]Rearrange buttons
-
-[1.0 RELEASE CHECKBOX]
-    [][1.0]Fit entire resume in 1 page (or close to)
-    [][0.9]Generate Cover Letter Button
-    [DONE][0.8]Add consistency chcker  
-    [DONE]Main CL Window, CL Generation and button
-
-[WIP]
-    [???]Convert to PDF button
-New Features:
-            []Save doc cl
-                []Template for cl
-Hubris tracker:
-    []Check if correct inputs are used for consistency checks since outputs differ a lot
-
-
-[???]
-    Give fields a last used memory?
-    Make consistency check exclusive button
-        Give program ability to take in user input to modify tailored resumes for eeasier consistency check iterating
-    Unchoke deepseek
-    Maybe add tailored courses under education?
-    Change format checker
-    Stop docx corruption: Maybe save to a new folder instead?
-    Allow asking before overwritting documents
-    Move console ouput to a window
-    Make program more robust:
-        Give it the ability to arrange unarranged cv Formats
-        Make it detect unarranged cv formats
-    Make it a single window?
-    Multiple resumes at once?
-    Climb flavor text??
+    [DONE]Filter out cl
