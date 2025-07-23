@@ -406,18 +406,20 @@ def make_cover_letter_text(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_UR
     And the following job description:
     {job_description}
     Write a cover letter tailored to the job description, following the guidelines below:
-        1.The cover letter should be concise, no more than 400 words.
         2.It should highlight the most relevant skills and experiences from the CV that match the job description.
         3.It should be written in a professional tone.
         4.It should include line breaks if deemed necessary to maintain good readability.
-        5.Whenever a line break occurs, it should start with "[1]New ParagraphX: " and then the text of the new paragraph.
+        5.Whenever a line break occurs, it should start with "[1]New ParagraphX: " and then the text of the new paragraph; 
+        X starts at 0 and goes up to 3.
         6.Strictly follow the format:
 
         [0]Cover Letter: 
-        [1]New Paragraph0: Brief cover letter tailored to the job description.
-        [1]New Paragraph1: Additional information or closing statement.
-        ..
-        [1]New ParagraphN: Last paragraph of text
+        [1]New Paragraph0: Cover Letter introduction, mentioning the job title and company.
+        [1]New Paragraph1: Briefly mention the most relevant skills and experiences from the CV that match the job description.
+        [1]New Paragraph2: Additional information about the candidate's qualifications and how they align with the job requirements.
+        [1]New Paragraph3: Closing statement, thanking the employer for their time and consideration.
+
+        Note: the total words in the Cover Letter section should not exceed 400 words. This is a hard limit, so be concise and to the point.
 
     """
     
@@ -458,7 +460,9 @@ def compose_cover_letter_dictionary(model,cv_text, job_description):
     system = helpers.read_text_file(r"C:\CodeProjects\Sisyphus\Sisyphus\systems\system_cover_letter.txt")
     cover_letter_text = make_cover_letter_text(model = model, system=system,cv_data=cv_text,job_description=job_description)
     clean_cover_letter_text = helpers.filter_output(cover_letter_text)
-    clean_cover_letter_dict = parsers.parse_cv_out(clean_cover_letter_text)
+    
+    clean_cover_letter_dict = parsers.parse_cl(clean_cover_letter_text)
+    
     #Make a list of dicts with name, title, languages, contact_info and clean_cover_letter_dict
     dict_list = [name,title,languages,contact_info,clean_cover_letter_dict]
     output_dict = parsers.dict_grafter(dict_list)

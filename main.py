@@ -282,7 +282,7 @@ def tailor_cl(root):
         cv_text=current_cv_text,
         job_description=job_desc
     )
-    cover_letter_text = parsers.inv_parse_cv_out(cover_letter_dict)
+    cover_letter_text = parsers.inv_parse_cl(cover_letter_dict)
     current_cl_text = cover_letter_text
 
     show_output_cl_button.config(state="normal")
@@ -521,6 +521,43 @@ def load_cv_text(file_name):
     print(f"CV loaded from {file_path}")
     return 
 
+def init_color(root, bg_color, fg_color):
+    """
+    Set all window backgrounds to bg_color and all text/button/border colors to fg_color.
+    Applies to both Tk and ttk widgets.
+    """
+    root.configure(bg=bg_color)
+    # Set Tkinter default colors
+    root.option_add("*Background", bg_color)
+    root.option_add("*Foreground", fg_color)
+    root.option_add("*insertBackground", fg_color)  # Cursor color in Text/Entry
+    root.option_add("*highlightBackground", bg_color)
+    root.option_add("*highlightColor", fg_color)
+    root.option_add("*selectBackground", fg_color)
+    root.option_add("*selectForeground", bg_color)
+
+    # ttk styles
+    style = ttk.Style(root)
+    try:
+        style.theme_use("alt")  # alt is more color-customizable
+    except Exception:
+        pass
+    style.configure("TLabel", background=bg_color, foreground=fg_color)
+    style.map("TLabel", 
+              background=[("active", bg_color), ("disabled", "#FFFFFF00")], 
+              foreground=[("active", fg_color), ("disabled", "#FFFFFF00")])  # Set your desired color for disabled labels
+    style.configure("TButton", background=bg_color, foreground=fg_color, bordercolor=fg_color, focuscolor=fg_color)
+    style.configure("TCombobox", fieldbackground=bg_color, background=bg_color, foreground=fg_color, bordercolor=fg_color)
+    style.configure("TEntry", fieldbackground=bg_color, background=bg_color, foreground=fg_color, bordercolor=fg_color)
+    style.configure("TText", background=bg_color, foreground=fg_color, bordercolor=fg_color)
+    style.configure("TFrame", background=bg_color)
+    style.configure("TMenubutton", background=bg_color, foreground=fg_color, bordercolor=fg_color)
+    style.map("TButton", background=[("active", bg_color)], foreground=[("active", fg_color)])
+    style.map("TButton",
+    background=[("active", bg_color), ("disabled", "#FF0000")],  # Set your desired color for disabled buttons
+    foreground=[("active", fg_color), ("disabled", "#FFFFFF")]  # Set your desired color for disabled text
+)
+    # For Text widgets (not ttk), set after creation if needed
 
 
 
@@ -546,8 +583,9 @@ def main():
             return 1
     
     root = tk.Tk()
+    
     root.title("Sisyphus Resume Tailor")
-
+    init_color(root, bg_color="#3F1111", fg_color="#ffa013")  # Example: dark grey and white
     model_var = tk.StringVar()
     models =[]
     cv_var = tk.StringVar()

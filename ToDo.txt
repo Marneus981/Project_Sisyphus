@@ -53,6 +53,9 @@
                 [FIXED]First showing of cv_text displays unmodded skills
     [DONE]Add consistency checker
     [DONE]Convert to PDF button (same as docx)
+    [DONE]Save text cl
+    [DONE]Show cl window
+    [DONE]Rearrange buttons
 
 [1.0 RELEASE CHECKBOX]
     [][1.0]Fit entire resume in 1 page (or close to)
@@ -63,18 +66,14 @@
 [WIP]
     [???]Convert to PDF button
 New Features:
-            [DONE]Save text cl
             []Save doc cl
-            []Template for cl
-            [DONE]Show cl window
-            [DONE]Rearrange buttons
+                []Template for cl
 Hubris tracker:
-    [DONE]Check if main CL generating works
-        []Needs some fixes in logic: probably inv_parse_cv_out
     []Check if correct inputs are used for consistency checks since outputs differ a lot
 
 
 [???]
+    Give fields a last used memory?
     Make consistency check exclusive button
         Give program ability to take in user input to modify tailored resumes for eeasier consistency check iterating
     Unchoke deepseek
