@@ -4,12 +4,13 @@
     [DONE]
         [DONE][0.8]Add consistency chcker  
         [DONE]Main CL Window, CL Generation and button
+    [DONE]Load cl text
     
 [WIP GOAL: 0.9]
 
     [???]Convert to PDF button
+    [???]Add another step in tailoring process: set a number of experiences, and only include a set number of them
     New Features[+0.1 per implementation]:
-        []Load cl text
         []Format/consistency check out cl
             []Do so on tailor
         []Save doc cl

@@ -428,12 +428,14 @@ def filter_output_cl_text(root):
 def refresh_options_callback():
         global model_dropdown, cv_dropdown, system_dropdown, model_var, models, cv_var, cvs, system_var, systems, template_dropdown,templates, template_var
         global saved_out_dropdown, saved_outs, saved_out_var, load_cv_text_button
+        global saved_out_dropdown_cl, saved_outs_cl, saved_out_var_cl, load_cl_text_button
         options = helpers.refresh_options()
         models = options[0]
         systems = options[1]
         cvs = options[2]
         templates = options[3]
         saved_outs = options[4]
+        saved_outs_cl = options[5]
         model_dropdown['values'] = models
         if models:
             model_var.set(models[0])
@@ -451,6 +453,10 @@ def refresh_options_callback():
         if saved_outs:
             saved_out_var.set(saved_outs[0])
             load_cv_text_button.config(state="normal")
+        saved_out_dropdown_cl['values'] = saved_outs_cl
+        if saved_outs_cl:
+            saved_out_var_cl.set(saved_outs_cl[0])
+            load_cl_text_button.config(state="normal")
         
 def save_output_cv(template_name,output_name):
     output_n = output_name
@@ -583,6 +589,7 @@ def init_color(root, bg_color, fg_color):
 
 
 def main():
+    
     # Save Output CV Button (initially disabled)
     global current_cl_text
     global tailor_cl_button
@@ -592,7 +599,7 @@ def main():
     global save_current_cv_text_button
     global load_cv_text_button
     global template_dropdown, templates, model_dropdown, cv_dropdown, system_dropdown, model_var, models, cv_var,cvs, system_var, systems,out_file_textbox,save_file_textbox,job_desc_textbox, current_cv_text, format_check_current_cv_button, filter_output_cv_button, template_var
-    
+    global saved_outs_cl, saved_out_var_cl, saved_out_dropdown_cl, load_cl_text_button
 
     run = runLocalModel.wait_for_ollama()
     if not run:
@@ -617,6 +624,9 @@ def main():
     templates = []
     saved_outs = []
     saved_out_var = tk.StringVar()
+
+    saved_outs_cl = []
+    saved_out_var_cl = tk.StringVar()
     
     # models = options[0]
     # systems = options[1]
@@ -667,6 +677,11 @@ def main():
     saved_out_dropdown.grid(row=4, column=1)
     ttk.Label(root, text="Select Saved Output CV:").grid(row=4, column=0)
 
+    #Dropdown for saved output CLs
+    saved_out_dropdown_cl = ttk.Combobox(root, textvariable=saved_out_var_cl, values=saved_outs_cl)
+    saved_out_dropdown_cl.grid(row=5, column=1)
+    ttk.Label(root, text="Select Saved Output CL:").grid(row=5, column=0)
+
     #2. 1 Text fields:
         #Job Description
     # Text fields
@@ -680,19 +695,19 @@ def main():
 
     # Job Description Textbox
 
-    ttk.Label(root, text="Job Description:").grid(row=5, column=0)
+    ttk.Label(root, text="Job Description:").grid(row=6, column=0)
     job_desc_textbox = tk.Text(root, height=5, width=40)
-    job_desc_textbox.grid(row=5, column=1)
+    job_desc_textbox.grid(row=6, column=1)
 
     #Output file Textbox
-    ttk.Label(root, text="Output File Name:").grid(row=5, column=2)
+    ttk.Label(root, text="Output File Name:").grid(row=6, column=2)
     out_file_textbox = tk.Text(root, height=1, width=20)
-    out_file_textbox.grid(row=5, column=3)
+    out_file_textbox.grid(row=6, column=3)
 
     #Saved Text File Name
-    ttk.Label(root, text="Saved Text File Name:").grid(row=5, column=4)
+    ttk.Label(root, text="Saved Text File Name:").grid(row=6, column=4)
     save_file_textbox = tk.Text(root, height=1, width=20)
-    save_file_textbox.grid(row=5, column=5)
+    save_file_textbox.grid(row=6, column=5)
 
 
 
@@ -724,43 +739,47 @@ def main():
 
     # Show CV Output Button (initially disabled)
     show_output_cv_button = ttk.Button(root, text="Show Output CV", command=lambda: show_output_cv(root), state="disabled")
-    show_output_cv_button.grid(row=6, column=1)
+    show_output_cv_button.grid(row=7, column=1)
 
     # Filter Output CV Text Button (initially disabled)
     filter_output_cv_button = ttk.Button(root, text="Filter Output CV Text", command=lambda: filter_output_cv_text(root), state="disabled")
-    filter_output_cv_button.grid(row=6, column=2)
+    filter_output_cv_button.grid(row=7, column=2)
 
     # Format Check Current CV Text Button (initially disabled)
     format_check_current_cv_button = ttk.Button(root, text="Format Check Current CV Text", command=lambda: format_check_current_cv_text(root), state="disabled")
-    format_check_current_cv_button.grid(row=6, column=3)
+    format_check_current_cv_button.grid(row=7, column=3)
 
     # Save Output CV Button (initially disabled)
     save_output_cv_button = ttk.Button(root, text="Save Output CV to DOCX", command=lambda:save_output_cv(template_name= template_var,output_name= out_file_textbox.get("1.0", tk.END).strip()), state="disabled")
-    save_output_cv_button.grid(row=6, column=4)
+    save_output_cv_button.grid(row=7, column=4)
 
     # Save Current CV Text Button to text file (disabled if no text in current_cv_text)
     save_current_cv_text_button = ttk.Button(root, text="Save Current CV Text", command=lambda: save_cv_text(save_file_textbox.get("1.0", tk.END).strip()), state="disabled")
-    save_current_cv_text_button.grid(row=6, column=5)
+    save_current_cv_text_button.grid(row=7, column=5)
     
     # Load CV Text Button (disabled if no saved output CVs)
     load_cv_text_button = ttk.Button(root, text="Load CV Text", command=lambda: load_cv_text(saved_out_var.get()), state="disabled")
-    load_cv_text_button.grid(row=6, column=6)
+    load_cv_text_button.grid(row=7, column=6)
 
     #Tailor Cover Letter Button (Initially disabled)
     tailor_cl_button =ttk.Button(root, text="Tailor CL", command=lambda: tailor_cl(root), state="disabled")
-    tailor_cl_button.grid(row=7, column=0)
+    tailor_cl_button.grid(row=8, column=0)
 
     # Show Output Cover Letter Button (Initially disabled)
     show_output_cl_button = ttk.Button(root, text="Show Output CL", command=lambda: show_output_cl(root), state="disabled")
-    show_output_cl_button.grid(row=7, column=1)
+    show_output_cl_button.grid(row=8, column=1)
 
     # Filter Output Cover Letter Button (Initially disabled)
     filter_output_cl_button = ttk.Button(root, text="Filter Output CL Text", command=lambda: filter_output_cl_text(root), state="disabled")
-    filter_output_cl_button.grid(row=7, column=2)
+    filter_output_cl_button.grid(row=8, column=2)
 
     # Save Output Cover Letter Button (Initially disabled)
     save_current_cl_text_button = ttk.Button(root, text="Save Current CL Text", command=lambda:save_cl_text(save_file_textbox.get("1.0", tk.END).strip()), state="disabled")
-    save_current_cl_text_button.grid(row=7, column=5)
+    save_current_cl_text_button.grid(row=8, column=5)
+
+    # Load Cover Letter Text Button (Initially disabled)
+    load_cl_text_button = ttk.Button(root, text="Load CL Text", command=lambda: load_cv_text(saved_out_var_cl.get()), state="disabled")
+    load_cl_text_button.grid(row=8, column=6)
 
     refresh_options_callback()
 

@@ -1,3 +1,4 @@
 # Add your dependencies here, e.g.
 # flask
 # requests
+#& C:/CodeProjects/Sisyphus/venv/Scripts/Activate.ps1 to start venv
