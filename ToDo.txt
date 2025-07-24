@@ -1,11 +1,12 @@
 [1.0 RELEASE CHECKBOX]
-    [][1.0]Fit entire resume in 1 page (or close to)
+    [][1.0 PUBLIC RELEASE] Clean code and prompt engineer a bit
+    [][1.0 PRIVATE RELEASE] Add own CV
+    [][0.95]Fit entire resume in 1 page (or close to)
     [][0.9]Add another step in tailoring process: set a number of experiences, and only include a set number of them
     
 [WIP GOAL: 0.9]
     [0.9]
         Add another step in tailoring process: set a number of experiences, and only include a set number of them
-
     [???]Convert to PDF button
         
 
