@@ -262,6 +262,7 @@ def tailor_cl(root):
     global current_cl_text
     global cl_window, cl_textbox
     global show_output_cl_button
+    global save_output_cl_button
     selected_model = model_var.get()  
     job_desc = job_desc_textbox.get("1.0", tk.END)
 
@@ -289,6 +290,7 @@ def tailor_cl(root):
     show_output_cl_button.config(state="normal")
     save_current_cl_text_button.config(state="normal")
     filter_output_cl_button.config(state="normal")
+    save_output_cl_button.config(state="normal")
     print("Cover letter text generated successfully.")
     global cl_window, cl_textbox
     
@@ -429,6 +431,7 @@ def refresh_options_callback():
         global model_dropdown, cv_dropdown, system_dropdown, model_var, models, cv_var, cvs, system_var, systems, template_dropdown,templates, template_var
         global saved_out_dropdown, saved_outs, saved_out_var, load_cv_text_button
         global saved_out_dropdown_cl, saved_outs_cl, saved_out_var_cl, load_cl_text_button
+        global cl_template_var, cl_templates, cl_template_dropdown
         options = helpers.refresh_options()
         models = options[0]
         systems = options[1]
@@ -436,6 +439,7 @@ def refresh_options_callback():
         templates = options[3]
         saved_outs = options[4]
         saved_outs_cl = options[5]
+        cl_templates = options[6]
         model_dropdown['values'] = models
         if models:
             model_var.set(models[0])
@@ -449,6 +453,9 @@ def refresh_options_callback():
         template_dropdown['values'] = templates
         if templates:
             template_var.set(templates[0])
+        cl_template_dropdown['values'] = cl_templates
+        if cl_templates:
+            cl_template_var.set(cl_templates[0])
         saved_out_dropdown['values'] = saved_outs
         if saved_outs:
             saved_out_var.set(saved_outs[0])
@@ -474,6 +481,23 @@ def save_output_cv(template_name,output_name):
     if os.path.exists(output_path):
         print(f"Warning: {output_path} already exists and will be overwritten.")
     fileGenerator.generate_docx(template_path, cv_dict, output_path)
+
+def save_output_cl(template_name, output_name):
+    output_n = output_name
+    template_n = template_name.get().strip()
+    if output_n == "":
+        print("Output file name cannot be empty.")
+        return
+    if template_n == "":
+        print("No template selected. Please select a template.")
+        return
+    global current_cl_text
+    cl_dict = parsers.parse_cl(current_cl_text)
+    template_path = os.path.join(SISYPHUS_PATH, "templates_cl", f"{template_n}")
+    output_path = os.path.join(SISYPHUS_PATH, "saved_docs_cl", f"{output_n}.docx")
+    if os.path.exists(output_path):
+        print(f"Warning: {output_path} already exists and will be overwritten.")
+    fileGenerator.generate_docx(template_path, cl_dict, output_path)
 
 def show_output_cv(root):
     global result_window, result_textbox, current_cv_text
@@ -548,6 +572,25 @@ def load_cv_text(file_name):
     print(f"CV loaded from {file_path}")
     return 
 
+def load_cl_text(file_name):
+    """
+    Loads Cover Letter text from a file and returns it.
+    """
+    global current_cl_text, show_output_cl_button, save_output_cl_button, save_current_cl_text_button, filter_output_cl_button
+    file_path = os.path.join(OUT_CL_PATH, file_name)
+    if not os.path.exists(file_path):
+        print(f"File {file_name} does not exist.")
+        return
+    with open(file_path, 'r', encoding='utf-8') as f:
+        #load the text from the file to string
+        current_cl_text = f.read()
+    show_output_cl_button.config(state="normal")
+    save_output_cl_button.config(state="normal")
+    save_current_cl_text_button.config(state="normal")
+    filter_output_cl_button.config(state="normal")
+    print(f"Cover letter loaded from {file_path}")
+    return
+
 def init_color(root, bg_color, fg_color):
     """
     Set all window backgrounds to bg_color and all text/button/border colors to fg_color.
@@ -600,6 +643,10 @@ def main():
     global load_cv_text_button
     global template_dropdown, templates, model_dropdown, cv_dropdown, system_dropdown, model_var, models, cv_var,cvs, system_var, systems,out_file_textbox,save_file_textbox,job_desc_textbox, current_cv_text, format_check_current_cv_button, filter_output_cv_button, template_var
     global saved_outs_cl, saved_out_var_cl, saved_out_dropdown_cl, load_cl_text_button
+    global cl_template_var, cl_templates, cl_template_dropdown
+    global save_output_cl_button
+    global filter_output_cl_button
+    global show_output_cv_button, show_output_cl_button
 
     run = runLocalModel.wait_for_ollama()
     if not run:
@@ -627,6 +674,9 @@ def main():
 
     saved_outs_cl = []
     saved_out_var_cl = tk.StringVar()
+
+    cl_template_var = tk.StringVar()
+    cl_templates = []
     
     # models = options[0]
     # systems = options[1]
@@ -672,15 +722,20 @@ def main():
     template_dropdown.grid(row=3, column=1)
     ttk.Label(root, text="Select Template:").grid(row=3, column=0)
 
+    #Dropdown for CL template
+    cl_template_dropdown = ttk.Combobox(root, textvariable=cl_template_var, values=cl_templates)
+    cl_template_dropdown.grid(row=4, column=1)
+    ttk.Label(root, text="Select CL Template:").grid(row=4, column=0)
+
     # Dropdown for saved output CVs
     saved_out_dropdown = ttk.Combobox(root, textvariable=saved_out_var, values=saved_outs)
-    saved_out_dropdown.grid(row=4, column=1)
-    ttk.Label(root, text="Select Saved Output CV:").grid(row=4, column=0)
+    saved_out_dropdown.grid(row=5, column=1)
+    ttk.Label(root, text="Select Saved Output CV:").grid(row=5, column=0)
 
     #Dropdown for saved output CLs
     saved_out_dropdown_cl = ttk.Combobox(root, textvariable=saved_out_var_cl, values=saved_outs_cl)
-    saved_out_dropdown_cl.grid(row=5, column=1)
-    ttk.Label(root, text="Select Saved Output CL:").grid(row=5, column=0)
+    saved_out_dropdown_cl.grid(row=6, column=1)
+    ttk.Label(root, text="Select Saved Output CL:").grid(row=6, column=0)
 
     #2. 1 Text fields:
         #Job Description
@@ -695,20 +750,24 @@ def main():
 
     # Job Description Textbox
 
-    ttk.Label(root, text="Job Description:").grid(row=6, column=0)
+    ttk.Label(root, text="Job Description:").grid(row=7, column=0)
     job_desc_textbox = tk.Text(root, height=5, width=40)
-    job_desc_textbox.grid(row=6, column=1)
+    job_desc_textbox.grid(row=7, column=1)
 
     #Output file Textbox
-    ttk.Label(root, text="Output File Name:").grid(row=6, column=2)
+    ttk.Label(root, text="Output CV Name:").grid(row=7, column=2)
     out_file_textbox = tk.Text(root, height=1, width=20)
-    out_file_textbox.grid(row=6, column=3)
+    out_file_textbox.grid(row=7, column=3)
+
+    #Output Cover Letter Textbox
+    ttk.Label(root, text="Output CL File Name:").grid(row=7, column=4)
+    out_file_cl_textbox = tk.Text(root, height=1, width=20)
+    out_file_cl_textbox.grid(row=7, column=5)
 
     #Saved Text File Name
-    ttk.Label(root, text="Saved Text File Name:").grid(row=6, column=4)
+    ttk.Label(root, text="Saved Text File Name:").grid(row=7, column=6)
     save_file_textbox = tk.Text(root, height=1, width=20)
-    save_file_textbox.grid(row=6, column=5)
-
+    save_file_textbox.grid(row=7, column=7)
 
 
     
@@ -733,53 +792,56 @@ def main():
     
     #Tailor Button
     tailor_button = ttk.Button(root, text="Tailor CV", command=lambda: tailor_cv(root))
-    tailor_button.grid(row=6, column=0)
+    tailor_button.grid(row=8, column=0)
 
     
 
     # Show CV Output Button (initially disabled)
     show_output_cv_button = ttk.Button(root, text="Show Output CV", command=lambda: show_output_cv(root), state="disabled")
-    show_output_cv_button.grid(row=7, column=1)
+    show_output_cv_button.grid(row=8, column=1)
 
     # Filter Output CV Text Button (initially disabled)
     filter_output_cv_button = ttk.Button(root, text="Filter Output CV Text", command=lambda: filter_output_cv_text(root), state="disabled")
-    filter_output_cv_button.grid(row=7, column=2)
+    filter_output_cv_button.grid(row=8, column=2)
 
     # Format Check Current CV Text Button (initially disabled)
     format_check_current_cv_button = ttk.Button(root, text="Format Check Current CV Text", command=lambda: format_check_current_cv_text(root), state="disabled")
-    format_check_current_cv_button.grid(row=7, column=3)
+    format_check_current_cv_button.grid(row=8, column=3)
 
     # Save Output CV Button (initially disabled)
     save_output_cv_button = ttk.Button(root, text="Save Output CV to DOCX", command=lambda:save_output_cv(template_name= template_var,output_name= out_file_textbox.get("1.0", tk.END).strip()), state="disabled")
-    save_output_cv_button.grid(row=7, column=4)
+    save_output_cv_button.grid(row=8, column=4)
 
     # Save Current CV Text Button to text file (disabled if no text in current_cv_text)
     save_current_cv_text_button = ttk.Button(root, text="Save Current CV Text", command=lambda: save_cv_text(save_file_textbox.get("1.0", tk.END).strip()), state="disabled")
-    save_current_cv_text_button.grid(row=7, column=5)
+    save_current_cv_text_button.grid(row=8, column=5)
     
     # Load CV Text Button (disabled if no saved output CVs)
     load_cv_text_button = ttk.Button(root, text="Load CV Text", command=lambda: load_cv_text(saved_out_var.get()), state="disabled")
-    load_cv_text_button.grid(row=7, column=6)
+    load_cv_text_button.grid(row=8, column=6)
 
     #Tailor Cover Letter Button (Initially disabled)
     tailor_cl_button =ttk.Button(root, text="Tailor CL", command=lambda: tailor_cl(root), state="disabled")
-    tailor_cl_button.grid(row=8, column=0)
+    tailor_cl_button.grid(row=9, column=0)
 
     # Show Output Cover Letter Button (Initially disabled)
     show_output_cl_button = ttk.Button(root, text="Show Output CL", command=lambda: show_output_cl(root), state="disabled")
-    show_output_cl_button.grid(row=8, column=1)
+    show_output_cl_button.grid(row=9, column=1)
 
     # Filter Output Cover Letter Button (Initially disabled)
     filter_output_cl_button = ttk.Button(root, text="Filter Output CL Text", command=lambda: filter_output_cl_text(root), state="disabled")
-    filter_output_cl_button.grid(row=8, column=2)
+    filter_output_cl_button.grid(row=9, column=2)
+
+    save_output_cl_button = ttk.Button(root, text="Save Output CL to DOCX", command=lambda:save_output_cl(template_name= cl_template_var,output_name= out_file_cl_textbox.get("1.0", tk.END).strip()), state="disabled")
+    save_output_cl_button.grid(row=9, column=4)
 
     # Save Output Cover Letter Button (Initially disabled)
     save_current_cl_text_button = ttk.Button(root, text="Save Current CL Text", command=lambda:save_cl_text(save_file_textbox.get("1.0", tk.END).strip()), state="disabled")
-    save_current_cl_text_button.grid(row=8, column=5)
+    save_current_cl_text_button.grid(row=9, column=5)
 
     # Load Cover Letter Text Button (Initially disabled)
-    load_cl_text_button = ttk.Button(root, text="Load CL Text", command=lambda: load_cv_text(saved_out_var_cl.get()), state="disabled")
-    load_cl_text_button.grid(row=8, column=6)
+    load_cl_text_button = ttk.Button(root, text="Load CL Text", command=lambda: load_cl_text(saved_out_var_cl.get()), state="disabled")
+    load_cl_text_button.grid(row=9, column=6)
 
     refresh_options_callback()
 

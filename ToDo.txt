@@ -1,10 +1,7 @@
 [1.0 RELEASE CHECKBOX]
     [][1.0]Fit entire resume in 1 page (or close to)
     [][0.9]Generate Cover Letter Button
-    [DONE]
-        [DONE][0.8]Add consistency chcker  
-        [DONE]Main CL Window, CL Generation and button
-    [DONE]Load cl text
+    
     
 [WIP GOAL: 0.9]
 
@@ -13,8 +10,7 @@
     New Features[+0.1 per implementation]:
         []Format/consistency check out cl
             []Do so on tailor
-        []Save doc cl
-            []Template for cl
+        
 
 [Hubris tracker]
     []Check if correct inputs are used for consistency checks since outputs differ a lot
@@ -95,8 +91,10 @@
                 [FIXED]On Doc Generation: An error occurred while generating the document: 'skills' is undefined
                 [FIXED]First showing of cv_text displays unmodded skills
     [DONE]Add consistency checker
-    [DONE]Convert to PDF button (same as docx)
     [DONE]Save text cl
     [DONE]Show cl window
     [DONE]Rearrange buttons
     [DONE]Filter out cl
+    [DONE]Load cl text
+    [DONE]Save doc cl
+    [DONE]Template for cl
