@@ -194,41 +194,9 @@ def tailor_cv(root):
         current_cv_text = final_final_cv_text
     
 
-    # current_cv_text = final_cv_text
+    format_check_current_cv_text(root)
 
-    # Enable the format check and filter buttons for output CV
-    format_check_current_cv_button.config(state="normal")
-    filter_output_cv_button.config(state="normal")
-    tailor_cl_button.config(state="normal")
-
-    # Prepare CV analysis output as a string
-    analysis_stream = io.StringIO()
-    old_stdout = sys.stdout
-    sys.stdout = analysis_stream
-    helpers.read_format_checker(helpers.format_checker_out(current_cv_text))
-    sys.stdout = old_stdout
-    analysis_text = analysis_stream.getvalue()
-
-    #Consistency check
-    con_systemm_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", "system_consistency.txt"))
-    con_vs_job_desc = tailor.consistency_checker_vs_job_desc(
-        model=selected_model,
-        system=con_systemm_text,
-        cv_data=current_cv_text,
-        job_description=job_desc
-    )
-    con_vs_cv = tailor.consistency_checker_vs_cv(
-        model=selected_model,
-        system=con_systemm_text,
-        cv_data=current_cv_text,
-        cv_data_orig=cv_text
-    )
-
-    #Append consistency check results to analysis text
-    analysis_text += "\n\nConsistency Checker Vs Job Description:\n"
-    analysis_text += helpers.filter_output(con_vs_job_desc) + "\n\n"
-    analysis_text += "Consistency Checker Vs CV:\n"
-    analysis_text += helpers.filter_output(con_vs_cv) + "\n\n"
+    
 
     print("The climb has ended, the CV is tailored!")
     # Show the tailored CV text in a new window
@@ -239,20 +207,16 @@ def tailor_cv(root):
     result_textbox = tk.Text(result_window, height=20, width=80)
     result_textbox.insert(tk.END, current_cv_text)
     result_textbox.pack(expand=True, fill=tk.BOTH)
-    show_output_cv_button.config(state="normal")
+    
 
     # Enable the save button when output is generated
+    show_output_cv_button.config(state="normal")
     save_output_cv_button.config(state="normal")
     save_current_cv_text_button.config(state="normal")
+    format_check_current_cv_button.config(state="normal")
+    filter_output_cv_button.config(state="normal")
+    tailor_cl_button.config(state="normal")
 
-    # Show the CV analysis in a new window
-    analysis_window = tk.Toplevel(root)
-    analysis_window.title("Output CV Analysis:")
-    analysis_label = tk.Label(analysis_window, text="Output CV Analysis:")
-    analysis_label.pack()
-    analysis_textbox = tk.Text(analysis_window, height=20, width=80)
-    analysis_textbox.insert(tk.END, analysis_text)
-    analysis_textbox.pack(expand=True, fill=tk.BOTH)
 
 def tailor_cl(root):
     #Assumes existing system
@@ -263,6 +227,7 @@ def tailor_cl(root):
     global cl_window, cl_textbox
     global show_output_cl_button
     global save_output_cl_button
+    global format_check_current_cl_button
     selected_model = model_var.get()  
     job_desc = job_desc_textbox.get("1.0", tk.END)
 
@@ -287,11 +252,11 @@ def tailor_cl(root):
     cover_letter_text = parsers.inv_parse_cl(cover_letter_dict)
     current_cl_text = cover_letter_text
 
-    show_output_cl_button.config(state="normal")
-    save_current_cl_text_button.config(state="normal")
-    filter_output_cl_button.config(state="normal")
-    save_output_cl_button.config(state="normal")
+
     print("Cover letter text generated successfully.")
+
+    format_check_current_cl_text(root)
+
     global cl_window, cl_textbox
     
     cl_window = tk.Toplevel(root)
@@ -299,6 +264,12 @@ def tailor_cl(root):
     cl_textbox = tk.Text(cl_window, height=20, width=80)
     cl_textbox.insert(tk.END, current_cl_text)
     cl_textbox.pack(expand=True, fill=tk.BOTH)
+
+    show_output_cl_button.config(state="normal")
+    save_current_cl_text_button.config(state="normal")
+    filter_output_cl_button.config(state="normal")
+    save_output_cl_button.config(state="normal")
+    format_check_current_cl_button.config(state="normal")
 
 def show_output_cl(root):
     global cl_window, cl_textbox, current_cl_text
@@ -324,6 +295,8 @@ def format_check_input_cv_file(root, cv_file):
     Reads a CV file and checks its format.
     Returns True if the format is correct, False otherwise.
     """
+    
+
     cv_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "cvs", cv_file))
     
     # Prepare CV analysis output as a string
@@ -344,6 +317,9 @@ def format_check_input_cv_file(root, cv_file):
     analysis_textbox.pack(expand=True, fill=tk.BOTH)
 
 def format_check_current_cv_text(root):
+    if job_desc_textbox.get("1.0", tk.END).strip() == "":
+        print("Job description is empty. Please enter a job description.")
+        return
     cv_text = current_cv_text
 
     # Prepare CV analysis output as a string
@@ -380,6 +356,55 @@ def format_check_current_cv_text(root):
     analysis_window = tk.Toplevel(root)
     analysis_window.title("Current Output CV Analysis:")
     analysis_label = tk.Label(analysis_window, text="Current Output CV Analysis:")
+    analysis_label.pack()
+    analysis_textbox = tk.Text(analysis_window, height=20, width=80)
+    analysis_textbox.insert(tk.END, analysis_text)
+    analysis_textbox.pack(expand=True, fill=tk.BOTH)
+
+def format_check_current_cl_text(root):
+    if job_desc_textbox.get("1.0", tk.END).strip() == "":
+        print("Job description is empty. Please enter a job description.")
+        return
+    #Assumes current_cv_text is already defined and is the tailored resume relevant to the cover letter
+    cl_text = current_cl_text
+    # Prepare CV analysis output as a string
+    analysis_stream = io.StringIO()
+    old_stdout = sys.stdout
+    sys.stdout = analysis_stream
+    helpers.read_format_checker(helpers.format_checker_out_cl(cl_text))
+    sys.stdout = old_stdout
+    analysis_text = analysis_stream.getvalue()
+    
+    cv_text = current_cv_text
+    selected_model = model_var.get()
+    job_desc = job_desc_textbox.get("1.0", tk.END)
+
+    con_system_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", "system_consistency_cl.txt"))
+    con_vs_job_desc = tailor.consistency_checker_vs_job_desc(
+        model=selected_model,
+        system=con_system_text,
+        cv_data=cl_text,
+        job_description=job_desc,
+        type = "CL"
+    )
+    con_vs_cv = tailor.consistency_checker_vs_cv(
+        model=selected_model,
+        system=con_system_text,
+        cv_data=cl_text,
+        cv_data_orig=cv_text,
+        type = "CL"
+    )
+
+    #Append consistency check results to analysis text
+    analysis_text += "\n\nConsistency Checker Vs Job Description:\n"
+    analysis_text += helpers.filter_output(con_vs_job_desc) + "\n\n"
+    analysis_text += "Consistency Checker Vs Tailored Resume:\n"
+    analysis_text += helpers.filter_output(con_vs_cv) + "\n\n"
+
+    # Show the CV analysis in a new window
+    analysis_window = tk.Toplevel(root)
+    analysis_window.title("Current Output CL Analysis:")
+    analysis_label = tk.Label(analysis_window, text="Current Output CL Analysis:")
     analysis_label.pack()
     analysis_textbox = tk.Text(analysis_window, height=20, width=80)
     analysis_textbox.insert(tk.END, analysis_text)
@@ -576,7 +601,7 @@ def load_cl_text(file_name):
     """
     Loads Cover Letter text from a file and returns it.
     """
-    global current_cl_text, show_output_cl_button, save_output_cl_button, save_current_cl_text_button, filter_output_cl_button
+    global current_cl_text, show_output_cl_button, save_output_cl_button, save_current_cl_text_button, filter_output_cl_button, format_check_current_cl_button
     file_path = os.path.join(OUT_CL_PATH, file_name)
     if not os.path.exists(file_path):
         print(f"File {file_name} does not exist.")
@@ -588,6 +613,7 @@ def load_cl_text(file_name):
     save_output_cl_button.config(state="normal")
     save_current_cl_text_button.config(state="normal")
     filter_output_cl_button.config(state="normal")
+    format_check_current_cl_button.config(state="normal")
     print(f"Cover letter loaded from {file_path}")
     return
 
@@ -647,6 +673,7 @@ def main():
     global save_output_cl_button
     global filter_output_cl_button
     global show_output_cv_button, show_output_cl_button
+    global format_check_current_cl_button
 
     run = runLocalModel.wait_for_ollama()
     if not run:
@@ -808,6 +835,8 @@ def main():
     format_check_current_cv_button = ttk.Button(root, text="Format Check Current CV Text", command=lambda: format_check_current_cv_text(root), state="disabled")
     format_check_current_cv_button.grid(row=8, column=3)
 
+    
+
     # Save Output CV Button (initially disabled)
     save_output_cv_button = ttk.Button(root, text="Save Output CV to DOCX", command=lambda:save_output_cv(template_name= template_var,output_name= out_file_textbox.get("1.0", tk.END).strip()), state="disabled")
     save_output_cv_button.grid(row=8, column=4)
@@ -831,6 +860,10 @@ def main():
     # Filter Output Cover Letter Button (Initially disabled)
     filter_output_cl_button = ttk.Button(root, text="Filter Output CL Text", command=lambda: filter_output_cl_text(root), state="disabled")
     filter_output_cl_button.grid(row=9, column=2)
+
+    # Format Check Current CL Text Button (initially disabled)
+    format_check_current_cl_button = ttk.Button(root, text="Format Check Current CL Text", command=lambda: format_check_current_cl_text(root), state="disabled")
+    format_check_current_cl_button.grid(row=9, column=3)
 
     save_output_cl_button = ttk.Button(root, text="Save Output CL to DOCX", command=lambda:save_output_cl(template_name= cl_template_var,output_name= out_file_cl_textbox.get("1.0", tk.END).strip()), state="disabled")
     save_output_cl_button.grid(row=9, column=4)

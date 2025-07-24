@@ -399,6 +399,85 @@ def format_checker_out (cv_text):
         'empty_subsections': empty_subsections
     }
 
+def format_checker_out_cl(cl_text):
+    """
+    Checks if cv_text follows the strict format/order of sections/subsections.
+    Returns a dict with lists of missing or empty sections/subsections.
+    """
+    import re
+    # Define expected sections and subsections
+    expected = {
+        '[0]Name:': [],
+        '[0]Contact Information:': [
+            '[1]Address:', '[1]Phone:', '[1]Email:', '[1]LinkedIn:', '[1]Github:', '[1]Portfolio:'
+        ],
+        '[0]Title:': [],
+        '[0]Languages:': [],
+        '[0]Cover Letter:': [
+            '[1]New Paragraph0:', '[1]New Paragraph1:', '[1]New Paragraph2:', '[1]New Paragraph3:'
+        ]
+    }
+
+    # Find all section headers and their lines
+    lines = [line.strip() for line in cl_text.splitlines() if line.strip()]
+    found_sections = {key: [] for key in expected}
+    current_section = None
+    for line in lines:
+        for section in expected:
+            if line.startswith(section):
+                current_section = section
+                found_sections[section].append(line)
+                break
+        else:
+            # Check for subsections
+            if current_section and any(line.startswith(sub) for sub in expected[current_section]):
+                found_sections[current_section].append(line)
+
+    missing_sections = []
+    missing_subsections = []
+    empty_subsections = []
+
+    # Helper: for sections with multiple entries, count the number of main entries
+    def count_entries(section, entry_key):
+        return sum(1 for l in found_sections[section] if l.startswith(entry_key))
+
+    empty_sections = []
+    for section, subs in expected.items():
+        section_lines = [l for l in found_sections[section] if l.startswith(section)]
+        if not section_lines:
+            missing_sections.append(section)
+        else:
+            # Special handling for sections without subsections
+            if section in ['[0]Name:', '[0]Title:', '[0]Languages:']:
+                # Check if the section line contains a non-empty string after the colon
+                non_empty = False
+                for l in section_lines:
+                    # Remove header and check if anything remains
+                    content = l[len(section):].strip()
+                    if content:
+                        non_empty = True
+                        break
+                if not non_empty:
+                    empty_sections.append(section)
+                continue
+            # For each subsection, count actual occurrences and compare
+            total_subs_found = 0
+            for sub in subs:
+                # For single-entry subsections
+                actual_n = sum(1 for l in found_sections[section] if l.startswith(sub))
+                total_subs_found += actual_n
+                if actual_n == 0:
+                    empty_subsections.append((f"{section}:{sub}", 1))
+            # If section exists but has no valid subsections/entries, mark as empty section
+            if total_subs_found == 0:
+                empty_sections.append(section)
+    return {
+        'missing_sections': missing_sections,
+        'empty_sections': empty_sections,
+        'missing_subsections': missing_subsections,
+        'empty_subsections': empty_subsections
+    }
+
 def filter_output(model_output):
     """
     Filters model output, keeping only lines that start with [X], where X is a number (e.g., [0], [1], etc.).

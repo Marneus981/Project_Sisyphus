@@ -1,19 +1,18 @@
 [1.0 RELEASE CHECKBOX]
     [][1.0]Fit entire resume in 1 page (or close to)
-    [][0.9]Generate Cover Letter Button
-    
+    [][0.9]Add another step in tailoring process: set a number of experiences, and only include a set number of them
     
 [WIP GOAL: 0.9]
+    [0.9]
+        Add another step in tailoring process: set a number of experiences, and only include a set number of them
 
     [???]Convert to PDF button
-    [???]Add another step in tailoring process: set a number of experiences, and only include a set number of them
-    New Features[+0.1 per implementation]:
-        []Format/consistency check out cl
-            []Do so on tailor
         
 
 [Hubris tracker]
     []Check if correct inputs are used for consistency checks since outputs differ a lot
+    []Confirm format checker is run correctly on cl/cv tailor
+    []LinkedIn might be wrongly detectted on format cl (checked with presaved cl)
 
 
 [???]
@@ -98,3 +97,4 @@
     [DONE]Load cl text
     [DONE]Save doc cl
     [DONE]Template for cl
+    [DONE]Format/consistency check out cl

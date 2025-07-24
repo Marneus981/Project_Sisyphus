@@ -313,29 +313,46 @@ def tailor_skills(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_dat
         print(response.text)
         return "Error: Ollama response was not valid JSON."
     
-def consistency_checker_vs_job_desc(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", job_description="", section="Consistency Checker"):
+def consistency_checker_vs_job_desc(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", job_description="", type="CV"):
 
-    prompt = f"""
-    Given the following already-tailored resume:
-    {cv_data}
-    And the job description the aforementioned resume was tailored to:
-    {job_description}
-    Perform a consistency check on the tailored resume against the job description and itself. This consistency check should include:
-    1. Check if the resume is consistent with the job description, meaning that all skills and experiences mentioned in the resume should be relevant to the job description.
-    2. Check if the resume is consistent with itself, meaning that there should be no contradictions or inconsistencies in the information provided.
-    3. Provide suggestions for improvement.
-    The consistency check should be returned in the following format:
+    if type == "CV":
+        prompt = f"""
+        Given the following already-tailored resume:
+        {cv_data}
+        And the job description the aforementioned resume was tailored to:
+        {job_description}
+        Perform a consistency check on the tailored resume against the job description and itself. This consistency check should include:
+        1. Check if the resume is consistent with the job description, meaning that all skills and experiences mentioned in the resume should be relevant to the job description.
+        2. Provide suggestions for improvement.
+        The consistency check should be returned strictly in the following format:
 
-    [0]Consistency Checker Vs Job Description:
-    [1]Job Description Consistency: [Yes/No]
-    [1]Inconsistencies With Job Description: [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-    [1]Self Consistency: [Yes/No]
-    [1]Inconsistencies With Self: [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-    [1]Suggestions for Improvement: [List of suggestions for improvement, if any; return 'None' if no suggestions; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+        [0]Consistency Checker Vs Job Description:
+        [1]Job Description Consistency: [Yes/No]
+        [1]Inconsistencies With Job Description: [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+        [1]Suggestions for Improvement: [List of suggestions for improvement, if any; return 'None' if no suggestions; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
 
-    Be mindful not to include any line breaks in  the content of any of the sections/subsections.
-    Be as objective as possible, and do not make any assumptions about the data; this also means that you should create nor imagine any data that is not present in the original CV data.
-    """
+        Be mindful not to include any line breaks in  the content of any of the sections/subsections.
+        Be as objective as possible, and do not make any assumptions about the data; this also means that you should create nor imagine any data that is not present in the original CV data.
+        """
+    elif type == "CL":
+        prompt = f"""
+        Given the following already-tailored cover letter:
+        {cv_data}
+        And the job description the aforementioned cover letter was tailored to:
+        {job_description}
+        Perform a consistency check on the tailored cover letter against the job description and itself. This consistency check should include:
+        1. Check if the cover letter is consistent with the job description, meaning that all skills and experiences mentioned in the cover letter should be relevant to the job description.
+        2. Provide suggestions for improvement.
+        The consistency check should be returned strictly in the following format:
+
+        [0]Consistency Checker Vs Job Description:
+        [1]Job Description Consistency: [Yes/No]
+        [1]Inconsistencies With Job Description: [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+        [1]Suggestions for Improvement: [List of suggestions for improvement, if any; return 'None' if no suggestions; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+
+        Be mindful not to include any line breaks in  the content of any of the sections/subsections.
+        Be as objective as possible, and do not make any assumptions about the data; this also means that you should create nor imagine any data that is not present in the original CV data.
+        """
     
     payload = {
         "model": model,
@@ -354,28 +371,51 @@ def consistency_checker_vs_job_desc(model=DEFAULT_MODEL, system="", ollama_url=D
         print(response.text)
         return "Error: Ollama response was not valid JSON."
     
-def consistency_checker_vs_cv(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", cv_data_orig ="", section="Consistency Checker"):
-    prompt = f"""
-    Given the following already-tailored resume:
-    {cv_data}
-    And the original untoilored curriculum data:
-    {cv_data_orig}
-    Perform a consistency check on the tailored resume against the original curriculum data. This consistency check should include:
-    1. Check if the resume is consistent with the original curriculum data, meaning that all skills and experiences mentioned in the resume should be present in the original CV data.
-    2. Check if the resume is consistent with itself, meaning that there should be no contradictions or inconsistencies in the information provided.
-    3. Provide suggestions for improvement.
-    The consistency check should be returned in the following format:
+def consistency_checker_vs_cv(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", cv_data_orig ="", type="CV"):
+    if type == "CV":
+        prompt = f"""
+        Given the following already-tailored resume:
+        {cv_data}
+        And the original untoilored curriculum data:
+        {cv_data_orig}
+        Perform a consistency check on the tailored resume against the original curriculum data. This consistency check should include:
+        1. Check if the resume is consistent with the original curriculum data, meaning that all skills and experiences mentioned in the resume should be present in the original CV data.
+        2. Check if the resume is consistent with itself, meaning that there should be no contradictions or inconsistencies in the information provided.
+        3. Provide suggestions for improvement.
+        The consistency check should be returned strictly in the following format:
 
-    [0]Consistency Checker Vs Cv:
-    [1]Job Description Consistency: [Yes/No]
-    [1]Inconsistencies With Job Description: [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-    [1]Self Consistency: [Yes/No]
-    [1]Inconsistencies With Self: [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-    [1]Suggestions for Improvement: [List of suggestions for improvement, if any; return 'None' if no suggestions; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+        [0]Consistency Checker Vs Cv:
+        [1]CV Consistency: [Yes/No]
+        [1]Inconsistencies With CV: [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+        [1]Self Consistency: [Yes/No]
+        [1]Inconsistencies With Self: [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+        [1]Suggestions for Improvement: [List of suggestions for improvement, if any; return 'None' if no suggestions; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
 
-    Be mindful not to include any line breaks in  the content of any of the sections/subsections.
-    Be as objective as possible, and do not make any assumptions about the data; this also means that you should create nor imagine any data that is not present in the original CV data.
-    """
+        Be mindful not to include any line breaks in  the content of any of the sections/subsections.
+        Be as objective as possible, and do not make any assumptions about the data; this also means that you should create nor imagine any data that is not present in the original CV data.
+        """
+    elif type == "CL":
+        prompt = f"""
+        Given the following already-tailored cover letter:
+        {cv_data}
+        And the resume meant to accompany it on a job application:
+        {cv_data_orig}
+        Perform a consistency check on the tailored cover letter against the resume. This consistency check should include:
+        1. Check if the cover letter is consistent with the resume, meaning that all skills and experiences mentioned in the cover letter should be present in the resume.
+        2. Check if the cover letter is consistent with itself, meaning that there should be no contradictions or inconsistencies in the information provided.
+        3. Provide suggestions for improvement.
+        The consistency check should be returned strictly in the following format:
+
+        [0]Consistency Checker Vs Resume:
+        [1]Resume Consistency: [Yes/No]
+        [1]Inconsistencies With Resume: [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+        [1]Self Consistency: [Yes/No]
+        [1]Inconsistencies With Self: [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+        [1]Suggestions for Improvement: [List of suggestions for improvement, if any; return 'None' if no suggestions; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+
+        Be mindful not to include any line breaks in  the content of any of the sections/subsections.
+        Be as objective as possible, and do not make any assumptions about the data; this also means that you should create nor imagine any data that is not present in the original CV data.
+        """
     
     payload = {
         "model": model,

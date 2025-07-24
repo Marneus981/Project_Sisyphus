@@ -366,7 +366,7 @@ def parse_cl(cl_text):
     [1]Address: Address
     [1]Phone: Phone
     [1]Email: Email
-    [1]Linkedin: Linkedin URL
+    [1]LinkedIn: Linkedin URL
     [1]Github: Github URL
     [1]Portfolio: Portfolio URL
     [0]Cover Letter:
@@ -449,11 +449,11 @@ def inv_parse_cl(cl_dict):
     """
     lines = []
     for parent_key, parent_value in cl_dict.items():
-        parent_field = parent_key.replace('_', ' ').title()
+        parent_field = format_key(parent_key)
         if isinstance(parent_value, dict):
             lines.append(f"[0]{parent_field}:")
             for sub_key, sub_value in parent_value.items():
-                sub_field = sub_key.replace('_', ' ').title()
+                sub_field = format_key(sub_key)
                 lines.append(f"[1]{sub_field}: {sub_value}")
         elif isinstance(parent_value, list) and parent_key == "cover_letter":
             lines.append(f"[0]Cover Letter:")
