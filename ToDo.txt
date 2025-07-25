@@ -4,9 +4,15 @@
     [][0.95]Fit entire resume in 1 page (or close to)
     [][0.9]Add another step in tailoring process: set a number of experiences, and only include a set number of them
     
-[WIP GOAL: 0.9]
-    [0.9]
-        Add another step in tailoring process: set a number of experiences, and only include a set number of them
+[WIP GOAL: 0.95 + FIXES]
+    [0.95 + FIXES]
+        [][BUG] 4 Experiences Roles get return per section (12 vs 6 total wanted)
+        [][BUG] Projects is not chronologically ordered
+            Possible solutions:
+                3.Rollback on prompts (duh)
+                2.Unique-to-tailoring-step Systems
+                1.Prompt engineering across all three levels: System, Prompt and Pruning Prompt
+
     [???]Convert to PDF button
         
 

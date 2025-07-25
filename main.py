@@ -161,8 +161,47 @@ def tailor_cv(root):
     #Merge unchanged fields back into the final tailored dict
     for key, value in unchanged_dict.items():
         final_tailored_dict[key] = value
+
     final_cv_text = helpers.format_output(parsers.inv_parse_cv(final_tailored_dict))
+    print("Final Resume before pruning:", final_cv_text)
+
+    print("Pruning following sections: Volunteering and Leadership, Work Experience and Projects...")
+
+    #Extract Volunteering and Leadership, Work Experience and Projects sections from the final CV text
+    volunteering_and_leadership = final_tailored_dict.get("volunteering_and_leadership", {})
+    work_experience = final_tailored_dict.get("work_experience", {})
+    projects = final_tailored_dict.get("projects", {})
+    #Graft to a single dict
+    experiences = {
+        "volunteering_and_leadership": volunteering_and_leadership,
+        "work_experience": work_experience,
+        "projects": projects
+    }
+    #Convvert to text
+    experiences_text = parsers.inv_parse_cv(experiences)
+    #Prune Volunteering and Leadership, Work Experience and Projects sections based on job description
+    pruned_experiences = tailor.prune_vl_w_p(
+        model=selected_model,
+        system=system_text,
+        resume_experiences=experiences_text,
+        job_description=job_desc
+    )
+    pruned_experiences = helpers.filter_output(pruned_experiences)
+    if pruned_experiences:
+        print("Pruned experiences section")
+        pruned_experiences_dict = parsers.parse_cv(pruned_experiences)
+        #Replace the experiences section in the final tailored dict
+        final_tailored_dict['volunteering_and_leadership'] = pruned_experiences_dict.get('volunteering_and_leadership', {})
+        final_tailored_dict['work_experience'] = pruned_experiences_dict.get('work_experience', {})
+        final_tailored_dict['projects'] = pruned_experiences_dict.get('projects', {})
+    else:
+        print("No experiences section tailored, using original experiences section")
+
+
+    
+    print("CV text before separate skills section: ", final_cv_text)
     final_final_cv_text = tailor.return_text_with_skills(final_cv_text)
+    print("CV text after skills section: ", final_final_cv_text)
     #Print final_final_cv_text
     # print('Checking tailor.return_text_with_skills output:')
     # print(final_final_cv_text)
