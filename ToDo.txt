@@ -7,11 +7,11 @@
 [WIP GOAL: 0.95 + FIXES]
     [0.95 + FIXES]
         [][BUG] 4 Experiences Roles get return per section (12 vs 6 total wanted)
-        [][BUG] Chronological ordering is wrong, we might need to outsource this to an actual function
-            Possible solutions:
-                3.Rollback on prompts (duh)
-                2.Unique-to-tailoring-step Systems
-                1.Prompt engineering across all three levels: System, Prompt and Pruning Prompt
+                Maybe unsaved pruning output? Check in vs out
+                Maybe separate systems?
+                Prompt engineering
+        [][BUG] Chronological ordering is wrong
+                Outsource this to an actual function
 
     [???]Convert to PDF button
         
@@ -105,3 +105,4 @@
     [DONE]Save doc cl
     [DONE]Template for cl
     [DONE]Format/consistency check out cl
+    Fixed several prompt related bugs, introduced more
