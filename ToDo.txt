@@ -7,7 +7,7 @@
 [WIP GOAL: 0.95 + FIXES]
     [0.95 + FIXES]
         [][BUG] 4 Experiences Roles get return per section (12 vs 6 total wanted)
-        [][BUG] Projects is not chronologically ordered
+        [][BUG] Chronological ordering is wrong, we might need to outsource this to an actual function
             Possible solutions:
                 3.Rollback on prompts (duh)
                 2.Unique-to-tailoring-step Systems
