@@ -68,13 +68,13 @@ def refresh_options():
     saved_outs_cl = list_text_files("Sisyphus/saved_outputs_cl")
     cl_templates = list_docx_files("Sisyphus/templates_cl")
     print("Options refreshed:")
-    print("Models:", models)
-    print("Systems:", systems)
-    print("CVs:", cvs)
-    print("CV Templates:", templates)
-    print("CL Templates:", cl_templates)
-    print("Previously Saved CV Outputs:", saved_outs)
-    print("Previously Saved CL Outputs:", saved_outs_cl)
+    print("Models: " + str(models))
+    print("Systems: " + str(systems))
+    print("CVs: " + str(cvs))
+    print("CV Templates: " + str(templates))
+    print("CL Templates: " + str(cl_templates))
+    print("Previously Saved CV Outputs: " + str(saved_outs))
+    print("Previously Saved CL Outputs: " + str(saved_outs_cl))
 
     return [models, systems, cvs, templates, saved_outs, saved_outs_cl, cl_templates]
 

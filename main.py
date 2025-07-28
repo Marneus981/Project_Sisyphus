@@ -6,12 +6,30 @@ import io
 import sys
 import Sisyphus.fileGenerator as fileGenerator
 import datetime
+import logging
 
 
 SISYPHUS_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus"
 DOCS_PATH =r"C:\CodeProjects\Sisyphus\Sisyphus\saved_docs"
 OUT_CV_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\saved_outputs"
 OUT_CL_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\saved_outputs_cl"
+
+# Create a logs directory if it doesn't exist
+log_dir = os.path.join(SISYPHUS_PATH, "log")
+os.makedirs(log_dir, exist_ok=True)
+log_file = os.path.join(log_dir, f"run_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s: %(message)s',
+    handlers=[
+        logging.FileHandler(log_file, encoding="utf-8"),
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+
+# Replace all print statements with logging.info, logging.warning, etc. as needed.
+print = logging.info
 
 def tailor_cv(root):
     global tailor_cl_button
@@ -39,10 +57,10 @@ def tailor_cv(root):
     cv_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "cvs", cv_file))
     system_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", system_file))
 
-    print("Selected Model:", selected_model)
-    print("CV Text:", cv_text)
-    print("System:", system_text)
-    print("Job Description:", job_desc)
+    print("Selected Model: " + str(selected_model))
+    print("CV Text: " + str(cv_text))
+    print("System: " + str(system_text))
+    print("Job Description: " + str(job_desc))
     # Here you can call your tailoring functions
 
     cv_dict = parsers.parse_cv(cv_text)
@@ -153,7 +171,7 @@ def tailor_cv(root):
         )
         tailored_s = helpers.filter_output(tailored_s)
         if tailored_s:
-            print("Tailored summary section:", tailored_s)
+            print("Tailored summary section: " + str(tailored_s))
             # Add the tailored summary to the dict
             tailored_list.append(parsers.parse_cv(tailored_s))
             #tailored_dict['summary'] = tailored_s
@@ -163,8 +181,11 @@ def tailor_cv(root):
         final_tailored_dict[key] = value
 
     final_cv_text = helpers.format_output(parsers.inv_parse_cv(final_tailored_dict))
-    print("Final Resume before pruning:", final_cv_text)
+    print("All sections tailored successfully")
+    print("Final Resume before pruning: " + str(final_cv_text))
 
+
+    #Prune Volunteering and Leadership, Work Experience and Projects sections based on job description
     print("Pruning following sections: Volunteering and Leadership, Work Experience and Projects...")
 
     #Extract Volunteering and Leadership, Work Experience and Projects sections from the final CV text
@@ -177,8 +198,9 @@ def tailor_cv(root):
         "work_experience": work_experience,
         "projects": projects
     }
-    #Convvert to text
+    #Convert to text
     experiences_text = parsers.inv_parse_cv(experiences)
+    print("Experiences text before pruning: " + str(experiences_text))
     #Prune Volunteering and Leadership, Work Experience and Projects sections based on job description
     pruned_experiences = tailor.prune_vl_w_p(
         model=selected_model,
@@ -190,18 +212,20 @@ def tailor_cv(root):
     if pruned_experiences:
         print("Pruned experiences section")
         pruned_experiences_dict = parsers.parse_cv(pruned_experiences)
+        print("Pruned experiences dict: " +  str(pruned_experiences_dict))
         #Replace the experiences section in the final tailored dict
         final_tailored_dict['volunteering_and_leadership'] = pruned_experiences_dict.get('volunteering_and_leadership', {})
         final_tailored_dict['work_experience'] = pruned_experiences_dict.get('work_experience', {})
         final_tailored_dict['projects'] = pruned_experiences_dict.get('projects', {})
+        final_cv_text = helpers.format_output(parsers.inv_parse_cv(final_tailored_dict))
     else:
         print("No experiences section tailored, using original experiences section")
 
 
-    
-    print("CV text before separate skills section: ", final_cv_text)
+
+    print("CV text before separate skills section: " +  str(final_cv_text))
     final_final_cv_text = tailor.return_text_with_skills(final_cv_text)
-    print("CV text after skills section: ", final_final_cv_text)
+    print("CV text after skills section: " +  str(final_final_cv_text))
     #Print final_final_cv_text
     # print('Checking tailor.return_text_with_skills output:')
     # print(final_final_cv_text)
@@ -280,7 +304,7 @@ def tailor_cl(root):
         print("No CV text available. Please tailor a CV first.")
         return
     
-    print("Tailoring cover letter with model:", selected_model)
+    print("Tailoring cover letter with model: " + str(selected_model))
 
     # Compose cover letter dictionary
     cover_letter_dict = tailor.compose_cover_letter_dictionary(

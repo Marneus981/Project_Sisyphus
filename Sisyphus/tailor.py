@@ -189,13 +189,12 @@ def prune_vl_w_p(model = DEFAULT_MODEL, system = "", ollama_url = DEFAULT_URL, r
     {job_description}
 
     Select a total sum of 6 experiences/roles across all the sections based on the job description.
+    For example, you can pick 2 from Work Experience, 2 from Projects, and 2 from Volunteering and Leadership.
     Follow these guidelines while selecting:
+    - You MUST return 6 experiences/roles, unless the total sum of experiences/roles across all sections is less than 6, in which case you should return all of them.
     - The selection process must be based on relevance to the job description
     - The selection process must be made across all sections (Volunteering and Leadership, Work Experience, Projects)
-    - IMPORTANT: The sum of experiences/roles across all sections must not exceed 6 (e.g., if there are 2 experiences in Volunteering and Leadership, 2 in Work Experience, and 2 in Projects, that is a total of 6 experiences/roles)
-    - There must at least be 1 experience/role in each section (Volunteering and Leadership, Work Experience, Projects) if they exist in the resume
     - If there are empty sections or subsections, include them as empty sections or subsections in the output, but do not include any text in them.
-    - Within each section, you must order the experiences chronologically, from the most recently completed to the oldest.
     - Return only the requested selection and strictly follow the wording and structure from the resume's sections, no changes to format or content
     """
     payload = {
