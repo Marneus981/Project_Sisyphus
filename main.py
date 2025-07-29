@@ -208,16 +208,33 @@ def tailor_cv(root):
         resume_experiences=experiences_text,
         job_description=job_desc
     )
+    print("Pruned experiences before filtering: " + str(pruned_experiences))
     pruned_experiences = helpers.filter_output(pruned_experiences)
+    print("Pruned experiences after filtering: " + str(pruned_experiences))
     if pruned_experiences:
-        print("Pruned experiences section")
+##############################################################################
+        print("Remaining experiences after pruning: " + str(pruned_experiences))
+        print("[0]DEBUG")
         pruned_experiences_dict = parsers.parse_cv(pruned_experiences)
-        print("Pruned experiences dict: " +  str(pruned_experiences_dict))
+        for key in ['volunteering_and_leadership', 'work_experience', 'projects']:
+            print("" + key + " section after pruning: " + str(pruned_experiences_dict.get(key, {})))
         #Replace the experiences section in the final tailored dict
-        final_tailored_dict['volunteering_and_leadership'] = pruned_experiences_dict.get('volunteering_and_leadership', {})
-        final_tailored_dict['work_experience'] = pruned_experiences_dict.get('work_experience', {})
-        final_tailored_dict['projects'] = pruned_experiences_dict.get('projects', {})
-        final_cv_text = helpers.format_output(parsers.inv_parse_cv(final_tailored_dict))
+        print("[1]DEBUG")
+        vnl_s = pruned_experiences_dict.get('volunteering_and_leadership', {})
+        print("Volunteering and Leadership section after pruning and .get(): " + str(vnl_s))
+        final_tailored_dict['volunteering_and_leadership'] = vnl_s
+        w_s = pruned_experiences_dict.get('work_experience', {})
+        print("Work Experience section after pruning and .get(): " + str(w_s))
+        final_tailored_dict['work_experience'] = w_s
+        p_s = pruned_experiences_dict.get('projects', {})
+        print("Projects section after pruning and .get(): " + str(p_s))
+        final_tailored_dict['projects'] = p_s
+        print("[2]DEBUG")
+        final_cv_text0 = parsers.inv_parse_cv(final_tailored_dict)
+        print("[3]DEBUG")
+        final_cv_text = helpers.format_output(final_cv_text0)
+
+##############################################################################
     else:
         print("No experiences section tailored, using original experiences section")
 

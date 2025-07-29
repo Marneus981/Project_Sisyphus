@@ -24,24 +24,28 @@ def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system="", ollama_ur
     {cv_data}
     And the following job description:
     {job_description}
-    Tailor a '{section}' section for a resume to best match the job description by selecting the 4 most relevant roles/experiences;
-    Return only the revised section and strictly follow the format (Only the first role is shown as an example):
+    Tailor a '{section}' section for a resume to best match the job description by following this selection process:
+    1. Select the 4 most relevant roles/experiences based on the job description.
+        1.1. If there are less than 4 roles/experiences, return all of them.
+        1.2. Modify the "Description" sections to:
+            1.2.1. Have a maximum of 2 sentences, with less than 20 words each.
+            1.2.2. Be a continuous block of text, without line breaks, composed of 1 or 2 sentences that concisely highlight the achievements and relevant skills attained at each role.
+            1.2.3. Not include the ":" character.
+        1.3. Modify the "Skills" sections to:
+            1.3.1. Have up to 6 skills across all categories, only include the most relevant.
+        1.4. Check that all sections and subsections follow these guidelines:
+            1.4.1. Each section and subsection should be a continuous block of text, without line breaks.
+            1.4.2. If a section or subsection does not exist in the resume, return it as an empty section or subsection.
+    2. Return only the revised section and strictly follow the format (Only the first role is shown as an example):
 
-    [0]Volunteering and Leadership:
-    [1]Role: Role Name 1
-    [1]Organization: Organization Name 1
-    [1]Location: Location Name 1
-    [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
-    [1]Description: Brief description of the role and responsibilities for Role 1.
-    [1]Skills: Programming Languages: Programming Language 1, ...; Technical Skills: Technical Skill 1, ...; Soft Skills: Soft Skill 1, ...
-    ...
-
-    "Description" sections are to have a maximum of 2 sentences, with less than 20 words each.
-    "Description" sections should be a continuous block of text, without line breaks, composed of 1 or 2 sentences that concisely highlight the achievements and relevant skills attained at each role.
-    "Description" sections should not include the ":" character.
-    Each "Skills" section may have up to 6 skills across all 3 categories (Programming Languages, Technical Skills, Soft Skills), only include the most relevant.
-    Be mindful not to include any line breaks in any of the sections.
-    Do note that a given section/subsection may not exist in the resume, in which case you should return an empty section/subsection.
+        [0]Volunteering and Leadership:
+        [1]Role: Role Name 1
+        [1]Organization: Organization Name 1
+        [1]Location: Location Name 1
+        [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
+        [1]Description: Brief description of the role and responsibilities for Role 1.
+        [1]Skills: Programming Languages: Programming Language 1, ...; Technical Skills: Technical Skill 1, ...; Soft Skills: Soft Skill 1, ...
+        ...
     """
     payload = {
         "model": model,
@@ -80,24 +84,28 @@ def tailor_work_experience(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_UR
     {cv_data}
     And the following job description:
     {job_description}
-    Tailor a '{section}' section for a resume to best match the job description by selecting the 4 most relevant roles/experiences;
-    Return only the revised section and strictly follow the format (Only the first role/position is shown as an example):
+    Tailor a '{section}' section for a resume to best match the job description by following this selection process:
+    1. Select the 4 most relevant roles/experiences based on the job description.
+        1.1. If there are less than 4 roles/experiences, return all of them.
+        1.2. Modify the "Description" sections to:
+            1.2.1. Have a maximum of 2 sentences, with less than 20 words each.
+            1.2.2. Be a continuous block of text, without line breaks, composed of 1 or 2 sentences that concisely highlight the achievements and relevant skills attained at each role.
+            1.2.3. Not include the ":" character.
+        1.3. Modify the "Skills" sections to:
+            1.3.1. Have up to 6 skills across all categories, only include the most relevant.
+        1.4. Check that all sections and subsections follow these guidelines:
+            1.4.1. Each section and subsection should be a continuous block of text, without line breaks.
+            1.4.2. If a section or subsection does not exist in the resume, return it as an empty section or subsection.
+    2. Return only the revised section and strictly follow the format (Only the first role/position is shown as an example):
 
-    [0]Work Experience:
-    [1]Job Title: Job Title 1
-    [1]Company: Company 1
-    [1]Location: Location Name 1
-    [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
-    [1]Description: Brief description of the role and responsibilities for Role 1.
-    [1]Skills: Programming Languages: Programming Language 1, ...; Technical Skills: Technical Skill 1, ...; Soft Skills: Soft Skill 1, ...
-    ...
-
-    "Description" sections are to have a maximum of 2 sentences, with less than 20 words each.
-    "Description" sections should be a continuous block of text, without line breaks, composed of 1 or 2 sentences that concisely highlight the achievements and relevant skills attained at each role.
-    "Description" sections should not include the ":" character.
-    Each "Skills" section may have up to 6 skills across all categories, only include the most relevant.
-    Be mindful not to include any line breaks in any of the sections.
-    Do note that a given section/subsection may not exist in the resume, in which case you should return an empty section/subsection.
+        [0]Work Experience:
+        [1]Job Title: Job Title 1
+        [1]Company: Company 1
+        [1]Location: Location Name 1
+        [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
+        [1]Description: Brief description of the role and responsibilities for Role 1.
+        [1]Skills: Programming Languages: Programming Language 1, ...; Technical Skills: Technical Skill 1, ...; Soft Skills: Soft Skill 1, ...
+        ...
     """
     payload = {
         "model": model,
@@ -135,24 +143,28 @@ def tailor_projects(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_d
     {cv_data}
     And the following job description:
     {job_description}
-    Tailor a '{section}' section for a resume to best match the job description by selecting the 4 most relevant projects;
-    Return only the revised section and strictly follow the format (Only the first project is shown as an example):
+    Tailor a '{section}' section for a resume to best match the job description by following this selection process:
 
-    [0]Projects:
-    [1]Project Title: Project Title 1
-    [1]Type: Type of Project 1 (e.g., Personal, Academic, Professional)
-    [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
-    [1]Description: Brief description of the role and responsibilities for Role 1.
-    [1]Skills: Programming Languages: Programming Language 1, ...; Technical Skills: Technical Skill 1, ...; Soft Skills: Soft Skill 1, ...
-    ...
+    1. Select the 4 most relevant projects based on the job description.
+        1.1. If there are less than 4 projects, return all of them.
+        1.2. Modify the "Description" sections to:
+            1.2.1. Have a maximum of 2 sentences, with less than 20 words each.
+            1.2.2. Be a continuous block of text, without line breaks, composed of 1 or 2 sentences that concisely highlight the achievements and relevant skills attained at each project.
+            1.2.3. Not include the ":" character.
+        1.3. Modify the "Skills" sections to:
+            1.3.1. Have up to 6 skills across all categories, only include the most relevant.
+        1.4. Check that all sections and subsections follow these guidelines:
+            1.4.1. Each section and subsection should be a continuous block of text, without line breaks.
+            1.4.2. If a section or subsection does not exist in the resume, return it as an empty section or subsection.
+    2. Return only the revised section and strictly follow the format (Only the first project is shown as an example):
 
-    "Description" sections are to have a maximum of 2 sentences, with less than 20 words each.
-    "Description" sections should be a continuous block of text, without line breaks, composed of 1 or 2 sentences that concisely highlight the achievements and relevant skills attained at each role.
-    "Description" sections should not include the ":" character.
-    Each "Skills" section may have up to 6 skills across all categories, only include the most relevant.
-    If there are less than 4 projects, return them all.
-    Be mindful not to include any line breaks in any of the sections.
-    Do note that a given section/subsection may not exist in the resume, in which case you should return an empty section/subsection.
+        [0]Projects:
+        [1]Project Title: Project Title 1
+        [1]Type: Type of Project 1 (e.g., Personal, Academic, Professional)
+        [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
+        [1]Description: Brief description of the role and responsibilities for Role 1.
+        [1]Skills: Programming Languages: Programming Language 1, ...; Technical Skills: Technical Skill 1, ...; Soft Skills: Soft Skill 1, ...
+        ...
     """
     payload = {
         "model": model,
@@ -190,12 +202,30 @@ def prune_vl_w_p(model = DEFAULT_MODEL, system = "", ollama_url = DEFAULT_URL, r
 
     Select a total sum of 6 experiences/roles across all the sections based on the job description.
     For example, you can pick 2 from Work Experience, 2 from Projects, and 2 from Volunteering and Leadership.
-    Follow these guidelines while selecting:
-    - You MUST return 6 experiences/roles, unless the total sum of experiences/roles across all sections is less than 6, in which case you should return all of them.
+    Follow this process when selecting:
+
+    1. Count the total number of experiences/roles across all sections.
+    2. If the total number of experiences/roles is less than 6, return all of them.
+    3. If the total number of experiences/roles is greater than or equal to 6 before selection:
+        3.1. Select the most relevant 6 experiences/roles based on the job description.
+    4. Return the selected experiences/roles in the same format as the original resume, with no changes to structure or content.
+    
+    Follow these guidelines while selecting the experiences/roles in step 3:
     - The selection process must be based on relevance to the job description
     - The selection process must be made across all sections (Volunteering and Leadership, Work Experience, Projects)
     - If there are empty sections or subsections, include them as empty sections or subsections in the output, but do not include any text in them.
-    - Return only the requested selection and strictly follow the wording and structure from the resume's sections, no changes to format or content
+    - Follow the wording and structure from the resume's sections, no changes to format or content
+
+    Return your response strictly in the following format:
+
+        Step 1: 
+        Number of experiences/roles across all sections
+        Step 2: 
+        Were all experiences/roles returned? Yes/No
+        Step 3: 
+        List the titles of the selected experiences/roles and give an explanation for their selection
+        Step 4: 
+        Return the selected experiences/roles in the same format as the original resume, with no changes to structure or content
     """
     payload = {
         "model": model,

@@ -1,17 +1,36 @@
 [1.0 RELEASE CHECKBOX]
-    [][1.0 PUBLIC RELEASE] Clean code and prompt engineer a bit
-    [][1.0 PRIVATE RELEASE] Add own CV
+    [][1.0 PUBLIC RELEASE] Clean code and prompt engineer a bit; make a single UI window;make verbose toggle?
+    [][1.0 PRIVATE RELEASE] Add own CV; verify code performance and good practices
     [][0.95]Fit entire resume in 1 page (or close to)
     [][0.9]Add another step in tailoring process: set a number of experiences, and only include a set number of them
     
 [WIP GOAL: 0.95 + FIXES]
     [0.95 + FIXES]
+        []Make summary after pruning (maybe after skills too?)
+        []Make indented display for debug
         [][BUG] 4 Experiences Roles get return per section (12 vs 6 total wanted)
                 Maybe unsaved pruning output? Check in vs out
                 Maybe separate systems?
                 Prompt engineering
         [][BUG] Chronological ordering is wrong
                 Outsource this to an actual function
+
+        BUGS are somewhere here:
+
+        [0]pruned_experiences_dict = parsers.parse_cv(pruned_experiences)
+
+        [1]final_tailored_dict['volunteering_and_leadership'] = pruned_experiences_dict.get('volunteering_and_leadership', {})
+        final_tailored_dict['work_experience'] = pruned_experiences_dict.get('work_experience', {})
+        final_tailored_dict['projects'] = pruned_experiences_dict.get('projects', {})
+        
+        [2]final_cv_text = helpers.format_output(
+            [3]parsers.inv_parse_cv(final_tailored_dict))
+
+        [0][]
+        [1][]
+        [2][]
+        [3][]
+        [4][]
 
     [???]Convert to PDF button
         
