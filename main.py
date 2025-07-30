@@ -57,10 +57,10 @@ def tailor_cv(root):
     cv_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "cvs", cv_file))
     system_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", system_file))
 
-    print("Selected Model: " + str(selected_model))
-    print("CV Text: " + str(cv_text))
-    print("System: " + str(system_text))
-    print("Job Description: " + str(job_desc))
+    print("Selected Model: \n" + str(selected_model))
+    print("CV Text: \n" + helpers.indent_text(str(cv_text)))
+    print("System: \n" + str(system_text))
+    print("Job Description: \n" + str(job_desc))
     # Here you can call your tailoring functions
 
     cv_dict = parsers.parse_cv(cv_text)
@@ -160,7 +160,7 @@ def tailor_cv(root):
     # Convert the tailored dict back to text (no summary section yet)
     s_text = parsers.inv_parse_cv(tailored_dict)
 
-    print("Resume before pruning (And before Summary): " + str(s_text))
+    print("Resume before pruning (And before Summary): \n" + helpers.indent_text(str(s_text)))
 
 
     #Prune Volunteering and Leadership, Work Experience and Projects sections based on job description
@@ -178,7 +178,7 @@ def tailor_cv(root):
     }
     #Convert to text
     experiences_text = parsers.inv_parse_cv(experiences)
-    print("Experiences text before pruning: " + str(experiences_text))
+    print("Experiences text before pruning: \n" + helpers.indent_text(str(experiences_text)))
     #Prune Volunteering and Leadership, Work Experience and Projects sections based on job description
     pruned_experiences = tailor.prune_vl_w_p(
         model=selected_model,
@@ -186,12 +186,11 @@ def tailor_cv(root):
         resume_experiences=experiences_text,
         job_description=job_desc
     )
-    print("Pruned experiences before filtering: " + str(pruned_experiences))
+    print("Remaining experiences before filtering: \n" + helpers.indent_text(str(pruned_experiences)))
     pruned_experiences = helpers.filter_output(pruned_experiences)
-    print("Pruned experiences after filtering: " + str(pruned_experiences))
+    print("Remaining experiences after filtering: \n" + helpers.indent_text(str(pruned_experiences)))
     if pruned_experiences:
 ##############################################################################
-        print("Remaining experiences after pruning: " + str(pruned_experiences))
         print("[0]DEBUG")
         pruned_experiences_dict = parsers.parse_cv(pruned_experiences)
         for key in ['volunteering_and_leadership', 'work_experience', 'projects']:
@@ -199,13 +198,13 @@ def tailor_cv(root):
         #Replace the experiences section in the final tailored dict
         print("[1]DEBUG")
         vnl_s = pruned_experiences_dict.get('volunteering_and_leadership', {})
-        print("Volunteering and Leadership section after pruning and .get(): " + str(vnl_s))
+        print("Volunteering and Leadership section after pruning and .get(): \n" + str(vnl_s))
         tailored_dict['volunteering_and_leadership'] = vnl_s
         w_s = pruned_experiences_dict.get('work_experience', {})
-        print("Work Experience section after pruning and .get(): " + str(w_s))
+        print("Work Experience section after pruning and .get(): \n" + str(w_s))
         tailored_dict['work_experience'] = w_s
         p_s = pruned_experiences_dict.get('projects', {})
-        print("Projects section after pruning and .get(): " + str(p_s))
+        print("Projects section after pruning and .get(): \n" + str(p_s))
         tailored_dict['projects'] = p_s
         print("[2]DEBUG")
         cv_text0 = parsers.inv_parse_cv(tailored_dict)
@@ -241,9 +240,9 @@ def tailor_cv(root):
 
     print("All sections tailored successfully")
 
-    print("CV text before separate skills section: " +  str(final_cv_text))
+    print("CV text before separate skills section: " +  helpers.indent_text(str(final_cv_text)))
     final_final_cv_text = tailor.return_text_with_skills(final_cv_text)
-    print("CV text after skills section: " +  str(final_final_cv_text))
+    print("CV text after skills section: " +  helpers.indent_text(str(final_final_cv_text)))
     #Print final_final_cv_text
     # print('Checking tailor.return_text_with_skills output:')
     # print(final_final_cv_text)
@@ -274,7 +273,11 @@ def tailor_cv(root):
         print("No skills section tailored, using original skills section")
         current_cv_text = final_final_cv_text
     
-
+    print("Ordering Resume sections by end date/issue date...")
+    current_cv_text_dct = parsers.parse_cv_out(current_cv_text)
+    current_cv_text_dct = helpers.order_chronologically(current_cv_text_dct, mode='end_date')
+    current_cv_text = parsers.inv_parse_cv_out(current_cv_text_dct)
+    print("Ordering complete")
     format_check_current_cv_text(root)
 
     

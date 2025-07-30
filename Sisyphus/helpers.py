@@ -1,5 +1,6 @@
 import os
 from Sisyphus import parsers, runLocalModel
+import datetime
 def read_text_file(file_path):
     """
     Reads a text file from the given file location and returns its contents as a string.
@@ -7,7 +8,19 @@ def read_text_file(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:
         return f.read()
 
-
+def indent_text(text):
+    #Indents text based on first 3 characters of each line: [0] indicates no indent, [1] indicates 1 indent, etc.
+    lines = text.splitlines()
+    indented_lines = []
+    for line in lines:
+        if line.startswith('[') and len(line) > 2 and line[1].isdigit() and line[2] == ']':
+            indent_level = line[1]
+            if indent_level == '0':
+                indent = ''
+            else:
+                indent = ' ' * (int(indent_level) * 4)
+            indented_lines.append(f"{indent}{line.strip()}")
+    return "\n".join(indented_lines)
 
 def list_text_files(folder_path):
     """
@@ -510,3 +523,199 @@ def read_format_checker(format_checker_output):
     print("\nEmpty Subsections:")
     for sub, count in format_checker_output.get('empty_subsections', []):
         print(f"  {sub} (empty {count})")
+
+def order_chronologically(cv_dict, mode = 'end_date'):
+    """
+    This will be called once the CV is tailored and the final dict is ready.
+    Mode can be 'end_date', 'start_date' or 'issue_date'.
+    Orders the resume entries in cv_dict chronologically based on the specified mode.
+    Particularly, on the following keys:
+
+    (only works with mode set to 'start_date' or 'end_date')
+    - education
+    - work_experience
+    - projects
+    - volunteering_and_leadership
+
+    (only works with mode set to 'issue_date')
+    - certifications
+    - awards_and_scholarships
+
+    If any of the entries in the first 4 sections (education, work_experience, projects, volunteering_and_leadership)
+     lack a start_date OR end_date, and the missing date is the opposite of the mode, the available date will be used for ordering.
+    
+    If any of the entries in the first 4 sections (education, work_experience, projects, volunteering_and_leadership)
+     lack both start_date and end_date, the entry will be pushed to the end.
+
+    If any of the entries in the last 2 sections (certifications, awards_and_scholarships)
+     lack an issue_date, the entry will be pushed to the end. 
+    
+    The input cv_dict is modified in place, and the ordered sections are returned. This is its format:
+        {
+            'name': 'Name',
+            'contact_information': {
+                'address': 'Address, City, Country',
+                'phone': 'Phone Number',
+                'email': 'E-Mail Address',
+                'linkedin': 'LinkedIn Link',
+                'github': 'Github Link',
+                'portfolio': 'Portfolio Link'
+            },
+            'title': 'Title ( Software Engineer, etc.)',
+            'summary': 'Summary.',
+            'languages': ['Language 1', 'Language 2', ..., 'Language N'],
+            'education': [
+                {
+                    'degree': 'Degree 1',
+                    'university': 'Issuing University 1',
+                    'location': 'City 1, Country 1',
+                    'duration': 'Start Year 1/Start Month 1 - End Year 1/End Month 1',
+                    'courses': ['Course 1', ..., 'Course N']
+                },
+                ...
+                {
+                    'degree': 'Degree N',
+                    'university': 'Issuing University N',
+                    'location': 'City N, Country N',
+                    'duration': 'Start Year N/Start Month N - End Year N/End Month N',
+                    'courses': ['Course N1', ..., 'Course NN']
+                }
+            ],
+            'certifications': [
+                {
+                    'certification_name': 'Certification Name 1',
+                    'issuing_organization': 'Issuing Organization 1',
+                    'issue_date': 'Issue Year 1/Issue Month 1'
+                },
+                ...
+                {
+                    'certification_name': 'Certification Name N',
+                    'issuing_organization': 'Issuing Organization N',
+                    'issue_date': 'Issue Year N/Issue Month N'
+                }
+            ],
+            awards_and_scholarships: [
+                {
+                    'award_name': 'Award Name 1',
+                    'issuing_organization': 'Issuing Organization 1',
+                    'issue_date': 'Issue Year 1/Issue Month 1'
+                },
+                ...
+                {
+                    'award_name': 'Award Name N',
+                    'issuing_organization': 'Issuing Organization N',
+                    'issue_date': 'Issue Year N/Issue Month N'
+                }
+            ],
+            'volunteering_and_leadership': [
+                {
+                    'role': 'Role Name 1',
+                    'organization': 'Organization Name 1',
+                    'location': 'City 1, Country 1',
+                    'duration': 'Start Year 1/Start Month 1 - End Year 1/End Month 1',
+                    'description': 'Brief description of the role and responsibilities for Role 1.',
+                },
+                ...
+                {
+                    'role': 'Role Name N',
+                    'organization': 'Organization Name N',
+                    'location': 'City N, Country N',
+                    'duration': 'Start Year N/Start Month N - End Year N/End Month N',
+                    'description': 'Brief description of the role and responsibilities for Role N.',
+                }
+            ],
+            'work_experience': [
+                {
+                    'job_title': 'Job Title 1',
+                    'company': 'Company 1',
+                    'location': 'City 1, Country 1',
+                    'duration': 'Start Year 1/Start Month 1 - End Year 1/End Month 1',
+                    'description': 'Brief description of the role and responsibilities for Role 1.',
+                },
+                ...
+                {
+                    'job_title': 'Job Title N',
+                    'company': 'Company N',
+                    'location': 'City N, Country N',
+                    'duration': 'Start Year N/Start Month N - End Year N/End Month N',
+                    'description': 'Brief description of the role and responsibilities for Role N.',
+                }
+            ],
+            'projects': [
+                {
+                    'project_title': 'Project Title 1',
+                    'type': 'Type of Project 1 (e.g., Personal, Academic, Professional)',
+                    'duration': 'Start Year 1/Start Month 1 - End Year 1/End Month 1',
+                    'description': 'Brief description of the role and responsibilities for Role 1.',
+                },
+                ...
+                {
+                    'project_title': 'Project Title N',
+                    'type': 'Type of Project N (e.g., Personal, Academic, Professional)',
+                    'duration': 'Start Year N/Start Month N - End Year N/End Month N',
+                    'description': 'Brief description of the role and responsibilities for Role N.',
+                }
+            ],
+            'skills': {
+                'programming_languages': ['Programming Language 1', ..., 'Programming Language N'],
+                'technical_skills': ['Event Technical Skill 1', ..., 'Technical Skill N'],
+                'soft_skills': ['Soft Skill 1', ..., 'Soft Skill N']
+            }
+        }
+
+    """
+    if mode not in ['start_date', 'end_date', 'issue_date']:
+        raise ValueError("Invalid mode. Choose from 'start_date', 'end_date', or 'issue_date'.")
+    def parse_date(date_str):
+        """
+        Parse a date string in the format 'Year/Month' and return a datetime.date object.
+        """
+        year, month = map(int, date_str.split('/'))
+        return datetime.date(year, month, 1)
+    def parse_duration(duration_str):
+        """
+        Parse a duration string in the format 'Start Year/Start Month - End Year/End Month'
+        and return a tuple of start and end dates as datetime.date objects.
+        Output is a tuple of datetime.date objects.
+        """
+        start_str, end_str = duration_str.split(' - ')
+        start_date = parse_date(start_str)
+        end_date = parse_date(end_str)
+        return start_date, end_date
+    def order_section(section, type_key = 'start_date'):
+        """
+        Order the items in a section based on their start and end dates.
+        """
+        allowed_sections1 = ['education', 'work_experience', 'projects', 'volunteering_and_leadership']
+        allowed_sections2 = ['certifications', 'awards_and_scholarships']
+        allowed_keys = ['start_date', 'end_date', 'issue_date']
+        if type_key not in allowed_keys:
+            raise ValueError("Invalid type_key. Choose from 'start_date', 'end_date', or 'issue_date'.")
+        if section not in allowed_sections1 and section not in allowed_sections2:
+            raise ValueError("Invalid section. Choose from 'education', 'work_experience', 'projects', 'volunteering_and_leadership', 'certifications', or 'awards_and_scholarships'.")
+        if section in allowed_sections1:
+            if type_key == 'start_date':
+                return sorted(section, key=lambda x: (parse_duration(x['duration'])[0] if 'duration' in x else datetime.date.max))
+            elif type_key == 'end_date':
+                return sorted(section, key=lambda x: (parse_duration(x['duration'])[1] if 'duration' in x else datetime.date.max))
+            elif type_key == 'issue_date':
+                raise ValueError("Issue date is not applicable for sections: education, work_experience, projects, volunteering_and_leadership.")
+        if section in allowed_sections2:
+            if type_key == 'issue_date':
+                return sorted(section, key=lambda x: (parse_date(x['issue_date']) if 'issue_date' in x else datetime.date.max))
+            else:
+                raise ValueError("Start date and end date are not applicable for sections: certifications, awards_and_scholarships.")
+
+    # Order each section based on the specified mode
+    if 'education' in cv_dict:
+        cv_dict['education'] = order_section(cv_dict['education'], type_key=mode)
+    if 'work_experience' in cv_dict:
+        cv_dict['work_experience'] = order_section(cv_dict['work_experience'], type_key=mode)
+    if 'projects' in cv_dict:
+        cv_dict['projects'] = order_section(cv_dict['projects'], type_key=mode)
+    if 'volunteering_and_leadership' in cv_dict:
+        cv_dict['volunteering_and_leadership'] = order_section(cv_dict['volunteering_and_leadership'], type_key=mode)
+    if 'certifications' in cv_dict:
+        cv_dict['certifications'] = order_section(cv_dict['certifications'], type_key='issue_date')
+    if 'awards_and_scholarships' in cv_dict:
+        cv_dict['awards_and_scholarships'] = order_section(cv_dict['awards_and_scholarships'], type_key='issue_date')
