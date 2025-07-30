@@ -1,0 +1,600 @@
+2025-07-30 00:35:25,064 INFO: Ollama server is not running. Starting Ollama.
+2025-07-30 00:39:07,224 INFO: Job description is empty. Please enter a job description.
+2025-07-30 00:49:33,445 INFO: Job description is empty. Please enter a job description.
+2025-07-30 00:49:51,485 INFO: Selected Model: llama3:8b
+2025-07-30 00:49:51,486 INFO: CV Text: [0]Name: Jane Doe
+[0]Contact Information:
+    [1]Address: 123 Main St, Springfield, USA
+    [1]Phone: +1-555-123-4567
+    [1]Email: jane.doe@email.com
+    [1]LinkedIn: linkedin.com/in/janedoe
+    [1]Github: github.com/janedoe
+    [1]Portfolio: janedoe.dev
+[0]Title: Senior Software Engineer
+[0]Summary: Jane Doe is a dynamic and accomplished Senior Software Engineer with more than 15 years of experience leading complex technology initiatives and delivering innovative solutions across multiple industries, including finance, education, e-commerce, and media. Her career is marked by a consistent record of architecting, developing, and deploying scalable backend systems, cloud infrastructure, and distributed applications that have driven measurable improvements in performance, reliability, and cost efficiency. Jane has demonstrated exceptional leadership in managing and mentoring teams of up to 20 engineers and volunteers, fostering a culture of collaboration, adaptability, and continuous improvement. She has spearheaded cloud migration projects that resulted in a 30% reduction in operational costs and a 95% stakeholder satisfaction rate, and has led the design and implementation of microservices architectures that reduced system downtime by 40% and increased transaction throughput by 25%. Her technical expertise encompasses Python, Java, JavaScript, C++, SQL, Dart, Go, and R, with advanced proficiency in Docker, Kubernetes, cloud computing, machine learning, NLP, IoT, and API integration. Jane’s project portfolio includes real-time analytics dashboards, mobile applications, IoT automation systems, recommendation engines, and sentiment analysis tools, each of which has delivered significant business value and user engagement improvements. She has mentored over 100 aspiring developers, achieving a 90% bootcamp completion rate and a 35% improvement in job placement, and has contributed to open source projects, enhancing code quality and adoption by 20%. Jane’s commitment to quality assurance, security, and customer service is reflected in her achievements as a QA tester, IT support specialist, and data analyst, where she improved release quality, lab uptime, and business decision-making through automation and analytics. Her experience in event planning, curriculum development, public speaking, and community outreach has expanded program reach and impact, earning her recognition for dedication, expertise, and positive influence. Fluent in English, Spanish, and French, Jane is passionate about mentoring, empowering others, and bridging the digital divide. She has received the Dean’s List and Tech Innovation Scholarship for academic excellence and holds certifications as an AWS Solutions Architect and Scrum Master. Throughout her career, Jane has demonstrated exceptional problem-solving, analytical thinking, and attention to detail, consistently delivering projects on time and within budget. Her ability to analyze complex problems, architect robust solutions, and build strong relationships with clients, stakeholders, and team members positions her as a valuable asset to any organization seeking to innovate and excel in today’s competitive landscape. Jane’s technical acumen, leadership, and interpersonal skills have enabled her to drive organizational success, foster inclusive environments, and inspire the next generation of engineers. Her history of exceeding performance metrics and delivering impactful results is a testament to her dedication, creativity, and adaptability, making her an ideal candidate for senior engineering and leadership roles in dynamic, forward-thinking organizations. She is committed to continuous learning and professional development, ensuring her contributions remain relevant and valuable. Jane’s experience spans the full software development lifecycle, from requirements gathering and design to implementation, testing, and deployment. She is passionate about fostering inclusive environments, promoting diversity in tech, and inspiring the next generation of engineers through mentorship and community engagement. Her technical acumen, combined with her leadership and interpersonal skills, positions her as a valuable asset to any organization seeking to innovate and excel in today's competitive landscape.
+[0]Languages: English, Spanish, French
+[0]Education:
+    [1]Degree: B.Sc. Computer Science
+    [1]University: Springfield University
+    [1]Location: Springfield, USA
+    [1]Duration: 2012/09 - 2016/06
+    [1]Courses: Algorithms, Data Structures, Operating Systems, Databases
+    [1]Degree: M.Sc. Software Engineering
+    [1]University: Capital Tech
+    [1]Location: Capital City, USA
+    [1]Duration: 2016/09 - 2018/06
+    [1]Courses: Cloud Computing, Distributed Systems, Advanced Programming
+[0]Certifications:
+    [1]Certification Name: AWS Certified Solutions Architect
+    [1]Issuing Organization: Amazon Web Services
+    [1]Issue Date: 2019/05
+    [1]Certification Name: Scrum Master
+    [1]Issuing Organization: Scrum Alliance
+    [1]Issue Date: 2020/03
+[0]Awards and Scholarships:
+    [1]Award Name: Dean’s List
+    [1]Issuing Organization: Springfield University
+    [1]Issue Date: 2015/06
+    [1]Award Name: Tech Innovation Scholarship
+    [1]Issuing Organization: Capital Tech
+    [1]Issue Date: 2017/09
+[0]Volunteering and Leadership:
+    [1]Role: Coding Bootcamp Mentor
+    [1]Organization: CodeSpring
+    [1]Location: Springfield, USA
+    [1]Duration: 2020/01 - 2022/12
+    [1]Description: Mentored over 100 aspiring developers in Python and web development, designing and delivering curriculum modules on REST APIs, Docker, and cloud integration. Achieved a 90% bootcamp completion rate and improved participant job placement by 35%. Fostered a collaborative learning environment, provided personalized feedback, and facilitated group projects and hackathons to encourage teamwork and innovation. Developed advanced workshops on microservices and cloud computing, resulting in measurable increases in participant technical proficiency. Provided ongoing career guidance and support, helping graduates secure positions at leading tech companies. Consistently received positive feedback from participants and program coordinators for dedication, expertise, and impact. Led outreach initiatives to local schools and organizations, expanding program reach and promoting diversity in tech. Recognized for exceptional mentoring, communication, and leadership skills. Coordinated alumni networking events and maintained relationships with graduates to track career progress and offer continued support. Implemented feedback systems to improve curriculum and teaching methods, ensuring the program remained relevant and effective. Collaborated with other mentors to share best practices and develop new instructional materials, contributing to the overall success and reputation of the bootcamp.
+    [1]Skills: Programming Languages: Python, JavaScript, Java, C++, SQL, Dart; Technical Skills: Web Development, REST APIs, Docker, Kubernetes, Cloud Integration, Data Visualization; Soft Skills: Mentoring, Communication, Leadership, Problem Solving, Teamwork, Adaptability
+    [1]Role: Hackathon Organizer
+    [1]Organization: TechFest
+    [1]Location: Capital City, USA
+    [1]Duration: 2018/03 - 2019/03
+    [1]Description: Organized annual hackathons for 200+ participants, managing logistics, securing sponsorships, and facilitating workshops on event planning and cloud setup. Increased event attendance by 50% and built strong relationships with sponsors and partners, contributing to the long-term sustainability of the hackathon series. Coordinated with industry experts to deliver keynote sessions and technical challenges, enhancing the learning experience for attendees. Implemented feedback systems to continuously improve event quality and participant satisfaction. Managed budgets and resources efficiently, ensuring successful execution of all event components. Developed marketing strategies and outreach campaigns, resulting in record participation and media coverage. Recognized for leadership, teamwork, and organizational excellence in high-pressure environments. Oversaw volunteer recruitment and training, ensuring all staff were prepared to support participants and troubleshoot technical issues. Created post-event reports and analytics to measure impact and identify areas for improvement. Fostered a culture of innovation and collaboration, encouraging participants to develop creative solutions to real-world problems.
+    [1]Skills: Programming Languages: Java, Python, JavaScript, C++, SQL, Dart; Technical Skills: Event Planning, Cloud Setup, Web Development, REST APIs, Docker, Kubernetes; Soft Skills: Leadership, Teamwork, Communication, Problem Solving, Organization, Adaptability
+    [1]Role: Open Source Contributor
+    [1]Organization: OpenDev Community
+    [1]Location: Remote
+    [1]Duration: 2019/06 - 2020/12
+    [1]Description: Contributed to open source Python and C++ libraries, reviewed 150+ pull requests, and improved documentation. Enhanced code quality and project adoption by 20%. Collaborated with global teams, demonstrating initiative and problem-solving. Led efforts to refactor legacy codebases, improving maintainability and performance. Authored comprehensive documentation and tutorials, making projects more accessible to new contributors. Participated in community forums and virtual meetups, sharing knowledge and best practices. Recognized by project maintainers for reliability, technical expertise, and positive impact on the open source ecosystem. Provided mentorship to new contributors, helping them navigate project guidelines and development workflows. Implemented automated testing and CI/CD pipelines to streamline development and ensure code quality. Engaged with users to gather feedback and prioritize feature requests, contributing to the ongoing evolution and success of the projects.
+    [1]Skills: Programming Languages: Python, C++, Java, JavaScript, SQL, Dart; Technical Skills: Version Control, Documentation, Web Development, REST APIs, Docker, Kubernetes; Soft Skills: Collaboration, Initiative, Communication, Problem Solving, Teamwork, Adaptability
+    [1]Role: STEM Volunteer
+    [1]Organization: Girls Who Code
+    [1]Location: Springfield, USA
+    [1]Duration: 2021/02 - 2022/06
+    [1]Description: Assisted in organizing workshops and mentoring high school students in programming basics, increasing STEM participation by 40%. Developed teaching materials and led hands-on coding sessions, praised for patience and communication. Coordinated outreach efforts to local schools, expanding program reach and impact. Provided individualized support to students, helping them overcome technical challenges and build confidence. Facilitated group projects and presentations, encouraging collaboration and creativity. Received recognition from program leaders for commitment to diversity and inclusion in STEM education. Organized field trips and guest speaker events to expose students to real-world applications of STEM. Developed assessment tools to track student progress and identify areas for improvement. Fostered a supportive and inclusive environment, ensuring all students felt valued and empowered to pursue STEM careers.
+    [1]Skills: Programming Languages: JavaScript, HTML, Python, Java, C++, SQL; Technical Skills: Workshop Planning, Teaching, Web Development, REST APIs, Docker, Kubernetes; Soft Skills: Patience, Communication, Leadership, Problem Solving, Teamwork, Adaptability
+    [1]Role: Community Tech Educator
+    [1]Organization: Springfield Library
+    [1]Location: Springfield, USA
+    [1]Duration: 2022/07 - 2023/06
+    [1]Description: Led free coding classes for adults, focusing on digital literacy and basic programming. Developed curriculum and taught 60+ participants, improving digital literacy scores by 30%. Designed interactive learning modules and assessments to track progress. Provided one-on-one coaching and troubleshooting support, helping participants overcome barriers to technology adoption. Organized community events and workshops to promote lifelong learning and digital inclusion. Built partnerships with local organizations to expand program offerings and reach. Recognized for empathy, adaptability, and commitment to community engagement. Created online resources and tutorials to support remote learners. Facilitated group discussions and peer learning activities to encourage collaboration and knowledge sharing. Evaluated program effectiveness through surveys and feedback, continuously refining curriculum to meet participant needs.
+    [1]Skills: Programming Languages: Python, HTML, JavaScript, Java, C++, SQL; Technical Skills: Curriculum Development, Teaching, Web Development, REST APIs, Docker, Kubernetes; Soft Skills: Empathy, Communication, Leadership, Problem Solving, Teamwork, Adaptability
+    [1]Role: Youth Robotics Coach
+    [1]Organization: RoboSpring
+    [1]Location: Springfield, USA
+    [1]Duration: 2023/07 - Present
+    [1]Description: Coached middle school robotics teams, preparing them for competitions and fostering teamwork. Led teams to win 2 regional awards, implemented hands-on training in robotics and electronics, and promoted STEM engagement. Developed training programs and practice schedules to maximize team performance. Provided technical guidance on programming and hardware design, enabling students to build innovative robots. Facilitated team-building activities and conflict resolution, ensuring a positive and productive environment. Engaged with parents and educators to promote STEM opportunities and support student growth. Recognized for coaching, leadership, and technical expertise. Organized workshops and demonstrations to showcase student projects and inspire interest in robotics. Maintained equipment and managed budgets to ensure teams had the resources needed for success.
+    [1]Skills: Programming Languages: C++, Python, Java, JavaScript, SQL, Dart; Technical Skills: Robotics, Electronics, Web Development, REST APIs, Docker, Kubernetes; Soft Skills: Coaching, Teamwork, Communication, Problem Solving, Leadership, Adaptability
+    [1]Role: Tech Literacy Volunteer
+    [1]Organization: DigitalSpring
+    [1]Location: Springfield, USA
+    [1]Duration: 2022/01 - 2022/12
+    [1]Description: Taught basic computer skills to seniors, helping bridge the digital divide. Improved participant confidence with technology by 60%. Developed accessible learning materials and resources tailored to senior learners. Organized group sessions and individual coaching, fostering a supportive community. Provided troubleshooting support and personalized instruction, praised for patience and adaptability. Collaborated with local agencies to expand program reach and impact. Received positive feedback from participants and community leaders for dedication and effectiveness. Created step-by-step guides and video tutorials to assist with common technology tasks. Facilitated discussions on internet safety and privacy, empowering seniors to use technology confidently and securely.
+    [1]Skills: Programming Languages: Python, HTML, JavaScript, Java, C++, SQL; Technical Skills: Computer Basics, Troubleshooting, Web Development, REST APIs, Docker, Kubernetes; Soft Skills: Patience, Communication, Leadership, Problem Solving, Teamwork, Adaptability
+    [1]Role: Event Coordinator
+    [1]Organization: Springfield Tech Expo
+    [1]Location: Springfield, USA
+    [1]Duration: 2023/03 - Present
+    [1]Description: Coordinated logistics and managed volunteers for the annual Springfield Tech Expo, increasing event efficiency by 25%. Developed communication plans and managed a team of 20 volunteers, recognized for organization and leadership. Oversaw event marketing and outreach, resulting in record attendance and media coverage. Implemented technology solutions to streamline registration and scheduling. Facilitated post-event evaluations and feedback sessions to drive continuous improvement. Built strong relationships with sponsors and exhibitors, contributing to event success and sustainability. Recognized for organizational excellence and impact on community engagement. Developed contingency plans to address potential challenges and ensure smooth event execution.
+    [1]Skills: Programming Languages: JavaScript, Python, Java, C++, SQL, Dart; Technical Skills: Event Management, Communication, Web Development, REST APIs, Docker, Kubernetes; Soft Skills: Organization, Leadership, Communication, Problem Solving, Teamwork, Adaptability
+    [1]Role: Science Fair Judge
+    [1]Organization: Springfield High School
+    [1]Location: Springfield, USA
+    [1]Duration: 2022/04 - 2022/04
+    [1]Description: Judged student science projects, provided feedback, and encouraged STEM participation. Evaluated 50+ projects, promoted fairness and encouragement, and inspired students to pursue STEM careers. Delivered constructive feedback and guidance to participants, helping them refine their projects and presentation skills. Participated in award selection and ceremony, recognizing outstanding achievements. Engaged with educators and parents to promote STEM education and opportunities. Received appreciation from school administrators for commitment and expertise. Developed scoring rubrics and criteria to ensure objective and consistent evaluation. Facilitated post-event discussions to help students reflect on their experiences and identify areas for growth.
+    [1]Skills: Programming Languages: Python, Java, JavaScript, C++, SQL, Dart; Technical Skills: Evaluation, Communication, Web Development, REST APIs, Docker, Kubernetes; Soft Skills: Fairness, Encouragement, Leadership, Problem Solving, Teamwork, Adaptability
+    [1]Role: Workshop Presenter
+    [1]Organization: Women in Tech
+    [1]Location: Capital City, USA
+    [1]Duration: 2023/05 - Present
+    [1]Description: Presented workshops on Python programming and career development for women in technology. Delivered sessions to 80+ attendees, received positive feedback for clarity and motivation, and helped increase program enrollment by 20%. Developed interactive presentations and hands-on coding exercises to engage participants. Provided mentorship and career advice, supporting professional growth and advancement. Collaborated with program organizers to expand workshop offerings and reach. Recognized for impact on participant confidence and skill development. Created follow-up resources and support networks to help attendees continue learning and advancing in their careers.
+    [1]Skills: Programming Languages: Python, JavaScript, Java, C++, SQL, Dart; Technical Skills: Public Speaking, Workshop Design, Web Development, REST APIs, Docker, Kubernetes; Soft Skills: Communication, Motivation, Leadership, Problem Solving, Teamwork, Adaptability
+[0]Work Experience:
+    [1]Job Title: Senior Backend Engineer
+    [1]Company: FinTech Solutions
+    [1]Location: Springfield, USA
+    [1]Duration: 2019/07 - Present
+    [1]Description: Led the design and implementation of scalable microservices architecture using Python, Go, and Docker, reducing system downtime by 40% and increasing transaction throughput by 25%. Managed a team of 5 engineers, mentored junior staff, and fostered a culture of continuous improvement. Spearheaded cloud migration, improving reliability and reducing operational costs by 30%. Collaborated with cross-functional teams to deliver high-performance financial applications, integrating Kubernetes for automated deployment and monitoring. Implemented advanced security protocols and compliance measures, ensuring data integrity and regulatory adherence. Provided technical guidance and training to team members, enhancing overall productivity and expertise. Consistently delivered projects on time and within budget, exceeding client expectations and contributing to company growth. Led post-mortem analyses and process improvements, resulting in a 20% reduction in incident response times. Recognized for outstanding leadership, analytical thinking, and technical excellence. Developed documentation and best practices for microservices development, contributing to knowledge sharing and team efficiency. Coordinated with stakeholders to prioritize feature development and address business needs, ensuring alignment with organizational goals.
+    [1]Skills: Programming Languages: Python, Go, Java, JavaScript, C++, SQL; Technical Skills: Microservices, Docker, Kubernetes, API Development, Database Design, Cloud Computing; Soft Skills: Leadership, Problem Solving, Communication, Teamwork, Adaptability, Analytical Thinking
+    [1]Job Title: Software Engineer
+    [1]Company: WebApps Inc.
+    [1]Location: Capital City, USA
+    [1]Duration: 2016/07 - 2019/06
+    [1]Description: Developed RESTful APIs and optimized database queries, improving application performance by 30%. Collaborated with cross-functional teams to deliver web products, implemented microservices, and contributed to Docker and Kubernetes adoption. Led efforts to refactor legacy systems, reducing technical debt and improving maintainability. Conducted code reviews and provided mentorship to junior developers, fostering a culture of quality and innovation. Implemented automated testing and CI/CD pipelines, increasing deployment frequency and reliability. Received multiple performance awards for technical excellence and teamwork. Coordinated with product managers and designers to refine user experiences and requirements, ensuring alignment with business goals. Recognized for adaptability, initiative, and impact on organizational success. Developed internal tools to streamline development workflows and improve productivity. Participated in sprint planning and retrospectives, contributing to continuous improvement of team processes.
+    [1]Skills: Programming Languages: Java, SQL, Python, JavaScript, C++, Dart; Technical Skills: API Development, Database Design, Microservices, Docker, Kubernetes, Cloud Computing; Soft Skills: Collaboration, Communication, Leadership, Problem Solving, Teamwork, Adaptability
+    [1]Job Title: Junior Developer
+    [1]Company: StartUp Hub
+    [1]Location: Springfield, USA
+    [1]Duration: 2015/06 - 2016/06
+    [1]Description: Assisted in developing MVPs for startup clients, wrote unit tests, and maintained project documentation. Improved code coverage by 20% and contributed to successful product launches. Demonstrated adaptability and teamwork in fast-paced environments. Participated in agile development cycles, delivering features and bug fixes on tight deadlines. Collaborated with designers and product managers to refine user experiences and requirements. Provided technical support and troubleshooting for deployed applications, ensuring high availability and customer satisfaction. Recognized for initiative and willingness to learn new technologies. Developed prototypes and proof-of-concept applications to validate business ideas. Documented development processes and lessons learned to support future projects.
+    [1]Skills: Programming Languages: Python, JavaScript, Java, C++, SQL, Dart; Technical Skills: Unit Testing, Documentation, Microservices, Docker, Kubernetes, Cloud Computing; Soft Skills: Adaptability, Teamwork, Leadership, Problem Solving, Communication, Analytical Thinking
+    [1]Job Title: Research Assistant
+    [1]Company: Capital Tech
+    [1]Location: Capital City, USA
+    [1]Duration: 2014/09 - 2015/05
+    [1]Description: Supported research in distributed systems, implemented simulation tools, and co-authored a conference paper. Improved simulation accuracy by 15% and contributed to research recognized at national conferences. Developed custom software solutions for data analysis and visualization, enabling more effective research outcomes. Collaborated with faculty and graduate students to design experiments and interpret results. Presented findings at academic conferences and workshops, receiving positive feedback for clarity and impact. Demonstrated strong analytical and communication skills throughout the research process. Developed reusable code libraries to support ongoing research efforts. Assisted in grant writing and proposal development, contributing to successful funding applications.
+    [1]Skills: Programming Languages: Java, Python, JavaScript, C++, SQL, Dart; Technical Skills: Simulation, Research, Microservices, Docker, Kubernetes, Cloud Computing; Soft Skills: Analytical Thinking, Communication, Leadership, Problem Solving, Teamwork, Adaptability
+    [1]Job Title: Data Analyst Intern
+    [1]Company: DataSpring Analytics
+    [1]Location: Springfield, USA
+    [1]Duration: 2013/06 - 2014/08
+    [1]Description: Analyzed large datasets, created visualizations, and presented findings to stakeholders. Automated reporting processes, reducing manual effort by 50%. Developed predictive models and dashboards to support business decision-making. Collaborated with data engineers to optimize data pipelines and storage solutions. Provided training and support to end users, ensuring effective adoption of analytics tools. Received commendations from supervisors for technical proficiency and impact on business outcomes. Recognized for attention to detail, presentation skills, and analytical thinking. Developed documentation and training materials to support data literacy initiatives. Participated in cross-functional meetings to align analytics efforts with business strategy.
+    [1]Skills: Programming Languages: R, Python, Java, JavaScript, C++, SQL; Technical Skills: Data Analysis, Visualization, Microservices, Docker, Kubernetes, Cloud Computing; Soft Skills: Presentation, Attention to Detail, Leadership, Problem Solving, Teamwork, Adaptability
+    [1]Job Title: IT Support Specialist
+    [1]Company: Springfield University
+    [1]Location: Springfield, USA
+    [1]Duration: 2012/09 - 2013/05
+    [1]Description: Provided technical support to students and faculty, resolved hardware/software issues, and maintained lab equipment. Achieved a 95% satisfaction rate and improved lab uptime by 20%. Implemented preventive maintenance schedules and troubleshooting protocols, reducing incident response times. Trained users on new technologies and software applications, enhancing productivity and user experience. Documented support procedures and best practices for future reference. Recognized for patience, reliability, and customer service excellence. Developed online help resources and FAQs to assist users with common issues. Coordinated with IT staff to implement system upgrades and security patches.
+    [1]Skills: Programming Languages: Bash, Python, Java, JavaScript, C++, SQL; Technical Skills: Troubleshooting, Hardware Support, Microservices, Docker, Kubernetes, Cloud Computing; Soft Skills: Customer Service, Patience, Leadership, Problem Solving, Teamwork, Adaptability
+    [1]Job Title: QA Tester
+    [1]Company: WebApps Inc.
+    [1]Location: Capital City, USA
+    [1]Duration: 2011/06 - 2012/08
+    [1]Description: Tested web applications for bugs, wrote test cases, and collaborated with developers to resolve issues. Reduced bug count by 30% and improved release quality. Developed automated test scripts and regression suites, increasing test coverage and efficiency. Participated in sprint planning and retrospectives, providing valuable feedback on quality and process improvements. Trained new QA team members and contributed to documentation of testing standards. Received multiple awards for excellence in quality assurance. Recognized for detail-oriented work, communication, and technical proficiency. Developed metrics and dashboards to track testing progress and outcomes. Coordinated with development teams to prioritize bug fixes and feature enhancements.
+    [1]Skills: Programming Languages: JavaScript, Python, Java, C++, SQL, Dart; Technical Skills: Testing, Bug Tracking, Microservices, Docker, Kubernetes, Cloud Computing; Soft Skills: Detail-Oriented, Communication, Leadership, Problem Solving, Teamwork, Adaptability
+    [1]Job Title: Systems Administrator Intern
+    [1]Company: Capital Tech
+    [1]Location: Capital City, USA
+    [1]Duration: 2010/06 - 2011/05
+    [1]Description: Assisted in maintaining servers, monitoring network performance, and implementing security protocols. Improved server uptime by 15% and contributed to security audits. Developed monitoring dashboards and automated alert systems to proactively address issues. Collaborated with IT staff to implement backup and disaster recovery solutions. Provided training and documentation for system users and administrators. Recognized for reliability, technical expertise, and problem-solving ability. Assisted in capacity planning and resource allocation to support organizational growth. Participated in incident response and troubleshooting, ensuring rapid resolution of technical issues.
+    [1]Skills: Programming Languages: Bash, Python, Java, JavaScript, C++, SQL; Technical Skills: Server Management, Security, Microservices, Docker, Kubernetes, Cloud Computing; Soft Skills: Reliability, Problem Solving, Leadership, Communication, Teamwork, Adaptability
+    [1]Job Title: Product Manager Assistant
+    [1]Company: FinTech Solutions
+    [1]Location: Springfield, USA
+    [1]Duration: 2009/06 - 2010/05
+    [1]Description: Supported product managers in market research, feature planning, and user feedback analysis. Helped launch 3 new features, improving user engagement by 20%. Conducted competitive analysis and user surveys to inform product strategy. Coordinated cross-functional teams to deliver features on schedule and within budget. Developed training materials and documentation for new product releases. Received positive feedback from product managers and stakeholders for contributions to product success. Recognized for organization, communication, and impact on product development. Assisted in roadmap planning and prioritization of feature requests. Facilitated user testing and feedback sessions to validate product improvements.
+    [1]Skills: Programming Languages: Python, SQL, Java, JavaScript, C++, Dart; Technical Skills: Market Research, Planning, Microservices, Docker, Kubernetes, Cloud Computing; Soft Skills: Organization, Communication, Leadership, Problem Solving, Teamwork, Adaptability
+    [1]Job Title: Web Content Editor
+    [1]Company: Springfield Media
+    [1]Location: Springfield, USA
+    [1]Duration: 2008/06 - 2009/05
+    [1]Description: Edited and published web content, collaborated with writers, and ensured SEO best practices. Increased web traffic by 35% and improved content quality. Developed editorial guidelines and content calendars to streamline publishing workflows. Coordinated with marketing and design teams to enhance user engagement and brand consistency. Implemented analytics tools to track content performance and inform strategy. Recognized for creativity, reliability, and impact on organizational goals. Praised for attention to detail, collaboration, and leadership in content management. Developed training materials for new editors and writers to ensure consistency and quality.
+    [1]Skills: Programming Languages: HTML, CSS, JavaScript, Python, Java, SQL; Technical Skills: Editing, SEO, Microservices, Docker, Kubernetes, Cloud Computing; Soft Skills: Attention to Detail, Collaboration, Leadership, Problem Solving, Teamwork, Adaptability
+[0]Projects:
+    [1]Project Title: Real-Time Analytics Dashboard
+    [1]Type: Professional
+    [1]Duration: 2021/01 - 2021/12
+    [1]Description: Developed a real-time analytics dashboard using Python and React, enabling clients to monitor KPIs and generate actionable reports. Integrated WebSockets for live data updates and advanced data visualization, increasing user engagement by 50%. Optimized backend performance, reducing query latency by 35%. Designed modular architecture to support future scalability and feature expansion. Collaborated with stakeholders to define requirements and deliver a user-friendly interface. Provided training and documentation for end users, ensuring successful adoption and utilization. Implemented role-based access controls and security features to protect sensitive data. Received positive feedback from clients and management for technical excellence and business impact. Led post-launch support and feature enhancements, maintaining high user satisfaction and system reliability. Developed automated reporting tools and export features to support business analysis and decision-making.
+    [1]Skills: Programming Languages: Python, JavaScript, Dart, Java, C++, SQL; Technical Skills: Data Visualization, WebSockets, Mobile Development, Cloud Integration, API Integration, NLP; Soft Skills: Presentation, Documentation, UX Design, Initiative, Creativity, Self-Motivation
+    [1]Project Title: Mobile Expense Tracker
+    [1]Type: Personal
+    [1]Duration: 2020/03 - 2020/09
+    [1]Description: Developed a cross-platform mobile app for tracking expenses, featuring cloud sync and intuitive UI. Achieved 1,000+ downloads and maintained a 4.8-star rating. Implemented secure authentication and responsive design. Integrated analytics to provide users with spending insights and trends. Collaborated with beta testers to refine features and improve usability. Published app on major platforms and managed ongoing updates and support. Designed customizable categories and reporting tools to enhance user experience. Provided detailed documentation and tutorials for users. Recognized for creativity, initiative, and impact on user financial management. Developed push notification features to remind users of upcoming bills and budget limits.
+    [1]Skills: Programming Languages: Dart, JavaScript, Python, Java, C++, SQL; Technical Skills: Mobile Development, Cloud Integration, Data Visualization, WebSockets, API Integration, NLP; Soft Skills: UX Design, Initiative, Presentation, Documentation, Creativity, Self-Motivation
+    [1]Project Title: Inventory Management System
+    [1]Type: Academic
+    [1]Duration: 2018/01 - 2018/06
+    [1]Description: Created an inventory management system for a university project, supporting barcode scanning and reporting. Improved inventory accuracy by 25% and streamlined reporting processes. Designed user-friendly interfaces and automated data entry workflows. Collaborated with faculty and students to gather requirements and test features. Presented project at academic symposiums, receiving positive feedback for innovation and technical execution. Documented system architecture and implementation for future reference. Recognized for organization, problem-solving, and impact on academic operations. Developed export features for inventory reports and integrated with existing campus systems.
+    [1]Skills: Programming Languages: Java, SQL, Python, JavaScript, C++, Dart; Technical Skills: Database Design, Reporting, Mobile Development, Cloud Integration, Data Visualization, WebSockets; Soft Skills: Organization, Problem Solving, UX Design, Initiative, Presentation, Documentation
+    [1]Project Title: Portfolio Website
+    [1]Type: Personal
+    [1]Duration: 2017/05 - 2017/08
+    [1]Description: Designed and deployed a personal portfolio website to showcase projects and skills. Increased professional visibility and received positive feedback from recruiters. Implemented responsive design and SEO optimization. Integrated blog and contact features to enhance user engagement. Managed hosting and maintenance, ensuring high availability and performance. Updated content regularly to reflect new achievements and skills. Provided tutorials and resources for aspiring developers. Recognized for creativity, self-motivation, and impact on career advancement. Developed analytics dashboards to track site traffic and user interactions.
+    [1]Skills: Programming Languages: HTML, CSS, JavaScript, Python, Java, SQL; Technical Skills: Web Design, Deployment, Mobile Development, Cloud Integration, Data Visualization, WebSockets; Soft Skills: Creativity, Self-Motivation, UX Design, Initiative, Presentation, Documentation
+    [1]Project Title: Chatbot for Customer Support
+    [1]Type: Professional
+    [1]Duration: 2022/01 - 2022/06
+    [1]Description: Developed a chatbot using Python and NLP libraries to automate customer support for a retail client. Reduced response time by 60% and improved customer satisfaction scores. Designed conversational flows and intent recognition to enhance user experience. Integrated with existing APIs and provided analytics on user interactions. Collaborated with support teams to identify common issues and optimize solutions. Provided training and documentation for staff, ensuring effective use of the chatbot. Led post-launch support and feature enhancements, maintaining high user satisfaction. Recognized for innovation, problem-solving, and impact on customer service. Developed escalation protocols for complex queries and integrated multilingual support.
+    [1]Skills: Programming Languages: Python, JavaScript, Dart, Java, C++, SQL; Technical Skills: NLP, API Integration, Mobile Development, Cloud Integration, Data Visualization, WebSockets; Soft Skills: Problem Solving, Initiative, UX Design, Presentation, Documentation, Creativity
+    [1]Project Title: IoT Home Automation System
+    [1]Type: Personal
+    [1]Duration: 2023/01 - 2023/07
+    [1]Description: Built an IoT-based home automation system using Raspberry Pi and MQTT protocol for smart device control. Enabled remote monitoring and control, increasing home efficiency by 20%. Designed modular hardware and software components for easy expansion. Integrated voice control and mobile app interfaces for enhanced usability. Documented system architecture and provided tutorials for DIY enthusiasts. Received positive feedback from users and online communities for technical excellence and creativity. Led troubleshooting and support forums, helping users customize and expand their systems. Developed energy usage analytics and automated scheduling features.
+    [1]Skills: Programming Languages: Python, C++, Java, JavaScript, SQL, Dart; Technical Skills: IoT, MQTT, Mobile Development, Cloud Integration, Data Visualization, WebSockets; Soft Skills: Innovation, Self-Learning, UX Design, Initiative, Presentation, Documentation
+    [1]Project Title: E-Commerce Recommendation Engine
+    [1]Type: Professional
+    [1]Duration: 2022/07 - 2022/12
+    [1]Description: Implemented a recommendation engine for an e-commerce platform using collaborative filtering and machine learning. Increased sales conversion by 18% and improved user retention. Designed algorithms to personalize product suggestions and enhance user experience. Collaborated with data scientists and engineers to optimize model performance. Provided training and support for marketing teams to leverage insights. Delivered scalable solution and comprehensive documentation. Led post-launch analysis and feature enhancements, maintaining high system reliability and user satisfaction. Developed A/B testing frameworks to evaluate recommendation effectiveness.
+    [1]Skills: Programming Languages: Python, SQL, Java, JavaScript, C++, Dart; Technical Skills: Machine Learning, Data Analysis, Mobile Development, Cloud Integration, Data Visualization, WebSockets; Soft Skills: Analytical Thinking, Initiative, UX Design, Presentation, Documentation, Creativity
+    [1]Project Title: Social Media Sentiment Analyzer
+    [1]Type: Academic
+    [1]Duration: 2019/01 - 2019/06
+    [1]Description: Developed a tool to analyze sentiment in social media posts using Python and NLP. Processed 10,000+ posts and provided insights for marketing campaigns. Designed data pipelines and visualization dashboards to present findings. Collaborated with faculty and students to refine algorithms and improve accuracy. Presented results at academic conferences and published findings in peer-reviewed journals. Led workshops and tutorials for students and researchers. Received awards for innovation, research, and impact on social media analytics. Developed export features for sentiment reports and integrated with marketing dashboards.
+    [1]Skills: Programming Languages: Python, R, Java, JavaScript, C++, SQL; Technical Skills: NLP, Data Visualization, Mobile Development, Cloud Integration, API Integration, WebSockets; Soft Skills: Research, Communication, UX Design, Initiative, Presentation, Documentation
+    [1]Project Title: Employee Scheduling App
+    [1]Type: Professional
+    [1]Duration: 2023/08 - 2024/01
+    [1]Description: Created a web-based employee scheduling application for a small business, integrating calendar APIs and notifications. Reduced scheduling conflicts by 40% and improved staff satisfaction. Designed flexible scheduling algorithms to accommodate diverse work patterns. Collaborated with business owners to gather requirements and test features. Provided training and support for staff, ensuring effective adoption. Delivered user-friendly interface and robust backend. Led post-launch support and feature enhancements, maintaining high user satisfaction. Recognized for organization, initiative, and impact on business operations. Developed reporting tools to track attendance and shift coverage.
+    [1]Skills: Programming Languages: JavaScript, Python, Dart, Java, C++, SQL; Technical Skills: Web Development, API Integration, Mobile Development, Cloud Integration, Data Visualization, WebSockets; Soft Skills: Organization, Initiative, UX Design, Presentation, Documentation, Creativity
+    [1]Project Title: Fitness Tracker Dashboard
+    [1]Type: Personal
+    [1]Duration: 2024/02 - Present
+    [1]Description: Developed a dashboard to visualize fitness data from wearable devices, supporting multiple data sources and export options. Increased user engagement and provided actionable health insights. Implemented advanced data visualization and responsive design. Integrated analytics to track progress and set goals. Collaborated with users to refine features and improve usability. Published dashboard online and managed ongoing updates and support. Provided tutorials and resources for health enthusiasts. Recognized for creativity, self-motivation, and impact on user health management. Developed integration with third-party health apps and export features for fitness reports.
+    [1]Skills: Programming Languages: Python, JavaScript, Dart, Java, C++, SQL; Technical Skills: Data Visualization, API Integration, Mobile Development, Cloud Integration, WebSockets, NLP; Soft Skills: Creativity, Self-Motivation, UX Design, Initiative, Presentation, Documentation
+2025-07-30 00:49:51,490 INFO: System: You are a resume tailoring assistant. Only output the section requested, in the exact format specified. You are to follow the following guidelines when tailoring all resume sections:
+You may only draw from the provided descriptions, no making assumptions.
+Do not invent any data or roles, only use the data provided.
+You may not add any untrue statements outside of what has been provided in the untailored resume section.
+The tailored sections and overall resume must be brief, concise and professional. It must cater to recruiters and make the resume stand out.
+Use simple to understand language when possible, unless direct technical terminology is employed.
+2025-07-30 00:49:51,491 INFO: Job Description: DoorDash is building the world's most reliable on-demand, logistics engine for delivery. We are continuing to grow rapidly and expanding our Engineering offices globally! We are looking for Backend Engineers to build and maintain a large scale 24x7 global infrastructure system that powers DoorDash's 3-sided marketplace of Consumers, Merchants and Dashers.
+
+
+2025-07-30 00:49:51,492 INFO: Fetching unchanged fields...
+2025-07-30 00:49:51,492 INFO: Found field: name Keeping unchanged field: name
+2025-07-30 00:49:51,492 INFO: Found field: contact_information Keeping unchanged field: contact_information
+2025-07-30 00:49:51,492 INFO: Found field: title Keeping unchanged field: title
+2025-07-30 00:49:51,492 INFO: Found field: languages Keeping unchanged field: languages
+2025-07-30 00:49:51,493 INFO: Found field: education Keeping unchanged field: education
+2025-07-30 00:49:51,493 INFO: Found field: certifications Keeping unchanged field: certifications
+2025-07-30 00:49:51,493 INFO: Found field: awards_and_scholarships Keeping unchanged field: awards_and_scholarships
+2025-07-30 00:49:51,494 INFO: Searching fields to tailor...
+2025-07-30 00:49:51,494 INFO: Found summary section
+2025-07-30 00:49:51,494 INFO: Found volunteering_and_leadership section
+2025-07-30 00:49:51,494 INFO: Found work_experience section
+2025-07-30 00:49:51,495 INFO: Found projects section
+2025-07-30 00:49:51,495 INFO: Tailoring sections...
+2025-07-30 00:49:51,495 INFO: Tailoring volunteering and leadership section...
+2025-07-30 00:50:33,374 INFO: Tailored volunteering and leadership section
+2025-07-30 00:50:33,374 INFO: Tailoring work experience section...
+2025-07-30 00:51:08,058 INFO: Tailored work experience section
+2025-07-30 00:51:08,059 INFO: Tailoring projects section...
+2025-07-30 00:51:39,281 INFO: Tailored projects section
+2025-07-30 00:51:39,282 INFO: Tailoring summary section...
+2025-07-30 00:51:50,964 INFO: Tailored summary section: [0]Summary: As a seasoned Senior Software Engineer with expertise in building scalable microservices architecture and maintaining large-scale global infrastructure systems, I'm excited to apply for DoorDash's Backend Engineer role. With a strong background in programming languages like Python, Go, and Java, I've successfully led teams and collaborated on web product development, implementing microservices and Docker. My experience as a Coding Bootcamp Mentor and Hackathon Organizer has honed my leadership and mentorship skills. I'm confident that my technical expertise, combined with my passion for innovation and problem-solving, make me an ideal fit for this role.
+2025-07-30 00:51:50,967 INFO: All sections tailored successfully
+2025-07-30 00:51:50,967 INFO: Final Resume before pruning: [0]Name: Jane Doe
+[0]Contact Information:
+[1]Address: 123 Main St, Springfield, USA
+[1]Phone: +1-555-123-4567
+[1]Email: jane.doe@email.com
+[1]LinkedIn: linkedin.com/in/janedoe
+[1]Github: github.com/janedoe
+[1]Portfolio: janedoe.dev
+[0]Title: Senior Software Engineer
+[0]Summary: As a seasoned Senior Software Engineer with expertise in building scalable microservices architecture and maintaining large-scale global infrastructure systems, I'm excited to apply for DoorDash's Backend Engineer role. With a strong background in programming languages like Python, Go, and Java, I've successfully led teams and collaborated on web product development, implementing microservices and Docker. My experience as a Coding Bootcamp Mentor and Hackathon Organizer has honed my leadership and mentorship skills. I'm confident that my technical expertise, combined with my passion for innovation and problem-solving, make me an ideal fit for this role.
+[0]Languages: English, Spanish, French
+[0]Education:
+[1]Degree: B.Sc. Computer Science
+[1]University: Springfield University
+[1]Location: Springfield, USA
+[1]Duration: 2012/09 - 2016/06
+[1]Courses: Algorithms, Data Structures, Operating Systems, Databases
+[1]Degree: M.Sc. Software Engineering
+[1]University: Capital Tech
+[1]Location: Capital City, USA
+[1]Duration: 2016/09 - 2018/06
+[1]Courses: Cloud Computing, Distributed Systems, Advanced Programming
+[0]Certifications:
+[1]Certification Name: AWS Certified Solutions Architect
+[1]Issuing Organization: Amazon Web Services
+[1]Issue Date: 2019/05
+[1]Certification Name: Scrum Master
+[1]Issuing Organization: Scrum Alliance
+[1]Issue Date: 2020/03
+[0]Awards and Scholarships:
+[1]Award Name: Dean’s List
+[1]Issuing Organization: Springfield University
+[1]Issue Date: 2015/06
+[1]Award Name: Tech Innovation Scholarship
+[1]Issuing Organization: Capital Tech
+[1]Issue Date: 2017/09
+[0]Volunteering and Leadership:
+[1]Role: Coding Bootcamp Mentor
+[1]Organization: CodeSpring
+[1]Location: Springfield, USA
+[1]Duration: 2020/01 - 2022/12
+[1]Description: Mentored over 100 aspiring developers in Python and web development, enhancing code quality and project adoption by 20%
+[1]Skills: Programming Languages: Python; Technical Skills: Web Development, REST APIs; Soft Skills: Leadership, Mentorship
+[1]Role: Hackathon Organizer
+[1]Organization: TechFest
+[1]Location: Capital City, USA
+[1]Duration: 2018/03 - 2019/03
+[1]Description: Organized annual hackathons for 200+ participants, improving event attendance by 50% and building strong relationships with sponsors
+[1]Skills: Programming Languages: Java; Technical Skills: Event Planning, Cloud Setup; Soft Skills: Leadership, Organization
+[1]Role: Community Tech Educator
+[1]Organization: Springfield Library
+[1]Location: Springfield, USA
+[1]Duration: 2022/07 - 2023/06
+[1]Description: Led free coding classes for adults, improving digital literacy scores by 30% and empowering seniors to use technology confidently
+[1]Skills: Programming Languages: Python; Technical Skills: Curriculum Development, Teaching; Soft Skills: Empathy, Communication
+[1]Role: Event Coordinator
+[1]Organization: Springfield Tech Expo
+[1]Location: Springfield, USA
+[1]Duration: 2023/03 - Present
+[1]Description: Coordinated logistics and managed volunteers for the annual Springfield Tech Expo, increasing event efficiency by 25%
+[1]Skills: Programming Languages: JavaScript; Technical Skills: Event Management, Communication; Soft Skills: Organization, Leadership
+[0]Work Experience:
+[1]Job Title: Senior Backend Engineer
+[1]Company: FinTech Solutions
+[1]Location: Springfield, USA
+[1]Duration: 2019/07 - Present
+[1]Description: Led scalable microservices architecture design and implementation using Python, Go, and Docker. Managed a team of engineers, fostering continuous improvement
+[1]Skills: Programming Languages: Python, Go; Technical Skills: Microservices, Docker; Soft Skills: Leadership, Problem Solving
+[1]Job Title: Software Engineer
+[1]Company: WebApps Inc.
+[1]Location: Capital City, USA
+[1]Duration: 2016/07 - 2019/06
+[1]Description: Developed RESTful APIs and optimized database queries. Collaborated on web product development, implementing microservices and Docker
+[1]Skills: Programming Languages: Java, Python; Technical Skills: API Development, Microservices, Docker; Soft Skills: Collaboration, Leadership
+[1]Job Title: Research Assistant
+[1]Company: Capital Tech
+[1]Location: Capital City, USA
+[1]Duration: 2014/09 - 2015/05
+[1]Description: Implemented simulation tools and co-authored a conference paper. Developed custom software solutions for data analysis
+[1]Skills: Programming Languages: Java, Python; Technical Skills: Simulation, Microservices; Soft Skills: Analytical Thinking, Leadership
+[1]Job Title: IT Support Specialist
+[1]Company: Springfield University
+[1]Location: Springfield, USA
+[1]Duration: 2012/09 - 2013/05
+[1]Description: Provided technical support and resolved hardware/software issues. Implemented preventive maintenance schedules
+[1]Skills: Programming Languages: Bash; Technical Skills: Server Management; Soft Skills: Problem Solving
+[0]Projects:
+[1]Project Title: Chatbot for Customer Support
+[1]Type: Personal
+[1]Duration: 2024/02 - Present
+[1]Description: Developed a dashboard to visualize fitness data from wearable devices, supporting multiple data sources and export options, increasing user engagement
+[1]Skills: Programming Languages: Python; Technical Skills: Data Visualization, API Integration; Soft Skills: Creativity, Self-Motivation
+
+2025-07-30 00:51:50,968 INFO: Pruning following sections: Volunteering and Leadership, Work Experience and Projects...
+2025-07-30 00:51:50,968 INFO: Experiences text before pruning: [0]Volunteering and Leadership:
+[1]Role: Coding Bootcamp Mentor
+[1]Organization: CodeSpring
+[1]Location: Springfield, USA
+[1]Duration: 2020/01 - 2022/12
+[1]Description: Mentored over 100 aspiring developers in Python and web development, enhancing code quality and project adoption by 20%
+[1]Skills: Programming Languages: Python; Technical Skills: Web Development, REST APIs; Soft Skills: Leadership, Mentorship
+[1]Role: Hackathon Organizer
+[1]Organization: TechFest
+[1]Location: Capital City, USA
+[1]Duration: 2018/03 - 2019/03
+[1]Description: Organized annual hackathons for 200+ participants, improving event attendance by 50% and building strong relationships with sponsors
+[1]Skills: Programming Languages: Java; Technical Skills: Event Planning, Cloud Setup; Soft Skills: Leadership, Organization
+[1]Role: Community Tech Educator
+[1]Organization: Springfield Library
+[1]Location: Springfield, USA
+[1]Duration: 2022/07 - 2023/06
+[1]Description: Led free coding classes for adults, improving digital literacy scores by 30% and empowering seniors to use technology confidently
+[1]Skills: Programming Languages: Python; Technical Skills: Curriculum Development, Teaching; Soft Skills: Empathy, Communication
+[1]Role: Event Coordinator
+[1]Organization: Springfield Tech Expo
+[1]Location: Springfield, USA
+[1]Duration: 2023/03 - Present
+[1]Description: Coordinated logistics and managed volunteers for the annual Springfield Tech Expo, increasing event efficiency by 25%
+[1]Skills: Programming Languages: JavaScript; Technical Skills: Event Management, Communication; Soft Skills: Organization, Leadership
+[0]Work Experience:
+[1]Job Title: Senior Backend Engineer
+[1]Company: FinTech Solutions
+[1]Location: Springfield, USA
+[1]Duration: 2019/07 - Present
+[1]Description: Led scalable microservices architecture design and implementation using Python, Go, and Docker. Managed a team of engineers, fostering continuous improvement
+[1]Skills: Programming Languages: Python, Go; Technical Skills: Microservices, Docker; Soft Skills: Leadership, Problem Solving
+[1]Job Title: Software Engineer
+[1]Company: WebApps Inc.
+[1]Location: Capital City, USA
+[1]Duration: 2016/07 - 2019/06
+[1]Description: Developed RESTful APIs and optimized database queries. Collaborated on web product development, implementing microservices and Docker
+[1]Skills: Programming Languages: Java, Python; Technical Skills: API Development, Microservices, Docker; Soft Skills: Collaboration, Leadership
+[1]Job Title: Research Assistant
+[1]Company: Capital Tech
+[1]Location: Capital City, USA
+[1]Duration: 2014/09 - 2015/05
+[1]Description: Implemented simulation tools and co-authored a conference paper. Developed custom software solutions for data analysis
+[1]Skills: Programming Languages: Java, Python; Technical Skills: Simulation, Microservices; Soft Skills: Analytical Thinking, Leadership
+[1]Job Title: IT Support Specialist
+[1]Company: Springfield University
+[1]Location: Springfield, USA
+[1]Duration: 2012/09 - 2013/05
+[1]Description: Provided technical support and resolved hardware/software issues. Implemented preventive maintenance schedules
+[1]Skills: Programming Languages: Bash; Technical Skills: Server Management; Soft Skills: Problem Solving
+[0]Projects:
+[1]Project Title: Chatbot for Customer Support
+[1]Type: Personal
+[1]Duration: 2024/02 - Present
+[1]Description: Developed a dashboard to visualize fitness data from wearable devices, supporting multiple data sources and export options, increasing user engagement
+[1]Skills: Programming Languages: Python; Technical Skills: Data Visualization, API Integration; Soft Skills: Creativity, Self-Motivation
+2025-07-30 00:52:10,460 INFO: Pruned experiences before filtering: Step 1:
+Number of experiences/roles across all sections: 13
+
+Step 2:
+Were all experiences/roles returned? No
+
+Step 3:
+Selected experiences/roles and explanation for their selection:
+
+From Volunteering and Leadership:
+* Coding Bootcamp Mentor: This experience demonstrates leadership skills and ability to mentor, which are relevant to the job description's requirement for building and maintaining a large-scale infrastructure system.
+* Hackathon Organizer: This experience shows organizational and leadership skills, which can be applied to managing and coordinating logistics for DoorDash's 24x7 global infrastructure system.
+
+From Work Experience:
+* Senior Backend Engineer: This role showcases the candidate's experience in building scalable microservices architecture, which is relevant to the job description's requirement for maintaining a large-scale infrastructure system.
+* Software Engineer: This role highlights the candidate's experience in developing RESTful APIs and optimizing database queries, which can be applied to building and maintaining DoorDash's global infrastructure system.
+
+From Projects:
+* Chatbot for Customer Support (Personal Project): Although this is a personal project, it demonstrates the candidate's ability to develop and maintain a large-scale system, which is relevant to the job description.
+2025-07-30 00:52:10,461 INFO: Pruned experiences after filtering: 
+2025-07-30 00:52:10,461 INFO: No experiences section tailored, using original experiences section
+2025-07-30 00:52:10,461 INFO: CV text before separate skills section: [0]Name: Jane Doe
+[0]Contact Information:
+[1]Address: 123 Main St, Springfield, USA
+[1]Phone: +1-555-123-4567
+[1]Email: jane.doe@email.com
+[1]LinkedIn: linkedin.com/in/janedoe
+[1]Github: github.com/janedoe
+[1]Portfolio: janedoe.dev
+[0]Title: Senior Software Engineer
+[0]Summary: As a seasoned Senior Software Engineer with expertise in building scalable microservices architecture and maintaining large-scale global infrastructure systems, I'm excited to apply for DoorDash's Backend Engineer role. With a strong background in programming languages like Python, Go, and Java, I've successfully led teams and collaborated on web product development, implementing microservices and Docker. My experience as a Coding Bootcamp Mentor and Hackathon Organizer has honed my leadership and mentorship skills. I'm confident that my technical expertise, combined with my passion for innovation and problem-solving, make me an ideal fit for this role.
+[0]Languages: English, Spanish, French
+[0]Education:
+[1]Degree: B.Sc. Computer Science
+[1]University: Springfield University
+[1]Location: Springfield, USA
+[1]Duration: 2012/09 - 2016/06
+[1]Courses: Algorithms, Data Structures, Operating Systems, Databases
+[1]Degree: M.Sc. Software Engineering
+[1]University: Capital Tech
+[1]Location: Capital City, USA
+[1]Duration: 2016/09 - 2018/06
+[1]Courses: Cloud Computing, Distributed Systems, Advanced Programming
+[0]Certifications:
+[1]Certification Name: AWS Certified Solutions Architect
+[1]Issuing Organization: Amazon Web Services
+[1]Issue Date: 2019/05
+[1]Certification Name: Scrum Master
+[1]Issuing Organization: Scrum Alliance
+[1]Issue Date: 2020/03
+[0]Awards and Scholarships:
+[1]Award Name: Dean’s List
+[1]Issuing Organization: Springfield University
+[1]Issue Date: 2015/06
+[1]Award Name: Tech Innovation Scholarship
+[1]Issuing Organization: Capital Tech
+[1]Issue Date: 2017/09
+[0]Volunteering and Leadership:
+[1]Role: Coding Bootcamp Mentor
+[1]Organization: CodeSpring
+[1]Location: Springfield, USA
+[1]Duration: 2020/01 - 2022/12
+[1]Description: Mentored over 100 aspiring developers in Python and web development, enhancing code quality and project adoption by 20%
+[1]Skills: Programming Languages: Python; Technical Skills: Web Development, REST APIs; Soft Skills: Leadership, Mentorship
+[1]Role: Hackathon Organizer
+[1]Organization: TechFest
+[1]Location: Capital City, USA
+[1]Duration: 2018/03 - 2019/03
+[1]Description: Organized annual hackathons for 200+ participants, improving event attendance by 50% and building strong relationships with sponsors
+[1]Skills: Programming Languages: Java; Technical Skills: Event Planning, Cloud Setup; Soft Skills: Leadership, Organization
+[1]Role: Community Tech Educator
+[1]Organization: Springfield Library
+[1]Location: Springfield, USA
+[1]Duration: 2022/07 - 2023/06
+[1]Description: Led free coding classes for adults, improving digital literacy scores by 30% and empowering seniors to use technology confidently
+[1]Skills: Programming Languages: Python; Technical Skills: Curriculum Development, Teaching; Soft Skills: Empathy, Communication
+[1]Role: Event Coordinator
+[1]Organization: Springfield Tech Expo
+[1]Location: Springfield, USA
+[1]Duration: 2023/03 - Present
+[1]Description: Coordinated logistics and managed volunteers for the annual Springfield Tech Expo, increasing event efficiency by 25%
+[1]Skills: Programming Languages: JavaScript; Technical Skills: Event Management, Communication; Soft Skills: Organization, Leadership
+[0]Work Experience:
+[1]Job Title: Senior Backend Engineer
+[1]Company: FinTech Solutions
+[1]Location: Springfield, USA
+[1]Duration: 2019/07 - Present
+[1]Description: Led scalable microservices architecture design and implementation using Python, Go, and Docker. Managed a team of engineers, fostering continuous improvement
+[1]Skills: Programming Languages: Python, Go; Technical Skills: Microservices, Docker; Soft Skills: Leadership, Problem Solving
+[1]Job Title: Software Engineer
+[1]Company: WebApps Inc.
+[1]Location: Capital City, USA
+[1]Duration: 2016/07 - 2019/06
+[1]Description: Developed RESTful APIs and optimized database queries. Collaborated on web product development, implementing microservices and Docker
+[1]Skills: Programming Languages: Java, Python; Technical Skills: API Development, Microservices, Docker; Soft Skills: Collaboration, Leadership
+[1]Job Title: Research Assistant
+[1]Company: Capital Tech
+[1]Location: Capital City, USA
+[1]Duration: 2014/09 - 2015/05
+[1]Description: Implemented simulation tools and co-authored a conference paper. Developed custom software solutions for data analysis
+[1]Skills: Programming Languages: Java, Python; Technical Skills: Simulation, Microservices; Soft Skills: Analytical Thinking, Leadership
+[1]Job Title: IT Support Specialist
+[1]Company: Springfield University
+[1]Location: Springfield, USA
+[1]Duration: 2012/09 - 2013/05
+[1]Description: Provided technical support and resolved hardware/software issues. Implemented preventive maintenance schedules
+[1]Skills: Programming Languages: Bash; Technical Skills: Server Management; Soft Skills: Problem Solving
+[0]Projects:
+[1]Project Title: Chatbot for Customer Support
+[1]Type: Personal
+[1]Duration: 2024/02 - Present
+[1]Description: Developed a dashboard to visualize fitness data from wearable devices, supporting multiple data sources and export options, increasing user engagement
+[1]Skills: Programming Languages: Python; Technical Skills: Data Visualization, API Integration; Soft Skills: Creativity, Self-Motivation
+
+2025-07-30 00:52:10,462 INFO: CV text after skills section: [0]Name: Jane Doe
+[0]Contact Information:
+[1]Address: 123 Main St, Springfield, USA
+[1]Phone: +1-555-123-4567
+[1]Email: jane.doe@email.com
+[1]LinkedIn: linkedin.com/in/janedoe
+[1]Github: github.com/janedoe
+[1]Portfolio: janedoe.dev
+[0]Title: Senior Software Engineer
+[0]Summary: As a seasoned Senior Software Engineer with expertise in building scalable microservices architecture and maintaining large-scale global infrastructure systems, I'm excited to apply for DoorDash's Backend Engineer role. With a strong background in programming languages like Python, Go, and Java, I've successfully led teams and collaborated on web product development, implementing microservices and Docker. My experience as a Coding Bootcamp Mentor and Hackathon Organizer has honed my leadership and mentorship skills. I'm confident that my technical expertise, combined with my passion for innovation and problem-solving, make me an ideal fit for this role.
+[0]Languages: English, Spanish, French
+[0]Education:
+[1]Degree: B.Sc. Computer Science
+[1]University: Springfield University
+[1]Location: Springfield, USA
+[1]Duration: 2012/09 - 2016/06
+[1]Courses: Algorithms, Data Structures, Operating Systems, Databases
+[1]Degree: M.Sc. Software Engineering
+[1]University: Capital Tech
+[1]Location: Capital City, USA
+[1]Duration: 2016/09 - 2018/06
+[1]Courses: Cloud Computing, Distributed Systems, Advanced Programming
+[0]Certifications:
+[1]Certification Name: AWS Certified Solutions Architect
+[1]Issuing Organization: Amazon Web Services
+[1]Issue Date: 2019/05
+[1]Certification Name: Scrum Master
+[1]Issuing Organization: Scrum Alliance
+[1]Issue Date: 2020/03
+[0]Awards and Scholarships:
+[1]Award Name: Dean’s List
+[1]Issuing Organization: Springfield University
+[1]Issue Date: 2015/06
+[1]Award Name: Tech Innovation Scholarship
+[1]Issuing Organization: Capital Tech
+[1]Issue Date: 2017/09
+[0]Volunteering and Leadership:
+[1]Role: Coding Bootcamp Mentor
+[1]Organization: CodeSpring
+[1]Location: Springfield, USA
+[1]Duration: 2020/01 - 2022/12
+[1]Description: Mentored over 100 aspiring developers in Python and web development, enhancing code quality and project adoption by 20%
+[1]Role: Hackathon Organizer
+[1]Organization: TechFest
+[1]Location: Capital City, USA
+[1]Duration: 2018/03 - 2019/03
+[1]Description: Organized annual hackathons for 200+ participants, improving event attendance by 50% and building strong relationships with sponsors
+[1]Role: Community Tech Educator
+[1]Organization: Springfield Library
+[1]Location: Springfield, USA
+[1]Duration: 2022/07 - 2023/06
+[1]Description: Led free coding classes for adults, improving digital literacy scores by 30% and empowering seniors to use technology confidently
+[1]Role: Event Coordinator
+[1]Organization: Springfield Tech Expo
+[1]Location: Springfield, USA
+[1]Duration: 2023/03 - Present
+[1]Description: Coordinated logistics and managed volunteers for the annual Springfield Tech Expo, increasing event efficiency by 25%
+[0]Work Experience:
+[1]Job Title: Senior Backend Engineer
+[1]Company: FinTech Solutions
+[1]Location: Springfield, USA
+[1]Duration: 2019/07 - Present
+[1]Description: Led scalable microservices architecture design and implementation using Python, Go, and Docker. Managed a team of engineers, fostering continuous improvement
+[1]Job Title: Software Engineer
+[1]Company: WebApps Inc.
+[1]Location: Capital City, USA
+[1]Duration: 2016/07 - 2019/06
+[1]Description: Developed RESTful APIs and optimized database queries. Collaborated on web product development, implementing microservices and Docker
+[1]Job Title: Research Assistant
+[1]Company: Capital Tech
+[1]Location: Capital City, USA
+[1]Duration: 2014/09 - 2015/05
+[1]Description: Implemented simulation tools and co-authored a conference paper. Developed custom software solutions for data analysis
+[1]Job Title: IT Support Specialist
+[1]Company: Springfield University
+[1]Location: Springfield, USA
+[1]Duration: 2012/09 - 2013/05
+[1]Description: Provided technical support and resolved hardware/software issues. Implemented preventive maintenance schedules
+[0]Projects:
+[1]Project Title: Chatbot for Customer Support
+[1]Type: Personal
+[1]Duration: 2024/02 - Present
+[1]Description: Developed a dashboard to visualize fitness data from wearable devices, supporting multiple data sources and export options, increasing user engagement
+[0]Skills:
+[1]Programming Languages: Bash, Go, Java, JavaScript, Python
+[1]Technical Skills: API Development, API Integration, Cloud Setup, Communication, Curriculum Development, Data Visualization, Docker, Event Management, Event Planning, Microservices, REST APIs, Server Management, Simulation, Teaching, Web Development
+[1]Soft Skills: Analytical Thinking, Collaboration, Communication, Creativity, Empathy, Leadership, Mentorship, Organization, Problem Solving, Self-Motivation
+2025-07-30 00:52:10,464 INFO: Tailoring skills section...
+2025-07-30 00:52:16,377 INFO: Tailored skills section
+2025-07-30 00:52:47,398 INFO: The climb has ended, the CV is tailored!
+2025-07-30 01:18:41,766 INFO: CV saved to C:\CodeProjects\Sisyphus\Sisyphus\saved_outputs\out_cv_20250730_011841.txt

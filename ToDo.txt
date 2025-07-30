@@ -6,16 +6,11 @@
     
 [WIP GOAL: 0.95 + FIXES]
     [0.95 + FIXES]
-        []Make summary after pruning (maybe after skills too?)
+        [DONE]Make summary after pruning (maybe after skills too?)
         []Make indented display for debug
-        [][BUG] 4 Experiences Roles get return per section (12 vs 6 total wanted)
-                Maybe unsaved pruning output? Check in vs out
-                Maybe separate systems?
-                Prompt engineering
-        [][BUG] Chronological ordering is wrong
-                Outsource this to an actual function
+        []Outsource chronological ordering to an actual function
 
-        BUGS are somewhere here:
+        BUGS are somewhere here (or before lmao):
 
         [0]pruned_experiences_dict = parsers.parse_cv(pruned_experiences)
 

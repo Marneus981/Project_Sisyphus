@@ -88,7 +88,7 @@ def tailor_cv(root):
     v_and_l_section = None
     w_section = None
     p_section = None
-    s_section = None
+    # s_section = None
     print("Searching fields to tailor...")
     for field in cv_fields:
         if 'volunteering_and_leadership' in field:
@@ -103,9 +103,9 @@ def tailor_cv(root):
             print("Found projects section")
             p_section = {'projects': field['projects']}
 
-        if 'summary' in field:
-            print("Found summary section")
-            s_section = {'summary': field['summary']}
+        # if 'summary' in field:
+        #     print("Found summary section")
+        #     s_section = {'summary': field['summary']}
 
     # Tailor each section if it exists
     print("Tailoring sections...")
@@ -160,38 +160,16 @@ def tailor_cv(root):
     # Convert the tailored dict back to text (no summary section yet)
     s_text = parsers.inv_parse_cv(tailored_dict)
 
-    #Tailor summary section if it exists
-    if s_section:
-        print("Tailoring summary section...")
-        tailored_s = tailor.tailor_summary(
-            model=selected_model,
-            system=system_text,
-            cv_data=s_text,
-            job_description=job_desc
-        )
-        tailored_s = helpers.filter_output(tailored_s)
-        if tailored_s:
-            print("Tailored summary section: " + str(tailored_s))
-            # Add the tailored summary to the dict
-            tailored_list.append(parsers.parse_cv(tailored_s))
-            #tailored_dict['summary'] = tailored_s
-    final_tailored_dict = parsers.dict_grafter(tailored_list)
-    #Merge unchanged fields back into the final tailored dict
-    for key, value in unchanged_dict.items():
-        final_tailored_dict[key] = value
-
-    final_cv_text = helpers.format_output(parsers.inv_parse_cv(final_tailored_dict))
-    print("All sections tailored successfully")
-    print("Final Resume before pruning: " + str(final_cv_text))
+    print("Resume before pruning (And before Summary): " + str(s_text))
 
 
     #Prune Volunteering and Leadership, Work Experience and Projects sections based on job description
     print("Pruning following sections: Volunteering and Leadership, Work Experience and Projects...")
 
     #Extract Volunteering and Leadership, Work Experience and Projects sections from the final CV text
-    volunteering_and_leadership = final_tailored_dict.get("volunteering_and_leadership", {})
-    work_experience = final_tailored_dict.get("work_experience", {})
-    projects = final_tailored_dict.get("projects", {})
+    volunteering_and_leadership = tailored_dict.get("volunteering_and_leadership", {})
+    work_experience = tailored_dict.get("work_experience", {})
+    projects = tailored_dict.get("projects", {})
     #Graft to a single dict
     experiences = {
         "volunteering_and_leadership": volunteering_and_leadership,
@@ -222,23 +200,46 @@ def tailor_cv(root):
         print("[1]DEBUG")
         vnl_s = pruned_experiences_dict.get('volunteering_and_leadership', {})
         print("Volunteering and Leadership section after pruning and .get(): " + str(vnl_s))
-        final_tailored_dict['volunteering_and_leadership'] = vnl_s
+        tailored_dict['volunteering_and_leadership'] = vnl_s
         w_s = pruned_experiences_dict.get('work_experience', {})
         print("Work Experience section after pruning and .get(): " + str(w_s))
-        final_tailored_dict['work_experience'] = w_s
+        tailored_dict['work_experience'] = w_s
         p_s = pruned_experiences_dict.get('projects', {})
         print("Projects section after pruning and .get(): " + str(p_s))
-        final_tailored_dict['projects'] = p_s
+        tailored_dict['projects'] = p_s
         print("[2]DEBUG")
-        final_cv_text0 = parsers.inv_parse_cv(final_tailored_dict)
+        cv_text0 = parsers.inv_parse_cv(tailored_dict)
         print("[3]DEBUG")
-        final_cv_text = helpers.format_output(final_cv_text0)
+        s_text = helpers.format_output(cv_text0)
 
 ##############################################################################
     else:
         print("No experiences section tailored, using original experiences section")
 
 
+    #Tailor summary section if it exists
+    # if s_section:
+    print("Tailoring summary section...")
+    tailored_s = tailor.tailor_summary(
+        model=selected_model,
+        system=system_text,
+        cv_data=s_text,
+        job_description=job_desc
+    )
+    tailored_s = helpers.filter_output(tailored_s)
+    if tailored_s:
+        # Add the tailored summary to the dict
+        tailored_list.append(parsers.parse_cv(tailored_s))
+        #tailored_dict['summary'] = tailored_s
+    final_tailored_dict = parsers.dict_grafter(tailored_list)
+    #Merge unchanged fields back into the final tailored dict
+    for key, value in unchanged_dict.items():
+        final_tailored_dict[key] = value
+
+    final_cv_text = helpers.format_output(parsers.inv_parse_cv(final_tailored_dict))
+
+
+    print("All sections tailored successfully")
 
     print("CV text before separate skills section: " +  str(final_cv_text))
     final_final_cv_text = tailor.return_text_with_skills(final_cv_text)

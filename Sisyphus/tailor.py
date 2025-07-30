@@ -25,27 +25,28 @@ def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system="", ollama_ur
     And the following job description:
     {job_description}
     Tailor a '{section}' section for a resume to best match the job description by following this selection process:
-    1. Select the 4 most relevant roles/experiences based on the job description.
-        1.1. If there are less than 4 roles/experiences, return all of them.
-        1.2. Modify the "Description" sections to:
-            1.2.1. Have a maximum of 2 sentences, with less than 20 words each.
-            1.2.2. Be a continuous block of text, without line breaks, composed of 1 or 2 sentences that concisely highlight the achievements and relevant skills attained at each role.
-            1.2.3. Not include the ":" character.
-        1.3. Modify the "Skills" sections to:
-            1.3.1. Have up to 6 skills across all categories, only include the most relevant.
-        1.4. Check that all sections and subsections follow these guidelines:
-            1.4.1. Each section and subsection should be a continuous block of text, without line breaks.
-            1.4.2. If a section or subsection does not exist in the resume, return it as an empty section or subsection.
-    2. Return only the revised section and strictly follow the format (Only the first role is shown as an example):
-
-        [0]Volunteering and Leadership:
-        [1]Role: Role Name 1
-        [1]Organization: Organization Name 1
-        [1]Location: Location Name 1
-        [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
-        [1]Description: Brief description of the role and responsibilities for Role 1.
-        [1]Skills: Programming Languages: Programming Language 1, ...; Technical Skills: Technical Skill 1, ...; Soft Skills: Soft Skill 1, ...
-        ...
+    0. If there are no volunteering and leadership experiences in the resume, return an empty section (skip all next steps).
+    1. If there are less than 4 volunteering and leadership experiences overall (before selecting), return all of them (skip all next steps).
+    2. Rank all volunteering and leadership experiences based on relevance to the job description; select the top 4 and return them as follows:
+        2.1. Modify the "Description" sections to:
+            2.1.1. Have a maximum of 2 sentences, with less than 20 words each.
+            2.1.2. Be a continuous block of text, without line breaks, composed of 1 or 2 sentences that concisely highlight the achievements and relevant skills attained at each role.
+            2.1.3. Not include the ":" character.
+        2.2. Modify the "Skills" sections to:
+            2.2.1. Have up to 6 skills across all categories, only include the most relevant.
+            2.2.2. Every subsection should be present, even if it is empty.
+        2.3. Check that all sections and subsections follow these guidelines:
+            2.3.1. Each section and subsection should be a continuous block of text, without line breaks.
+            2.3.2. If a section or subsection does not exist in the resume, return it as an empty section or subsection.
+        2.4. Return only the revised section and strictly follow the format (Only the first role is shown as an example):
+            [0]Volunteering and Leadership:
+            [1]Role: Role Name 1
+            [1]Organization: Organization Name 1
+            [1]Location: Location Name 1
+            [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
+            [1]Description: Brief description of the role and responsibilities for Role 1.
+            [1]Skills: Programming Languages: Programming Language 1, ...; Technical Skills: Technical Skill 1, ...; Soft Skills: Soft Skill 1, ...
+            ...
     """
     payload = {
         "model": model,
@@ -85,27 +86,28 @@ def tailor_work_experience(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_UR
     And the following job description:
     {job_description}
     Tailor a '{section}' section for a resume to best match the job description by following this selection process:
-    1. Select the 4 most relevant roles/experiences based on the job description.
-        1.1. If there are less than 4 roles/experiences, return all of them.
-        1.2. Modify the "Description" sections to:
-            1.2.1. Have a maximum of 2 sentences, with less than 20 words each.
-            1.2.2. Be a continuous block of text, without line breaks, composed of 1 or 2 sentences that concisely highlight the achievements and relevant skills attained at each role.
-            1.2.3. Not include the ":" character.
-        1.3. Modify the "Skills" sections to:
-            1.3.1. Have up to 6 skills across all categories, only include the most relevant.
-        1.4. Check that all sections and subsections follow these guidelines:
-            1.4.1. Each section and subsection should be a continuous block of text, without line breaks.
-            1.4.2. If a section or subsection does not exist in the resume, return it as an empty section or subsection.
-    2. Return only the revised section and strictly follow the format (Only the first role/position is shown as an example):
-
-        [0]Work Experience:
-        [1]Job Title: Job Title 1
-        [1]Company: Company 1
-        [1]Location: Location Name 1
-        [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
-        [1]Description: Brief description of the role and responsibilities for Role 1.
-        [1]Skills: Programming Languages: Programming Language 1, ...; Technical Skills: Technical Skill 1, ...; Soft Skills: Soft Skill 1, ...
-        ...
+    0. If there are no work experiences in the resume, return an empty section (skip all next steps).
+    1. If there are less than 4 work experiences overall (before selecting), return all of them (skip all next steps).
+    2. Rank all work experiences based on relevance to the job description; select the top 4 and return them as follows:
+        2.1. Modify the "Description" sections to:
+            2.1.1. Have a maximum of 2 sentences, with less than 20 words each.
+            2.1.2. Be a continuous block of text, without line breaks, composed of 1 or 2 sentences that concisely highlight the achievements and relevant skills attained at each role.
+            2.1.3. Not include the ":" character.
+        2.2. Modify the "Skills" sections to:
+            2.2.1. Have up to 6 skills across all categories, only include the most relevant.
+            2.2.2. Every subsection should be present, even if it is empty.
+        2.3. Check that all sections and subsections follow these guidelines:
+            2.3.1. Each section and subsection should be a continuous block of text, without line breaks.
+            2.3.2. If a section or subsection does not exist in the resume, return it as an empty section or subsection.
+        2.4. Return only the revised section and strictly follow the format (Only the first role/position is shown as an example):
+            [0]Work Experience:
+            [1]Job Title: Job Title 1
+            [1]Company: Company 1
+            [1]Location: Location Name 1
+            [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
+            [1]Description: Brief description of the role and responsibilities for Role 1.
+            [1]Skills: Programming Languages: Programming Language 1, ...; Technical Skills: Technical Skill 1, ...; Soft Skills: Soft Skill 1, ...
+            ...
     """
     payload = {
         "model": model,
@@ -144,27 +146,27 @@ def tailor_projects(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_d
     And the following job description:
     {job_description}
     Tailor a '{section}' section for a resume to best match the job description by following this selection process:
-
-    1. Select the 4 most relevant projects based on the job description.
-        1.1. If there are less than 4 projects, return all of them.
-        1.2. Modify the "Description" sections to:
-            1.2.1. Have a maximum of 2 sentences, with less than 20 words each.
-            1.2.2. Be a continuous block of text, without line breaks, composed of 1 or 2 sentences that concisely highlight the achievements and relevant skills attained at each project.
-            1.2.3. Not include the ":" character.
-        1.3. Modify the "Skills" sections to:
-            1.3.1. Have up to 6 skills across all categories, only include the most relevant.
-        1.4. Check that all sections and subsections follow these guidelines:
-            1.4.1. Each section and subsection should be a continuous block of text, without line breaks.
-            1.4.2. If a section or subsection does not exist in the resume, return it as an empty section or subsection.
-    2. Return only the revised section and strictly follow the format (Only the first project is shown as an example):
-
-        [0]Projects:
-        [1]Project Title: Project Title 1
-        [1]Type: Type of Project 1 (e.g., Personal, Academic, Professional)
-        [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
-        [1]Description: Brief description of the role and responsibilities for Role 1.
-        [1]Skills: Programming Languages: Programming Language 1, ...; Technical Skills: Technical Skill 1, ...; Soft Skills: Soft Skill 1, ...
-        ...
+    0. If there are no projects in the resume, return an empty section (skip all next steps).
+    1. If there are less than 4 projects overall (before selecting), return all of them (skip all next steps).
+    2. Rank all projects based on relevance to the job description; select the top 4 and return them as follows:
+        2.1 Modify the "Description" sections to:
+            2.1.1. Have a maximum of 2 sentences, with less than 20 words each.
+            2.1.2. Be a continuous block of text, without line breaks, composed of 1 or 2 sentences that concisely highlight the achievements and relevant skills attained at each project.
+            2.1.3. Not include the ":" character.
+        2.2. Modify the "Skills" sections to:
+            2.2.1. Have up to 6 skills across all categories, only include the most relevant.
+            2.2.2. Every subsection should be present, even if it is empty.
+        2.3. Check that all sections and subsections follow these guidelines:
+            2.3.1. Each section and subsection should be a continuous block of text, without line breaks.
+            2.3.2. If a section or subsection does not exist in the resume, return it as an empty section or subsection.
+        2.4. Return only the revised section and strictly follow the format (Only the first project is shown as an example):
+            [0]Projects:
+            [1]Project Title: Project Title 1
+            [1]Type: Type of Project 1 (e.g., Personal, Academic, Professional)
+            [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
+            [1]Description: Brief description of the role and responsibilities for Role 1.
+            [1]Skills: Programming Languages: Programming Language 1, ...; Technical Skills: Technical Skill 1, ...; Soft Skills: Soft Skill 1, ...
+            ...
     """
     payload = {
         "model": model,
