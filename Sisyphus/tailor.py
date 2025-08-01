@@ -290,29 +290,40 @@ def return_text_with_skills(cv_text):
 
     lines = cv_text.splitlines()
     for line in lines:
-        if line.startswith("[1]Skills: "):
-            parts = line.split("; ")
-            part0 = parts[0].split(": ")
-            #[1]Skills
-            #Programming Languages
-            #Programming Language N1, ..., Programming Language NN
-            part0_prog = part0[2]
-            part0_prog_splt = part0_prog.split(", ")
-            programming_skills += part0_prog_splt
-
-            part1 = parts[1].split(": ")
-            #Technical Skills
-            #Technical Skill N1, ..., Techincal Skill NN
-            part1_tech = part1[1]
-            part1_tech_splt = part1_tech.split(", ")
-            technical_skills += part1_tech_splt
-
-            part2 = parts[2].split(": ")
-            #Soft Skills
-            #Soft Skill N1, ..., Soft Skill NN
-            part2_soft = part2[1]
-            part2_soft_splt = part2_soft.split(", ")
-            soft_skills += part2_soft_splt
+        if line.startswith("[1]Skills:"):
+            templine = line.replace("[1]Skills:", "").strip()
+            if templine != "":
+                parts = line.split("; ")
+                if "Programming Languages" in line:
+                    part0 = parts[0].split(": ")
+                    #[1]Skills
+                    #Programming Languages
+                    #Programming Language N1, ..., Programming Language NN
+                    part0_prog = part0[2]
+                    part0_prog_splt = part0_prog.split(", ")
+                    programming_skills += part0_prog_splt
+                else:
+                    print("No Programming Languages found in Skills section")
+                if "Technical Skills" in line:
+                    part1 = parts[1].split(": ")
+                    #Technical Skills
+                    #Technical Skill N1, ..., Techincal Skill NN
+                    part1_tech = part1[1]
+                    part1_tech_splt = part1_tech.split(", ")
+                    technical_skills += part1_tech_splt
+                else:
+                    print("No Technical Skills found in Skills section")
+                if "Soft Skills" in line:
+                    part2 = parts[2].split(": ")
+                    #Soft Skills
+                    #Soft Skill N1, ..., Soft Skill NN
+                    part2_soft = part2[1]
+                    part2_soft_splt = part2_soft.split(", ")
+                    soft_skills += part2_soft_splt
+                else:
+                    print("No Soft Skills found in Skills section")
+            else:
+                print("No Skills subsection found")
         else:
             return_list.append(line)
 

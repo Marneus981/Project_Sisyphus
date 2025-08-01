@@ -689,33 +689,40 @@ def order_chronologically(cv_dict, mode = 'end_date'):
         allowed_sections1 = ['education', 'work_experience', 'projects', 'volunteering_and_leadership']
         allowed_sections2 = ['certifications', 'awards_and_scholarships']
         allowed_keys = ['start_date', 'end_date', 'issue_date']
-        if type_key not in allowed_keys:
-            raise ValueError("Invalid type_key. Choose from 'start_date', 'end_date', or 'issue_date'.")
-        if section not in allowed_sections1 and section not in allowed_sections2:
-            raise ValueError("Invalid section. Choose from 'education', 'work_experience', 'projects', 'volunteering_and_leadership', 'certifications', or 'awards_and_scholarships'.")
-        if section in allowed_sections1:
-            if type_key == 'start_date':
-                return sorted(section, key=lambda x: (parse_duration(x['duration'])[0] if 'duration' in x else datetime.date.max))
-            elif type_key == 'end_date':
-                return sorted(section, key=lambda x: (parse_duration(x['duration'])[1] if 'duration' in x else datetime.date.max))
-            elif type_key == 'issue_date':
-                raise ValueError("Issue date is not applicable for sections: education, work_experience, projects, volunteering_and_leadership.")
-        if section in allowed_sections2:
-            if type_key == 'issue_date':
-                return sorted(section, key=lambda x: (parse_date(x['issue_date']) if 'issue_date' in x else datetime.date.max))
+        for key in section:
+            if type_key not in allowed_keys:
+                raise ValueError("Invalid type_key. Choose from 'start_date', 'end_date', or 'issue_date'.")
+            if key in allowed_sections1:
+                if type_key == 'start_date':
+                    return sorted(section, key=lambda x: (parse_duration(x['duration'])[0] if 'duration' in x else datetime.date.max))
+                elif type_key == 'end_date':
+                    return sorted(section, key=lambda x: (parse_duration(x['duration'])[1] if 'duration' in x else datetime.date.max))
+                elif type_key == 'issue_date':
+                    raise ValueError("Issue date is not applicable for sections: education, work_experience, projects, volunteering_and_leadership.")
+            elif key in allowed_sections2:
+                if type_key == 'issue_date':
+                    return sorted(section, key=lambda x: (parse_date(x['issue_date']) if 'issue_date' in x else datetime.date.max))
+                else:
+                    raise ValueError("Start date and end date are not applicable for sections: certifications, awards_and_scholarships.")
             else:
-                raise ValueError("Start date and end date are not applicable for sections: certifications, awards_and_scholarships.")
-
+                raise ValueError("Invalid section. Choose from 'education', 'work_experience', 'projects', 'volunteering_and_leadership', 'certifications', or 'awards_and_scholarships'.")
+        
     # Order each section based on the specified mode
     if 'education' in cv_dict:
-        cv_dict['education'] = order_section(cv_dict['education'], type_key=mode)
+        temp_dct_cpy = {'education': cv_dict['education']}
+        cv_dict['education'] = order_section(temp_dct_cpy, type_key=mode)
     if 'work_experience' in cv_dict:
-        cv_dict['work_experience'] = order_section(cv_dict['work_experience'], type_key=mode)
+        temp_dct_cpy = {'work_experience': cv_dict['work_experience']}
+        cv_dict['work_experience'] = order_section(temp_dct_cpy, type_key=mode)
     if 'projects' in cv_dict:
-        cv_dict['projects'] = order_section(cv_dict['projects'], type_key=mode)
+        temp_dct_cpy = {'projects': cv_dict['projects']}
+        cv_dict['projects'] = order_section(temp_dct_cpy, type_key=mode)
     if 'volunteering_and_leadership' in cv_dict:
-        cv_dict['volunteering_and_leadership'] = order_section(cv_dict['volunteering_and_leadership'], type_key=mode)
+        temp_dct_cpy = {'volunteering_and_leadership': cv_dict['volunteering_and_leadership']}
+        cv_dict['volunteering_and_leadership'] = order_section(temp_dct_cpy, type_key=mode)
     if 'certifications' in cv_dict:
-        cv_dict['certifications'] = order_section(cv_dict['certifications'], type_key='issue_date')
+        temp_dct_cpy = {'certifications': cv_dict['certifications']}
+        cv_dict['certifications'] = order_section(temp_dct_cpy, type_key='issue_date')
     if 'awards_and_scholarships' in cv_dict:
-        cv_dict['awards_and_scholarships'] = order_section(cv_dict['awards_and_scholarships'], type_key='issue_date')
+        temp_dct_cpy = {'awards_and_scholarships': cv_dict['awards_and_scholarships']}
+        cv_dict['awards_and_scholarships'] = order_section(temp_dct_cpy, type_key='issue_date')

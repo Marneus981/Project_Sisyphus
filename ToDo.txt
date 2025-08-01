@@ -4,12 +4,13 @@
     [][0.95]Fit entire resume in 1 page (or close to)
     [][0.9]Add another step in tailoring process: set a number of experiences, and only include a set number of them
     
-[WIP GOAL: 0.95 + FIXES]
+[WIP]
 
-    [0.95 + FIXES]
-        []Stabilize output
+
         []Add mode button for chronological ordering
-        []Make return_text_with_skills more robust
+
+
+        []Make output > 90% consistent
 
     [???]Convert to PDF button
         
@@ -107,3 +108,5 @@
     [DONE]Make summary after pruning (maybe after skills too?)
     [DONE]Make indented display for debug
     [DONE]Outsource chronological ordering to an actual function
+    [DONE]Stabilize output
+    [DONE]Make return_text_with_skills more robust

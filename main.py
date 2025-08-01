@@ -274,9 +274,39 @@ def tailor_cv(root):
         current_cv_text = final_final_cv_text
     
     print("Ordering Resume sections by end date/issue date...")
-    current_cv_text_dct = parsers.parse_cv_out(current_cv_text)
-    current_cv_text_dct = helpers.order_chronologically(current_cv_text_dct, mode='end_date')
-    current_cv_text = parsers.inv_parse_cv_out(current_cv_text_dct)
+    temp_dct = parsers.parse_cv_out(current_cv_text)
+    split_curr = parsers.dict_spliter(temp_dct)
+    to_be_ordered = []
+    for section in split_curr:
+        # Check if key is one of the sections to be ordered
+        for key in section:
+            if key in ['education', 'work_experience', 'projects', 'volunteering_and_leadership', 'certifications', 'awards_and_scholarships']:
+                print(f"Found section to order: {key}")
+                to_be_ordered.append(section)
+    grafted_curr = parsers.dict_grafter(to_be_ordered)
+    helpers.order_chronologically(grafted_curr, mode='end_date')
+    ordered_curr = grafted_curr
+    #Replace all ordered sections from ordered_curr to temp_dct
+    if 'education' in ordered_curr:
+        temp_dct['education'] = ordered_curr['education']
+        print("Ordered education section")
+    if 'work_experience' in ordered_curr:
+        temp_dct['work_experience'] = ordered_curr['work_experience']
+        print("Ordered work experience section")
+    if 'projects' in ordered_curr:
+        temp_dct['projects'] = ordered_curr['projects']
+        print("Ordered projects section")
+    if 'volunteering_and_leadership' in ordered_curr:
+        temp_dct['volunteering_and_leadership'] = ordered_curr['volunteering_and_leadership']
+        print("Ordered volunteering and leadership section")
+    if 'certifications' in ordered_curr:
+        temp_dct['certifications'] = ordered_curr['certifications']
+        print("Ordered certifications section")
+    if 'awards_and_scholarships' in ordered_curr:
+        temp_dct['awards_and_scholarships'] = ordered_curr['awards_and_scholarships']
+        print("Ordered awards and scholarships section")
+
+    current_cv_text = parsers.inv_parse_cv_out(temp_dct)
     print("Ordering complete")
     format_check_current_cv_text(root)
 
