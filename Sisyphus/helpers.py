@@ -1,6 +1,20 @@
 import os
 from Sisyphus import parsers, runLocalModel
 import datetime
+import sentencepiece as spm
+
+def token_length_llama(text):
+    tokenizer = spm.SentencePieceProcessor(model_file='path/to/your/model.model')
+    tokens = tokenizer.encode(text)
+    return len(tokens)
+
+def token_math(model, input_text):
+    if model.startswith("llama"):
+        max_tokens = 8000
+        tokens = token_length_llama(input_text)
+        remaining_tokens = max_tokens - tokens
+    print(f"[MODEL: {model}] Input uses {tokens} tokens, remaining for response: {remaining_tokens}")
+
 def read_text_file(file_path):
     """
     Reads a text file from the given file location and returns its contents as a string.

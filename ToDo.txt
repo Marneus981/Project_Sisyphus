@@ -7,11 +7,23 @@
 [WIP]
 
 
-        []Add mode button for chronological ordering
+    [0.97] 
+    []Make output > 90% consistent
+    Fix chrono ordering
+    Ideas:
+        Simplify input to tailoring function by only including selected fields
+        Make tailoring functions rank their selections implicitly:
+        Make title matching function for ranking
+        
 
 
-        []Make output > 90% consistent
-
+    [0.98]
+    []Give fields a last used memory
+    [0.99]
+    []Make it a single window
+    []Add output window
+    []Add loading icon
+    
     [???]Convert to PDF button
         
 
@@ -22,11 +34,11 @@
 
 
 [???]
+    Add mode button for chronological ordering
     Miggrate to better UI package
     Wrap app
     Add reqs description / batch file for install
     Relabel format check to format and consistency check
-    Give fields a last used memory?
     Make consistency check exclusive button
         Give program ability to take in user input to modify tailored resumes for eeasier consistency check iterating
     Unchoke deepseek
@@ -38,7 +50,6 @@
     Make program more robust:
         Give it the ability to arrange unarranged cv Formats
         Make it detect unarranged cv formats
-    Make it a single window?
     Multiple resumes at once?
     Climb flavor text??
 

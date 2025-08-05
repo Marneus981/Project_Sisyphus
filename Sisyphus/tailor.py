@@ -5,6 +5,7 @@ DEFAULT_MODEL = "llama3:8b"
 DEFAULT_URL = "http://localhost:11434"
 
 
+
 def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", job_description="", section="Volunteering and Leadership"):
     
     # - Volunteering and Leadership (Choose Which To Include Based on Job Description)
@@ -20,34 +21,33 @@ def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system="", ollama_ur
             # - Soft Skills
     
     prompt = f"""
-    Given the following section on all volunteering and leadership experiences for a resume:
-    {cv_data}
-    And the following job description:
-    {job_description}
-    Tailor a '{section}' section for a resume to best match the job description by following this selection process:
-    0. If there are no volunteering and leadership experiences in the resume, return an empty section (skip all next steps).
-    1. If there are less than 4 volunteering and leadership experiences overall (before selecting), return all of them (skip all next steps).
-    2. Rank all volunteering and leadership experiences based on relevance to the job description; select the top 4 and return them as follows:
-        2.1. Modify the "Description" sections to:
-            2.1.1. Have a maximum of 2 sentences, with less than 20 words each.
-            2.1.2. Be a continuous block of text, without line breaks, composed of 1 or 2 sentences that concisely highlight the achievements and relevant skills attained at each role.
-            2.1.3. Not include the ":" character.
-        2.2. Modify the "Skills" sections to:
-            2.2.1. Have up to 6 skills across all categories, only include the most relevant.
-            2.2.2. Every subsection should be present, even if it is empty.
-        2.3. Check that all sections and subsections follow these guidelines:
-            2.3.1. Each section and subsection should be a continuous block of text, without line breaks.
-            2.3.2. If a section or subsection does not exist in the resume, return it as an empty section or subsection.
-        2.4. Return only the revised section and strictly follow the format (Only the first role is shown as an example):
-            [0]Volunteering and Leadership:
-            [1]Role: Role Name 1
-            [1]Organization: Organization Name 1
-            [1]Location: Location Name 1
-            [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
-            [1]Description: Brief description of the role and responsibilities for Role 1.
-            [1]Skills: Programming Languages: Programming Language 1, ...; Technical Skills: Technical Skill 1, ...; Soft Skills: Soft Skill 1, ...
-            ...
+Given the following section on all volunteering and leadership experiences for a resume:
+{cv_data}
+And the following job description:
+{job_description}
+
+Please select up to 4 volunteering and leadership experiences that best match the job description. If there are 4 or fewer experiences, include all of them. If there are no experiences, return an empty section.
+
+For each selected experience:
+- Keep all original subsections: Role, Organization, Location, Duration, Description, and Skills.
+- In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
+- In the Skills subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
+- Do not use line breaks inside any subsection. Do not use the ":" character in the Description.
+- If any subsection is missing, include it as empty.
+- Skills must be comma-separated and follow the format below.
+
+Return only the revised section in the following format (showing one example, but there may be up to 4 experiences):
+
+[0]Volunteering and Leadership:
+[1]Role: Role Name 1
+[1]Organization: Organization Name 1
+[1]Location: Location Name 1
+[1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
+[1]Description: Brief description for Role 1.
+[1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
+...
     """
+    helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -81,34 +81,33 @@ def tailor_work_experience(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_UR
     Tailors the work experience section based on the job description using Ollama.
     """
     prompt = f"""
-    Given the following section on all work experiences for a resume:
-    {cv_data}
-    And the following job description:
-    {job_description}
-    Tailor a '{section}' section for a resume to best match the job description by following this selection process:
-    0. If there are no work experiences in the resume, return an empty section (skip all next steps).
-    1. If there are less than 4 work experiences overall (before selecting), return all of them (skip all next steps).
-    2. Rank all work experiences based on relevance to the job description; select the top 4 and return them as follows:
-        2.1. Modify the "Description" sections to:
-            2.1.1. Have a maximum of 2 sentences, with less than 20 words each.
-            2.1.2. Be a continuous block of text, without line breaks, composed of 1 or 2 sentences that concisely highlight the achievements and relevant skills attained at each role.
-            2.1.3. Not include the ":" character.
-        2.2. Modify the "Skills" sections to:
-            2.2.1. Have up to 6 skills across all categories, only include the most relevant.
-            2.2.2. Every subsection should be present, even if it is empty.
-        2.3. Check that all sections and subsections follow these guidelines:
-            2.3.1. Each section and subsection should be a continuous block of text, without line breaks.
-            2.3.2. If a section or subsection does not exist in the resume, return it as an empty section or subsection.
-        2.4. Return only the revised section and strictly follow the format (Only the first role/position is shown as an example):
-            [0]Work Experience:
-            [1]Job Title: Job Title 1
-            [1]Company: Company 1
-            [1]Location: Location Name 1
-            [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
-            [1]Description: Brief description of the role and responsibilities for Role 1.
-            [1]Skills: Programming Languages: Programming Language 1, ...; Technical Skills: Technical Skill 1, ...; Soft Skills: Soft Skill 1, ...
-            ...
+Given the following section on all work experiences for a resume:
+{cv_data}
+And the following job description:
+{job_description}
+
+Please select up to 4 work experiences that best match the job description. If there are 4 or fewer experiences, include all of them. If there are no experiences, return an empty section.
+
+For each selected experience:
+- Keep all original subsections: Job Title, Company, Location, Duration, Description, and Skills.
+- In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
+- In the Skills subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
+- Do not use line breaks inside any subsection. Do not use the ":" character in the Description.
+- If any subsection is missing, include it as empty.
+- Skills must be comma-separated and follow the format below.
+
+Return only the revised section in the following format (showing one example, but there may be up to 4 experiences):
+
+[0]Work Experience:
+[1]Job Title: Job Title 1
+[1]Company: Company 1
+[1]Location: Location Name 1
+[1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
+[1]Description: Brief description for Job Title 1.
+[1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
+...
     """
+    helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -141,33 +140,32 @@ def tailor_projects(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_d
     Tailors the projects section based on the job description using Ollama.
     """
     prompt = f"""
-    Given the following section on all projects for a resume:
-    {cv_data}
-    And the following job description:
-    {job_description}
-    Tailor a '{section}' section for a resume to best match the job description by following this selection process:
-    0. If there are no projects in the resume, return an empty section (skip all next steps).
-    1. If there are less than 4 projects overall (before selecting), return all of them (skip all next steps).
-    2. Rank all projects based on relevance to the job description; select the top 4 and return them as follows:
-        2.1 Modify the "Description" sections to:
-            2.1.1. Have a maximum of 2 sentences, with less than 20 words each.
-            2.1.2. Be a continuous block of text, without line breaks, composed of 1 or 2 sentences that concisely highlight the achievements and relevant skills attained at each project.
-            2.1.3. Not include the ":" character.
-        2.2. Modify the "Skills" sections to:
-            2.2.1. Have up to 6 skills across all categories, only include the most relevant.
-            2.2.2. Every subsection should be present, even if it is empty.
-        2.3. Check that all sections and subsections follow these guidelines:
-            2.3.1. Each section and subsection should be a continuous block of text, without line breaks.
-            2.3.2. If a section or subsection does not exist in the resume, return it as an empty section or subsection.
-        2.4. Return only the revised section and strictly follow the format (Only the first project is shown as an example):
-            [0]Projects:
-            [1]Project Title: Project Title 1
-            [1]Type: Type of Project 1 (e.g., Personal, Academic, Professional)
-            [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
-            [1]Description: Brief description of the role and responsibilities for Role 1.
-            [1]Skills: Programming Languages: Programming Language 1, ...; Technical Skills: Technical Skill 1, ...; Soft Skills: Soft Skill 1, ...
-            ...
+Given the following section on all projects for a resume:
+{cv_data}
+And the following job description:
+{job_description}
+
+Please select up to 4 projects that best match the job description. If there are 4 or fewer projects, include all of them. If there are no projects, return an empty section.
+
+For each selected project:
+- Keep all original subsections: Project Title, Type, Duration, Description, and Skills.
+- In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
+- In the Skills subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
+- Do not use line breaks inside any subsection. Do not use the ":" character in the Description.
+- If any subsection is missing, include it as empty.
+- Skills must be comma-separated and follow the format below.
+
+Return only the revised section in the following format (showing one example, but there may be up to 4 projects):
+
+[0]Projects:
+[1]Project Title: Project Title 1
+[1]Type: Type of Project 1 (e.g., Personal, Academic, Professional)
+[1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
+[1]Description: Brief description for Project 1.
+[1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
+...
     """
+    helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -229,6 +227,7 @@ def prune_vl_w_p(model = DEFAULT_MODEL, system = "", ollama_url = DEFAULT_URL, r
         Step 4: 
         Return the selected experiences/roles in the same format as the original resume, with no changes to structure or content
     """
+    helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -266,6 +265,7 @@ def tailor_summary(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_da
     Do not line break the summary section, it should be a continuous block of text.
     Do note that the section may not exist in the CV, in which case you should return an empty section. Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
     """
+    helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -372,6 +372,7 @@ def tailor_skills(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_dat
         [1]Technical Skills: Technical Skill 1, Technical Skill 2, Technical Skill 3, Technical Skill 4, Technical Skill 5
         [1]Soft Skills: Soft Skill 1, Soft Skill 2, Soft Skill 3, Soft Skill 4
     """
+    helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -428,6 +429,7 @@ def consistency_checker_vs_job_desc(model=DEFAULT_MODEL, system="", ollama_url=D
         Be as objective as possible, and do not make any assumptions about the data; this also means that you should create nor imagine any data that is not present in the original CV data.
         """
     
+    helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -491,6 +493,7 @@ def consistency_checker_vs_cv(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT
         Be as objective as possible, and do not make any assumptions about the data; this also means that you should create nor imagine any data that is not present in the original CV data.
         """
     
+    helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -537,6 +540,7 @@ def make_cover_letter_text(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_UR
 
     """
     
+    helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,

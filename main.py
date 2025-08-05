@@ -33,6 +33,7 @@ print = logging.info
 
 def tailor_cv(root):
     global tailor_cl_button
+    global result_window, result_textbox, show_output_cv_button, save_output_cv_button, save_current_cv_text_button
     global format_check_current_cv_button, filter_output_cv_button, current_cv_text
     selected_model = model_var.get()
     cv_file = cv_var.get()
@@ -52,8 +53,6 @@ def tailor_cv(root):
         print("No system file selected. Please select a system file.")
         return
 
-
-
     cv_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "cvs", cv_file))
     system_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", system_file))
 
@@ -61,7 +60,6 @@ def tailor_cv(root):
     print("CV Text: \n" + helpers.indent_text(str(cv_text)))
     print("System: \n" + str(system_text))
     print("Job Description: \n" + str(job_desc))
-    # Here you can call your tailoring functions
 
     cv_dict = parsers.parse_cv(cv_text)
     unchanged_dict = {}
@@ -80,8 +78,9 @@ def tailor_cv(root):
             print(f"Found field: {key} Keeping unchanged field: {key}")
             unchanged_dict[key] = cv_dict[key]
 
-    
-
+    print("[STEP 1][INPUT] Raw CV text: \n" + helpers.indent_text(str(cv_text)))
+    print("[STEP 1][START] Tailoring resume without Summary section")
+    #region STEP 1
     # Tailor each remaining section
     tailored_list = []
     cv_fields = parsers.dict_spliter(cv_dict)
@@ -102,10 +101,6 @@ def tailor_cv(root):
         if 'projects' in field:
             print("Found projects section")
             p_section = {'projects': field['projects']}
-
-        # if 'summary' in field:
-        #     print("Found summary section")
-        #     s_section = {'summary': field['summary']}
 
     # Tailor each section if it exists
     print("Tailoring sections...")
@@ -156,16 +151,13 @@ def tailor_cv(root):
     for key, value in unchanged_dict.items():
         tailored_dict[key] = value
 
-
     # Convert the tailored dict back to text (no summary section yet)
     s_text = parsers.inv_parse_cv(tailored_dict)
-
-    print("Resume before pruning (And before Summary): \n" + helpers.indent_text(str(s_text)))
-
-
-    #Prune Volunteering and Leadership, Work Experience and Projects sections based on job description
-    print("Pruning following sections: Volunteering and Leadership, Work Experience and Projects...")
-
+    #endregion
+    print("[STEP 1][COMPLETE]")
+    print("[STEP 1][OUTPUT]>>>[STEP 2][INPUT] Tailored resume text (no Summary): \n" + helpers.indent_text(str(s_text)))
+    print("[STEP 2][START]Pruning following sections: Volunteering and Leadership, Work Experience and Projects...")
+    #region STEP 2
     #Extract Volunteering and Leadership, Work Experience and Projects sections from the final CV text
     volunteering_and_leadership = tailored_dict.get("volunteering_and_leadership", {})
     work_experience = tailored_dict.get("work_experience", {})
@@ -178,7 +170,7 @@ def tailor_cv(root):
     }
     #Convert to text
     experiences_text = parsers.inv_parse_cv(experiences)
-    print("Experiences text before pruning: \n" + helpers.indent_text(str(experiences_text)))
+    # print("Experiences text before pruning: \n" + helpers.indent_text(str(experiences_text)))
     #Prune Volunteering and Leadership, Work Experience and Projects sections based on job description
     pruned_experiences = tailor.prune_vl_w_p(
         model=selected_model,
@@ -186,17 +178,15 @@ def tailor_cv(root):
         resume_experiences=experiences_text,
         job_description=job_desc
     )
-    print("Remaining experiences before filtering: \n" + helpers.indent_text(str(pruned_experiences)))
+    # print("Remaining experiences before filtering: \n" + helpers.indent_text(str(pruned_experiences)))
     pruned_experiences = helpers.filter_output(pruned_experiences)
-    print("Remaining experiences after filtering: \n" + helpers.indent_text(str(pruned_experiences)))
+    # print("Remaining experiences after filtering: \n" + helpers.indent_text(str(pruned_experiences)))
+    
     if pruned_experiences:
-##############################################################################
-        print("[0]DEBUG")
         pruned_experiences_dict = parsers.parse_cv(pruned_experiences)
         for key in ['volunteering_and_leadership', 'work_experience', 'projects']:
             print("" + key + " section after pruning: " + str(pruned_experiences_dict.get(key, {})))
         #Replace the experiences section in the final tailored dict
-        print("[1]DEBUG")
         vnl_s = pruned_experiences_dict.get('volunteering_and_leadership', {})
         print("Volunteering and Leadership section after pruning and .get(): \n" + str(vnl_s))
         tailored_dict['volunteering_and_leadership'] = vnl_s
@@ -206,18 +196,17 @@ def tailor_cv(root):
         p_s = pruned_experiences_dict.get('projects', {})
         print("Projects section after pruning and .get(): \n" + str(p_s))
         tailored_dict['projects'] = p_s
-        print("[2]DEBUG")
         cv_text0 = parsers.inv_parse_cv(tailored_dict)
-        print("[3]DEBUG")
         s_text = helpers.format_output(cv_text0)
 
-##############################################################################
     else:
         print("No experiences section tailored, using original experiences section")
 
-
-    #Tailor summary section if it exists
-    # if s_section:
+    #endregion
+    print("[STEP 2][COMPLETE]")
+    print("[STEP 2][OUTPUT]>>>[STEP 3][INPUT] Tailored resume text (no Summary; pruned): \n" + helpers.indent_text(str(s_text)))
+    print("[STEP 3][START] Tailoring Summary section...")
+    #region STEP 3
     print("Tailoring summary section...")
     tailored_s = tailor.tailor_summary(
         model=selected_model,
@@ -236,13 +225,14 @@ def tailor_cv(root):
         final_tailored_dict[key] = value
 
     final_cv_text = helpers.format_output(parsers.inv_parse_cv(final_tailored_dict))
-
-
+    #endregion
+    print("[STEP 3][COMPLETE]")
     print("All sections tailored successfully")
-
-    print("CV text before separate skills section: " +  helpers.indent_text(str(final_cv_text)))
+    print("[STEP 3][OUTPUT]>>>[STEP 4][INPUT] Tailored resume text (with Summary; pruned): \n" + helpers.indent_text(str(final_cv_text)))
+    print("[STEP 4][START] Making skills section separate and tailoring it...")
+    #region STEP 4
     final_final_cv_text = tailor.return_text_with_skills(final_cv_text)
-    print("CV text after skills section: " +  helpers.indent_text(str(final_final_cv_text)))
+    # print("CV text after skills section: " +  helpers.indent_text(str(final_final_cv_text)))
     #Print final_final_cv_text
     # print('Checking tailor.return_text_with_skills output:')
     # print(final_final_cv_text)
@@ -272,8 +262,11 @@ def tailor_cv(root):
     else:
         print("No skills section tailored, using original skills section")
         current_cv_text = final_final_cv_text
-    
-    print("Ordering Resume sections by end date/issue date...")
+    #endregion
+    print("[STEP 4][COMPLETE]")
+    print("[STEP 4][OUTPUT]>>>[STEP 5][INPUT] Tailored resume text (with Summary; pruned; skills tailored): \n" + helpers.indent_text(str(current_cv_text)))
+    print("[STEP 5][START] Ordering Resume sections by end date/issue date...")
+    #region STEP 5
     temp_dct = parsers.parse_cv_out(current_cv_text)
     split_curr = parsers.dict_spliter(temp_dct)
     to_be_ordered = []
@@ -281,40 +274,47 @@ def tailor_cv(root):
         # Check if key is one of the sections to be ordered
         for key in section:
             if key in ['education', 'work_experience', 'projects', 'volunteering_and_leadership', 'certifications', 'awards_and_scholarships']:
-                print(f"Found section to order: {key}")
+                print(f"Found section to order: {key} with value: {section[key]}")
                 to_be_ordered.append(section)
+    print("Sections to be ordered: ", to_be_ordered)
     grafted_curr = parsers.dict_grafter(to_be_ordered)
     helpers.order_chronologically(grafted_curr, mode='end_date')
     ordered_curr = grafted_curr
+    for section in ordered_curr:
+        print(f"Ordered section: {ordered_curr[section]}")
     #Replace all ordered sections from ordered_curr to temp_dct
     if 'education' in ordered_curr:
         temp_dct['education'] = ordered_curr['education']
-        print("Ordered education section")
+        #print("Ordered education section: " + str(temp_dct['education']))
     if 'work_experience' in ordered_curr:
         temp_dct['work_experience'] = ordered_curr['work_experience']
-        print("Ordered work experience section")
+        #print("Ordered work experience section: " + str(temp_dct['work_experience']))
     if 'projects' in ordered_curr:
         temp_dct['projects'] = ordered_curr['projects']
-        print("Ordered projects section")
+        #print("Ordered projects section: " + str(temp_dct['projects']))
     if 'volunteering_and_leadership' in ordered_curr:
         temp_dct['volunteering_and_leadership'] = ordered_curr['volunteering_and_leadership']
-        print("Ordered volunteering and leadership section")
+        #print("Ordered volunteering and leadership section: " + str(temp_dct['volunteering_and_leadership']))
     if 'certifications' in ordered_curr:
         temp_dct['certifications'] = ordered_curr['certifications']
-        print("Ordered certifications section")
+        #print("Ordered certifications section: " + str(temp_dct['certifications']))
     if 'awards_and_scholarships' in ordered_curr:
         temp_dct['awards_and_scholarships'] = ordered_curr['awards_and_scholarships']
-        print("Ordered awards and scholarships section")
+        #print("Ordered awards and scholarships section: " + str(temp_dct['awards_and_scholarships']))
 
     current_cv_text = parsers.inv_parse_cv_out(temp_dct)
     print("Ordering complete")
+    #endregion
+    print("[STEP 5][COMPLETE]")
+    print("[STEP 5][OUTPUT]>>>[STEP 6][INPUT] Tailored resume text (with Summary; pruned; skills tailored; ordered): \n" + helpers.indent_text(str(current_cv_text)))
+    print("[STEP 6][START] Formatting/Consistency check for tailored resume...")
+    #region STEP 6
     format_check_current_cv_text(root)
-
-    
-
+    #endregion
+    print("[STEP 6][COMPLETE]") 
     print("The climb has ended, the CV is tailored!")
     # Show the tailored CV text in a new window
-    global result_window, result_textbox, show_output_cv_button, save_output_cv_button, save_current_cv_text_button
+    
     
     result_window = tk.Toplevel(root)
     result_window.title("Tailored CV")
