@@ -9,6 +9,7 @@
 
     [0.97] 
     []Make output > 90% consistent
+    Fix tokenizer; waiting on response from meta
     Fix chrono ordering
     Ideas:
         Simplify input to tailoring function by only including selected fields

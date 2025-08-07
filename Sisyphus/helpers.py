@@ -1,18 +1,37 @@
 import os
+from xml.parsers.expat import model
 from Sisyphus import parsers, runLocalModel
 import datetime
-import sentencepiece as spm
+import transformers
+import subprocess
 
-def token_length_llama(text):
-    tokenizer = spm.SentencePieceProcessor(model_file='path/to/your/model.model')
-    tokens = tokenizer.encode(text)
-    return len(tokens)
+TOKENIZER_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\tokenizers"
+
+def count_tokens_with_js(text):
+    tokenizer_js_path = os.path.join(TOKENIZER_PATH, "llama3", "tokenizer.js")
+    result = subprocess.run(
+        ["node", tokenizer_js_path, text],
+        capture_output=True, text=True
+    )
+    if result.stderr:
+        print("JS Error:", result.stderr)
+    print("JS Output:", result.stdout)
+    if not result.stdout.strip().isdigit():
+        raise RuntimeError("Token JS script did not return a valid number.")
+    return int(result.stdout.strip())
 
 def token_math(model, input_text):
-    if model.startswith("llama"):
-        max_tokens = 8000
-        tokens = token_length_llama(input_text)
-        remaining_tokens = max_tokens - tokens
+    
+    
+    if model.startswith("llama3"):
+        tokens = count_tokens_with_js(input_text.strip())
+        max_tokens = 8192
+
+    else:
+        print(f"Token calculation not implemented for model: {model}")
+        return
+
+    remaining_tokens = max_tokens - tokens
     print(f"[MODEL: {model}] Input uses {tokens} tokens, remaining for response: {remaining_tokens}")
 
 def read_text_file(file_path):
@@ -696,7 +715,7 @@ def order_chronologically(cv_dict, mode = 'end_date'):
         start_date = parse_date(start_str)
         end_date = parse_date(end_str)
         return start_date, end_date
-    def order_section(section, type_key = 'start_date'):
+    def order_section(section, type_key = 'end_date'):
         """
         Order the items in a section based on their start and end dates.
         """
@@ -704,9 +723,11 @@ def order_chronologically(cv_dict, mode = 'end_date'):
         allowed_sections2 = ['certifications', 'awards_and_scholarships']
         allowed_keys = ['start_date', 'end_date', 'issue_date']
         for key in section:
+            print(f"[DEBUG] order_section: ordering {key}")
             if type_key not in allowed_keys:
                 raise ValueError("Invalid type_key. Choose from 'start_date', 'end_date', or 'issue_date'.")
             if key in allowed_sections1:
+                
                 if type_key == 'start_date':
                     return sorted(section, key=lambda x: (parse_duration(x['duration'])[0] if 'duration' in x else datetime.date.max))
                 elif type_key == 'end_date':
@@ -723,20 +744,38 @@ def order_chronologically(cv_dict, mode = 'end_date'):
         
     # Order each section based on the specified mode
     if 'education' in cv_dict:
+        print("[DEBUG] order_chronologically: ordering education")
         temp_dct_cpy = {'education': cv_dict['education']}
+        print("[DEBUG] " + str(temp_dct_cpy))
         cv_dict['education'] = order_section(temp_dct_cpy, type_key=mode)
+        print("[DEBUG] " + str(cv_dict['education']))
     if 'work_experience' in cv_dict:
+        print("[DEBUG] order_chronologically: ordering work_experience")
         temp_dct_cpy = {'work_experience': cv_dict['work_experience']}
+        print("[DEBUG] " + str(temp_dct_cpy))
         cv_dict['work_experience'] = order_section(temp_dct_cpy, type_key=mode)
+        print("[DEBUG] " + str(cv_dict['work_experience']))
     if 'projects' in cv_dict:
+        print("[DEBUG] order_chronologically: ordering projects")
         temp_dct_cpy = {'projects': cv_dict['projects']}
+        print("[DEBUG] " + str(temp_dct_cpy))
         cv_dict['projects'] = order_section(temp_dct_cpy, type_key=mode)
+        print("[DEBUG] " + str(cv_dict['projects']))
     if 'volunteering_and_leadership' in cv_dict:
+        print("[DEBUG] order_chronologically: ordering volunteering_and_leadership")
         temp_dct_cpy = {'volunteering_and_leadership': cv_dict['volunteering_and_leadership']}
+        print("[DEBUG] " + str(temp_dct_cpy))
         cv_dict['volunteering_and_leadership'] = order_section(temp_dct_cpy, type_key=mode)
+        print("[DEBUG] " + str(cv_dict['volunteering_and_leadership']))
     if 'certifications' in cv_dict:
+        print("[DEBUG] order_chronologically: ordering certifications")
         temp_dct_cpy = {'certifications': cv_dict['certifications']}
+        print("[DEBUG] " + str(temp_dct_cpy))
         cv_dict['certifications'] = order_section(temp_dct_cpy, type_key='issue_date')
+        print("[DEBUG] " + str(cv_dict['certifications']))
     if 'awards_and_scholarships' in cv_dict:
+        print("[DEBUG] order_chronologically: ordering awards_and_scholarships")
         temp_dct_cpy = {'awards_and_scholarships': cv_dict['awards_and_scholarships']}
+        print("[DEBUG] " + str(temp_dct_cpy))
         cv_dict['awards_and_scholarships'] = order_section(temp_dct_cpy, type_key='issue_date')
+        print("[DEBUG] " + str(cv_dict['awards_and_scholarships']))

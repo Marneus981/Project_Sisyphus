@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "llama3-tokenizer-js": "^1.2.0",
+    "transformers": "^1.8.3"
+  }
+}
