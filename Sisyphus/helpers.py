@@ -10,8 +10,10 @@ TOKENIZER_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\tokenizers"
 def count_tokens_with_js(text):
     tokenizer_js_path = os.path.join(TOKENIZER_PATH, "llama3", "tokenizer.js")
     result = subprocess.run(
-        ["node", tokenizer_js_path, text],
-        capture_output=True, text=True
+        ["node", tokenizer_js_path],
+        input=text,
+        capture_output=True, 
+        text=True
     )
     if result.stderr:
         print("JS Error:", result.stderr)

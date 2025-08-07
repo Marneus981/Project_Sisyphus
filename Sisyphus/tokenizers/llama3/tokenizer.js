@@ -1,6 +1,12 @@
 async function main() {
-    const input = process.argv[2];
+    let input = '';
+    process.stdin.setEncoding('utf8');
+    for await (const chunk of process.stdin) {
+        input += chunk;
+    }
+
     const llama3Tokenizer = await import('llama3-tokenizer-js')
-    console.log(llama3Tokenizer.default.encode(input).length)
+    const tokens = llama3Tokenizer.default.encode(input);
+    console.log(tokens.length);
 }
 main();
