@@ -3,6 +3,9 @@
 #Expected output: Parsed CV data in a structured format
 #The idea is to support both a UI for manual input (each field) and a raw text input for parsing.
 import re
+import logging
+# Set up logging
+print = logging.info
 
 def format_key(key, parent_key=None):
         # Special case for LinkedIn under Contact Information

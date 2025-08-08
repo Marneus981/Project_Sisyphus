@@ -1,9 +1,12 @@
 import requests
 import subprocess
 import time
-
+import logging
 DEFAULT_MODEL = "llama3:8b"
 DEFAULT_URL = "http://localhost:11434"
+
+# Set up logging
+print = logging.info
 
 def is_ollama_running(ollama_url=DEFAULT_URL):
     try:

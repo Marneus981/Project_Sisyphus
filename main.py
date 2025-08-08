@@ -276,12 +276,21 @@ def tailor_cv(root):
             if key in ['education', 'work_experience', 'projects', 'volunteering_and_leadership', 'certifications', 'awards_and_scholarships']:
                 print(f"Found section to order: {key} with value: {section[key]}")
                 to_be_ordered.append(section)
-    print("Sections to be ordered: ", to_be_ordered)
     grafted_curr = parsers.dict_grafter(to_be_ordered)
-    helpers.order_chronologically(grafted_curr, mode='end_date')
-    ordered_curr = grafted_curr
+    #check if grafted_curr is empty
+    if not grafted_curr:
+        print("No sections to order, skipping ordering step.")
+    else:
+        #print ("Grafted current sections: " + str(grafted_curr))
+        print("Grafted current sections:\n" +  helpers.indent_text(parsers.inv_parse_cv_out(grafted_curr)))
+    new_grafted_curr = helpers.order_chronologically(grafted_curr, mode='end_date')
+    if not new_grafted_curr:
+        print("No sections were ordered.")
+    else:
+        print("Ordered sections:\n" + helpers.indent_text(parsers.inv_parse_cv_out(new_grafted_curr)))
+    ordered_curr = new_grafted_curr
     for section in ordered_curr:
-        print(f"Ordered section: {ordered_curr[section]}")
+        print(f"{section} section content: {ordered_curr[section]}")
     #Replace all ordered sections from ordered_curr to temp_dct
     if 'education' in ordered_curr:
         temp_dct['education'] = ordered_curr['education']

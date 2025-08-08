@@ -2,6 +2,9 @@ from docxtpl import DocxTemplate
 import subprocess
 import os
 import time
+import logging
+# Set up logging
+print = logging.info
 
 def context_cleaner(context):
     """

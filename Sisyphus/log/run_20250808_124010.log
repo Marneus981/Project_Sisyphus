@@ -1,0 +1,360 @@
+2025-08-08 12:42:40,740 INFO: Ollama server is not running. Starting Ollama.
+2025-08-08 12:45:08,686 INFO: Selected Model: 
+llama3:8b
+2025-08-08 12:45:08,687 INFO: CV Text: 
+[0]Name: Jane Doe
+[0]Contact Information:
+[0]Title: Senior Software Engineer
+[0]Summary: Jane Doe is a dynamic and accomplished Senior Software Engineer with more than 15 years of experience leading complex technology initiatives and delivering innovative solutions across multiple industries, including finance, education, e-commerce, and media. Her career is marked by a consistent record of architecting, developing, and deploying scalable backend systems, cloud infrastructure, and distributed applications that have driven measurable improvements in performance, reliability, and cost efficiency. Jane has demonstrated exceptional leadership in managing and mentoring teams of up to 20 engineers and volunteers, fostering a culture of collaboration, adaptability, and continuous improvement. She has spearheaded cloud migration projects that resulted in a 30% reduction in operational costs and a 95% stakeholder satisfaction rate, and has led the design and implementation of microservices architectures that reduced system downtime by 40% and increased transaction throughput by 25%. Her technical expertise encompasses Python, Java, JavaScript, C++, SQL, Dart, Go, and R, with advanced proficiency in Docker, Kubernetes, cloud computing, machine learning, NLP, IoT, and API integration. Jane’s project portfolio includes real-time analytics dashboards, mobile applications, IoT automation systems, recommendation engines, and sentiment analysis tools, each of which has delivered significant business value and user engagement improvements. She has mentored over 100 aspiring developers, achieving a 90% bootcamp completion rate and a 35% improvement in job placement, and has contributed to open source projects, enhancing code quality and adoption by 20%. Jane’s commitment to quality assurance, security, and customer service is reflected in her achievements as a QA tester, IT support specialist, and data analyst, where she improved release quality, lab uptime, and business decision-making through automation and analytics. Her experience in event planning, curriculum development, public speaking, and community outreach has expanded program reach and impact, earning her recognition for dedication, expertise, and positive influence. Fluent in English, Spanish, and French, Jane is passionate about mentoring, empowering others, and bridging the digital divide. She has received the Dean’s List and Tech Innovation Scholarship for academic excellence and holds certifications as an AWS Solutions Architect and Scrum Master. Throughout her career, Jane has demonstrated exceptional problem-solving, analytical thinking, and attention to detail, consistently delivering projects on time and within budget. Her ability to analyze complex problems, architect robust solutions, and build strong relationships with clients, stakeholders, and team members positions her as a valuable asset to any organization seeking to innovate and excel in today’s competitive landscape. Jane’s technical acumen, leadership, and interpersonal skills have enabled her to drive organizational success, foster inclusive environments, and inspire the next generation of engineers. Her history of exceeding performance metrics and delivering impactful results is a testament to her dedication, creativity, and adaptability, making her an ideal candidate for senior engineering and leadership roles in dynamic, forward-thinking organizations. She is committed to continuous learning and professional development, ensuring her contributions remain relevant and valuable. Jane’s experience spans the full software development lifecycle, from requirements gathering and design to implementation, testing, and deployment. She is passionate about fostering inclusive environments, promoting diversity in tech, and inspiring the next generation of engineers through mentorship and community engagement. Her technical acumen, combined with her leadership and interpersonal skills, positions her as a valuable asset to any organization seeking to innovate and excel in today's competitive landscape.
+[0]Languages: English, Spanish, French
+[0]Education:
+[0]Certifications:
+[0]Awards and Scholarships:
+[0]Volunteering and Leadership:
+[0]Work Experience:
+[0]Projects:
+2025-08-08 12:45:08,689 INFO: System: 
+You are a resume tailoring assistant. Only output the section requested, in the exact format specified. You are to follow the following guidelines when tailoring all resume sections:
+You may only draw from the provided descriptions, no making assumptions.
+Do not invent any data or roles, only use the data provided.
+You may not add any untrue statements outside of what has been provided in the untailored resume section.
+The tailored sections and overall resume must be brief, concise and professional. It must cater to recruiters and make the resume stand out.
+Use simple to understand language when possible, unless direct technical terminology is employed.
+2025-08-08 12:45:08,689 INFO: Job Description: 
+DoorDash is building the world's most reliable on-demand, logistics engine for delivery. We are continuing to grow rapidly and expanding our Engineering offices globally! We are looking for Backend Engineers to build and maintain a large scale 24x7 global infrastructure system that powers DoorDash's 3-sided marketplace of Consumers, Merchants and Dashers.
+
+
+2025-08-08 12:45:08,690 INFO: Fetching unchanged fields...
+2025-08-08 12:45:08,690 INFO: Found field: name Keeping unchanged field: name
+2025-08-08 12:45:08,690 INFO: Found field: contact_information Keeping unchanged field: contact_information
+2025-08-08 12:45:08,692 INFO: Found field: title Keeping unchanged field: title
+2025-08-08 12:45:08,692 INFO: Found field: languages Keeping unchanged field: languages
+2025-08-08 12:45:08,692 INFO: Found field: education Keeping unchanged field: education
+2025-08-08 12:45:08,692 INFO: Found field: certifications Keeping unchanged field: certifications
+2025-08-08 12:45:08,692 INFO: Found field: awards_and_scholarships Keeping unchanged field: awards_and_scholarships
+2025-08-08 12:45:08,692 INFO: [STEP 1][INPUT] Raw CV text: 
+[0]Name: Jane Doe
+[0]Contact Information:
+[0]Title: Senior Software Engineer
+[0]Summary: Jane Doe is a dynamic and accomplished Senior Software Engineer with more than 15 years of experience leading complex technology initiatives and delivering innovative solutions across multiple industries, including finance, education, e-commerce, and media. Her career is marked by a consistent record of architecting, developing, and deploying scalable backend systems, cloud infrastructure, and distributed applications that have driven measurable improvements in performance, reliability, and cost efficiency. Jane has demonstrated exceptional leadership in managing and mentoring teams of up to 20 engineers and volunteers, fostering a culture of collaboration, adaptability, and continuous improvement. She has spearheaded cloud migration projects that resulted in a 30% reduction in operational costs and a 95% stakeholder satisfaction rate, and has led the design and implementation of microservices architectures that reduced system downtime by 40% and increased transaction throughput by 25%. Her technical expertise encompasses Python, Java, JavaScript, C++, SQL, Dart, Go, and R, with advanced proficiency in Docker, Kubernetes, cloud computing, machine learning, NLP, IoT, and API integration. Jane’s project portfolio includes real-time analytics dashboards, mobile applications, IoT automation systems, recommendation engines, and sentiment analysis tools, each of which has delivered significant business value and user engagement improvements. She has mentored over 100 aspiring developers, achieving a 90% bootcamp completion rate and a 35% improvement in job placement, and has contributed to open source projects, enhancing code quality and adoption by 20%. Jane’s commitment to quality assurance, security, and customer service is reflected in her achievements as a QA tester, IT support specialist, and data analyst, where she improved release quality, lab uptime, and business decision-making through automation and analytics. Her experience in event planning, curriculum development, public speaking, and community outreach has expanded program reach and impact, earning her recognition for dedication, expertise, and positive influence. Fluent in English, Spanish, and French, Jane is passionate about mentoring, empowering others, and bridging the digital divide. She has received the Dean’s List and Tech Innovation Scholarship for academic excellence and holds certifications as an AWS Solutions Architect and Scrum Master. Throughout her career, Jane has demonstrated exceptional problem-solving, analytical thinking, and attention to detail, consistently delivering projects on time and within budget. Her ability to analyze complex problems, architect robust solutions, and build strong relationships with clients, stakeholders, and team members positions her as a valuable asset to any organization seeking to innovate and excel in today’s competitive landscape. Jane’s technical acumen, leadership, and interpersonal skills have enabled her to drive organizational success, foster inclusive environments, and inspire the next generation of engineers. Her history of exceeding performance metrics and delivering impactful results is a testament to her dedication, creativity, and adaptability, making her an ideal candidate for senior engineering and leadership roles in dynamic, forward-thinking organizations. She is committed to continuous learning and professional development, ensuring her contributions remain relevant and valuable. Jane’s experience spans the full software development lifecycle, from requirements gathering and design to implementation, testing, and deployment. She is passionate about fostering inclusive environments, promoting diversity in tech, and inspiring the next generation of engineers through mentorship and community engagement. Her technical acumen, combined with her leadership and interpersonal skills, positions her as a valuable asset to any organization seeking to innovate and excel in today's competitive landscape.
+[0]Languages: English, Spanish, French
+[0]Education:
+[0]Certifications:
+[0]Awards and Scholarships:
+[0]Volunteering and Leadership:
+[0]Work Experience:
+[0]Projects:
+2025-08-08 12:45:08,693 INFO: [STEP 1][START] Tailoring resume without Summary section
+2025-08-08 12:45:08,693 INFO: Searching fields to tailor...
+2025-08-08 12:45:08,693 INFO: Found volunteering_and_leadership section
+2025-08-08 12:45:08,693 INFO: Found work_experience section
+2025-08-08 12:45:08,694 INFO: Found projects section
+2025-08-08 12:45:08,694 INFO: Tailoring sections...
+2025-08-08 12:45:08,694 INFO: Tailoring volunteering and leadership section...
+2025-08-08 12:45:37,414 INFO: Tailored volunteering and leadership section
+2025-08-08 12:45:37,414 INFO: Tailoring work experience section...
+2025-08-08 12:45:59,102 INFO: Tailored work experience section
+2025-08-08 12:45:59,102 INFO: Tailoring projects section...
+2025-08-08 12:46:27,888 INFO: Tailored projects section
+2025-08-08 12:46:27,889 INFO: [STEP 1][COMPLETE]
+2025-08-08 12:46:27,889 INFO: [STEP 1][OUTPUT]>>>[STEP 2][INPUT] Tailored resume text (no Summary): 
+[0]Volunteering and Leadership:
+    [1]Role: Coding Bootcamp Mentor
+    [1]Organization: CodeSpring
+    [1]Location: Springfield, USA
+    [1]Duration: 2020/01 - 2022/12
+    [1]Description: Mentored over 100 aspiring developers in Python and web development, improving participant job placement by 35%. Developed advanced workshops on microservices and cloud computing
+    [1]Skills: Programming Languages: Python; Technical Skills: Web Development, REST APIs, Docker, Kubernetes; Soft Skills: Leadership, Problem Solving, Teamwork
+[0]Work Experience:
+    [1]Job Title: Senior Backend Engineer
+    [1]Company: FinTech Solutions
+    [1]Location: Springfield, USA
+    [1]Duration: 2019/07 - Present
+    [1]Description: Designed and implemented scalable microservices architecture using Python, Go, and Docker. Reduced system downtime by 40% and increased transaction throughput by 25%
+    [1]Skills: Programming Languages: Python; Technical Skills: Microservices, Docker, Cloud Computing; Soft Skills: Leadership, Problem Solving
+    [1]Job Title: Software Engineer
+    [1]Company: WebApps Inc.
+    [1]Location: Capital City, USA
+    [1]Duration: 2016/07 - 2019/06
+    [1]Description: Developed RESTful APIs and optimized database queries. Improved application performance by 30% using microservices architecture
+    [1]Skills: Programming Languages: Java; Technical Skills: API Development, Microservices, Docker, Cloud Computing; Soft Skills: Collaboration, Problem Solving
+[0]Projects:
+    [1]Project Title: Real-Time Analytics Dashboard
+    [1]Type: Professional
+    [1]Duration: 2023/08 - 2024/01
+    [1]Description: Created a web-based employee scheduling application, showcasing skills in building scalable and user-friendly systems
+    [1]Skills: Programming Languages: JavaScript; Technical Skills: Web Development, API Integration; Soft Skills: Organization
+[0]Name: Jane Doe
+[0]Contact Information:
+    [1]Address: 123 Main St, Springfield, USA
+    [1]Phone: +1-555-123-4567
+    [1]Email: jane.doe@email.com
+    [1]LinkedIn: linkedin.com/in/janedoe
+    [1]Github: github.com/janedoe
+    [1]Portfolio: janedoe.dev
+[0]Title: Senior Software Engineer
+[0]Languages: English, Spanish, French
+[0]Education:
+    [1]Degree: B.Sc. Computer Science
+    [1]University: Springfield University
+    [1]Location: Springfield, USA
+    [1]Duration: 2012/09 - 2016/06
+    [1]Courses: Algorithms, Data Structures, Operating Systems, Databases
+    [1]Degree: M.Sc. Software Engineering
+    [1]University: Capital Tech
+    [1]Location: Capital City, USA
+    [1]Duration: 2016/09 - 2018/06
+    [1]Courses: Cloud Computing, Distributed Systems, Advanced Programming
+[0]Certifications:
+    [1]Certification Name: AWS Certified Solutions Architect
+    [1]Issuing Organization: Amazon Web Services
+    [1]Issue Date: 2019/05
+    [1]Certification Name: Scrum Master
+    [1]Issuing Organization: Scrum Alliance
+    [1]Issue Date: 2020/03
+[0]Awards and Scholarships:
+    [1]Award Name: Dean’s List
+    [1]Issuing Organization: Springfield University
+    [1]Issue Date: 2015/06
+    [1]Award Name: Tech Innovation Scholarship
+    [1]Issuing Organization: Capital Tech
+    [1]Issue Date: 2017/09
+2025-08-08 12:46:27,890 INFO: [STEP 2][START]Pruning following sections: Volunteering and Leadership, Work Experience and Projects...
+2025-08-08 12:47:03,107 INFO: volunteering_and_leadership section after pruning: [{'role': 'Coding Bootcamp Mentor', 'organization': 'CodeSpring', 'location': 'Springfield, USA', 'duration': '2020/01 - 2022/12', 'description': ['Mentored over 100 aspiring developers in Python and web development, improving participant job placement by 35%', 'Developed advanced workshops on microservices and cloud computing'], 'skills': {'programming_languages': ['Python'], 'technical_skills': ['Web Development', 'REST APIs', 'Docker', 'Kubernetes'], 'soft_skills': ['Leadership', 'Problem Solving', 'Teamwork']}}]
+2025-08-08 12:47:03,108 INFO: work_experience section after pruning: [{'job_title': 'Senior Backend Engineer', 'company': 'FinTech Solutions', 'location': 'Springfield, USA', 'duration': '2019/07 - Present', 'description': ['Designed and implemented scalable microservices architecture using Python, Go, and Docker', 'Reduced system downtime by 40% and increased transaction throughput by 25%']}]
+2025-08-08 12:47:03,108 INFO: projects section after pruning: [{'project_title': 'Real-Time Analytics Dashboard', 'type': 'Professional', 'duration': '2023/08 - 2024/01', 'description': ['Created a web-based employee scheduling application, showcasing skills in building scalable and user-friendly systems']}]
+2025-08-08 12:47:03,108 INFO: Volunteering and Leadership section after pruning and .get(): 
+[{'role': 'Coding Bootcamp Mentor', 'organization': 'CodeSpring', 'location': 'Springfield, USA', 'duration': '2020/01 - 2022/12', 'description': ['Mentored over 100 aspiring developers in Python and web development, improving participant job placement by 35%', 'Developed advanced workshops on microservices and cloud computing'], 'skills': {'programming_languages': ['Python'], 'technical_skills': ['Web Development', 'REST APIs', 'Docker', 'Kubernetes'], 'soft_skills': ['Leadership', 'Problem Solving', 'Teamwork']}}]
+2025-08-08 12:47:03,108 INFO: Work Experience section after pruning and .get(): 
+[{'job_title': 'Senior Backend Engineer', 'company': 'FinTech Solutions', 'location': 'Springfield, USA', 'duration': '2019/07 - Present', 'description': ['Designed and implemented scalable microservices architecture using Python, Go, and Docker', 'Reduced system downtime by 40% and increased transaction throughput by 25%']}]
+2025-08-08 12:47:03,109 INFO: Projects section after pruning and .get(): 
+[{'project_title': 'Real-Time Analytics Dashboard', 'type': 'Professional', 'duration': '2023/08 - 2024/01', 'description': ['Created a web-based employee scheduling application, showcasing skills in building scalable and user-friendly systems']}]
+2025-08-08 12:47:03,110 INFO: [STEP 2][COMPLETE]
+2025-08-08 12:47:03,110 INFO: [STEP 2][OUTPUT]>>>[STEP 3][INPUT] Tailored resume text (no Summary; pruned): 
+[0]Name: Jane Doe
+[0]Contact Information:
+    [1]Address: 123 Main St, Springfield, USA
+    [1]Phone: +1-555-123-4567
+    [1]Email: jane.doe@email.com
+    [1]LinkedIn: linkedin.com/in/janedoe
+    [1]Github: github.com/janedoe
+    [1]Portfolio: janedoe.dev
+[0]Title: Senior Software Engineer
+[0]Languages: English, Spanish, French
+[0]Education:
+    [1]Degree: B.Sc. Computer Science
+    [1]University: Springfield University
+    [1]Location: Springfield, USA
+    [1]Duration: 2012/09 - 2016/06
+    [1]Courses: Algorithms, Data Structures, Operating Systems, Databases
+    [1]Degree: M.Sc. Software Engineering
+    [1]University: Capital Tech
+    [1]Location: Capital City, USA
+    [1]Duration: 2016/09 - 2018/06
+    [1]Courses: Cloud Computing, Distributed Systems, Advanced Programming
+[0]Certifications:
+    [1]Certification Name: AWS Certified Solutions Architect
+    [1]Issuing Organization: Amazon Web Services
+    [1]Issue Date: 2019/05
+    [1]Certification Name: Scrum Master
+    [1]Issuing Organization: Scrum Alliance
+    [1]Issue Date: 2020/03
+[0]Awards and Scholarships:
+    [1]Award Name: Dean’s List
+    [1]Issuing Organization: Springfield University
+    [1]Issue Date: 2015/06
+    [1]Award Name: Tech Innovation Scholarship
+    [1]Issuing Organization: Capital Tech
+    [1]Issue Date: 2017/09
+[0]Volunteering and Leadership:
+    [1]Role: Coding Bootcamp Mentor
+    [1]Organization: CodeSpring
+    [1]Location: Springfield, USA
+    [1]Duration: 2020/01 - 2022/12
+    [1]Description: Mentored over 100 aspiring developers in Python and web development, improving participant job placement by 35%. Developed advanced workshops on microservices and cloud computing
+    [1]Skills: Programming Languages: Python; Technical Skills: Web Development, REST APIs, Docker, Kubernetes; Soft Skills: Leadership, Problem Solving, Teamwork
+[0]Work Experience:
+    [1]Job Title: Senior Backend Engineer
+    [1]Company: FinTech Solutions
+    [1]Location: Springfield, USA
+    [1]Duration: 2019/07 - Present
+    [1]Description: Designed and implemented scalable microservices architecture using Python, Go, and Docker. Reduced system downtime by 40% and increased transaction throughput by 25%
+[0]Projects:
+    [1]Project Title: Real-Time Analytics Dashboard
+    [1]Type: Professional
+    [1]Duration: 2023/08 - 2024/01
+    [1]Description: Created a web-based employee scheduling application, showcasing skills in building scalable and user-friendly systems
+2025-08-08 12:47:03,111 INFO: [STEP 3][START] Tailoring Summary section...
+2025-08-08 12:47:03,111 INFO: Tailoring summary section...
+2025-08-08 12:47:15,554 INFO: [STEP 3][COMPLETE]
+2025-08-08 12:47:15,555 INFO: All sections tailored successfully
+2025-08-08 12:47:15,555 INFO: [STEP 3][OUTPUT]>>>[STEP 4][INPUT] Tailored resume text (with Summary; pruned): 
+[0]Name: Jane Doe
+[0]Contact Information:
+    [1]Address: 123 Main St, Springfield, USA
+    [1]Phone: +1-555-123-4567
+    [1]Email: jane.doe@email.com
+    [1]LinkedIn: linkedin.com/in/janedoe
+    [1]Github: github.com/janedoe
+    [1]Portfolio: janedoe.dev
+[0]Title: Senior Software Engineer
+[0]Summary: As a Senior Software Engineer with expertise in building scalable and user-friendly systems, I am excited to bring my skills to DoorDash's 24x7 global infrastructure system. With proficiency in multiple programming languages (English, Spanish, French), I have successfully designed and implemented microservices architectures using Python and Docker. My experience as a Senior Backend Engineer at FinTech Solutions has equipped me with the ability to reduce system downtime by 40% and increase transaction throughput by 25%. Additionally, my mentorship of over 100 aspiring developers in Python and web development has honed my leadership and problem-solving skills. I am confident that my strong technical background, combined with my passion for delivering high-quality solutions, makes me an ideal candidate for this role.
+[0]Languages: English, Spanish, French
+[0]Education:
+    [1]Degree: B.Sc. Computer Science
+    [1]University: Springfield University
+    [1]Location: Springfield, USA
+    [1]Duration: 2012/09 - 2016/06
+    [1]Courses: Algorithms, Data Structures, Operating Systems, Databases
+    [1]Degree: M.Sc. Software Engineering
+    [1]University: Capital Tech
+    [1]Location: Capital City, USA
+    [1]Duration: 2016/09 - 2018/06
+    [1]Courses: Cloud Computing, Distributed Systems, Advanced Programming
+[0]Certifications:
+    [1]Certification Name: AWS Certified Solutions Architect
+    [1]Issuing Organization: Amazon Web Services
+    [1]Issue Date: 2019/05
+    [1]Certification Name: Scrum Master
+    [1]Issuing Organization: Scrum Alliance
+    [1]Issue Date: 2020/03
+[0]Awards and Scholarships:
+    [1]Award Name: Dean’s List
+    [1]Issuing Organization: Springfield University
+    [1]Issue Date: 2015/06
+    [1]Award Name: Tech Innovation Scholarship
+    [1]Issuing Organization: Capital Tech
+    [1]Issue Date: 2017/09
+[0]Volunteering and Leadership:
+    [1]Role: Coding Bootcamp Mentor
+    [1]Organization: CodeSpring
+    [1]Location: Springfield, USA
+    [1]Duration: 2020/01 - 2022/12
+    [1]Description: Mentored over 100 aspiring developers in Python and web development, improving participant job placement by 35%. Developed advanced workshops on microservices and cloud computing
+    [1]Skills: Programming Languages: Python; Technical Skills: Web Development, REST APIs, Docker, Kubernetes; Soft Skills: Leadership, Problem Solving, Teamwork
+[0]Work Experience:
+    [1]Job Title: Senior Backend Engineer
+    [1]Company: FinTech Solutions
+    [1]Location: Springfield, USA
+    [1]Duration: 2019/07 - Present
+    [1]Description: Designed and implemented scalable microservices architecture using Python, Go, and Docker. Reduced system downtime by 40% and increased transaction throughput by 25%
+    [1]Skills: Programming Languages: Python; Technical Skills: Microservices, Docker, Cloud Computing; Soft Skills: Leadership, Problem Solving
+    [1]Job Title: Software Engineer
+    [1]Company: WebApps Inc.
+    [1]Location: Capital City, USA
+    [1]Duration: 2016/07 - 2019/06
+    [1]Description: Developed RESTful APIs and optimized database queries. Improved application performance by 30% using microservices architecture
+    [1]Skills: Programming Languages: Java; Technical Skills: API Development, Microservices, Docker, Cloud Computing; Soft Skills: Collaboration, Problem Solving
+[0]Projects:
+    [1]Project Title: Real-Time Analytics Dashboard
+    [1]Type: Professional
+    [1]Duration: 2023/08 - 2024/01
+    [1]Description: Created a web-based employee scheduling application, showcasing skills in building scalable and user-friendly systems
+    [1]Skills: Programming Languages: JavaScript; Technical Skills: Web Development, API Integration; Soft Skills: Organization
+2025-08-08 12:47:15,556 INFO: [STEP 4][START] Making skills section separate and tailoring it...
+2025-08-08 12:47:15,556 INFO: Tailoring skills section...
+2025-08-08 12:47:21,491 INFO: Tailored skills section
+2025-08-08 12:47:21,491 INFO: [STEP 4][COMPLETE]
+2025-08-08 12:47:21,491 INFO: [STEP 4][OUTPUT]>>>[STEP 5][INPUT] Tailored resume text (with Summary; pruned; skills tailored): 
+[0]Name: Jane Doe
+[0]Contact Information:
+    [1]Address: 123 Main St, Springfield, USA
+    [1]Phone: +1-555-123-4567
+    [1]Email: jane.doe@email.com
+    [1]LinkedIn: linkedin.com/in/janedoe
+    [1]Github: github.com/janedoe
+    [1]Portfolio: janedoe.dev
+[0]Title: Senior Software Engineer
+[0]Summary: As a Senior Software Engineer with expertise in building scalable and user-friendly systems, I am excited to bring my skills to DoorDash's 24x7 global infrastructure system. With proficiency in multiple programming languages (English, Spanish, French), I have successfully designed and implemented microservices architectures using Python and Docker. My experience as a Senior Backend Engineer at FinTech Solutions has equipped me with the ability to reduce system downtime by 40% and increase transaction throughput by 25%. Additionally, my mentorship of over 100 aspiring developers in Python and web development has honed my leadership and problem-solving skills. I am confident that my strong technical background, combined with my passion for delivering high-quality solutions, makes me an ideal candidate for this role.
+[0]Languages: English, Spanish, French
+[0]Education:
+    [1]Degree: B.Sc. Computer Science
+    [1]University: Springfield University
+    [1]Location: Springfield, USA
+    [1]Duration: 2012/09 - 2016/06
+    [1]Courses: Algorithms, Data Structures, Operating Systems, Databases
+    [1]Degree: M.Sc. Software Engineering
+    [1]University: Capital Tech
+    [1]Location: Capital City, USA
+    [1]Duration: 2016/09 - 2018/06
+    [1]Courses: Cloud Computing, Distributed Systems, Advanced Programming
+[0]Certifications:
+    [1]Certification Name: AWS Certified Solutions Architect
+    [1]Issuing Organization: Amazon Web Services
+    [1]Issue Date: 2019/05
+    [1]Certification Name: Scrum Master
+    [1]Issuing Organization: Scrum Alliance
+    [1]Issue Date: 2020/03
+[0]Awards and Scholarships:
+    [1]Award Name: Dean’s List
+    [1]Issuing Organization: Springfield University
+    [1]Issue Date: 2015/06
+    [1]Award Name: Tech Innovation Scholarship
+    [1]Issuing Organization: Capital Tech
+    [1]Issue Date: 2017/09
+[0]Volunteering and Leadership:
+    [1]Role: Coding Bootcamp Mentor
+    [1]Organization: CodeSpring
+    [1]Location: Springfield, USA
+    [1]Duration: 2020/01 - 2022/12
+    [1]Description: Mentored over 100 aspiring developers in Python and web development, improving participant job placement by 35%. Developed advanced workshops on microservices and cloud computing
+[0]Work Experience:
+    [1]Job Title: Senior Backend Engineer
+    [1]Company: FinTech Solutions
+    [1]Location: Springfield, USA
+    [1]Duration: 2019/07 - Present
+    [1]Description: Designed and implemented scalable microservices architecture using Python, Go, and Docker. Reduced system downtime by 40% and increased transaction throughput by 25%
+    [1]Job Title: Software Engineer
+    [1]Company: WebApps Inc.
+    [1]Location: Capital City, USA
+    [1]Duration: 2016/07 - 2019/06
+    [1]Description: Developed RESTful APIs and optimized database queries. Improved application performance by 30% using microservices architecture
+[0]Projects:
+    [1]Project Title: Real-Time Analytics Dashboard
+    [1]Type: Professional
+    [1]Duration: 2023/08 - 2024/01
+    [1]Description: Created a web-based employee scheduling application, showcasing skills in building scalable and user-friendly systems
+[0]Skills:
+    [1]Programming Languages: Java, JavaScript, Python
+    [1]Technical Skills: API Development, Cloud Computing, Docker, Kubernetes, REST APIs
+    [1]Soft Skills: Collaboration, Leadership, Organization, Teamwork
+2025-08-08 12:47:21,492 INFO: [STEP 5][START] Ordering Resume sections by end date/issue date...
+2025-08-08 12:47:21,492 INFO: Found section to order: education with value: [{'degree': 'B.Sc. Computer Science', 'university': 'Springfield University', 'location': 'Springfield, USA', 'duration': '2012/09 - 2016/06', 'courses': ['Algorithms', 'Data Structures', 'Operating Systems', 'Databases']}, {'degree': 'M.Sc. Software Engineering', 'university': 'Capital Tech', 'location': 'Capital City, USA', 'duration': '2016/09 - 2018/06', 'courses': ['Cloud Computing', 'Distributed Systems', 'Advanced Programming']}]
+2025-08-08 12:47:21,493 INFO: Found section to order: certifications with value: [{'certification_name': 'AWS Certified Solutions Architect', 'issuing_organization': 'Amazon Web Services', 'issue_date': '2019/05'}, {'certification_name': 'Scrum Master', 'issuing_organization': 'Scrum Alliance', 'issue_date': '2020/03'}]
+2025-08-08 12:47:21,493 INFO: Found section to order: awards_and_scholarships with value: [{'award_name': 'Dean’s List', 'issuing_organization': 'Springfield University', 'issue_date': '2015/06'}, {'award_name': 'Tech Innovation Scholarship', 'issuing_organization': 'Capital Tech', 'issue_date': '2017/09'}]
+2025-08-08 12:47:21,493 INFO: Found section to order: volunteering_and_leadership with value: [{'role': 'Coding Bootcamp Mentor', 'organization': 'CodeSpring', 'location': 'Springfield, USA', 'duration': '2020/01 - 2022/12', 'description': ['Mentored over 100 aspiring developers in Python and web development, improving participant job placement by 35%', 'Developed advanced workshops on microservices and cloud computing']}]
+2025-08-08 12:47:21,493 INFO: Found section to order: work_experience with value: [{'job_title': 'Senior Backend Engineer', 'company': 'FinTech Solutions', 'location': 'Springfield, USA', 'duration': '2019/07 - Present', 'description': ['Designed and implemented scalable microservices architecture using Python, Go, and Docker', 'Reduced system downtime by 40% and increased transaction throughput by 25%']}, {'job_title': 'Software Engineer', 'company': 'WebApps Inc.', 'location': 'Capital City, USA', 'duration': '2016/07 - 2019/06', 'description': ['Developed RESTful APIs and optimized database queries', 'Improved application performance by 30% using microservices architecture']}]
+2025-08-08 12:47:21,494 INFO: Found section to order: projects with value: [{'project_title': 'Real-Time Analytics Dashboard', 'type': 'Professional', 'duration': '2023/08 - 2024/01', 'description': ['Created a web-based employee scheduling application, showcasing skills in building scalable and user-friendly systems']}]
+2025-08-08 12:47:21,543 INFO: education section content: ['education']
+2025-08-08 12:47:21,543 INFO: certifications section content: ['certifications']
+2025-08-08 12:47:21,544 INFO: awards_and_scholarships section content: ['awards_and_scholarships']
+2025-08-08 12:47:21,544 INFO: volunteering_and_leadership section content: ['volunteering_and_leadership']
+2025-08-08 12:47:21,544 INFO: work_experience section content: ['work_experience']
+2025-08-08 12:47:21,545 INFO: projects section content: ['projects']
+2025-08-08 12:47:21,545 INFO: Ordering complete
+2025-08-08 12:47:21,545 INFO: [STEP 5][COMPLETE]
+2025-08-08 12:47:21,545 INFO: [STEP 5][OUTPUT]>>>[STEP 6][INPUT] Tailored resume text (with Summary; pruned; skills tailored; ordered): 
+[0]Name: Jane Doe
+[0]Contact Information:
+    [1]Address: 123 Main St, Springfield, USA
+    [1]Phone: +1-555-123-4567
+    [1]Email: jane.doe@email.com
+    [1]LinkedIn: linkedin.com/in/janedoe
+    [1]Github: github.com/janedoe
+    [1]Portfolio: janedoe.dev
+[0]Title: Senior Software Engineer
+[0]Summary: As a Senior Software Engineer with expertise in building scalable and user-friendly systems, I am excited to bring my skills to DoorDash's 24x7 global infrastructure system. With proficiency in multiple programming languages (English, Spanish, French), I have successfully designed and implemented microservices architectures using Python and Docker. My experience as a Senior Backend Engineer at FinTech Solutions has equipped me with the ability to reduce system downtime by 40% and increase transaction throughput by 25%. Additionally, my mentorship of over 100 aspiring developers in Python and web development has honed my leadership and problem-solving skills. I am confident that my strong technical background, combined with my passion for delivering high-quality solutions, makes me an ideal candidate for this role.
+[0]Languages: English, Spanish, French
+[0]Education:
+[0]Certifications:
+[0]Awards and Scholarships:
+[0]Volunteering and Leadership:
+[0]Work Experience:
+[0]Projects:
+[0]Skills:
+    [1]Programming Languages: Java, JavaScript, Python
+    [1]Technical Skills: API Development, Cloud Computing, Docker, Kubernetes, REST APIs
+    [1]Soft Skills: Collaboration, Leadership, Organization, Teamwork
+2025-08-08 12:47:21,546 INFO: [STEP 6][START] Formatting/Consistency check for tailored resume...
+2025-08-08 12:47:54,898 INFO: [STEP 6][COMPLETE]
+2025-08-08 12:47:54,898 INFO: The climb has ended, the CV is tailored!

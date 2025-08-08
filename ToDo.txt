@@ -8,6 +8,7 @@
 
 
     [0.97] 
+    Verify token limit
     []Make output > 90% consistent
     Fix tokenizer; waiting on response from meta
     Fix chrono ordering

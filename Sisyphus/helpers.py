@@ -4,6 +4,9 @@ from Sisyphus import parsers, runLocalModel
 import datetime
 import transformers
 import subprocess
+import logging
+# Set up logging
+print = logging.info
 
 TOKENIZER_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\tokenizers"
 
@@ -34,7 +37,13 @@ def token_math(model, input_text):
         return
 
     remaining_tokens = max_tokens - tokens
-    print(f"[MODEL: {model}] Input uses {tokens} tokens, remaining for response: {remaining_tokens}")
+    percent_used = (tokens / max_tokens) * 100
+    print(f"[MODEL: {model}] Input token usage: {percent_used:.2f}%")
+    if remaining_tokens < 0:
+        print(f"[MODEL: {model}] Input exceeds max tokens by {-remaining_tokens}.")
+    else:
+        print(f"[MODEL: {model}] Input uses {tokens} tokens, remaining for response: {remaining_tokens}.")
+    
 
 def read_text_file(file_path):
     """
@@ -559,6 +568,54 @@ def read_format_checker(format_checker_output):
     for sub, count in format_checker_output.get('empty_subsections', []):
         print(f"  {sub} (empty {count})")
 
+def parse_date(date_str):
+    """
+    Parse a date string in the format 'Year/Month' and return a datetime.date object.
+    """
+    print("[DEBUG] parse_date")
+    year, month = map(int, date_str.split('/'))
+    return datetime.date(year, month, 1)
+def parse_duration(duration_str):
+    """
+    Parse a duration string in the format 'Start Year/Start Month - End Year/End Month'
+    and return a tuple of start and end dates as datetime.date objects.
+    Output is a tuple of datetime.date objects.
+    """
+    print("[DEBUG] parse_duration")
+    start_str, end_str = duration_str.split(' - ')
+    start_date = parse_date(start_str)
+    end_date = parse_date(end_str)
+    return start_date, end_date
+def order_section(section, type_key = 'end_date'):
+    """
+    Order the items in a section based on their start and end dates.
+    """
+    print("[DEBUG] order_section")
+    allowed_sections1 = ['education', 'work_experience', 'projects', 'volunteering_and_leadership']
+    allowed_sections2 = ['certifications', 'awards_and_scholarships']
+    allowed_keys = ['start_date', 'end_date', 'issue_date']
+    
+    for key in section:
+        print(f"[DEBUG] order_section: ordering {key}")
+        if type_key not in allowed_keys:
+            raise ValueError("Invalid type_key. Choose from 'start_date', 'end_date', or 'issue_date'.")
+        if key in allowed_sections1:
+            
+            if type_key == 'start_date':
+                return sorted(section, key=lambda x: (parse_duration(x['duration'])[0] if 'duration' in x else datetime.date.max))
+            elif type_key == 'end_date':
+                return sorted(section, key=lambda x: (parse_duration(x['duration'])[1] if 'duration' in x else datetime.date.max))
+            elif type_key == 'issue_date':
+                raise ValueError("Issue date is not applicable for sections: education, work_experience, projects, volunteering_and_leadership.")
+        elif key in allowed_sections2:
+            if type_key == 'issue_date':
+                return sorted(section, key=lambda x: (parse_date(x['issue_date']) if 'issue_date' in x else datetime.date.max))
+            else:
+                raise ValueError("Start date and end date are not applicable for sections: certifications, awards_and_scholarships.")
+        else:
+            raise ValueError("Invalid section. Choose from 'education', 'work_experience', 'projects', 'volunteering_and_leadership', 'certifications', or 'awards_and_scholarships'.")
+
+
 def order_chronologically(cv_dict, mode = 'end_date'):
     """
     This will be called once the CV is tailored and the final dict is ready.
@@ -699,85 +756,20 @@ def order_chronologically(cv_dict, mode = 'end_date'):
         }
 
     """
+    print(f"[DEBUG] order_chronologically: Starting with mode {mode}")
     if mode not in ['start_date', 'end_date', 'issue_date']:
         raise ValueError("Invalid mode. Choose from 'start_date', 'end_date', or 'issue_date'.")
-    def parse_date(date_str):
-        """
-        Parse a date string in the format 'Year/Month' and return a datetime.date object.
-        """
-        year, month = map(int, date_str.split('/'))
-        return datetime.date(year, month, 1)
-    def parse_duration(duration_str):
-        """
-        Parse a duration string in the format 'Start Year/Start Month - End Year/End Month'
-        and return a tuple of start and end dates as datetime.date objects.
-        Output is a tuple of datetime.date objects.
-        """
-        start_str, end_str = duration_str.split(' - ')
-        start_date = parse_date(start_str)
-        end_date = parse_date(end_str)
-        return start_date, end_date
-    def order_section(section, type_key = 'end_date'):
-        """
-        Order the items in a section based on their start and end dates.
-        """
-        allowed_sections1 = ['education', 'work_experience', 'projects', 'volunteering_and_leadership']
-        allowed_sections2 = ['certifications', 'awards_and_scholarships']
-        allowed_keys = ['start_date', 'end_date', 'issue_date']
-        for key in section:
-            print(f"[DEBUG] order_section: ordering {key}")
-            if type_key not in allowed_keys:
-                raise ValueError("Invalid type_key. Choose from 'start_date', 'end_date', or 'issue_date'.")
-            if key in allowed_sections1:
-                
-                if type_key == 'start_date':
-                    return sorted(section, key=lambda x: (parse_duration(x['duration'])[0] if 'duration' in x else datetime.date.max))
-                elif type_key == 'end_date':
-                    return sorted(section, key=lambda x: (parse_duration(x['duration'])[1] if 'duration' in x else datetime.date.max))
-                elif type_key == 'issue_date':
-                    raise ValueError("Issue date is not applicable for sections: education, work_experience, projects, volunteering_and_leadership.")
-            elif key in allowed_sections2:
-                if type_key == 'issue_date':
-                    return sorted(section, key=lambda x: (parse_date(x['issue_date']) if 'issue_date' in x else datetime.date.max))
-                else:
-                    raise ValueError("Start date and end date are not applicable for sections: certifications, awards_and_scholarships.")
-            else:
-                raise ValueError("Invalid section. Choose from 'education', 'work_experience', 'projects', 'volunteering_and_leadership', 'certifications', or 'awards_and_scholarships'.")
-        
+    return_dict = cv_dict.copy()  # Create a copy of the input dictionary to avoid modifying the original
+
     # Order each section based on the specified mode
-    if 'education' in cv_dict:
-        print("[DEBUG] order_chronologically: ordering education")
-        temp_dct_cpy = {'education': cv_dict['education']}
-        print("[DEBUG] " + str(temp_dct_cpy))
-        cv_dict['education'] = order_section(temp_dct_cpy, type_key=mode)
-        print("[DEBUG] " + str(cv_dict['education']))
-    if 'work_experience' in cv_dict:
-        print("[DEBUG] order_chronologically: ordering work_experience")
-        temp_dct_cpy = {'work_experience': cv_dict['work_experience']}
-        print("[DEBUG] " + str(temp_dct_cpy))
-        cv_dict['work_experience'] = order_section(temp_dct_cpy, type_key=mode)
-        print("[DEBUG] " + str(cv_dict['work_experience']))
-    if 'projects' in cv_dict:
-        print("[DEBUG] order_chronologically: ordering projects")
-        temp_dct_cpy = {'projects': cv_dict['projects']}
-        print("[DEBUG] " + str(temp_dct_cpy))
-        cv_dict['projects'] = order_section(temp_dct_cpy, type_key=mode)
-        print("[DEBUG] " + str(cv_dict['projects']))
-    if 'volunteering_and_leadership' in cv_dict:
-        print("[DEBUG] order_chronologically: ordering volunteering_and_leadership")
-        temp_dct_cpy = {'volunteering_and_leadership': cv_dict['volunteering_and_leadership']}
-        print("[DEBUG] " + str(temp_dct_cpy))
-        cv_dict['volunteering_and_leadership'] = order_section(temp_dct_cpy, type_key=mode)
-        print("[DEBUG] " + str(cv_dict['volunteering_and_leadership']))
-    if 'certifications' in cv_dict:
-        print("[DEBUG] order_chronologically: ordering certifications")
-        temp_dct_cpy = {'certifications': cv_dict['certifications']}
-        print("[DEBUG] " + str(temp_dct_cpy))
-        cv_dict['certifications'] = order_section(temp_dct_cpy, type_key='issue_date')
-        print("[DEBUG] " + str(cv_dict['certifications']))
-    if 'awards_and_scholarships' in cv_dict:
-        print("[DEBUG] order_chronologically: ordering awards_and_scholarships")
-        temp_dct_cpy = {'awards_and_scholarships': cv_dict['awards_and_scholarships']}
-        print("[DEBUG] " + str(temp_dct_cpy))
-        cv_dict['awards_and_scholarships'] = order_section(temp_dct_cpy, type_key='issue_date')
-        print("[DEBUG] " + str(cv_dict['awards_and_scholarships']))
+    for entry in return_dict:
+        print(f"[DEBUG] order_chronologically: {entry} with content {return_dict[entry]}")
+        temp_mode = mode
+        if entry in ['certifications', 'awards_and_scholarships']:
+            temp_mode = 'issue_date'
+        temp_dct_cpy = {entry: return_dict[entry]}
+        return_dict[entry] = order_section(temp_dct_cpy, type_key=temp_mode)
+        print(f"[DEBUG] order_chronologically: {entry} with ordered content {return_dict[entry]}")
+    return return_dict
+
+
