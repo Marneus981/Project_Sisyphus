@@ -1,0 +1,533 @@
+2025-08-08 14:56:17,150 INFO: Waiting for Ollama to be ready...
+2025-08-08 14:56:19,177 INFO: Ollama is running.
+2025-08-08 14:56:19,295 INFO: Refreshing options...
+2025-08-08 14:56:21,352 INFO: Options refreshed:
+2025-08-08 14:56:21,352 INFO: Models: ['deepseek-r1:8b', 'llama3:8b']
+2025-08-08 14:56:21,352 INFO: Systems: ['system1.txt', 'system_consistency.txt', 'system_consistency_cl.txt', 'system_cover_letter.txt']
+2025-08-08 14:56:21,355 INFO: CVs: ['cv1.txt']
+2025-08-08 14:56:21,355 INFO: CV Templates: ['cv_template.docx', 'cv_template2.docx', 'cv_template21.docx', 'cv_template21_simplest.docx']
+2025-08-08 14:56:21,355 INFO: CL Templates: ['cl_template.docx']
+2025-08-08 14:56:21,355 INFO: Previously Saved CV Outputs: ['cltrials.txt', 'out_cv_20250724_213613.txt', 'out_cv_20250725_000423.txt', 'out_cv_20250725_001236.txt', 'out_cv_20250725_003414.txt', 'out_cv_20250725_004330.txt', 'out_cv_20250725_005646.txt', 'out_cv_20250730_011841.txt', 'out_cv_20250730_020338.txt', 'stableish0.txt']
+2025-08-08 14:56:21,355 INFO: Previously Saved CL Outputs: ['out_cl_20250722_234433.txt', 'out_cl_20250723_230452.txt']
+2025-08-08 14:56:30,058 INFO: Selected Model: 
+llama3:8b
+2025-08-08 14:56:30,058 INFO: CV Text: 
+[0]Name: Jane Doe
+[0]Contact Information:
+[0]Title: Senior Software Engineer
+[0]Summary: Jane Doe is a dynamic and accomplished Senior Software Engineer with more than 15 years of experience leading complex technology initiatives and delivering innovative solutions across multiple industries, including finance, education, e-commerce, and media. Her career is marked by a consistent record of architecting, developing, and deploying scalable backend systems, cloud infrastructure, and distributed applications that have driven measurable improvements in performance, reliability, and cost efficiency. Jane has demonstrated exceptional leadership in managing and mentoring teams of up to 20 engineers and volunteers, fostering a culture of collaboration, adaptability, and continuous improvement. She has spearheaded cloud migration projects that resulted in a 30% reduction in operational costs and a 95% stakeholder satisfaction rate, and has led the design and implementation of microservices architectures that reduced system downtime by 40% and increased transaction throughput by 25%. Her technical expertise encompasses Python, Java, JavaScript, C++, SQL, Dart, Go, and R, with advanced proficiency in Docker, Kubernetes, cloud computing, machine learning, NLP, IoT, and API integration. Jane’s project portfolio includes real-time analytics dashboards, mobile applications, IoT automation systems, recommendation engines, and sentiment analysis tools, each of which has delivered significant business value and user engagement improvements. She has mentored over 100 aspiring developers, achieving a 90% bootcamp completion rate and a 35% improvement in job placement, and has contributed to open source projects, enhancing code quality and adoption by 20%. Jane’s commitment to quality assurance, security, and customer service is reflected in her achievements as a QA tester, IT support specialist, and data analyst, where she improved release quality, lab uptime, and business decision-making through automation and analytics. Her experience in event planning, curriculum development, public speaking, and community outreach has expanded program reach and impact, earning her recognition for dedication, expertise, and positive influence. Fluent in English, Spanish, and French, Jane is passionate about mentoring, empowering others, and bridging the digital divide. She has received the Dean’s List and Tech Innovation Scholarship for academic excellence and holds certifications as an AWS Solutions Architect and Scrum Master. Throughout her career, Jane has demonstrated exceptional problem-solving, analytical thinking, and attention to detail, consistently delivering projects on time and within budget. Her ability to analyze complex problems, architect robust solutions, and build strong relationships with clients, stakeholders, and team members positions her as a valuable asset to any organization seeking to innovate and excel in today’s competitive landscape. Jane’s technical acumen, leadership, and interpersonal skills have enabled her to drive organizational success, foster inclusive environments, and inspire the next generation of engineers. Her history of exceeding performance metrics and delivering impactful results is a testament to her dedication, creativity, and adaptability, making her an ideal candidate for senior engineering and leadership roles in dynamic, forward-thinking organizations. She is committed to continuous learning and professional development, ensuring her contributions remain relevant and valuable. Jane’s experience spans the full software development lifecycle, from requirements gathering and design to implementation, testing, and deployment. She is passionate about fostering inclusive environments, promoting diversity in tech, and inspiring the next generation of engineers through mentorship and community engagement. Her technical acumen, combined with her leadership and interpersonal skills, positions her as a valuable asset to any organization seeking to innovate and excel in today's competitive landscape.
+[0]Languages: English, Spanish, French
+[0]Education:
+[0]Certifications:
+[0]Awards and Scholarships:
+[0]Volunteering and Leadership:
+[0]Work Experience:
+[0]Projects:
+2025-08-08 14:56:30,058 INFO: System: 
+You are a resume tailoring assistant. Only output the section requested, in the exact format specified. You are to follow the following guidelines when tailoring all resume sections:
+You may only draw from the provided descriptions, no making assumptions.
+Do not invent any data or roles, only use the data provided.
+You may not add any untrue statements outside of what has been provided in the untailored resume section.
+The tailored sections and overall resume must be brief, concise and professional. It must cater to recruiters and make the resume stand out.
+Use simple to understand language when possible, unless direct technical terminology is employed.
+2025-08-08 14:56:30,058 INFO: Job Description: 
+DoorDash is building the world's most reliable on-demand, logistics engine for delivery. We are continuing to grow rapidly and expanding our Engineering offices globally! We are looking for Backend Engineers to build and maintain a large scale 24x7 global infrastructure system that powers DoorDash's 3-sided marketplace of Consumers, Merchants and Dashers.
+
+
+2025-08-08 14:56:30,066 INFO: Fetching unchanged fields...
+2025-08-08 14:56:30,066 INFO: Found field: name Keeping unchanged field: name
+2025-08-08 14:56:30,066 INFO: Found field: contact_information Keeping unchanged field: contact_information
+2025-08-08 14:56:30,066 INFO: Found field: title Keeping unchanged field: title
+2025-08-08 14:56:30,066 INFO: Found field: languages Keeping unchanged field: languages
+2025-08-08 14:56:30,066 INFO: Found field: education Keeping unchanged field: education
+2025-08-08 14:56:30,066 INFO: Found field: certifications Keeping unchanged field: certifications
+2025-08-08 14:56:30,066 INFO: Found field: awards_and_scholarships Keeping unchanged field: awards_and_scholarships
+2025-08-08 14:56:30,066 INFO: [STEP 1][INPUT] Raw CV text: 
+[0]Name: Jane Doe
+[0]Contact Information:
+[0]Title: Senior Software Engineer
+[0]Summary: Jane Doe is a dynamic and accomplished Senior Software Engineer with more than 15 years of experience leading complex technology initiatives and delivering innovative solutions across multiple industries, including finance, education, e-commerce, and media. Her career is marked by a consistent record of architecting, developing, and deploying scalable backend systems, cloud infrastructure, and distributed applications that have driven measurable improvements in performance, reliability, and cost efficiency. Jane has demonstrated exceptional leadership in managing and mentoring teams of up to 20 engineers and volunteers, fostering a culture of collaboration, adaptability, and continuous improvement. She has spearheaded cloud migration projects that resulted in a 30% reduction in operational costs and a 95% stakeholder satisfaction rate, and has led the design and implementation of microservices architectures that reduced system downtime by 40% and increased transaction throughput by 25%. Her technical expertise encompasses Python, Java, JavaScript, C++, SQL, Dart, Go, and R, with advanced proficiency in Docker, Kubernetes, cloud computing, machine learning, NLP, IoT, and API integration. Jane’s project portfolio includes real-time analytics dashboards, mobile applications, IoT automation systems, recommendation engines, and sentiment analysis tools, each of which has delivered significant business value and user engagement improvements. She has mentored over 100 aspiring developers, achieving a 90% bootcamp completion rate and a 35% improvement in job placement, and has contributed to open source projects, enhancing code quality and adoption by 20%. Jane’s commitment to quality assurance, security, and customer service is reflected in her achievements as a QA tester, IT support specialist, and data analyst, where she improved release quality, lab uptime, and business decision-making through automation and analytics. Her experience in event planning, curriculum development, public speaking, and community outreach has expanded program reach and impact, earning her recognition for dedication, expertise, and positive influence. Fluent in English, Spanish, and French, Jane is passionate about mentoring, empowering others, and bridging the digital divide. She has received the Dean’s List and Tech Innovation Scholarship for academic excellence and holds certifications as an AWS Solutions Architect and Scrum Master. Throughout her career, Jane has demonstrated exceptional problem-solving, analytical thinking, and attention to detail, consistently delivering projects on time and within budget. Her ability to analyze complex problems, architect robust solutions, and build strong relationships with clients, stakeholders, and team members positions her as a valuable asset to any organization seeking to innovate and excel in today’s competitive landscape. Jane’s technical acumen, leadership, and interpersonal skills have enabled her to drive organizational success, foster inclusive environments, and inspire the next generation of engineers. Her history of exceeding performance metrics and delivering impactful results is a testament to her dedication, creativity, and adaptability, making her an ideal candidate for senior engineering and leadership roles in dynamic, forward-thinking organizations. She is committed to continuous learning and professional development, ensuring her contributions remain relevant and valuable. Jane’s experience spans the full software development lifecycle, from requirements gathering and design to implementation, testing, and deployment. She is passionate about fostering inclusive environments, promoting diversity in tech, and inspiring the next generation of engineers through mentorship and community engagement. Her technical acumen, combined with her leadership and interpersonal skills, positions her as a valuable asset to any organization seeking to innovate and excel in today's competitive landscape.
+[0]Languages: English, Spanish, French
+[0]Education:
+[0]Certifications:
+[0]Awards and Scholarships:
+[0]Volunteering and Leadership:
+[0]Work Experience:
+[0]Projects:
+2025-08-08 14:56:30,066 INFO: [STEP 1][START] Tailoring resume without Summary section
+2025-08-08 14:56:30,066 INFO: Searching fields to tailor...
+2025-08-08 14:56:30,066 INFO: Found volunteering_and_leadership section
+2025-08-08 14:56:30,066 INFO: Found work_experience section
+2025-08-08 14:56:30,066 INFO: Found projects section
+2025-08-08 14:56:30,066 INFO: Tailoring sections...
+2025-08-08 14:56:30,066 INFO: Tailoring volunteering and leadership section...
+2025-08-08 14:56:31,041 INFO: JS Output: 2921
+
+2025-08-08 14:56:31,045 INFO: [MODEL: llama3:8b] Input token usage: 35.66%
+2025-08-08 14:56:31,045 INFO: [MODEL: llama3:8b] Input uses 2921 tokens, remaining for response: 5271.
+2025-08-08 14:57:03,888 INFO: Tailored volunteering and leadership section
+2025-08-08 14:57:03,888 INFO: Tailoring work experience section...
+2025-08-08 14:57:04,358 INFO: JS Output: 2775
+
+2025-08-08 14:57:04,358 INFO: [MODEL: llama3:8b] Input token usage: 33.87%
+2025-08-08 14:57:04,359 INFO: [MODEL: llama3:8b] Input uses 2775 tokens, remaining for response: 5417.
+2025-08-08 14:57:17,860 INFO: Tailored work experience section
+2025-08-08 14:57:17,860 INFO: Tailoring projects section...
+2025-08-08 14:57:18,317 INFO: JS Output: 2500
+
+2025-08-08 14:57:18,317 INFO: [MODEL: llama3:8b] Input token usage: 30.52%
+2025-08-08 14:57:18,318 INFO: [MODEL: llama3:8b] Input uses 2500 tokens, remaining for response: 5692.
+2025-08-08 14:57:42,475 INFO: Tailored projects section
+2025-08-08 14:57:42,476 INFO: [STEP 1][COMPLETE]
+2025-08-08 14:57:42,476 INFO: [STEP 1][OUTPUT]>>>[STEP 2][INPUT] Tailored resume text (no Summary): 
+[0]Volunteering and Leadership:
+    [1]Role: Coding Bootcamp Mentor
+    [1]Organization: Women in Tech
+    [1]Location: Capital City, USA
+    [1]Duration: 2023/05 - Present
+    [1]Description: Presented workshops on Python programming and career development for women in technology, delivering sessions to 80+ attendees and receiving positive feedback for clarity and motivation
+    [1]Skills: Programming Languages: Python; Technical Skills: Public Speaking, Workshop Design; Soft Skills: Communication, Motivation
+[0]Work Experience:
+    [1]Job Title: Senior Backend Engineer
+    [1]Company: FinTech Solutions
+    [1]Location: Springfield, USA
+    [1]Duration: 2019/07 - Present
+    [1]Description: Spearheaded cloud migration and scalable microservices architecture. Led design and implementation of Python, Go, and Docker-based systems
+    [1]Skills: Programming Languages: Python, Go; Technical Skills: Microservices, Cloud Computing, Docker; Soft Skills: Leadership, Problem Solving, Communication
+[0]Projects:
+    [1]Project Title: Real-Time Analytics Dashboard
+    [1]Type: Professional
+    [1]Duration: 2021/01 - 2021/12
+    [1]Description: Developed a real-time analytics dashboard with Python and React, enabling clients to monitor KPIs. Optimized performance, reducing query latency by 35%
+    [1]Skills: Programming Languages: Python; Technical Skills: Data Visualization, WebSockets; Soft Skills: Presentation, Documentation
+    [1]Project Title: E-Commerce Recommendation Engine
+    [1]Type: Professional
+    [1]Duration: 2022/07 - 2022/12
+    [1]Description: Implemented a recommendation engine with collaborative filtering and machine learning. Increased sales conversion by 18%
+    [1]Skills: Programming Languages: Python; Technical Skills: Machine Learning, Data Analysis; Soft Skills: Analytical Thinking, Initiative
+    [1]Project Title: Employee Scheduling App
+    [1]Type: Professional
+    [1]Duration: 2023/08 - 2024/01
+    [1]Description: Created a web-based employee scheduling application with calendar APIs and notifications. Reduced scheduling conflicts by 40%
+    [1]Skills: Programming Languages: JavaScript; Technical Skills: Web Development, API Integration; Soft Skills: Organization, Initiative
+    [1]Project Title: Fitness Tracker Dashboard
+    [1]Type: Personal
+    [1]Duration: 2024/02 - Present
+    [1]Description: Developed a dashboard to visualize fitness data from wearable devices. Increased user engagement and provided actionable health insights
+    [1]Skills: Programming Languages: Python; Technical Skills: Data Visualization, API Integration; Soft Skills: Creativity, Self-Motivation
+[0]Name: Jane Doe
+[0]Contact Information:
+    [1]Address: 123 Main St, Springfield, USA
+    [1]Phone: +1-555-123-4567
+    [1]Email: jane.doe@email.com
+    [1]LinkedIn: linkedin.com/in/janedoe
+    [1]Github: github.com/janedoe
+    [1]Portfolio: janedoe.dev
+[0]Title: Senior Software Engineer
+[0]Languages: English, Spanish, French
+[0]Education:
+    [1]Degree: B.Sc. Computer Science
+    [1]University: Springfield University
+    [1]Location: Springfield, USA
+    [1]Duration: 2012/09 - 2016/06
+    [1]Courses: Algorithms, Data Structures, Operating Systems, Databases
+    [1]Degree: M.Sc. Software Engineering
+    [1]University: Capital Tech
+    [1]Location: Capital City, USA
+    [1]Duration: 2016/09 - 2018/06
+    [1]Courses: Cloud Computing, Distributed Systems, Advanced Programming
+[0]Certifications:
+    [1]Certification Name: AWS Certified Solutions Architect
+    [1]Issuing Organization: Amazon Web Services
+    [1]Issue Date: 2019/05
+    [1]Certification Name: Scrum Master
+    [1]Issuing Organization: Scrum Alliance
+    [1]Issue Date: 2020/03
+[0]Awards and Scholarships:
+    [1]Award Name: Dean’s List
+    [1]Issuing Organization: Springfield University
+    [1]Issue Date: 2015/06
+    [1]Award Name: Tech Innovation Scholarship
+    [1]Issuing Organization: Capital Tech
+    [1]Issue Date: 2017/09
+2025-08-08 14:57:42,477 INFO: [STEP 2][START]Pruning following sections: Volunteering and Leadership, Work Experience and Projects...
+2025-08-08 14:57:42,938 INFO: JS Output: 1054
+
+2025-08-08 14:57:42,938 INFO: [MODEL: llama3:8b] Input token usage: 12.87%
+2025-08-08 14:57:42,938 INFO: [MODEL: llama3:8b] Input uses 1054 tokens, remaining for response: 7138.
+2025-08-08 14:58:13,482 INFO: volunteering_and_leadership section after pruning: {}
+2025-08-08 14:58:13,482 INFO: work_experience section after pruning: {}
+2025-08-08 14:58:13,482 INFO: projects section after pruning: {}
+2025-08-08 14:58:13,482 INFO: Volunteering and Leadership section after pruning and .get(): 
+{}
+2025-08-08 14:58:13,482 INFO: Work Experience section after pruning and .get(): 
+{}
+2025-08-08 14:58:13,482 INFO: Projects section after pruning and .get(): 
+{}
+2025-08-08 14:58:13,482 INFO: Processing section: name
+2025-08-08 14:58:13,484 INFO: Processing section: contact_information
+2025-08-08 14:58:13,484 INFO: Processing section: title
+2025-08-08 14:58:13,484 INFO: Processing section: languages
+2025-08-08 14:58:13,484 INFO: Processing section: education
+2025-08-08 14:58:13,484 INFO: Processing section: certifications
+2025-08-08 14:58:13,484 INFO: Processing section: awards_and_scholarships
+2025-08-08 14:58:13,485 INFO: Processing section: volunteering_and_leadership
+2025-08-08 14:58:13,485 INFO: Processing section: work_experience
+2025-08-08 14:58:13,485 INFO: Processing section: projects
+2025-08-08 14:58:13,485 INFO: [STEP 2][COMPLETE]
+2025-08-08 14:58:13,485 INFO: [STEP 2][OUTPUT]>>>[STEP 3][INPUT] Tailored resume text (no Summary; pruned): 
+[0]Name: Jane Doe
+[0]Contact Information:
+    [1]Address: 123 Main St, Springfield, USA
+    [1]Phone: +1-555-123-4567
+    [1]Email: jane.doe@email.com
+    [1]LinkedIn: linkedin.com/in/janedoe
+    [1]Github: github.com/janedoe
+    [1]Portfolio: janedoe.dev
+[0]Title: Senior Software Engineer
+[0]Languages: English, Spanish, French
+[0]Education:
+    [1]Degree: B.Sc. Computer Science
+    [1]University: Springfield University
+    [1]Location: Springfield, USA
+    [1]Duration: 2012/09 - 2016/06
+    [1]Courses: Algorithms, Data Structures, Operating Systems, Databases
+    [1]Degree: M.Sc. Software Engineering
+    [1]University: Capital Tech
+    [1]Location: Capital City, USA
+    [1]Duration: 2016/09 - 2018/06
+    [1]Courses: Cloud Computing, Distributed Systems, Advanced Programming
+[0]Certifications:
+    [1]Certification Name: AWS Certified Solutions Architect
+    [1]Issuing Organization: Amazon Web Services
+    [1]Issue Date: 2019/05
+    [1]Certification Name: Scrum Master
+    [1]Issuing Organization: Scrum Alliance
+    [1]Issue Date: 2020/03
+[0]Awards and Scholarships:
+    [1]Award Name: Dean’s List
+    [1]Issuing Organization: Springfield University
+    [1]Issue Date: 2015/06
+    [1]Award Name: Tech Innovation Scholarship
+    [1]Issuing Organization: Capital Tech
+    [1]Issue Date: 2017/09
+[0]Volunteering and Leadership:
+[0]Work Experience:
+[0]Projects:
+2025-08-08 14:58:13,486 INFO: [STEP 3][START] Tailoring Summary section...
+2025-08-08 14:58:13,486 INFO: Tailoring summary section...
+2025-08-08 14:58:13,946 INFO: JS Output: 653
+
+2025-08-08 14:58:13,947 INFO: [MODEL: llama3:8b] Input token usage: 7.97%
+2025-08-08 14:58:13,947 INFO: [MODEL: llama3:8b] Input uses 653 tokens, remaining for response: 7539.
+2025-08-08 14:58:21,537 INFO: Processing section: name
+2025-08-08 14:58:21,537 INFO: Processing section: contact_information
+2025-08-08 14:58:21,538 INFO: Processing section: title
+2025-08-08 14:58:21,538 INFO: Processing section: summary
+2025-08-08 14:58:21,538 INFO: Processing section: languages
+2025-08-08 14:58:21,538 INFO: Processing section: education
+2025-08-08 14:58:21,538 INFO: Processing section: certifications
+2025-08-08 14:58:21,538 INFO: Processing section: awards_and_scholarships
+2025-08-08 14:58:21,538 INFO: Processing section: volunteering_and_leadership
+2025-08-08 14:58:21,539 INFO: Processing section: work_experience
+2025-08-08 14:58:21,539 INFO: Processing section: projects
+2025-08-08 14:58:21,539 INFO: [STEP 3][COMPLETE]
+2025-08-08 14:58:21,539 INFO: All sections tailored successfully
+2025-08-08 14:58:21,539 INFO: [STEP 3][OUTPUT]>>>[STEP 4][INPUT] Tailored resume text (with Summary; pruned): 
+[0]Name: Jane Doe
+[0]Contact Information:
+    [1]Address: 123 Main St, Springfield, USA
+    [1]Phone: +1-555-123-4567
+    [1]Email: jane.doe@email.com
+    [1]LinkedIn: linkedin.com/in/janedoe
+    [1]Github: github.com/janedoe
+    [1]Portfolio: janedoe.dev
+[0]Title: Senior Software Engineer
+[0]Summary: As a Senior Software Engineer with expertise in building and maintaining large-scale infrastructure systems, I bring a unique blend of technical skills and leadership experience to drive success in DoorDash's 3-sided marketplace. With proficiency in multiple languages (English, Spanish, French), I am well-equipped to collaborate with diverse teams. My background in cloud computing, distributed systems, and advanced programming allows me to design scalable solutions that power high-traffic applications. As a certified Scrum Master, I can lead agile development efforts to deliver results efficiently.
+[0]Languages: English, Spanish, French
+[0]Education:
+    [1]Degree: B.Sc. Computer Science
+    [1]University: Springfield University
+    [1]Location: Springfield, USA
+    [1]Duration: 2012/09 - 2016/06
+    [1]Courses: Algorithms, Data Structures, Operating Systems, Databases
+    [1]Degree: M.Sc. Software Engineering
+    [1]University: Capital Tech
+    [1]Location: Capital City, USA
+    [1]Duration: 2016/09 - 2018/06
+    [1]Courses: Cloud Computing, Distributed Systems, Advanced Programming
+[0]Certifications:
+    [1]Certification Name: AWS Certified Solutions Architect
+    [1]Issuing Organization: Amazon Web Services
+    [1]Issue Date: 2019/05
+    [1]Certification Name: Scrum Master
+    [1]Issuing Organization: Scrum Alliance
+    [1]Issue Date: 2020/03
+[0]Awards and Scholarships:
+    [1]Award Name: Dean’s List
+    [1]Issuing Organization: Springfield University
+    [1]Issue Date: 2015/06
+    [1]Award Name: Tech Innovation Scholarship
+    [1]Issuing Organization: Capital Tech
+    [1]Issue Date: 2017/09
+[0]Volunteering and Leadership:
+    [1]Role: Coding Bootcamp Mentor
+    [1]Organization: Women in Tech
+    [1]Location: Capital City, USA
+    [1]Duration: 2023/05 - Present
+    [1]Description: Presented workshops on Python programming and career development for women in technology, delivering sessions to 80+ attendees and receiving positive feedback for clarity and motivation
+    [1]Skills: Programming Languages: Python; Technical Skills: Public Speaking, Workshop Design; Soft Skills: Communication, Motivation
+[0]Work Experience:
+    [1]Job Title: Senior Backend Engineer
+    [1]Company: FinTech Solutions
+    [1]Location: Springfield, USA
+    [1]Duration: 2019/07 - Present
+    [1]Description: Spearheaded cloud migration and scalable microservices architecture. Led design and implementation of Python, Go, and Docker-based systems
+    [1]Skills: Programming Languages: Python, Go; Technical Skills: Microservices, Cloud Computing, Docker; Soft Skills: Leadership, Problem Solving, Communication
+[0]Projects:
+    [1]Project Title: Real-Time Analytics Dashboard
+    [1]Type: Professional
+    [1]Duration: 2021/01 - 2021/12
+    [1]Description: Developed a real-time analytics dashboard with Python and React, enabling clients to monitor KPIs. Optimized performance, reducing query latency by 35%
+    [1]Skills: Programming Languages: Python; Technical Skills: Data Visualization, WebSockets; Soft Skills: Presentation, Documentation
+    [1]Project Title: E-Commerce Recommendation Engine
+    [1]Type: Professional
+    [1]Duration: 2022/07 - 2022/12
+    [1]Description: Implemented a recommendation engine with collaborative filtering and machine learning. Increased sales conversion by 18%
+    [1]Skills: Programming Languages: Python; Technical Skills: Machine Learning, Data Analysis; Soft Skills: Analytical Thinking, Initiative
+    [1]Project Title: Employee Scheduling App
+    [1]Type: Professional
+    [1]Duration: 2023/08 - 2024/01
+    [1]Description: Created a web-based employee scheduling application with calendar APIs and notifications. Reduced scheduling conflicts by 40%
+    [1]Skills: Programming Languages: JavaScript; Technical Skills: Web Development, API Integration; Soft Skills: Organization, Initiative
+    [1]Project Title: Fitness Tracker Dashboard
+    [1]Type: Personal
+    [1]Duration: 2024/02 - Present
+    [1]Description: Developed a dashboard to visualize fitness data from wearable devices. Increased user engagement and provided actionable health insights
+    [1]Skills: Programming Languages: Python; Technical Skills: Data Visualization, API Integration; Soft Skills: Creativity, Self-Motivation
+2025-08-08 14:58:21,540 INFO: [STEP 4][START] Making skills section separate and tailoring it...
+2025-08-08 14:58:21,540 INFO: Tailoring skills section...
+2025-08-08 14:58:21,980 INFO: JS Output: 442
+
+2025-08-08 14:58:21,980 INFO: [MODEL: llama3:8b] Input token usage: 5.40%
+2025-08-08 14:58:21,981 INFO: [MODEL: llama3:8b] Input uses 442 tokens, remaining for response: 7750.
+2025-08-08 14:58:27,008 INFO: Tailored skills section
+2025-08-08 14:58:27,008 INFO: [STEP 4][COMPLETE]
+2025-08-08 14:58:27,008 INFO: [STEP 4][OUTPUT]>>>[STEP 5][INPUT] Tailored resume text (with Summary; pruned; skills tailored): 
+[0]Name: Jane Doe
+[0]Contact Information:
+    [1]Address: 123 Main St, Springfield, USA
+    [1]Phone: +1-555-123-4567
+    [1]Email: jane.doe@email.com
+    [1]LinkedIn: linkedin.com/in/janedoe
+    [1]Github: github.com/janedoe
+    [1]Portfolio: janedoe.dev
+[0]Title: Senior Software Engineer
+[0]Summary: As a Senior Software Engineer with expertise in building and maintaining large-scale infrastructure systems, I bring a unique blend of technical skills and leadership experience to drive success in DoorDash's 3-sided marketplace. With proficiency in multiple languages (English, Spanish, French), I am well-equipped to collaborate with diverse teams. My background in cloud computing, distributed systems, and advanced programming allows me to design scalable solutions that power high-traffic applications. As a certified Scrum Master, I can lead agile development efforts to deliver results efficiently.
+[0]Languages: English, Spanish, French
+[0]Education:
+    [1]Degree: B.Sc. Computer Science
+    [1]University: Springfield University
+    [1]Location: Springfield, USA
+    [1]Duration: 2012/09 - 2016/06
+    [1]Courses: Algorithms, Data Structures, Operating Systems, Databases
+    [1]Degree: M.Sc. Software Engineering
+    [1]University: Capital Tech
+    [1]Location: Capital City, USA
+    [1]Duration: 2016/09 - 2018/06
+    [1]Courses: Cloud Computing, Distributed Systems, Advanced Programming
+[0]Certifications:
+    [1]Certification Name: AWS Certified Solutions Architect
+    [1]Issuing Organization: Amazon Web Services
+    [1]Issue Date: 2019/05
+    [1]Certification Name: Scrum Master
+    [1]Issuing Organization: Scrum Alliance
+    [1]Issue Date: 2020/03
+[0]Awards and Scholarships:
+    [1]Award Name: Dean’s List
+    [1]Issuing Organization: Springfield University
+    [1]Issue Date: 2015/06
+    [1]Award Name: Tech Innovation Scholarship
+    [1]Issuing Organization: Capital Tech
+    [1]Issue Date: 2017/09
+[0]Volunteering and Leadership:
+    [1]Role: Coding Bootcamp Mentor
+    [1]Organization: Women in Tech
+    [1]Location: Capital City, USA
+    [1]Duration: 2023/05 - Present
+    [1]Description: Presented workshops on Python programming and career development for women in technology, delivering sessions to 80+ attendees and receiving positive feedback for clarity and motivation
+[0]Work Experience:
+    [1]Job Title: Senior Backend Engineer
+    [1]Company: FinTech Solutions
+    [1]Location: Springfield, USA
+    [1]Duration: 2019/07 - Present
+    [1]Description: Spearheaded cloud migration and scalable microservices architecture. Led design and implementation of Python, Go, and Docker-based systems
+[0]Projects:
+    [1]Project Title: Real-Time Analytics Dashboard
+    [1]Type: Professional
+    [1]Duration: 2021/01 - 2021/12
+    [1]Description: Developed a real-time analytics dashboard with Python and React, enabling clients to monitor KPIs. Optimized performance, reducing query latency by 35%
+    [1]Project Title: E-Commerce Recommendation Engine
+    [1]Type: Professional
+    [1]Duration: 2022/07 - 2022/12
+    [1]Description: Implemented a recommendation engine with collaborative filtering and machine learning. Increased sales conversion by 18%
+    [1]Project Title: Employee Scheduling App
+    [1]Type: Professional
+    [1]Duration: 2023/08 - 2024/01
+    [1]Description: Created a web-based employee scheduling application with calendar APIs and notifications. Reduced scheduling conflicts by 40%
+    [1]Project Title: Fitness Tracker Dashboard
+    [1]Type: Personal
+    [1]Duration: 2024/02 - Present
+    [1]Description: Developed a dashboard to visualize fitness data from wearable devices. Increased user engagement and provided actionable health insights
+[0]Skills:
+    [1]Programming Languages: Go, JavaScript, Python
+    [1]Technical Skills: API Integration, Cloud Computing, Data Analysis, Machine Learning, Web Development
+    [1]Soft Skills: Analytical Thinking, Communication, Leadership, Organization, Problem Solving
+2025-08-08 14:58:27,009 INFO: [STEP 5][START] Ordering Resume sections by end date/issue date...
+2025-08-08 14:58:27,009 INFO: Found section to order: education with value: [{'degree': 'B.Sc. Computer Science', 'university': 'Springfield University', 'location': 'Springfield, USA', 'duration': '2012/09 - 2016/06', 'courses': ['Algorithms', 'Data Structures', 'Operating Systems', 'Databases']}, {'degree': 'M.Sc. Software Engineering', 'university': 'Capital Tech', 'location': 'Capital City, USA', 'duration': '2016/09 - 2018/06', 'courses': ['Cloud Computing', 'Distributed Systems', 'Advanced Programming']}]
+2025-08-08 14:58:27,009 INFO: Found section to order: certifications with value: [{'certification_name': 'AWS Certified Solutions Architect', 'issuing_organization': 'Amazon Web Services', 'issue_date': '2019/05'}, {'certification_name': 'Scrum Master', 'issuing_organization': 'Scrum Alliance', 'issue_date': '2020/03'}]
+2025-08-08 14:58:27,009 INFO: Found section to order: awards_and_scholarships with value: [{'award_name': 'Dean’s List', 'issuing_organization': 'Springfield University', 'issue_date': '2015/06'}, {'award_name': 'Tech Innovation Scholarship', 'issuing_organization': 'Capital Tech', 'issue_date': '2017/09'}]
+2025-08-08 14:58:27,009 INFO: Found section to order: volunteering_and_leadership with value: [{'role': 'Coding Bootcamp Mentor', 'organization': 'Women in Tech', 'location': 'Capital City, USA', 'duration': '2023/05 - Present', 'description': ['Presented workshops on Python programming and career development for women in technology, delivering sessions to 80+ attendees and receiving positive feedback for clarity and motivation']}]
+2025-08-08 14:58:27,010 INFO: Found section to order: work_experience with value: [{'job_title': 'Senior Backend Engineer', 'company': 'FinTech Solutions', 'location': 'Springfield, USA', 'duration': '2019/07 - Present', 'description': ['Spearheaded cloud migration and scalable microservices architecture', 'Led design and implementation of Python, Go, and Docker-based systems']}]
+2025-08-08 14:58:27,010 INFO: Found section to order: projects with value: [{'project_title': 'Real-Time Analytics Dashboard', 'type': 'Professional', 'duration': '2021/01 - 2021/12', 'description': ['Developed a real-time analytics dashboard with Python and React, enabling clients to monitor KPIs', 'Optimized performance, reducing query latency by 35%']}, {'project_title': 'E-Commerce Recommendation Engine', 'type': 'Professional', 'duration': '2022/07 - 2022/12', 'description': ['Implemented a recommendation engine with collaborative filtering and machine learning', 'Increased sales conversion by 18%']}, {'project_title': 'Employee Scheduling App', 'type': 'Professional', 'duration': '2023/08 - 2024/01', 'description': ['Created a web-based employee scheduling application with calendar APIs and notifications', 'Reduced scheduling conflicts by 40%']}, {'project_title': 'Fitness Tracker Dashboard', 'type': 'Personal', 'duration': '2024/02 - Present', 'description': ['Developed a dashboard to visualize fitness data from wearable devices', 'Increased user engagement and provided actionable health insights']}]
+2025-08-08 14:58:27,010 INFO: Grafted current sections:
+[0]Education:
+    [1]Degree: B.Sc. Computer Science
+    [1]University: Springfield University
+    [1]Location: Springfield, USA
+    [1]Duration: 2012/09 - 2016/06
+    [1]Courses: Algorithms, Data Structures, Operating Systems, Databases
+    [1]Degree: M.Sc. Software Engineering
+    [1]University: Capital Tech
+    [1]Location: Capital City, USA
+    [1]Duration: 2016/09 - 2018/06
+    [1]Courses: Cloud Computing, Distributed Systems, Advanced Programming
+[0]Certifications:
+    [1]Certification Name: AWS Certified Solutions Architect
+    [1]Issuing Organization: Amazon Web Services
+    [1]Issue Date: 2019/05
+    [1]Certification Name: Scrum Master
+    [1]Issuing Organization: Scrum Alliance
+    [1]Issue Date: 2020/03
+[0]Awards and Scholarships:
+    [1]Award Name: Dean’s List
+    [1]Issuing Organization: Springfield University
+    [1]Issue Date: 2015/06
+    [1]Award Name: Tech Innovation Scholarship
+    [1]Issuing Organization: Capital Tech
+    [1]Issue Date: 2017/09
+[0]Volunteering and Leadership:
+    [1]Role: Coding Bootcamp Mentor
+    [1]Organization: Women in Tech
+    [1]Location: Capital City, USA
+    [1]Duration: 2023/05 - Present
+    [1]Description: Presented workshops on Python programming and career development for women in technology, delivering sessions to 80+ attendees and receiving positive feedback for clarity and motivation
+[0]Work Experience:
+    [1]Job Title: Senior Backend Engineer
+    [1]Company: FinTech Solutions
+    [1]Location: Springfield, USA
+    [1]Duration: 2019/07 - Present
+    [1]Description: Spearheaded cloud migration and scalable microservices architecture. Led design and implementation of Python, Go, and Docker-based systems
+[0]Projects:
+    [1]Project Title: Real-Time Analytics Dashboard
+    [1]Type: Professional
+    [1]Duration: 2021/01 - 2021/12
+    [1]Description: Developed a real-time analytics dashboard with Python and React, enabling clients to monitor KPIs. Optimized performance, reducing query latency by 35%
+    [1]Project Title: E-Commerce Recommendation Engine
+    [1]Type: Professional
+    [1]Duration: 2022/07 - 2022/12
+    [1]Description: Implemented a recommendation engine with collaborative filtering and machine learning. Increased sales conversion by 18%
+    [1]Project Title: Employee Scheduling App
+    [1]Type: Professional
+    [1]Duration: 2023/08 - 2024/01
+    [1]Description: Created a web-based employee scheduling application with calendar APIs and notifications. Reduced scheduling conflicts by 40%
+    [1]Project Title: Fitness Tracker Dashboard
+    [1]Type: Personal
+    [1]Duration: 2024/02 - Present
+    [1]Description: Developed a dashboard to visualize fitness data from wearable devices. Increased user engagement and provided actionable health insights
+2025-08-08 14:58:27,011 INFO: [DEBUG] order_chronologically: Starting with mode end_date
+2025-08-08 14:58:27,011 INFO: [DEBUG] order_chronologically: education with content [{'degree': 'B.Sc. Computer Science', 'university': 'Springfield University', 'location': 'Springfield, USA', 'duration': '2012/09 - 2016/06', 'courses': ['Algorithms', 'Data Structures', 'Operating Systems', 'Databases']}, {'degree': 'M.Sc. Software Engineering', 'university': 'Capital Tech', 'location': 'Capital City, USA', 'duration': '2016/09 - 2018/06', 'courses': ['Cloud Computing', 'Distributed Systems', 'Advanced Programming']}]
+2025-08-08 14:58:27,011 INFO: [DEBUG] order_section
+2025-08-08 14:58:27,011 INFO: [DEBUG] order_section: ordering education
+2025-08-08 14:58:27,011 INFO: [DEBUG] order_chronologically: education with ordered content ['education']
+2025-08-08 14:58:27,012 INFO: [DEBUG] order_chronologically: certifications with content [{'certification_name': 'AWS Certified Solutions Architect', 'issuing_organization': 'Amazon Web Services', 'issue_date': '2019/05'}, {'certification_name': 'Scrum Master', 'issuing_organization': 'Scrum Alliance', 'issue_date': '2020/03'}]
+2025-08-08 14:58:27,012 INFO: [DEBUG] order_section
+2025-08-08 14:58:27,012 INFO: [DEBUG] order_section: ordering certifications
+2025-08-08 14:58:27,012 INFO: [DEBUG] order_chronologically: certifications with ordered content ['certifications']
+2025-08-08 14:58:27,012 INFO: [DEBUG] order_chronologically: awards_and_scholarships with content [{'award_name': 'Dean’s List', 'issuing_organization': 'Springfield University', 'issue_date': '2015/06'}, {'award_name': 'Tech Innovation Scholarship', 'issuing_organization': 'Capital Tech', 'issue_date': '2017/09'}]
+2025-08-08 14:58:27,012 INFO: [DEBUG] order_section
+2025-08-08 14:58:27,012 INFO: [DEBUG] order_section: ordering awards_and_scholarships
+2025-08-08 14:58:27,013 INFO: [DEBUG] order_chronologically: awards_and_scholarships with ordered content ['awards_and_scholarships']
+2025-08-08 14:58:27,013 INFO: [DEBUG] order_chronologically: volunteering_and_leadership with content [{'role': 'Coding Bootcamp Mentor', 'organization': 'Women in Tech', 'location': 'Capital City, USA', 'duration': '2023/05 - Present', 'description': ['Presented workshops on Python programming and career development for women in technology, delivering sessions to 80+ attendees and receiving positive feedback for clarity and motivation']}]
+2025-08-08 14:58:27,013 INFO: [DEBUG] order_section
+2025-08-08 14:58:27,013 INFO: [DEBUG] order_section: ordering volunteering_and_leadership
+2025-08-08 14:58:27,013 INFO: [DEBUG] order_chronologically: volunteering_and_leadership with ordered content ['volunteering_and_leadership']
+2025-08-08 14:58:27,014 INFO: [DEBUG] order_chronologically: work_experience with content [{'job_title': 'Senior Backend Engineer', 'company': 'FinTech Solutions', 'location': 'Springfield, USA', 'duration': '2019/07 - Present', 'description': ['Spearheaded cloud migration and scalable microservices architecture', 'Led design and implementation of Python, Go, and Docker-based systems']}]
+2025-08-08 14:58:27,014 INFO: [DEBUG] order_section
+2025-08-08 14:58:27,014 INFO: [DEBUG] order_section: ordering work_experience
+2025-08-08 14:58:27,014 INFO: [DEBUG] order_chronologically: work_experience with ordered content ['work_experience']
+2025-08-08 14:58:27,014 INFO: [DEBUG] order_chronologically: projects with content [{'project_title': 'Real-Time Analytics Dashboard', 'type': 'Professional', 'duration': '2021/01 - 2021/12', 'description': ['Developed a real-time analytics dashboard with Python and React, enabling clients to monitor KPIs', 'Optimized performance, reducing query latency by 35%']}, {'project_title': 'E-Commerce Recommendation Engine', 'type': 'Professional', 'duration': '2022/07 - 2022/12', 'description': ['Implemented a recommendation engine with collaborative filtering and machine learning', 'Increased sales conversion by 18%']}, {'project_title': 'Employee Scheduling App', 'type': 'Professional', 'duration': '2023/08 - 2024/01', 'description': ['Created a web-based employee scheduling application with calendar APIs and notifications', 'Reduced scheduling conflicts by 40%']}, {'project_title': 'Fitness Tracker Dashboard', 'type': 'Personal', 'duration': '2024/02 - Present', 'description': ['Developed a dashboard to visualize fitness data from wearable devices', 'Increased user engagement and provided actionable health insights']}]
+2025-08-08 14:58:27,015 INFO: [DEBUG] order_section
+2025-08-08 14:58:27,015 INFO: [DEBUG] order_section: ordering projects
+2025-08-08 14:58:27,015 INFO: [DEBUG] order_chronologically: projects with ordered content ['projects']
+2025-08-08 14:58:27,015 INFO: Ordered sections:
+[0]Education:
+[0]Certifications:
+[0]Awards and Scholarships:
+[0]Volunteering and Leadership:
+[0]Work Experience:
+[0]Projects:
+2025-08-08 14:58:27,015 INFO: education section content: ['education']
+2025-08-08 14:58:27,015 INFO: certifications section content: ['certifications']
+2025-08-08 14:58:27,016 INFO: awards_and_scholarships section content: ['awards_and_scholarships']
+2025-08-08 14:58:27,016 INFO: volunteering_and_leadership section content: ['volunteering_and_leadership']
+2025-08-08 14:58:27,016 INFO: work_experience section content: ['work_experience']
+2025-08-08 14:58:27,016 INFO: projects section content: ['projects']
+2025-08-08 14:58:27,017 INFO: Ordering complete
+2025-08-08 14:58:27,017 INFO: [STEP 5][COMPLETE]
+2025-08-08 14:58:27,017 INFO: [STEP 5][OUTPUT]>>>[STEP 6][INPUT] Tailored resume text (with Summary; pruned; skills tailored; ordered): 
+[0]Name: Jane Doe
+[0]Contact Information:
+    [1]Address: 123 Main St, Springfield, USA
+    [1]Phone: +1-555-123-4567
+    [1]Email: jane.doe@email.com
+    [1]LinkedIn: linkedin.com/in/janedoe
+    [1]Github: github.com/janedoe
+    [1]Portfolio: janedoe.dev
+[0]Title: Senior Software Engineer
+[0]Summary: As a Senior Software Engineer with expertise in building and maintaining large-scale infrastructure systems, I bring a unique blend of technical skills and leadership experience to drive success in DoorDash's 3-sided marketplace. With proficiency in multiple languages (English, Spanish, French), I am well-equipped to collaborate with diverse teams. My background in cloud computing, distributed systems, and advanced programming allows me to design scalable solutions that power high-traffic applications. As a certified Scrum Master, I can lead agile development efforts to deliver results efficiently.
+[0]Languages: English, Spanish, French
+[0]Education:
+[0]Certifications:
+[0]Awards and Scholarships:
+[0]Volunteering and Leadership:
+[0]Work Experience:
+[0]Projects:
+[0]Skills:
+    [1]Programming Languages: Go, JavaScript, Python
+    [1]Technical Skills: API Integration, Cloud Computing, Data Analysis, Machine Learning, Web Development
+    [1]Soft Skills: Analytical Thinking, Communication, Leadership, Organization, Problem Solving
+2025-08-08 14:58:27,017 INFO: [STEP 6][START] Formatting/Consistency check for tailored resume...
+2025-08-08 14:58:27,018 INFO: Missing Sections:
+2025-08-08 14:58:27,018 INFO: 
+Empty Sections:
+2025-08-08 14:58:27,018 INFO:   [0]Education:
+2025-08-08 14:58:27,019 INFO:   [0]Certifications:
+2025-08-08 14:58:27,019 INFO:   [0]Awards and Scholarships:
+2025-08-08 14:58:27,019 INFO:   [0]Volunteering and Leadership:
+2025-08-08 14:58:27,019 INFO:   [0]Work Experience:
+2025-08-08 14:58:27,019 INFO:   [0]Projects:
+2025-08-08 14:58:27,020 INFO: 
+Missing Subsections:
+2025-08-08 14:58:27,020 INFO: 
+Empty Subsections:
+2025-08-08 14:58:27,479 INFO: JS Output: 661
+
+2025-08-08 14:58:27,479 INFO: [MODEL: llama3:8b] Input token usage: 8.07%
+2025-08-08 14:58:27,480 INFO: [MODEL: llama3:8b] Input uses 661 tokens, remaining for response: 7531.
+2025-08-08 14:58:35,367 INFO: JS Output: 8962
+
+2025-08-08 14:58:35,367 INFO: [MODEL: llama3:8b] Input token usage: 109.40%
+2025-08-08 14:58:35,367 INFO: [MODEL: llama3:8b] Input exceeds max tokens by 770.
+2025-08-08 14:58:49,126 INFO: [STEP 6][COMPLETE]
+2025-08-08 14:58:49,127 INFO: The climb has ended, the CV is tailored!

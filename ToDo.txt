@@ -10,8 +10,8 @@
     [0.97] 
     Verify token limit
     []Make output > 90% consistent
-    Fix tokenizer; waiting on response from meta
-    Fix chrono ordering
+
+    Implement reverse ordering
     Ideas:
         Simplify input to tailoring function by only including selected fields
         Make tailoring functions rank their selections implicitly:

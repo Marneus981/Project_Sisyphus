@@ -19,8 +19,8 @@ def count_tokens_with_js(text):
         text=True
     )
     if result.stderr:
-        print("JS Error:", result.stderr)
-    print("JS Output:", result.stdout)
+        print("JS Error: " + result.stderr)
+    print("JS Output: " + result.stdout)
     if not result.stdout.strip().isdigit():
         raise RuntimeError("Token JS script did not return a valid number.")
     return int(result.stdout.strip())
@@ -583,8 +583,14 @@ def parse_duration(duration_str):
     """
     print("[DEBUG] parse_duration")
     start_str, end_str = duration_str.split(' - ')
-    start_date = parse_date(start_str)
-    end_date = parse_date(end_str)
+    if start_str:
+        start_date = parse_date(start_str)
+    else:
+        start_date = None
+    if end_str:
+        end_date = parse_date(end_str)
+    else:
+        end_date = None
     return start_date, end_date
 def order_section(section, type_key = 'end_date'):
     """
@@ -594,27 +600,37 @@ def order_section(section, type_key = 'end_date'):
     allowed_sections1 = ['education', 'work_experience', 'projects', 'volunteering_and_leadership']
     allowed_sections2 = ['certifications', 'awards_and_scholarships']
     allowed_keys = ['start_date', 'end_date', 'issue_date']
-    
-    for key in section:
-        print(f"[DEBUG] order_section: ordering {key}")
-        if type_key not in allowed_keys:
-            raise ValueError("Invalid type_key. Choose from 'start_date', 'end_date', or 'issue_date'.")
+    #Section is a dictionary of the form {'key': list of things that need to be ordered}
+    #first determine if the sole key in dictionary is in one of the allowed sections
+    if len(section) != 1:
+        raise ValueError("Section must be a dictionary with a single key.")
+    else:
+        key = next(iter(section))
         if key in allowed_sections1:
-            
-            if type_key == 'start_date':
-                return sorted(section, key=lambda x: (parse_duration(x['duration'])[0] if 'duration' in x else datetime.date.max))
-            elif type_key == 'end_date':
-                return sorted(section, key=lambda x: (parse_duration(x['duration'])[1] if 'duration' in x else datetime.date.max))
-            elif type_key == 'issue_date':
-                raise ValueError("Issue date is not applicable for sections: education, work_experience, projects, volunteering_and_leadership.")
-        elif key in allowed_sections2:
-            if type_key == 'issue_date':
-                return sorted(section, key=lambda x: (parse_date(x['issue_date']) if 'issue_date' in x else datetime.date.max))
+            if type_key not in allowed_keys[0:2]:
+                raise ValueError(f"Invalid type_key for section '{key}'. Choose from {allowed_keys[0:2]}.")
+            # Handle allowed_sections1
             else:
-                raise ValueError("Start date and end date are not applicable for sections: certifications, awards_and_scholarships.")
+                items = section[key] #list of dictionaries to be sorted
+                if type_key == 'start_date':
+                    items.sort(key=lambda x: parse_duration(x['duration'])[0])
+                    return items                           
+                elif type_key == 'end_date':
+                    items.sort(key=lambda x: parse_duration(x['duration'])[1])
+                    return items
+
+        elif key in allowed_sections2:
+            if type_key not in allowed_keys[2:]:
+                raise ValueError(f"Invalid type_key for section '{key}'. Choose from {allowed_keys[2:]}.")
+            # Handle allowed_sections2
+            else:
+                items = section[key] #list of dictionaries to be sorted
+                if type_key == 'issue_date':
+                    items.sort(key=lambda x: parse_date(x['issue_date']))
+                    return items
+
         else:
             raise ValueError("Invalid section. Choose from 'education', 'work_experience', 'projects', 'volunteering_and_leadership', 'certifications', or 'awards_and_scholarships'.")
-
 
 def order_chronologically(cv_dict, mode = 'end_date'):
     """
