@@ -1,3 +1,4 @@
+from pydoc import text
 import requests
 from Sisyphus import helpers
 from Sisyphus import parsers
@@ -8,53 +9,275 @@ DEFAULT_URL = "http://localhost:11434"
 # Set up logging
 print = logging.info
 
+def augment_output(input_text, reference_dict, type):
+    allowed_types = ['volunteering_and_leadership','work_experience','projects', 'vl_w_p', ]
+    if type not in allowed_types:
+        raise ValueError(f"augment_output: Invalid type: {type}. Allowed types are: {allowed_types}")
+    """
+    Input is in format (if type is 'volunteering_and_leadership'):
+    <Role Name 1>
+    <Role Name 2>
+    ...
+    Output is in format (if type is 'volunteering_and_leadership'):
+    [0]Volunteering and Leadership:
+    [1]Role: <Role Name 1>
+    [1]Organization: <Organization Name 1>
+    [1]Location: <Location Name 1>
+    [1]Duration: <Start Date 1> - <End Date 1>
+    [1]Description: <Description 1>
+    [1]Role: <Role Name 2>
+    [1]Organization: <Organization Name 2>
+    [1]Location: <Location Name 2>
+    [1]Duration: <Start Date 2> - <End Date 2>
+    [1]Description: <Description 2>
+    ...
 
+    Input is in format (if type is 'work_experience'):
+    <Job Title 1>
+    <Job Title 2>
+    ...
+    Output is in format (if type is 'work_experience'):
+    [0]Work Experience:
+    [1]Job Title: <Job Title 1>
+    [1]Company: <Company Name 1>
+    [1]Location: <Location Name 1>
+    [1]Duration: <Start Date 1> - <End Date 1>
+    [1]Description: <Description 1>
+    [1]Job Title: <Job Title 2>
+    [1]Company: <Company Name 2>
+    [1]Location: <Location Name 2>
+    [1]Duration: <Start Date 2> - <End Date 2>
+    [1]Description: <Description 2>
+    ...
 
-def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", job_description="", section="Volunteering and Leadership"):
-    
-    # - Volunteering and Leadership (Choose Which To Include Based on Job Description)
-    # - Volunteering X
-        # - Role
-        # - Organization
-        # - Location
-        # - Duration
-        # - Description
-        # - Skills (Choose Which To Include Based on Job Description)
-            # - Programming Languages
-            # - Technical Skills
-            # - Soft Skills
-    
+    Input is in format (if type is 'projects'):
+    <Project Title 1>
+    <Project Title 2>
+    ...
+    Output is in format (if type is 'projects'):
+    [0]Projects:
+    [1]Project Title: <Project Title 1>
+    [1]Type: <Type of Project 1>
+    [1]Duration: <Start Date 1> - <End Date 1>
+    [1]Description: <Description 1>
+    [1]Project Title: <Project Title 2>
+    [1]Type: <Type of Project 2>
+    [1]Duration: <Start Date 2> - <End Date 2>
+    [1]Description: <Description 2>
+    ...
+
+    Input is in format (if type is 'vl_w_p'):
+    [V]<Volunteer Role 1>
+    [J]<Job Title 1>
+    [P]<Project Title 1>
+    ...
+    Output is in format (if type is 'vl_w_p'):
+    [0]Volunteering and Leadership:
+    [1]Role: <Role Name 1>
+    [1]Organization: <Organization Name 1>
+    [1]Location: <Location Name 1>
+    [1]Duration: <Start Date 1> - <End Date 1>
+    [1]Description: <Description 1>
+    ...
+    [0]Work Experience:
+    [1]Job Title: <Job Title 1>
+    [1]Company: <Company Name 1>
+    [1]Location: <Location Name 1>
+    [1]Duration: <Start Date 1> - <End Date 1>
+    [1]Description: <Description 1>
+    ...
+    [0]Projects:
+    [1]Project Title: <Project Title 1>
+    [1]Type: <Type of Project 1>
+    [1]Duration: <Start Date 1> - <End Date 1>
+    [1]Description: <Description 1>
+
+    Note:
+    This assumes that the input is well-structured and follows the expected format for each type.
+    It also assumes that all necessary information is provided for each entry and each role is unique.
+    Ill be using a dict for easier access to the reference data.
+
+    The goal of this function is to match the input entries with its output format.
+    ...
+    """
+    #Split lines in input text and store them in a list of strings
+    input_lines = input_text.strip().split('\n')
+    tmp_dict = {}
+    if type == 'volunteering_and_leadership':
+        return_list = []
+        reference_list = reference_dict[type]
+        for line in input_lines:
+            for item in reference_list:
+                if line.strip() == item['role']:
+                    return_list.append(item)
+                    reference_list.remove(item)
+                    break
+        tmp_dict[type] = return_list
+
+    elif type == 'work_experience':
+        return_list = []
+        reference_list = reference_dict[type]
+        for line in input_lines:
+            for item in reference_list:
+                if line.strip() == item['job_title']:
+                    return_list.append(item)
+                    reference_list.remove(item)
+                    break
+        tmp_dict[type] = return_list
+
+    elif type == 'projects':
+        return_list = []
+        reference_list = reference_dict[type]
+        for line in input_lines:
+            for item in reference_list:
+                if line.strip() == item['project_title']:
+                    return_list.append(item)
+                    reference_list.remove(item)
+                    break
+        tmp_dict[type] = return_list
+
+    elif type == 'vl_w_p':
+        return_list = [[],[],[]]
+        reference_list_vl = reference_dict['volunteering_and_leadership']
+        reference_list_w = reference_dict['work_experience']
+        reference_list_p = reference_dict['projects']
+        for line in input_lines:
+            found = False
+            for item in reference_list_vl:
+                if line.strip() == item['role']:
+                    return_list[0].append(item)
+                    reference_list_vl.remove(item)
+                    found = True
+                    break
+            if found:
+                continue
+            for item in reference_list_w:
+                if line.strip() == item['job_title']:
+                    return_list[1].append(item)
+                    reference_list_w.remove(item)
+                    found = True
+                    break
+            if found:
+                continue
+            for item in reference_list_p:
+                if line.strip() == item['project_title']:
+                    return_list[2].append(item)
+                    reference_list_p.remove(item)
+                    found = True
+                    break
+        tmp_dict['volunteering_and_leadership'] = return_list[0]
+        tmp_dict['work_experience'] = return_list[1]
+        tmp_dict['projects'] = return_list[2]
+    return tmp_dict
+
+def prepare_input_text(input_text, type):
+    allowed_types = ['volunteering_and_leadership','work_experience','projects', 'vl_w_p', ]
+    if type not in allowed_types:
+        raise ValueError(f"Invalid type: {type}. Allowed types are: {allowed_types}")
+    # Split lines in input text and store them in a list of strings
+    input_lines = input_text.strip().split('\n')
+    return_list = []
+    return_text = ''
+    if type == 'volunteering_and_leadership':
+        """
+        Remove lines that start with:
+        [0]Volunteering and Leadership:
+        [1]Organization:
+        [1]Location:
+        [1]Duration:
+
+        In the rest of the lines, remove [1]Role and [1]Description [1]Skills
+        """
+        for line in input_lines:
+            if not line.startswith(("[0]Volunteering and Leadership:", "[1]Organization:", "[1]Location:", "[1]Duration:")):
+                line = line.replace("[1]Role: ", "[R]").replace("[1]Description: ", "").replace("[1]Skills: ", "").strip()
+                if line:
+                    return_list.append(line)
+        for item in return_list:
+            return_text += f"{item}\n"
+        return return_text
+
+    if type == 'work_experience':
+        for line in input_lines:
+            if not line.startswith(("[0]Work Experience:", "[1]Company:", "[1]Location:", "[1]Duration:")):
+                line = line.replace("[1]Job Title: ", "[J]").replace("[1]Description: ", "").replace("[1]Skills: ", "").strip()
+                if line:
+                    return_list.append(line)
+        for item in return_list:
+            return_text += f"{item}\n"
+        return return_text
+    if type == 'projects':
+        for line in input_lines:
+            if not line.startswith(("[0]Projects:", "[1]Type:", "[1]Duration:")):
+                line = line.replace("[0]Project:", "").replace("[1]Project Title: ", "[P]").replace("[1]Description: ", "").replace("[1]Technologies: ", "").strip()
+                if line:
+                    return_list.append(line)
+        for item in return_list:
+            return_text += f"{item}\n"
+        return return_text
+    if type == 'vl_w_p':
+        for line in input_lines:
+            if not line.startswith(("[0]Volunteering and Leadership:", "[1]Organization:", "[1]Location:", "[1]Duration:",
+                                    "[0]Work Experience:", "[1]Company:",
+                                    "[0]Projects:", "[1]Type:")):
+                line = line.replace("[1]Role: ", "[R]").replace("[1]Description: ", "").replace("[1]Skills: ", "").replace("[1]Job Title: ", "[J]").replace("[1]Project Title: ", "[P]").strip()
+                if line:
+                    return_list.append(line)
+        for item in return_list:
+            return_text += f"{item}\n"
+        return return_text
+
+def clean_first_step(text):
+    # Remove lines that do not start with [X] where X is a capitalized letter
+    cleaned_lines = []
+    for line in text.split('\n'):
+        if line.startswith(("[R]", "[J]", "[P]")):
+            cleaned_lines.append(line)
+    return '\n'.join(cleaned_lines)  
+"""
+    raw text section>>>>prepare_input_text>>>Role;Description;Skills
+    >>>Tailor function>>>Text list of chosen items>>>augment_output>>>tailored_dict (section)
+"""
+def summarize_job_description(job_description = "", system3 = "", ollama_url=DEFAULT_URL, model=DEFAULT_MODEL):
+    # Summarize the job description by extracting key responsibilities and requirements
+    # This is a placeholder implementation
     prompt = f"""
-Given the following section on all volunteering and leadership experiences for a resume:
-{cv_data}
-And the following job description:
-{job_description}
-
-Please select up to 4 volunteering and leadership experiences that best match the job description. If there are 4 or fewer experiences, include all of them. If there are no experiences, return an empty section.
-
-For each selected experience:
-- Keep all original subsections: Role, Organization, Location, Duration, Description, and Skills.
-- In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
-- In the Skills subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
-- Do not use line breaks inside any subsection. Do not use the ":" character in the Description.
-- If any subsection is missing, include it as empty.
-- Skills must be comma-separated and follow the format below.
-
-Return only the revised section in the following format (showing one example, but there may be up to 4 experiences):
-
-[0]Volunteering and Leadership:
-[1]Role: Role Name 1
-[1]Organization: Organization Name 1
-[1]Location: Location Name 1
-[1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
-[1]Description: Brief description for Role 1.
-[1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
-...
+    Summarize the following job description by extracting key responsibilities and requirements; include only the most important points, no unnecessary details:
+    {job_description}
     """
     helpers.token_math(model, prompt)
     payload = {
         "model": model,
-        "system": system,
+        "system": system3,
+        "prompt": prompt
+    }
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    try:
+        result = response.json()
+        return result.get("response", "")
+    except Exception:
+        print("Ollama response was not valid JSON:")
+        print(response.text)
+        return "Error: Ollama response was not valid JSON."
+
+def step0_volunteering_and_leadership(model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL, 
+                                       raw_cv_data="", job_description=""):
+    prompt = f"""
+Given the following "Volunteering and Leadership" resume section:
+{raw_cv_data}
+And the following job description:
+{job_description}
+Select up to 4 relevant experiences that best match the job description. If there are 4 or fewer experiences, include all of them. If there are no experiences, return an empty section.
+Output the selected experiences strictly in the following format:
+[V]Role Name 1
+[V]Role Name 2
+[V]Role Name 3
+[V]Role Name 4
+    """
+    helpers.token_math(model, prompt)
+    payload = {
+        "model": model,
+        "system": system1,
         "prompt": prompt,
         "stream": False
     }
@@ -66,6 +289,71 @@ Return only the revised section in the following format (showing one example, bu
         print("Ollama response was not valid JSON:")
         print(response.text)
         return "Error: Ollama response was not valid JSON."
+
+def step3_volunteering_and_leadership(model=DEFAULT_MODEL, system2="", ollama_url=DEFAULT_URL, 
+                                       experience="", job_description=""):
+    prompt = f"""
+Given the following "Volunteering and Leadership" resume experience:
+{experience}
+And the following job description:
+{job_description}
+Rewrite the experience to best match the job description, following these guidelines:
+- Keep all original subsections: Role, Organization, Location, Duration, Description, and Skills.
+- In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
+- In the Skills subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
+- Do not use line breaks inside any subsection. Do not use the ":" character in the Description.
+- If any subsection is missing, include it as empty.
+- Skills must be comma-separated and follow the format below.
+Return only the revised section in the following format:
+[1]Role: Role Name 1
+[1]Organization: Organization Name 1
+[1]Location: Location Name 1
+[1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
+[1]Description: Brief description for Role 1.
+[1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
+    """
+    helpers.token_math(model, prompt)
+    payload = {
+        "model": model,
+        "system": system2,
+        "prompt": prompt,
+        "stream": False
+    }
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    try:
+        result = response.json()
+        return result.get("response", "")
+    except Exception:
+        print("Ollama response was not valid JSON:")
+        print(response.text)
+        return "Error: Ollama response was not valid JSON."
+
+def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system1="", system2="", system3="", ollama_url=DEFAULT_URL, 
+                                       raw_cv_data="", job_description="", 
+                                       section="volunteering_and_leadership", reference_dct={}):
+    job_description_summary = summarize_job_description(job_description, ollama_url=ollama_url, model=model, system3=system3)
+    step0 = prepare_input_text(raw_cv_data, type=section)
+    step1 = step0_volunteering_and_leadership(model=model, system1=system1, ollama_url=ollama_url, 
+                                               raw_cv_data=step0, job_description=job_description_summary)
+    step1_clean = clean_first_step(step1).strip()
+    step2_dct = augment_output(step1_clean, reference_dct, type=section)
+    step2_text = helpers.filter_output(parsers.inv_parse_cv(step2_dct))
+    step3_text = []
+    #Delete line that starts with [0]Volunteering and Leadership
+    step2_text = step2_text.replace("[0]Volunteering and Leadership:", "")
+    step2_text = helpers.filter_output(step2_text.strip())
+    #Split text into list of individual experiences (each experience starts with [1]Role)
+    step3_text = step2_text.split("\n[1]Role: ")[1:]
+    step3_text = ["[1]Role: " + exp for exp in step3_text]
+    step3_list = []
+    for exp in step3_text:
+        temp = step3_volunteering_and_leadership(model=model, system2=system2, ollama_url=ollama_url, experience=exp, job_description=job_description_summary)
+        temp = helpers.filter_output(temp.strip())
+        step3_list.append(temp)
+    step3_text = "\n".join(step3_list)
+    step4_text = "[0]Volunteering and Leadership:\n" + step3_text
+    step4_text = helpers.filter_output(step4_text.strip())
+    return step4_text
 
 def tailor_work_experience(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", job_description="", section="Work Experience"):
     
@@ -255,7 +543,7 @@ def tailor_summary(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_da
     Tailors the summary section based on the job description using Ollama.
     """
     prompt = f"""
-    Given the following already tailored CV, with no summary section:
+    Given the following already tailored resume, with no summary section:
     {cv_data}
     And the following job description:
     {job_description}
@@ -590,226 +878,3 @@ def compose_cover_letter_dictionary(model,cv_text, job_description):
     output_dict = parsers.dict_grafter(dict_list)
     #Return the output_dict
     return output_dict
-
-def augment_output(input_text, reference_dict, type):
-    allowed_types = ['volunteering_and_leadership','work_experience','projects', 'vl_w_p', ]
-    if type not in allowed_types:
-        raise ValueError(f"augment_output: Invalid type: {type}. Allowed types are: {allowed_types}")
-    """
-    Input is in format (if type is 'volunteering_and_leadership'):
-    <Role Name 1>
-    <Role Name 2>
-    ...
-    Output is in format (if type is 'volunteering_and_leadership'):
-    [0]Volunteering and Leadership:
-    [1]Role: <Role Name 1>
-    [1]Organization: <Organization Name 1>
-    [1]Location: <Location Name 1>
-    [1]Duration: <Start Date 1> - <End Date 1>
-    [1]Description: <Description 1>
-    [1]Role: <Role Name 2>
-    [1]Organization: <Organization Name 2>
-    [1]Location: <Location Name 2>
-    [1]Duration: <Start Date 2> - <End Date 2>
-    [1]Description: <Description 2>
-    ...
-
-    Input is in format (if type is 'work_experience'):
-    <Job Title 1>
-    <Job Title 2>
-    ...
-    Output is in format (if type is 'work_experience'):
-    [0]Work Experience:
-    [1]Job Title: <Job Title 1>
-    [1]Company: <Company Name 1>
-    [1]Location: <Location Name 1>
-    [1]Duration: <Start Date 1> - <End Date 1>
-    [1]Description: <Description 1>
-    [1]Job Title: <Job Title 2>
-    [1]Company: <Company Name 2>
-    [1]Location: <Location Name 2>
-    [1]Duration: <Start Date 2> - <End Date 2>
-    [1]Description: <Description 2>
-    ...
-
-    Input is in format (if type is 'projects'):
-    <Project Title 1>
-    <Project Title 2>
-    ...
-    Output is in format (if type is 'projects'):
-    [0]Projects:
-    [1]Project Title: <Project Title 1>
-    [1]Type: <Type of Project 1>
-    [1]Duration: <Start Date 1> - <End Date 1>
-    [1]Description: <Description 1>
-    [1]Project Title: <Project Title 2>
-    [1]Type: <Type of Project 2>
-    [1]Duration: <Start Date 2> - <End Date 2>
-    [1]Description: <Description 2>
-    ...
-
-    Input is in format (if type is 'vl_w_p'):
-    [V]<Volunteer Role 1>
-    [J]<Job Title 1>
-    [P]<Project Title 1>
-    ...
-    Output is in format (if type is 'vl_w_p'):
-    [0]Volunteering and Leadership:
-    [1]Role: <Role Name 1>
-    [1]Organization: <Organization Name 1>
-    [1]Location: <Location Name 1>
-    [1]Duration: <Start Date 1> - <End Date 1>
-    [1]Description: <Description 1>
-    ...
-    [0]Work Experience:
-    [1]Job Title: <Job Title 1>
-    [1]Company: <Company Name 1>
-    [1]Location: <Location Name 1>
-    [1]Duration: <Start Date 1> - <End Date 1>
-    [1]Description: <Description 1>
-    ...
-    [0]Projects:
-    [1]Project Title: <Project Title 1>
-    [1]Type: <Type of Project 1>
-    [1]Duration: <Start Date 1> - <End Date 1>
-    [1]Description: <Description 1>
-
-    Note:
-    This assumes that the input is well-structured and follows the expected format for each type.
-    It also assumes that all necessary information is provided for each entry and each role is unique.
-    Ill be using a dict for easier access to the reference data.
-
-    The goal of this function is to match the input entries with its output format.
-    ...
-    """
-    #Split lines in input text and store them in a list of strings
-    input_lines = input_text.strip().split('\n')
-    tmp_dict = {}
-    if type == 'volunteering_and_leadership':
-        return_list = []
-        reference_list = reference_dict[type]
-        for line in input_lines:
-            for item in reference_list:
-                if line.strip() == item['role']:
-                    return_list.append(item)
-                    reference_list.remove(item)
-                    break
-        tmp_dict[type] = return_list
-
-    elif type == 'work_experience':
-        return_list = []
-        reference_list = reference_dict[type]
-        for line in input_lines:
-            for item in reference_list:
-                if line.strip() == item['job_title']:
-                    return_list.append(item)
-                    reference_list.remove(item)
-                    break
-        tmp_dict[type] = return_list
-
-    elif type == 'projects':
-        return_list = []
-        reference_list = reference_dict[type]
-        for line in input_lines:
-            for item in reference_list:
-                if line.strip() == item['project_title']:
-                    return_list.append(item)
-                    reference_list.remove(item)
-                    break
-        tmp_dict[type] = return_list
-
-    elif type == 'vl_w_p':
-        return_list = [[],[],[]]
-        reference_list_vl = reference_dict['volunteering_and_leadership']
-        reference_list_w = reference_dict['work_experience']
-        reference_list_p = reference_dict['projects']
-        for line in input_lines:
-            found = False
-            for item in reference_list_vl:
-                if line.strip() == item['role']:
-                    return_list[0].append(item)
-                    reference_list_vl.remove(item)
-                    found = True
-                    break
-            if found:
-                continue
-            for item in reference_list_w:
-                if line.strip() == item['job_title']:
-                    return_list[1].append(item)
-                    reference_list_w.remove(item)
-                    found = True
-                    break
-            if found:
-                continue
-            for item in reference_list_p:
-                if line.strip() == item['project_title']:
-                    return_list[2].append(item)
-                    reference_list_p.remove(item)
-                    found = True
-                    break
-        tmp_dict['volunteering_and_leadership'] = return_list[0]
-        tmp_dict['work_experience'] = return_list[1]
-        tmp_dict['projects'] = return_list[2]
-    return tmp_dict
-
-def prepare_input_text(input_text, type):
-    allowed_types = ['volunteering_and_leadership','work_experience','projects', 'vl_w_p', ]
-    if type not in allowed_types:
-        raise ValueError(f"Invalid type: {type}. Allowed types are: {allowed_types}")
-    # Split lines in input text and store them in a list of strings
-    input_lines = input_text.strip().split('\n')
-    return_list = []
-    return_text = ''
-    if type == 'volunteering_and_leadership':
-        """
-        Remove lines that start with:
-        [0]Volunteering and Leadership:
-        [1]Organization:
-        [1]Location:
-        [1]Duration:
-
-        In the rest of the lines, remove [1]Role and [1]Description [1]Skills
-        """
-        for line in input_lines:
-            if not line.startswith(("[0]Volunteering and Leadership:", "[1]Organization:", "[1]Location:", "[1]Duration:")):
-                line = line.replace("[1]Role: ", "").replace("[1]Description: ", "").replace("[1]Skills: ", "").strip()
-                if line:
-                    return_list.append(line)
-        for item in return_list:
-            return_text += f"{item}\n"
-        return return_text
-
-    if type == 'work_experience':
-        for line in input_lines:
-            if not line.startswith(("[0]Work Experience:", "[1]Company:", "[1]Location:", "[1]Duration:")):
-                line = line.replace("[1]Job Title: ", "").replace("[1]Description: ", "").replace("[1]Skills: ", "").strip()
-                if line:
-                    return_list.append(line)
-        for item in return_list:
-            return_text += f"{item}\n"
-        return return_text
-    if type == 'projects':
-        for line in input_lines:
-            if not line.startswith(("[0]Projects:", "[1]Type:", "[1]Duration:")):
-                line = line.replace("[0]Project:", "").replace("[1]Project Title: ", "").replace("[1]Description: ", "").replace("[1]Technologies: ", "").strip()
-                if line:
-                    return_list.append(line)
-        for item in return_list:
-            return_text += f"{item}\n"
-        return return_text
-    if type == 'vl_w_p':
-        for line in input_lines:
-            if not line.startswith(("[0]Volunteering and Leadership:", "[1]Organization:", "[1]Location:", "[1]Duration:",
-                                    "[0]Work Experience:", "[1]Company:",
-                                    "[0]Projects:", "[1]Type:")):
-                line = line.replace("[1]Role: ", "[V]").replace("[1]Description: ", "").replace("[1]Skills: ", "").replace("[1]Job Title: ", "[J]").replace("[1]Project Title: ", "[P]").strip()
-                if line:
-                    return_list.append(line)
-        for item in return_list:
-            return_text += f"{item}\n"
-        return return_text
-    
-"""
-    raw text section>>>>prepare_input_text>>>Role;Description;Skills
-    >>>Tailor function>>>Text list of chosen items>>>augment_output>>>tailored_dict (section)
-"""

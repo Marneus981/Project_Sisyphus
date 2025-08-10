@@ -9,15 +9,48 @@
 
     [0.97] 
         []Verify token count correctness
-        [DONE]Verify token limit
+        
         []Make output > 90% consistent + 0.001
+            []Simplify tailor_projects
+                [DONE]Select relevant info to feed
+                []Change prompt
+            []Simplify tailor_volunteering_and_leadership
+                [DONE]Select relevant info to feed
+                []Change prompt
+            []Simplify tailor_work_experience
+                [DONE]Select relevant info to feed
+                []Change prompt
+            []Simplify prune_vl_w_p
+                [DONE]Select relevant info to feed
+                []Change prompt
 
-        []Implement reverse ordering + 0.001
-            Ideas:
-                Simplify input to tailoring functions to include min relevant fields
-                    Create function to process simplified outputs into new complete ones
-                Partition analysis prompts per section
-            
+
+            []Simplify summary
+                []Select relevant info to feed OR find way to feed it lots of data
+                    []Hierarchical Summarization??
+                []Change prompt
+            []Simplify make_cover_letter_text
+                []Select relevant info to feed 
+                    OR 
+                    find way to feed it lots of data
+                    []Hierarchical Summarization??
+                []Change prompt
+            []Simplify consistency_checker_vs_cv
+                []Select relevant info to feed 
+                    OR
+                    find way to feed it lots of data
+                    OR 
+                    make it a step by step process
+                    []Hierarchical Summarization??
+                []Change prompt
+            []Simplify consistency_checker_vs_job_desc
+                []Select relevant info to feed 
+                    OR
+                    find way to feed it lots of data
+                    OR 
+                    make it a step by step process
+                    []Hierarchical Summarization??
+                []Change prompt
 
 
     [0.98]
@@ -124,3 +157,5 @@
     [DONE]Outsource chronological ordering to an actual function
     [DONE]Stabilize output
     [DONE]Make return_text_with_skills more robust
+    [DONE]Implement reverse ordering
+    [DONE]Verify token limit
