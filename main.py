@@ -109,9 +109,13 @@ def tailor_cv(root):
         v_and_l_text = parsers.inv_parse_cv(v_and_l_section)
         tailored_v_and_l = tailor.tailor_volunteering_and_leadership(
             model=selected_model,
-            system=system_text,
-            cv_data=v_and_l_text,
-            job_description=job_desc
+            system1=system_text,
+            system2=system_text,
+            system3= system_text,
+            job_description=job_desc,
+            raw_cv_data=v_and_l_text,
+            section="volunteering_and_leadership",
+            reference_dct=v_and_l_section
         )
         tailored_v_and_l = helpers.filter_output(tailored_v_and_l)
         if tailored_v_and_l:

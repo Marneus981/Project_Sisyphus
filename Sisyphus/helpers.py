@@ -588,7 +588,10 @@ def parse_duration(duration_str):
     else:
         start_date = None
     if end_str:
-        end_date = parse_date(end_str)
+        if end_str.strip().lower() in ["present","current"]:
+            end_date = datetime.date.today()
+        else:
+            end_date = parse_date(end_str)
     else:
         end_date = None
     return start_date, end_date

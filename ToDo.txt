@@ -8,6 +8,7 @@
 
 
     [0.97] 
+        []Add handling for present in chrono ordering
         []Verify token count correctness
         
         []Make output > 90% consistent + 0.001

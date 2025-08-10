@@ -249,7 +249,8 @@ def summarize_job_description(job_description = "", system3 = "", ollama_url=DEF
     payload = {
         "model": model,
         "system": system3,
-        "prompt": prompt
+        "prompt": prompt,
+        "stream": False
     }
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
@@ -331,28 +332,43 @@ Return only the revised section in the following format:
 def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system1="", system2="", system3="", ollama_url=DEFAULT_URL, 
                                        raw_cv_data="", job_description="", 
                                        section="volunteering_and_leadership", reference_dct={}):
+    print(f"tailor_volunteering_and_leadership: raw_cv_data:\n" + raw_cv_data)
     job_description_summary = summarize_job_description(job_description, ollama_url=ollama_url, model=model, system3=system3)
+    print(f"tailor_volunteering_and_leadership: job_description_summary:\n" + job_description_summary)
     step0 = prepare_input_text(raw_cv_data, type=section)
+    print(f"tailor_volunteering_and_leadership: step0:\n" + step0)
     step1 = step0_volunteering_and_leadership(model=model, system1=system1, ollama_url=ollama_url, 
                                                raw_cv_data=step0, job_description=job_description_summary)
+    print(f"tailor_volunteering_and_leadership: step1:\n" + step1)
     step1_clean = clean_first_step(step1).strip()
+    print(f"tailor_volunteering_and_leadership: step1_clean:\n" + step1_clean)
     step2_dct = augment_output(step1_clean, reference_dct, type=section)
+    print(f"tailor_volunteering_and_leadership: step2_dct:\n" + str(step2_dct))
     step2_text = helpers.filter_output(parsers.inv_parse_cv(step2_dct))
+    print(f"tailor_volunteering_and_leadership: step2_text:\n" + step2_text)
     step3_text = []
     #Delete line that starts with [0]Volunteering and Leadership
     step2_text = step2_text.replace("[0]Volunteering and Leadership:", "")
+    print(f"tailor_volunteering_and_leadership: step2_text (No [0]):\n" + step2_text)
     step2_text = helpers.filter_output(step2_text.strip())
+    print(f"tailor_volunteering_and_leadership: step2_text after filtering:\n" + step2_text)
     #Split text into list of individual experiences (each experience starts with [1]Role)
     step3_text = step2_text.split("\n[1]Role: ")[1:]
     step3_text = ["[1]Role: " + exp for exp in step3_text]
     step3_list = []
     for exp in step3_text:
+        print(f"tailor_volunteering_and_leadership: step3_volunteering_and_leadership: exp:\n" + exp)
         temp = step3_volunteering_and_leadership(model=model, system2=system2, ollama_url=ollama_url, experience=exp, job_description=job_description_summary)
+        print(f"tailor_volunteering_and_leadership: step3_volunteering_and_leadership: temp:\n" + temp)
         temp = helpers.filter_output(temp.strip())
+        print(f"tailor_volunteering_and_leadership: step3_volunteering_and_leadership: temp (filtered):\n" + temp)
         step3_list.append(temp)
     step3_text = "\n".join(step3_list)
+    print(f"tailor_volunteering_and_leadership: step3_text:\n" + step3_text)
     step4_text = "[0]Volunteering and Leadership:\n" + step3_text
+    print(f"tailor_volunteering_and_leadership: step4_text before filtering:\n" + step4_text)
     step4_text = helpers.filter_output(step4_text.strip())
+    print(f"tailor_volunteering_and_leadership: step4_text after filtering:\n" + step4_text)
     return step4_text
 
 def tailor_work_experience(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", job_description="", section="Work Experience"):
