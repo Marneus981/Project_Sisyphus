@@ -591,4 +591,168 @@ def compose_cover_letter_dictionary(model,cv_text, job_description):
     #Return the output_dict
     return output_dict
 
-  
+def augment_output(input_text, reference_dict, type):
+    allowed_types = ['volunteering_and_leadership','work_experience','projects', 'vl_w_p', ]
+    if type not in allowed_types:
+        raise ValueError(f"augment_output: Invalid type: {type}. Allowed types are: {allowed_types}")
+    """
+    Input is in format (if type is 'volunteering_and_leadership'):
+    <Role Name 1>
+    <Role Name 2>
+    ...
+    Output is in format (if type is 'volunteering_and_leadership'):
+    [0]Volunteering and Leadership:
+    [1]Role: <Role Name 1>
+    [1]Organization: <Organization Name 1>
+    [1]Location: <Location Name 1>
+    [1]Duration: <Start Date 1> - <End Date 1>
+    [1]Description: <Description 1>
+    [1]Role: <Role Name 2>
+    [1]Organization: <Organization Name 2>
+    [1]Location: <Location Name 2>
+    [1]Duration: <Start Date 2> - <End Date 2>
+    [1]Description: <Description 2>
+    ...
+
+    Input is in format (if type is 'work_experience'):
+    <Job Title 1>
+    <Job Title 2>
+    ...
+    Output is in format (if type is 'work_experience'):
+    [0]Work Experience:
+    [1]Job Title: <Job Title 1>
+    [1]Company: <Company Name 1>
+    [1]Location: <Location Name 1>
+    [1]Duration: <Start Date 1> - <End Date 1>
+    [1]Description: <Description 1>
+    [1]Job Title: <Job Title 2>
+    [1]Company: <Company Name 2>
+    [1]Location: <Location Name 2>
+    [1]Duration: <Start Date 2> - <End Date 2>
+    [1]Description: <Description 2>
+    ...
+
+    Input is in format (if type is 'projects'):
+    <Project Title 1>
+    <Project Title 2>
+    ...
+    Output is in format (if type is 'projects'):
+    [0]Projects:
+    [1]Project Title: <Project Title 1>
+    [1]Type: <Type of Project 1>
+    [1]Duration: <Start Date 1> - <End Date 1>
+    [1]Description: <Description 1>
+    [1]Project Title: <Project Title 2>
+    [1]Type: <Type of Project 2>
+    [1]Duration: <Start Date 2> - <End Date 2>
+    [1]Description: <Description 2>
+    ...
+
+    Input is in format (if type is 'vl_w_p'):
+    [V]<Volunteer Role 1>
+    [J]<Job Title 1>
+    [P]<Project Title 1>
+    ...
+    Output is in format (if type is 'vl_w_p'):
+    [0]Volunteering and Leadership:
+    [1]Role: <Role Name 1>
+    [1]Organization: <Organization Name 1>
+    [1]Location: <Location Name 1>
+    [1]Duration: <Start Date 1> - <End Date 1>
+    [1]Description: <Description 1>
+    ...
+    [0]Work Experience:
+    [1]Job Title: <Job Title 1>
+    [1]Company: <Company Name 1>
+    [1]Location: <Location Name 1>
+    [1]Duration: <Start Date 1> - <End Date 1>
+    [1]Description: <Description 1>
+    ...
+    [0]Projects:
+    [1]Project Title: <Project Title 1>
+    [1]Type: <Type of Project 1>
+    [1]Duration: <Start Date 1> - <End Date 1>
+    [1]Description: <Description 1>
+
+    Note:
+    This assumes that the input is well-structured and follows the expected format for each type.
+    It also assumes that all necessary information is provided for each entry and each role is unique.
+    Ill be using a dict for easier access to the reference data.
+
+    The goal of this function is to match the input entries with its output format.
+    ...
+    """
+    #Split lines in input text and store them in a list of strings
+    input_lines = input_text.strip().split('\n')
+    tmp_dict = {}
+    if type == 'volunteering_and_leadership':
+        return_list = []
+        reference_list = reference_dict[type]
+        for line in input_lines:
+            for item in reference_list:
+                if line.strip() == item['role']:
+                    return_list.append(item)
+                    reference_list.remove(item)
+                    break
+        tmp_dict[type] = return_list
+
+    elif type == 'work_experience':
+        return_list = []
+        reference_list = reference_dict[type]
+        for line in input_lines:
+            for item in reference_list:
+                if line.strip() == item['job_title']:
+                    return_list.append(item)
+                    reference_list.remove(item)
+                    break
+        tmp_dict[type] = return_list
+
+    elif type == 'projects':
+        return_list = []
+        reference_list = reference_dict[type]
+        for line in input_lines:
+            for item in reference_list:
+                if line.strip() == item['project_title']:
+                    return_list.append(item)
+                    reference_list.remove(item)
+                    break
+        tmp_dict[type] = return_list
+
+    elif type == 'vl_w_p':
+        return_list = [[],[],[]]
+        reference_list_vl = reference_dict['volunteering_and_leadership']
+        reference_list_w = reference_dict['work_experience']
+        reference_list_p = reference_dict['projects']
+        for line in input_lines:
+            found = False
+            for item in reference_list_vl:
+                if line.strip() == item['role']:
+                    return_list[0].append(item)
+                    reference_list_vl.remove(item)
+                    found = True
+                    break
+            if found:
+                continue
+            for item in reference_list_w:
+                if line.strip() == item['job_title']:
+                    return_list[1].append(item)
+                    reference_list_w.remove(item)
+                    found = True
+                    break
+            if found:
+                continue
+            for item in reference_list_p:
+                if line.strip() == item['project_title']:
+                    return_list[2].append(item)
+                    reference_list_p.remove(item)
+                    found = True
+                    break
+        tmp_dict['volunteering_and_leadership'] = return_list[0]
+        tmp_dict['work_experience'] = return_list[1]
+        tmp_dict['projects'] = return_list[2]
+    return tmp_dict
+
+
+"""
+Role;Description;Skills>>>Tailor function>>>Text list of chosen items>>>augment_output>>>tailored_dict (section)
+"""

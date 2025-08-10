@@ -8,15 +8,16 @@
 
 
     [0.97] 
-    Verify token limit
-    []Make output > 90% consistent
+        []Verify token count correctness
+        [DONE]Verify token limit
+        []Make output > 90% consistent + 0.001
 
-    Implement reverse ordering
-    Ideas:
-        Simplify input to tailoring function by only including selected fields
-        Make tailoring functions rank their selections implicitly:
-        Make title matching function for ranking
-        
+        []Implement reverse ordering + 0.001
+            Ideas:
+                Simplify input to tailoring functions to include min relevant fields
+                    Create function to process simplified outputs into new complete ones
+                Partition analysis prompts per section
+            
 
 
     [0.98]

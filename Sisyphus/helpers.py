@@ -9,7 +9,7 @@ import logging
 print = logging.info
 
 TOKENIZER_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\tokenizers"
-
+LLAMA_MAX_TOKENS = 4096
 def count_tokens_with_js(text):
     tokenizer_js_path = os.path.join(TOKENIZER_PATH, "llama3", "tokenizer.js")
     result = subprocess.run(
@@ -30,7 +30,7 @@ def token_math(model, input_text):
     
     if model.startswith("llama3"):
         tokens = count_tokens_with_js(input_text.strip())
-        max_tokens = 8192
+        max_tokens = LLAMA_MAX_TOKENS
 
     else:
         print(f"Token calculation not implemented for model: {model}")
@@ -592,7 +592,7 @@ def parse_duration(duration_str):
     else:
         end_date = None
     return start_date, end_date
-def order_section(section, type_key = 'end_date'):
+def order_section(section, type_key = 'end_date', reverse = False):
     """
     Order the items in a section based on their start and end dates.
     """
@@ -613,10 +613,10 @@ def order_section(section, type_key = 'end_date'):
             else:
                 items = section[key] #list of dictionaries to be sorted
                 if type_key == 'start_date':
-                    items.sort(key=lambda x: parse_duration(x['duration'])[0])
+                    items.sort(reverse=reverse, key=lambda x: parse_duration(x['duration'])[0])
                     return items                           
                 elif type_key == 'end_date':
-                    items.sort(key=lambda x: parse_duration(x['duration'])[1])
+                    items.sort(reverse=reverse, key=lambda x: parse_duration(x['duration'])[1])
                     return items
 
         elif key in allowed_sections2:
@@ -626,13 +626,13 @@ def order_section(section, type_key = 'end_date'):
             else:
                 items = section[key] #list of dictionaries to be sorted
                 if type_key == 'issue_date':
-                    items.sort(key=lambda x: parse_date(x['issue_date']))
+                    items.sort(reverse=reverse, key=lambda x: parse_date(x['issue_date']))
                     return items
 
         else:
             raise ValueError("Invalid section. Choose from 'education', 'work_experience', 'projects', 'volunteering_and_leadership', 'certifications', or 'awards_and_scholarships'.")
 
-def order_chronologically(cv_dict, mode = 'end_date'):
+def order_chronologically(cv_dict, mode = 'end_date', reverse = False):
     """
     This will be called once the CV is tailored and the final dict is ready.
     Mode can be 'end_date', 'start_date' or 'issue_date'.
@@ -784,7 +784,7 @@ def order_chronologically(cv_dict, mode = 'end_date'):
         if entry in ['certifications', 'awards_and_scholarships']:
             temp_mode = 'issue_date'
         temp_dct_cpy = {entry: return_dict[entry]}
-        return_dict[entry] = order_section(temp_dct_cpy, type_key=temp_mode)
+        return_dict[entry] = order_section(temp_dct_cpy, type_key=temp_mode, reverse=reverse)
         print(f"[DEBUG] order_chronologically: {entry} with ordered content {return_dict[entry]}")
     return return_dict
 

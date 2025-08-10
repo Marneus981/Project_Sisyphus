@@ -283,7 +283,7 @@ def tailor_cv(root):
     else:
         #print ("Grafted current sections: " + str(grafted_curr))
         print("Grafted current sections:\n" +  helpers.indent_text(parsers.inv_parse_cv_out(grafted_curr)))
-    new_grafted_curr = helpers.order_chronologically(grafted_curr, mode='end_date')
+    new_grafted_curr = helpers.order_chronologically(grafted_curr, mode='end_date',reverse= True)
     if not new_grafted_curr:
         print("No sections were ordered.")
     else:
