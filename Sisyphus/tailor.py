@@ -752,7 +752,64 @@ def augment_output(input_text, reference_dict, type):
         tmp_dict['projects'] = return_list[2]
     return tmp_dict
 
+def prepare_input_text(input_text, type):
+    allowed_types = ['volunteering_and_leadership','work_experience','projects', 'vl_w_p', ]
+    if type not in allowed_types:
+        raise ValueError(f"Invalid type: {type}. Allowed types are: {allowed_types}")
+    # Split lines in input text and store them in a list of strings
+    input_lines = input_text.strip().split('\n')
+    return_list = []
+    return_text = ''
+    if type == 'volunteering_and_leadership':
+        """
+        Remove lines that start with:
+        [0]Volunteering and Leadership:
+        [1]Organization:
+        [1]Location:
+        [1]Duration:
 
+        In the rest of the lines, remove [1]Role and [1]Description [1]Skills
+        """
+        for line in input_lines:
+            if not line.startswith(("[0]Volunteering and Leadership:", "[1]Organization:", "[1]Location:", "[1]Duration:")):
+                line = line.replace("[1]Role: ", "").replace("[1]Description: ", "").replace("[1]Skills: ", "").strip()
+                if line:
+                    return_list.append(line)
+        for item in return_list:
+            return_text += f"{item}\n"
+        return return_text
+
+    if type == 'work_experience':
+        for line in input_lines:
+            if not line.startswith(("[0]Work Experience:", "[1]Company:", "[1]Location:", "[1]Duration:")):
+                line = line.replace("[1]Job Title: ", "").replace("[1]Description: ", "").replace("[1]Skills: ", "").strip()
+                if line:
+                    return_list.append(line)
+        for item in return_list:
+            return_text += f"{item}\n"
+        return return_text
+    if type == 'projects':
+        for line in input_lines:
+            if not line.startswith(("[0]Projects:", "[1]Type:", "[1]Duration:")):
+                line = line.replace("[0]Project:", "").replace("[1]Project Title: ", "").replace("[1]Description: ", "").replace("[1]Technologies: ", "").strip()
+                if line:
+                    return_list.append(line)
+        for item in return_list:
+            return_text += f"{item}\n"
+        return return_text
+    if type == 'vl_w_p':
+        for line in input_lines:
+            if not line.startswith(("[0]Volunteering and Leadership:", "[1]Organization:", "[1]Location:", "[1]Duration:",
+                                    "[0]Work Experience:", "[1]Company:",
+                                    "[0]Projects:", "[1]Type:")):
+                line = line.replace("[1]Role: ", "[V]").replace("[1]Description: ", "").replace("[1]Skills: ", "").replace("[1]Job Title: ", "[J]").replace("[1]Project Title: ", "[P]").strip()
+                if line:
+                    return_list.append(line)
+        for item in return_list:
+            return_text += f"{item}\n"
+        return return_text
+    
 """
-Role;Description;Skills>>>Tailor function>>>Text list of chosen items>>>augment_output>>>tailored_dict (section)
+    raw text section>>>>prepare_input_text>>>Role;Description;Skills
+    >>>Tailor function>>>Text list of chosen items>>>augment_output>>>tailored_dict (section)
 """
