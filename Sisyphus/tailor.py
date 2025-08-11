@@ -199,7 +199,7 @@ def prepare_input_text(input_text, type):
         """
         for line in input_lines:
             if not line.startswith(("[0]Volunteering and Leadership:", "[1]Organization:", "[1]Location:", "[1]Duration:")):
-                line = line.replace("[1]Role: ", "[R]").replace("[1]Description: ", "").replace("[1]Skills: ", "").strip()
+                line = line.replace("[1]Role: ", "[R]").replace("[1]Description: ", "Description: ").replace("[1]Skills: ", "Skills: ").strip()
                 if line:
                     return_list.append(line)
         for item in return_list:
@@ -209,7 +209,7 @@ def prepare_input_text(input_text, type):
     if type == 'work_experience':
         for line in input_lines:
             if not line.startswith(("[0]Work Experience:", "[1]Company:", "[1]Location:", "[1]Duration:")):
-                line = line.replace("[1]Job Title: ", "[J]").replace("[1]Description: ", "").replace("[1]Skills: ", "").strip()
+                line = line.replace("[1]Job Title: ", "[J]").replace("[1]Description: ", "Description: ").replace("[1]Skills: ", "Skills: ").strip()
                 if line:
                     return_list.append(line)
         for item in return_list:
@@ -218,7 +218,7 @@ def prepare_input_text(input_text, type):
     if type == 'projects':
         for line in input_lines:
             if not line.startswith(("[0]Projects:", "[1]Type:", "[1]Duration:")):
-                line = line.replace("[0]Project:", "").replace("[1]Project Title: ", "[P]").replace("[1]Description: ", "").replace("[1]Technologies: ", "").strip()
+                line = line.replace("[1]Project Title: ", "[P]").replace("[1]Description: ", "Description: ").replace("[1]Skills: ", "Skills: ").strip()
                 if line:
                     return_list.append(line)
         for item in return_list:
@@ -229,7 +229,7 @@ def prepare_input_text(input_text, type):
             if not line.startswith(("[0]Volunteering and Leadership:", "[1]Organization:", "[1]Location:", "[1]Duration:",
                                     "[0]Work Experience:", "[1]Company:",
                                     "[0]Projects:", "[1]Type:")):
-                line = line.replace("[1]Role: ", "[R]").replace("[1]Description: ", "").replace("[1]Skills: ", "").replace("[1]Job Title: ", "[J]").replace("[1]Project Title: ", "[P]").strip()
+                line = line.replace("[1]Role: ", "[R]").replace("[1]Description: ", "Description: ").replace("[1]Skills: ", "Skills: ").replace("[1]Job Title: ", "[J]").replace("[1]Project Title: ", "[P]").strip()
                 if line:
                     return_list.append(line)
         for item in return_list:
@@ -249,7 +249,7 @@ def clean_first_step(text):
 """
 #For each main tailor function (including pruning), we need to create 3 functions
 #Tailor Volunteering and Leadership
-def summarize_job_description(job_description = "", system3 = "", ollama_url=DEFAULT_URL, model=DEFAULT_MODEL):
+def summarize_job_description(job_description = "", system = "", ollama_url=DEFAULT_URL, model=DEFAULT_MODEL):
     # Summarize the job description by extracting key responsibilities and requirements
     # This is a placeholder implementation
     prompt = f"""
@@ -257,17 +257,19 @@ def summarize_job_description(job_description = "", system3 = "", ollama_url=DEF
     Also, highlight needed skills, both technical and soft.
     {job_description}
     """
-    helpers.token_math(model, prompt)
+    input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
-        "system": system3,
+        "system": system,
         "prompt": prompt,
         "stream": False
     }
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
-        return result.get("response", "")
+        response_text = result.get("response", "")
+        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
@@ -287,7 +289,7 @@ Output the selected experiences strictly in the following format:
 [R]Role Name 3
 [R]Role Name 4
     """
-    helpers.token_math(model, prompt)
+    input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system1,
@@ -297,7 +299,9 @@ Output the selected experiences strictly in the following format:
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
-        return result.get("response", "")
+        response_text = result.get("response", "")
+        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
@@ -325,7 +329,7 @@ Return only the revised section in the following format:
 [1]Description: Brief description for Role 1.
 [1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
     """
-    helpers.token_math(model, prompt)
+    input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system2,
@@ -335,18 +339,18 @@ Return only the revised section in the following format:
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
-        return result.get("response", "")
+        response_text = result.get("response", "")
+        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
-def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system1="", system2="", system3="", ollama_url=DEFAULT_URL, 
-                                       raw_cv_data="", job_description="", 
+def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system1="", system2="", ollama_url=DEFAULT_URL, 
+                                       raw_cv_data="", job_description_summary="", 
                                        section="volunteering_and_leadership", reference_dct={}):
     print(f"tailor_volunteering_and_leadership: raw_cv_data:\n" + raw_cv_data)
-    job_description_summary = summarize_job_description(job_description, ollama_url=ollama_url, model=model, system3=system3)
-    print(f"tailor_volunteering_and_leadership: job_description_summary:\n" + job_description_summary)
     step0 = prepare_input_text(raw_cv_data, type=section)
     print(f"tailor_volunteering_and_leadership: step0:\n" + step0)
     step1 = step0_volunteering_and_leadership(model=model, system1=system1, ollama_url=ollama_url, 
@@ -398,7 +402,7 @@ Output the selected experiences strictly in the following format:
 [J]Job Title 3
 [J]Job Title 4
     """
-    helpers.token_math(model, prompt)
+    input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system1,
@@ -408,7 +412,9 @@ Output the selected experiences strictly in the following format:
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
-        return result.get("response", "")
+        response_text = result.get("response", "")
+        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
@@ -436,7 +442,7 @@ Return only the revised section in the following format:
 [1]Description: Brief description for Job Title 1.
 [1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
     """
-    helpers.token_math(model, prompt)
+    input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system2,
@@ -446,17 +452,17 @@ Return only the revised section in the following format:
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
-        return result.get("response", "")
+        response_text = result.get("response", "")
+        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
-def tailor_work_experience(model=DEFAULT_MODEL, system1="", system2="", system3="", ollama_url=DEFAULT_URL, 
-                          raw_cv_data="", job_description="", section="work_experience", reference_dct={}):
+def tailor_work_experience(model=DEFAULT_MODEL, system1="", system2="", ollama_url=DEFAULT_URL, 
+                          raw_cv_data="", job_description_summary="", section="work_experience", reference_dct={}):
     print(f"tailor_work_experience: raw_cv_data:\n" + raw_cv_data)
-    job_description_summary = summarize_job_description(job_description, ollama_url=ollama_url, model=model, system3=system3)
-    print(f"tailor_work_experience: job_description_summary:\n" + job_description_summary)
     step0 = prepare_input_text(raw_cv_data, type=section)
     print(f"tailor_work_experience: step0:\n" + step0)
     step1 = step0_work_experience(model=model, system1=system1, ollama_url=ollama_url, 
@@ -505,7 +511,7 @@ Output the selected projects strictly in the following format:
 [P]Project Title 3
 [P]Project Title 4
     """
-    helpers.token_math(model, prompt)
+    input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system1,
@@ -515,7 +521,9 @@ Output the selected projects strictly in the following format:
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
-        return result.get("response", "")
+        response_text = result.get("response", "")
+        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
@@ -542,7 +550,7 @@ Return only the revised section in the following format:
 [1]Description: Brief description for Project Title 1.
 [1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
     """
-    helpers.token_math(model, prompt)
+    input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system2,
@@ -552,17 +560,17 @@ Return only the revised section in the following format:
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
-        return result.get("response", "")
+        response_text = result.get("response", "")
+        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
-def tailor_projects(model=DEFAULT_MODEL, system1="", system2="", system3="", ollama_url=DEFAULT_URL, 
-                   raw_cv_data="", job_description="", section="projects", reference_dct={}):
+def tailor_projects(model=DEFAULT_MODEL, system1="", system2="", ollama_url=DEFAULT_URL, 
+                   raw_cv_data="", job_description_summary="", section="projects", reference_dct={}):
     print(f"tailor_projects: raw_cv_data:\n" + raw_cv_data)
-    job_description_summary = summarize_job_description(job_description, ollama_url=ollama_url, model=model, system3=system3)
-    print(f"tailor_projects: job_description_summary:\n" + job_description_summary)
     step0 = prepare_input_text(raw_cv_data, type=section)
     print(f"tailor_projects: step0:\n" + step0)
     step1 = step0_projects(model=model, system1=system1, ollama_url=ollama_url, 
@@ -597,67 +605,59 @@ def tailor_projects(model=DEFAULT_MODEL, system1="", system2="", system3="", oll
     print(f"tailor_projects: step4_text after filtering:\n" + step4_text)
     return step4_text
 #Prune Experiences
-def prune_vl_w_p(model = DEFAULT_MODEL, system = "", ollama_url = DEFAULT_URL, resume_experiences = "", job_description = ""):
-    # Choose which experiences to include based on job description, ranking them from most relevant to least while following these guidelines:
-
-    # - Use the exact wording and structure from the resume, no changes to format or content
-    # - The ranking must be based on relevance to the job description
-    # - The ranking must be made across all sections (Volunteering and Leadership, Work Experience, Projects); this means that the ranking must  NOT be made within each section, but rather across all sections. 
-    # - You must strictly follow the wording and format of the resume, no changes to structure or content since your job is to prune the resume, not to change it.
-    # - The ranking must only show the 8 most relevant experiences, with the rest being removed.
-    # - There must at least be 1 experience in each section (Volunteering and Leadership, Work Experience, Projects) if they exist in the resume.
-
-    prompt = f"""
-    Given the following three sections: Volunteering and Leadership, Work Experience, and Projects from an already tailored resume:
-
-    {resume_experiences}
-
-    And the following job description:
-
-    {job_description}
-
-    Select a total sum of 6 experiences/roles across all the sections based on the job description.
-    For example, you can pick 2 from Work Experience, 2 from Projects, and 2 from Volunteering and Leadership.
-    Follow this process when selecting:
-
-    1. Count the total number of experiences/roles across all sections.
-    2. If the total number of experiences/roles is less than 6, return all of them.
-    3. If the total number of experiences/roles is greater than or equal to 6 before selection:
-        3.1. Select the most relevant 6 experiences/roles based on the job description.
-    4. Return the selected experiences/roles in the same format as the original resume, with no changes to structure or content.
+def step0_prune_experiences(model = DEFAULT_MODEL, system1 = "", ollama_url = DEFAULT_URL,
+                            experiences = "", job_description = ""):
     
-    Follow these guidelines while selecting the experiences/roles in step 3:
-    - The selection process must be based on relevance to the job description
-    - The selection process must be made across all sections (Volunteering and Leadership, Work Experience, Projects)
-    - If there are empty sections or subsections, include them as empty sections or subsections in the output, but do not include any text in them.
-    - Follow the wording and structure from the resume's sections, no changes to format or content
-
+    prompt = f"""
+    Given the following experiences across 3 resume sections (Volunteering and Leadership, Work Experience, and Projects):
+    {experiences}
+    And the following job description:
+    {job_description}
+    Select 6 experiences based on the job description. When selecting:
+    - If the total number of experiences/roles is less than 6, return all of them.
+    - If the total number of experiences/roles is greater than or equal to 6 before selection: Select the most relevant 6 experiences/roles based on the job description.
+    - If possible, select 1 experience from each section (Volunteering and Leadership, Work Experience, and Projects).
     Return your response strictly in the following format:
-
-        Step 1: 
-        Number of experiences/roles across all sections
-        Step 2: 
-        Were all experiences/roles returned? Yes/No
-        Step 3: 
-        List the titles of the selected experiences/roles and give an explanation for their selection
-        Step 4: 
-        Return the selected experiences/roles in the same format as the original resume, with no changes to structure or content
+    [X]Role/Job Title/Project Title 1
+    ...
+    [X]Role/Job Title/Project Title 6
+    Where [X] indicates the type of experience:
+    - [R] Role: Volunteering and Leadership
+    - [J] Job Title: Work Experience
+    - [P] Project Title: Project
     """
-    helpers.token_math(model, prompt)
+    input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
-        "system": system,
+        "system": system1,
         "prompt": prompt,
         "stream": False
     }
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
-        return result.get("response", "")
+        response_text = result.get("response", "")
+        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
         return "Error: Ollama response was not valid JSON."
+def prune_experiences(model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL, 
+                   experiences="", job_description_summary="", section="vl_w_p", reference_dct={}):
+    print(f"tailor_experiences: experiences:\n" + experiences)
+    step0 = prepare_input_text(experiences, type=section)
+    print(f"tailor_experiences: step0:\n" + step0)
+    step1 = step0_prune_experiences(model=model, system1=system1, ollama_url=ollama_url, 
+                           experiences=step0, job_description=job_description_summary)
+    print(f"tailor_experiences: step1:\n" + step1)
+    step1_clean = clean_first_step(step1).strip()
+    print(f"tailor_experiences: step1_clean:\n" + step1_clean)
+    step2_dct = augment_output(step1_clean, reference_dct, type=section)
+    print(f"tailor_experiences: step2_dct:\n" + str(step2_dct))
+    step2_text = helpers.filter_output(parsers.inv_parse_cv(step2_dct))
+    print(f"tailor_experiences: step2_text:\n" + step2_text)
+    return step2_text
 
 def tailor_summary(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", job_description="", section="Summary"):
     
@@ -681,7 +681,7 @@ def tailor_summary(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_da
     Do not line break the summary section, it should be a continuous block of text.
     Do note that the section may not exist in the CV, in which case you should return an empty section. Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
     """
-    helpers.token_math(model, prompt)
+    input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -691,7 +691,9 @@ def tailor_summary(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_da
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
-        return result.get("response", "")
+        response_text = result.get("response", "")
+        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
@@ -788,7 +790,7 @@ def tailor_skills(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_dat
         [1]Technical Skills: Technical Skill 1, Technical Skill 2, Technical Skill 3, Technical Skill 4, Technical Skill 5
         [1]Soft Skills: Soft Skill 1, Soft Skill 2, Soft Skill 3, Soft Skill 4
     """
-    helpers.token_math(model, prompt)
+    input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -798,7 +800,9 @@ def tailor_skills(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_dat
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
-        return result.get("response", "")
+        response_text = result.get("response", "")
+        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
@@ -845,7 +849,7 @@ def consistency_checker_vs_job_desc(model=DEFAULT_MODEL, system="", ollama_url=D
         Be as objective as possible, and do not make any assumptions about the data; this also means that you should create nor imagine any data that is not present in the original CV data.
         """
     
-    helpers.token_math(model, prompt)
+    input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -857,7 +861,9 @@ def consistency_checker_vs_job_desc(model=DEFAULT_MODEL, system="", ollama_url=D
     
     try:
         result = response.json()
-        return result.get("response", "")
+        response_text = result.get("response", "")
+        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
@@ -909,7 +915,7 @@ def consistency_checker_vs_cv(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT
         Be as objective as possible, and do not make any assumptions about the data; this also means that you should create nor imagine any data that is not present in the original CV data.
         """
     
-    helpers.token_math(model, prompt)
+    input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -921,7 +927,9 @@ def consistency_checker_vs_cv(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT
     
     try:
         result = response.json()
-        return result.get("response", "")
+        response_text = result.get("response", "")
+        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
@@ -956,7 +964,7 @@ def make_cover_letter_text(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_UR
 
     """
     
-    helpers.token_math(model, prompt)
+    input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -968,7 +976,9 @@ def make_cover_letter_text(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_UR
     
     try:
         result = response.json()
-        return result.get("response", "")
+        response_text = result.get("response", "")
+        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)

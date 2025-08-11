@@ -25,7 +25,7 @@ def count_tokens_with_js(text):
         raise RuntimeError("Token JS script did not return a valid number.")
     return int(result.stdout.strip())
 
-def token_math(model, input_text):
+def token_math(model, input_text, type = "input", offset = 0):
     
     
     if model.startswith("llama3"):
@@ -36,14 +36,22 @@ def token_math(model, input_text):
         print(f"Token calculation not implemented for model: {model}")
         return
 
-    remaining_tokens = max_tokens - tokens
+    remaining_tokens = max_tokens - tokens - offset
     percent_used = (tokens / max_tokens) * 100
-    print(f"[MODEL: {model}] Input token usage: {percent_used:.2f}%")
-    if remaining_tokens < 0:
-        print(f"[MODEL: {model}] Input exceeds max tokens by {-remaining_tokens}.")
-    else:
-        print(f"[MODEL: {model}] Input uses {tokens} tokens, remaining for response: {remaining_tokens}.")
-    
+    if type == "input":
+        print(f"[MODEL: {model}] Input token usage: {percent_used:.2f}%")
+        if remaining_tokens < 0:
+            print(f"[MODEL: {model}] Input exceeds max tokens by {-remaining_tokens}.")
+        else:
+            print(f"[MODEL: {model}] Input uses {tokens} tokens, remaining for response: {remaining_tokens}.")
+
+    if type == "output":
+        print(f"[MODEL: {model}] Output token usage: {percent_used:.2f}%")
+        if remaining_tokens < 0:
+            print(f"[MODEL: {model}] Output exceeds max tokens by {-remaining_tokens}.")
+        else:
+            print(f"[MODEL: {model}] Output uses {tokens} tokens, remaining for response: {remaining_tokens}.")
+    return tokens
 
 def read_text_file(file_path):
     """
@@ -555,18 +563,20 @@ def read_format_checker(format_checker_output):
     - Names and number of missing subsections
     - Names and number of empty subsections
     """
-    print("Missing Sections:")
+    return_str = ""
+    return_str += "Missing Sections:\n"
     for section in format_checker_output.get('missing_sections', []):
-        print(f"  {section}")
-    print("\nEmpty Sections:")
+        return_str += f"  {section}\n"
+    return_str += "\nEmpty Sections:\n"
     for section in format_checker_output.get('empty_sections', []):
-        print(f"  {section}")
-    print("\nMissing Subsections:")
+        return_str += f"  {section}\n"
+    return_str += "\nMissing Subsections:\n"
     for sub, count in format_checker_output.get('missing_subsections', []):
-        print(f"  {sub} (missing {count})")
-    print("\nEmpty Subsections:")
+        return_str += f"  {sub} (missing {count})\n"
+    return_str += "\nEmpty Subsections:\n"
     for sub, count in format_checker_output.get('empty_subsections', []):
-        print(f"  {sub} (empty {count})")
+        return_str += f"  {sub} (empty {count})\n"
+    return return_str
 
 def parse_date(date_str):
     """

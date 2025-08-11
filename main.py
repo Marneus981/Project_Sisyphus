@@ -60,7 +60,10 @@ def tailor_cv(root):
     print("CV Text: \n" + helpers.indent_text(str(cv_text)))
     print("System: \n" + str(system_text))
     print("Job Description: \n" + str(job_desc))
-
+    #Summarize job description
+    job_description_summary = tailor.summarize_job_description(job_desc, model=selected_model, system=system_text)
+    print(f"tailor_experiences: job_description_summary:\n" + job_description_summary)
+    job_desc = job_description_summary
     cv_dict = parsers.parse_cv(cv_text)
     unchanged_dict = {}
     # Copy over unchanged fields
@@ -111,8 +114,7 @@ def tailor_cv(root):
             model=selected_model,
             system1=system_text,
             system2=system_text,
-            system3= system_text,
-            job_description=job_desc,
+            job_description_summary=job_desc,
             raw_cv_data=v_and_l_text,
             section="volunteering_and_leadership",
             reference_dct=v_and_l_section
@@ -129,9 +131,8 @@ def tailor_cv(root):
             model=selected_model,
             system1=system_text,
             system2=system_text,
-            system3= system_text,
             raw_cv_data=w_text,
-            job_description=job_desc,
+            job_description_summary=job_desc,
             section="work_experience",
             reference_dct=w_section
         )
@@ -147,9 +148,8 @@ def tailor_cv(root):
             model=selected_model,
             system1=system_text,
             system2=system_text,
-            system3=system_text,
             raw_cv_data=p_text,
-            job_description=job_desc,
+            job_description_summary=job_desc,
             section="projects",
             reference_dct=p_section
         )
@@ -184,11 +184,13 @@ def tailor_cv(root):
     experiences_text = parsers.inv_parse_cv(experiences)
     # print("Experiences text before pruning: \n" + helpers.indent_text(str(experiences_text)))
     #Prune Volunteering and Leadership, Work Experience and Projects sections based on job description
-    pruned_experiences = tailor.prune_vl_w_p(
+    pruned_experiences = tailor.prune_experiences(
         model=selected_model,
-        system=system_text,
-        resume_experiences=experiences_text,
-        job_description=job_desc
+        system1=system_text,
+        experiences=experiences_text,
+        job_description_summary=job_desc,
+        section="vl_w_p",
+        reference_dct=experiences
     )
     # print("Remaining experiences before filtering: \n" + helpers.indent_text(str(pruned_experiences)))
     pruned_experiences = helpers.filter_output(pruned_experiences)
@@ -458,12 +460,13 @@ def format_check_current_cv_text(root):
     cv_text = current_cv_text
 
     # Prepare CV analysis output as a string
-    analysis_stream = io.StringIO()
-    old_stdout = sys.stdout
-    sys.stdout = analysis_stream
-    helpers.read_format_checker(helpers.format_checker_out(cv_text))
-    sys.stdout = old_stdout
-    analysis_text = analysis_stream.getvalue()
+    # analysis_stream = io.StringIO()
+    # old_stdout = sys.stdout
+    # sys.stdout = analysis_stream
+    integrity = helpers.read_format_checker(helpers.format_checker_out(cv_text))
+    # sys.stdout = old_stdout
+    # analysis_text = analysis_stream.getvalue()
+    analysis_text = integrity
     cv_text_og = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "cvs", cv_var.get()))
     selected_model = model_var.get()
     job_desc = job_desc_textbox.get("1.0", tk.END)

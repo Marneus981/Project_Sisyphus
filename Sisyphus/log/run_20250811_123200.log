@@ -1,0 +1,44 @@
+2025-08-11 12:32:00,094 INFO: Waiting for Ollama to be ready...
+2025-08-11 12:34:30,673 INFO: Ollama did not start in time.
+2025-08-11 12:34:30,673 INFO: Ollama server is not running. Starting Ollama.
+2025-08-11 12:34:30,691 INFO: Starting Ollama server...
+2025-08-11 12:34:30,691 INFO: Waiting for Ollama to be ready...
+2025-08-11 12:34:32,731 INFO: Ollama is running.
+2025-08-11 12:34:32,858 INFO: Refreshing options...
+2025-08-11 12:34:34,921 INFO: Options refreshed:
+2025-08-11 12:34:34,921 INFO: Models: ['deepseek-r1:8b', 'llama3:8b']
+2025-08-11 12:34:34,923 INFO: Systems: ['system1.txt', 'system_consistency.txt', 'system_consistency_cl.txt', 'system_cover_letter.txt']
+2025-08-11 12:34:34,923 INFO: CVs: ['cv1.txt']
+2025-08-11 12:34:34,923 INFO: CV Templates: ['cv_template.docx', 'cv_template2.docx', 'cv_template21.docx', 'cv_template21_simplest.docx']
+2025-08-11 12:34:34,923 INFO: CL Templates: ['cl_template.docx']
+2025-08-11 12:34:34,923 INFO: Previously Saved CV Outputs: ['cltrials.txt', 'out_cv_20250724_213613.txt', 'out_cv_20250725_000423.txt', 'out_cv_20250725_001236.txt', 'out_cv_20250725_003414.txt', 'out_cv_20250725_004330.txt', 'out_cv_20250725_005646.txt', 'out_cv_20250730_011841.txt', 'out_cv_20250730_020338.txt', 'stableish0.txt']
+2025-08-11 12:34:34,923 INFO: Previously Saved CL Outputs: ['out_cl_20250722_234433.txt', 'out_cl_20250723_230452.txt']
+2025-08-11 12:34:49,671 INFO: Selected Model: 
+llama3:8b
+2025-08-11 12:34:49,671 INFO: CV Text: 
+[0]Name: Jane Doe
+[0]Contact Information:
+[0]Title: Senior Software Engineer
+[0]Summary: Jane Doe is a dynamic and accomplished Senior Software Engineer with more than 15 years of experience leading complex technology initiatives and delivering innovative solutions across multiple industries, including finance, education, e-commerce, and media. Her career is marked by a consistent record of architecting, developing, and deploying scalable backend systems, cloud infrastructure, and distributed applications that have driven measurable improvements in performance, reliability, and cost efficiency. Jane has demonstrated exceptional leadership in managing and mentoring teams of up to 20 engineers and volunteers, fostering a culture of collaboration, adaptability, and continuous improvement. She has spearheaded cloud migration projects that resulted in a 30% reduction in operational costs and a 95% stakeholder satisfaction rate, and has led the design and implementation of microservices architectures that reduced system downtime by 40% and increased transaction throughput by 25%. Her technical expertise encompasses Python, Java, JavaScript, C++, SQL, Dart, Go, and R, with advanced proficiency in Docker, Kubernetes, cloud computing, machine learning, NLP, IoT, and API integration. Jane’s project portfolio includes real-time analytics dashboards, mobile applications, IoT automation systems, recommendation engines, and sentiment analysis tools, each of which has delivered significant business value and user engagement improvements. She has mentored over 100 aspiring developers, achieving a 90% bootcamp completion rate and a 35% improvement in job placement, and has contributed to open source projects, enhancing code quality and adoption by 20%. Jane’s commitment to quality assurance, security, and customer service is reflected in her achievements as a QA tester, IT support specialist, and data analyst, where she improved release quality, lab uptime, and business decision-making through automation and analytics. Her experience in event planning, curriculum development, public speaking, and community outreach has expanded program reach and impact, earning her recognition for dedication, expertise, and positive influence. Fluent in English, Spanish, and French, Jane is passionate about mentoring, empowering others, and bridging the digital divide. She has received the Dean’s List and Tech Innovation Scholarship for academic excellence and holds certifications as an AWS Solutions Architect and Scrum Master. Throughout her career, Jane has demonstrated exceptional problem-solving, analytical thinking, and attention to detail, consistently delivering projects on time and within budget. Her ability to analyze complex problems, architect robust solutions, and build strong relationships with clients, stakeholders, and team members positions her as a valuable asset to any organization seeking to innovate and excel in today’s competitive landscape. Jane’s technical acumen, leadership, and interpersonal skills have enabled her to drive organizational success, foster inclusive environments, and inspire the next generation of engineers. Her history of exceeding performance metrics and delivering impactful results is a testament to her dedication, creativity, and adaptability, making her an ideal candidate for senior engineering and leadership roles in dynamic, forward-thinking organizations. She is committed to continuous learning and professional development, ensuring her contributions remain relevant and valuable. Jane’s experience spans the full software development lifecycle, from requirements gathering and design to implementation, testing, and deployment. She is passionate about fostering inclusive environments, promoting diversity in tech, and inspiring the next generation of engineers through mentorship and community engagement. Her technical acumen, combined with her leadership and interpersonal skills, positions her as a valuable asset to any organization seeking to innovate and excel in today's competitive landscape.
+[0]Languages: English, Spanish, French
+[0]Education:
+[0]Certifications:
+[0]Awards and Scholarships:
+[0]Volunteering and Leadership:
+[0]Work Experience:
+[0]Projects:
+2025-08-11 12:34:49,671 INFO: System: 
+You are a resume tailoring assistant. Only output the section requested, in the exact format specified. You are to follow the following guidelines when tailoring all resume sections:
+You may only draw from the provided descriptions, no making assumptions.
+Do not invent any data or roles, only use the data provided.
+You may not add any untrue statements outside of what has been provided in the untailored resume section.
+The tailored sections and overall resume must be brief, concise and professional. It must cater to recruiters and make the resume stand out.
+Use simple to understand language when possible, unless direct technical terminology is employed.
+2025-08-11 12:34:49,679 INFO: Job Description: 
+DoorDash is building the world's most reliable on-demand, logistics engine for delivery. We are continuing to grow rapidly and expanding our Engineering offices globally! We are looking for Backend Engineers to build and maintain a large scale 24x7 global infrastructure system that powers DoorDash's 3-sided marketplace of Consumers, Merchants and Dashers.
+
+
+2025-08-11 12:34:50,489 INFO: JS Output: 97
+
+2025-08-11 12:34:50,489 INFO: [MODEL: llama3:8b] Input token usage: 2.37%
+2025-08-11 12:34:50,489 INFO: [MODEL: llama3:8b] Input uses 97 tokens, remaining for response: 3999.

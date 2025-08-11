@@ -8,24 +8,9 @@
 
 
     [0.97] 
-        [DONE]Add handling for present in chrono ordering
+        []Change job_description_summary prompt
         []Verify token count correctness
-        
         []Make output > 90% consistent + 0.001
-            [DONE]Simplify tailor_projects
-                [DONE]Select relevant info to feed
-                []Change prompt
-            [DONE]Simplify tailor_volunteering_and_leadership
-                [DONE]Select relevant info to feed
-                [DONE]Change prompt
-            [DONE]Simplify tailor_work_experience
-                [DONE]Select relevant info to feed
-                []Change prompt
-            []Simplify prune_vl_w_p
-                [DONE]Select relevant info to feed
-                []Change prompt
-
-
             []Simplify summary
                 []Select relevant info to feed OR find way to feed it lots of data
                     []Hierarchical Summarization??
@@ -55,11 +40,11 @@
 
 
     [0.98]
-    []Give fields a last used memory
+        []Give fields a last used memory
     [0.99]
-    []Make it a single window
-    []Add output window
-    []Add loading icon
+        []Make it a single window
+        []Add output window
+        []Add loading icon
     
     [???]Convert to PDF button
         
@@ -160,3 +145,17 @@
     [DONE]Make return_text_with_skills more robust
     [DONE]Implement reverse ordering
     [DONE]Verify token limit
+    [DONE]Add handling for present in chrono ordering
+    [DONE]Simplify tailor_projects
+        [DONE]Select relevant info to feed
+        [DONE]Change prompt
+    [DONE]Simplify tailor_volunteering_and_leadership
+        [DONE]Select relevant info to feed
+        [DONE]Change prompt
+    [DONE]Simplify tailor_work_experience
+        [DONE]Select relevant info to feed
+        [DONE]Change prompt
+    [DONE]Simplify prune_vl_w_p
+        [DONE]Select relevant info to feed
+        [DONE]Change prompt
+    Implemented better tokenizer math (ouput too)
