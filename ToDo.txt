@@ -12,13 +12,13 @@
         []Verify token count correctness
         
         []Make output > 90% consistent + 0.001
-            []Simplify tailor_projects
+            [DONE]Simplify tailor_projects
                 [DONE]Select relevant info to feed
                 []Change prompt
             [DONE]Simplify tailor_volunteering_and_leadership
                 [DONE]Select relevant info to feed
                 [DONE]Change prompt
-            []Simplify tailor_work_experience
+            [DONE]Simplify tailor_work_experience
                 [DONE]Select relevant info to feed
                 []Change prompt
             []Simplify prune_vl_w_p

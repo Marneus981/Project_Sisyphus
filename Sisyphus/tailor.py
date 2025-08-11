@@ -384,54 +384,62 @@ def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system1="", system2=
     return step4_text
 
 # Tailor Work Experience
-def tailor_work_experience(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", job_description="", section="Work Experience"):
-    
-    # - Work Experience
-    # - Work Experience X (Choose Which To Include Based on Job Description)
-        # - Job Title
-        # - Company
-        # - Location
-        # - Duration
-        # - Description
-        # - Skills (Choose Which To Include Based on Job Description)
-            # - Programming Languages
-            # - Technical Skills
-            # - Soft Skills
-
-    """
-    Tailors the work experience section based on the job description using Ollama.
-    """
+def step0_work_experience(model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL, 
+                          raw_cv_data="", job_description=""):
     prompt = f"""
-Given the following section on all work experiences for a resume:
-{cv_data}
+Given the following "Work Experience" resume section:
+{raw_cv_data}
 And the following job description:
 {job_description}
+Select up to 4 relevant experiences that best match the job description. If there are 4 or fewer experiences, include all of them. If there are no experiences, return an empty section.
+Output the selected experiences strictly in the following format:
+[J]Job Title 1
+[J]Job Title 2
+[J]Job Title 3
+[J]Job Title 4
+    """
+    helpers.token_math(model, prompt)
+    payload = {
+        "model": model,
+        "system": system1,
+        "prompt": prompt,
+        "stream": False
+    }
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    try:
+        result = response.json()
+        return result.get("response", "")
+    except Exception:
+        print("Ollama response was not valid JSON:")
+        print(response.text)
+        return "Error: Ollama response was not valid JSON."
 
-Please select up to 4 work experiences that best match the job description. If there are 4 or fewer experiences, include all of them. If there are no experiences, return an empty section.
-
-For each selected experience:
+def step3_work_experience(model=DEFAULT_MODEL, system2="", ollama_url=DEFAULT_URL, 
+                          experience="", job_description=""):
+    prompt = f"""
+Given the following "Work Experience" resume experience:
+{experience}
+And the following job description:
+{job_description}
+Rewrite the experience to best match the job description, following these guidelines:
 - Keep all original subsections: Job Title, Company, Location, Duration, Description, and Skills.
 - In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
 - In the Skills subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
 - Do not use line breaks inside any subsection. Do not use the ":" character in the Description.
 - If any subsection is missing, include it as empty.
 - Skills must be comma-separated and follow the format below.
-
-Return only the revised section in the following format (showing one example, but there may be up to 4 experiences):
-
-[0]Work Experience:
+Return only the revised section in the following format:
 [1]Job Title: Job Title 1
-[1]Company: Company 1
+[1]Company: Company Name 1
 [1]Location: Location Name 1
 [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
 [1]Description: Brief description for Job Title 1.
 [1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
-...
     """
     helpers.token_math(model, prompt)
     payload = {
         "model": model,
-        "system": system,
+        "system": system2,
         "prompt": prompt,
         "stream": False
     }
@@ -444,53 +452,100 @@ Return only the revised section in the following format (showing one example, bu
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
+def tailor_work_experience(model=DEFAULT_MODEL, system1="", system2="", system3="", ollama_url=DEFAULT_URL, 
+                          raw_cv_data="", job_description="", section="work_experience", reference_dct={}):
+    print(f"tailor_work_experience: raw_cv_data:\n" + raw_cv_data)
+    job_description_summary = summarize_job_description(job_description, ollama_url=ollama_url, model=model, system3=system3)
+    print(f"tailor_work_experience: job_description_summary:\n" + job_description_summary)
+    step0 = prepare_input_text(raw_cv_data, type=section)
+    print(f"tailor_work_experience: step0:\n" + step0)
+    step1 = step0_work_experience(model=model, system1=system1, ollama_url=ollama_url, 
+                                  raw_cv_data=step0, job_description=job_description_summary)
+    print(f"tailor_work_experience: step1:\n" + step1)
+    step1_clean = clean_first_step(step1).strip()
+    print(f"tailor_work_experience: step1_clean:\n" + step1_clean)
+    step2_dct = augment_output(step1_clean, reference_dct, type=section)
+    print(f"tailor_work_experience: step2_dct:\n" + str(step2_dct))
+    step2_text = helpers.filter_output(parsers.inv_parse_cv(step2_dct))
+    print(f"tailor_work_experience: step2_text:\n" + step2_text)
+    step3_text = []
+    step2_text = step2_text.replace("[0]Work Experience:", "")
+    print(f"tailor_work_experience: step2_text (No [0]):\n" + step2_text)
+    step2_text = helpers.filter_output(step2_text.strip())
+    print(f"tailor_work_experience: step2_text after filtering:\n" + step2_text)
+    step3_text = step2_text.split("\n[1]Job Title: ")[1:]
+    step3_text = ["[1]Job Title: " + exp for exp in step3_text]
+    step3_list = []
+    for exp in step3_text:
+        print(f"tailor_work_experience: step3_work_experience: exp:\n" + exp)
+        temp = step3_work_experience(model=model, system2=system2, ollama_url=ollama_url, experience=exp, job_description=job_description_summary)
+        print(f"tailor_work_experience: step3_work_experience: temp:\n" + temp)
+        temp = helpers.filter_output(temp.strip())
+        print(f"tailor_work_experience: step3_work_experience: temp (filtered):\n" + temp)
+        step3_list.append(temp)
+    step3_text = "\n".join(step3_list)
+    print(f"tailor_work_experience: step3_text:\n" + step3_text)
+    step4_text = "[0]Work Experience:\n" + step3_text
+    print(f"tailor_work_experience: step4_text before filtering:\n" + step4_text)
+    step4_text = helpers.filter_output(step4_text.strip())
+    print(f"tailor_work_experience: step4_text after filtering:\n" + step4_text)
+    return step4_text
 # Tailor Projects
-def tailor_projects(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", job_description="", section="Projects"):
-    
-    # - Projects
-    # - Project X (Choose Which To Include Based on Job Description)
-        # - Project Title
-        # - Type (e.g., Personal, Academic, Professional)
-        # - Duration
-        # - Description
-        # - Skills (Choose Which To Include Based on Job Description)
-            # - Programming Languages
-            # - Technical Skills
-            # - Soft Skills
-
-    """
-    Tailors the projects section based on the job description using Ollama.
-    """
+def step0_projects(model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL, 
+                   raw_cv_data="", job_description=""):
     prompt = f"""
-Given the following section on all projects for a resume:
-{cv_data}
+Given the following "Projects" resume section:
+{raw_cv_data}
 And the following job description:
 {job_description}
+Select up to 4 relevant projects that best match the job description. If there are 4 or fewer projects, include all of them. If there are no projects, return an empty section.
+Output the selected projects strictly in the following format:
+[P]Project Title 1
+[P]Project Title 2
+[P]Project Title 3
+[P]Project Title 4
+    """
+    helpers.token_math(model, prompt)
+    payload = {
+        "model": model,
+        "system": system1,
+        "prompt": prompt,
+        "stream": False
+    }
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    try:
+        result = response.json()
+        return result.get("response", "")
+    except Exception:
+        print("Ollama response was not valid JSON:")
+        print(response.text)
+        return "Error: Ollama response was not valid JSON."
 
-Please select up to 4 projects that best match the job description. If there are 4 or fewer projects, include all of them. If there are no projects, return an empty section.
-
-For each selected project:
+def step3_projects(model=DEFAULT_MODEL, system2="", ollama_url=DEFAULT_URL, 
+                   experience="", job_description=""):
+    prompt = f"""
+Given the following "Projects" resume experience:
+{experience}
+And the following job description:
+{job_description}
+Rewrite the project to best match the job description, following these guidelines:
 - Keep all original subsections: Project Title, Type, Duration, Description, and Skills.
 - In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
 - In the Skills subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
 - Do not use line breaks inside any subsection. Do not use the ":" character in the Description.
 - If any subsection is missing, include it as empty.
 - Skills must be comma-separated and follow the format below.
-
-Return only the revised section in the following format (showing one example, but there may be up to 4 projects):
-
-[0]Projects:
+Return only the revised section in the following format:
 [1]Project Title: Project Title 1
-[1]Type: Type of Project 1 (e.g., Personal, Academic, Professional)
+[1]Type: Type of Project 1
 [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
-[1]Description: Brief description for Project 1.
+[1]Description: Brief description for Project Title 1.
 [1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
-...
     """
     helpers.token_math(model, prompt)
     payload = {
         "model": model,
-        "system": system,
+        "system": system2,
         "prompt": prompt,
         "stream": False
     }
@@ -503,6 +558,44 @@ Return only the revised section in the following format (showing one example, bu
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
+def tailor_projects(model=DEFAULT_MODEL, system1="", system2="", system3="", ollama_url=DEFAULT_URL, 
+                   raw_cv_data="", job_description="", section="projects", reference_dct={}):
+    print(f"tailor_projects: raw_cv_data:\n" + raw_cv_data)
+    job_description_summary = summarize_job_description(job_description, ollama_url=ollama_url, model=model, system3=system3)
+    print(f"tailor_projects: job_description_summary:\n" + job_description_summary)
+    step0 = prepare_input_text(raw_cv_data, type=section)
+    print(f"tailor_projects: step0:\n" + step0)
+    step1 = step0_projects(model=model, system1=system1, ollama_url=ollama_url, 
+                           raw_cv_data=step0, job_description=job_description_summary)
+    print(f"tailor_projects: step1:\n" + step1)
+    step1_clean = clean_first_step(step1).strip()
+    print(f"tailor_projects: step1_clean:\n" + step1_clean)
+    step2_dct = augment_output(step1_clean, reference_dct, type=section)
+    print(f"tailor_projects: step2_dct:\n" + str(step2_dct))
+    step2_text = helpers.filter_output(parsers.inv_parse_cv(step2_dct))
+    print(f"tailor_projects: step2_text:\n" + step2_text)
+    step3_text = []
+    step2_text = step2_text.replace("[0]Projects:", "")
+    print(f"tailor_projects: step2_text (No [0]):\n" + step2_text)
+    step2_text = helpers.filter_output(step2_text.strip())
+    print(f"tailor_projects: step2_text after filtering:\n" + step2_text)
+    step3_text = step2_text.split("\n[1]Project Title: ")[1:]
+    step3_text = ["[1]Project Title: " + exp for exp in step3_text]
+    step3_list = []
+    for exp in step3_text:
+        print(f"tailor_projects: step3_projects: exp:\n" + exp)
+        temp = step3_projects(model=model, system2=system2, ollama_url=ollama_url, experience=exp, job_description=job_description_summary)
+        print(f"tailor_projects: step3_projects: temp:\n" + temp)
+        temp = helpers.filter_output(temp.strip())
+        print(f"tailor_projects: step3_projects: temp (filtered):\n" + temp)
+        step3_list.append(temp)
+    step3_text = "\n".join(step3_list)
+    print(f"tailor_projects: step3_text:\n" + step3_text)
+    step4_text = "[0]Projects:\n" + step3_text
+    print(f"tailor_projects: step4_text before filtering:\n" + step4_text)
+    step4_text = helpers.filter_output(step4_text.strip())
+    print(f"tailor_projects: step4_text after filtering:\n" + step4_text)
+    return step4_text
 #Prune Experiences
 def prune_vl_w_p(model = DEFAULT_MODEL, system = "", ollama_url = DEFAULT_URL, resume_experiences = "", job_description = ""):
     # Choose which experiences to include based on job description, ranking them from most relevant to least while following these guidelines:

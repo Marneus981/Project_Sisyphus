@@ -127,9 +127,13 @@ def tailor_cv(root):
         w_text = parsers.inv_parse_cv(w_section)
         tailored_w = tailor.tailor_work_experience(
             model=selected_model,
-            system=system_text,
-            cv_data=w_text,
-            job_description=job_desc
+            system1=system_text,
+            system2=system_text,
+            system3= system_text,
+            raw_cv_data=w_text,
+            job_description=job_desc,
+            section="work_experience",
+            reference_dct=w_section
         )
         tailored_w = helpers.filter_output(tailored_w)
         if tailored_w:
@@ -141,9 +145,13 @@ def tailor_cv(root):
         p_text = parsers.inv_parse_cv(p_section)
         tailored_p = tailor.tailor_projects(
             model=selected_model,
-            system=system_text,
-            cv_data=p_text,
-            job_description=job_desc
+            system1=system_text,
+            system2=system_text,
+            system3=system_text,
+            raw_cv_data=p_text,
+            job_description=job_desc,
+            section="projects",
+            reference_dct=p_section
         )
         tailored_p = helpers.filter_output(tailored_p)
         if tailored_p:
