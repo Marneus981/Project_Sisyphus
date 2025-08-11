@@ -8,16 +8,16 @@
 
 
     [0.97] 
-        []Add handling for present in chrono ordering
+        [DONE]Add handling for present in chrono ordering
         []Verify token count correctness
         
         []Make output > 90% consistent + 0.001
             []Simplify tailor_projects
                 [DONE]Select relevant info to feed
                 []Change prompt
-            []Simplify tailor_volunteering_and_leadership
+            [DONE]Simplify tailor_volunteering_and_leadership
                 [DONE]Select relevant info to feed
-                []Change prompt
+                [DONE]Change prompt
             []Simplify tailor_work_experience
                 [DONE]Select relevant info to feed
                 []Change prompt

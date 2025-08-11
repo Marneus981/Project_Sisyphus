@@ -102,8 +102,11 @@ def augment_output(input_text, reference_dict, type):
     """
     #Split lines in input text and store them in a list of strings
     input_lines = input_text.strip().split('\n')
+    
     tmp_dict = {}
     if type == 'volunteering_and_leadership':
+        #Remove [R] marker at the start of each line
+        input_lines = [line[3:] if line.startswith('[R]') else line for line in input_lines]
         return_list = []
         reference_list = reference_dict[type]
         for line in input_lines:
@@ -115,6 +118,8 @@ def augment_output(input_text, reference_dict, type):
         tmp_dict[type] = return_list
 
     elif type == 'work_experience':
+        #Remove [J] marker at the start of each line
+        input_lines = [line[3:] if line.startswith('[J]') else line for line in input_lines]
         return_list = []
         reference_list = reference_dict[type]
         for line in input_lines:
@@ -126,6 +131,8 @@ def augment_output(input_text, reference_dict, type):
         tmp_dict[type] = return_list
 
     elif type == 'projects':
+        #Remove [P] marker at the start of each line
+        input_lines = [line[3:] if line.startswith('[P]') else line for line in input_lines]
         return_list = []
         reference_list = reference_dict[type]
         for line in input_lines:
@@ -137,6 +144,8 @@ def augment_output(input_text, reference_dict, type):
         tmp_dict[type] = return_list
 
     elif type == 'vl_w_p':
+        # Remove [R], [J], [P] markers at the start of each line
+        input_lines = [line[3:] if line.startswith(('[R]', '[J]', '[P]')) else line for line in input_lines]
         return_list = [[],[],[]]
         reference_list_vl = reference_dict['volunteering_and_leadership']
         reference_list_w = reference_dict['work_experience']
@@ -238,11 +247,14 @@ def clean_first_step(text):
     raw text section>>>>prepare_input_text>>>Role;Description;Skills
     >>>Tailor function>>>Text list of chosen items>>>augment_output>>>tailored_dict (section)
 """
+#For each main tailor function (including pruning), we need to create 3 functions
+#Tailor Volunteering and Leadership
 def summarize_job_description(job_description = "", system3 = "", ollama_url=DEFAULT_URL, model=DEFAULT_MODEL):
     # Summarize the job description by extracting key responsibilities and requirements
     # This is a placeholder implementation
     prompt = f"""
-    Summarize the following job description by extracting key responsibilities and requirements; include only the most important points, no unnecessary details:
+    Summarize the following job description by extracting key responsibilities and requirements.
+    Also, highlight needed skills, both technical and soft.
     {job_description}
     """
     helpers.token_math(model, prompt)
@@ -270,10 +282,10 @@ And the following job description:
 {job_description}
 Select up to 4 relevant experiences that best match the job description. If there are 4 or fewer experiences, include all of them. If there are no experiences, return an empty section.
 Output the selected experiences strictly in the following format:
-[V]Role Name 1
-[V]Role Name 2
-[V]Role Name 3
-[V]Role Name 4
+[R]Role Name 1
+[R]Role Name 2
+[R]Role Name 3
+[R]Role Name 4
     """
     helpers.token_math(model, prompt)
     payload = {
@@ -371,6 +383,7 @@ def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system1="", system2=
     print(f"tailor_volunteering_and_leadership: step4_text after filtering:\n" + step4_text)
     return step4_text
 
+# Tailor Work Experience
 def tailor_work_experience(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", job_description="", section="Work Experience"):
     
     # - Work Experience
@@ -431,6 +444,7 @@ Return only the revised section in the following format (showing one example, bu
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
+# Tailor Projects
 def tailor_projects(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", job_description="", section="Projects"):
     
     # - Projects
@@ -489,6 +503,7 @@ Return only the revised section in the following format (showing one example, bu
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
+#Prune Experiences
 def prune_vl_w_p(model = DEFAULT_MODEL, system = "", ollama_url = DEFAULT_URL, resume_experiences = "", job_description = ""):
     # Choose which experiences to include based on job description, ranking them from most relevant to least while following these guidelines:
 
