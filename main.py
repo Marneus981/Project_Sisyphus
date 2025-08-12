@@ -224,9 +224,16 @@ def tailor_cv(root):
     print("Tailoring summary section...")
     tailored_s = tailor.tailor_summary(
         model=selected_model,
-        system=system_text,
-        cv_data=s_text,
-        job_description=job_desc
+        raw_cv_data=s_text,
+        job_description=job_desc,
+        system_s=system_text,
+        system00=system_text,
+        system1=system_text,
+        system2=system_text,
+        system3=system_text,
+        system0=system_text,
+        windows=2,
+        system01=system_text
     )
     tailored_s = helpers.filter_output(tailored_s)
     if tailored_s:

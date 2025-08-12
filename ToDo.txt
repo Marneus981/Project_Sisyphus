@@ -1,26 +1,10 @@
 [1.0 RELEASE CHECKBOX]
-    [][1.0 PUBLIC RELEASE] Clean code and prompt engineer a bit; make a single UI window;make verbose toggle?
+    [][1.0 PUBLIC RELEASE] Clean code and prompt engineer a bit; make a single UI window;deal with debug prints in "a way"
     [][1.0 PRIVATE RELEASE] Add own CV; verify code performance and good practices
-    [][0.95]Fit entire resume in 1 page (or close to)
-    [][0.9]Add another step in tailoring process: set a number of experiences, and only include a set number of them
-    
-[WIP]
-
-
-    [0.97] 
-        []Change job_description_summary prompt
-        []Verify token count correctness
-        []Make output > 90% consistent + 0.001
-            []Simplify summary
-                []Select relevant info to feed OR find way to feed it lots of data
-                    []Hierarchical Summarization??
-                []Change prompt
-            []Simplify make_cover_letter_text
-                []Select relevant info to feed 
-                    OR 
-                    find way to feed it lots of data
-                    []Hierarchical Summarization??
-                []Change prompt
+[WIP]      
+    [0.98]
+                []Make output > 90% consistent
+            []Debug missing sections
             []Simplify consistency_checker_vs_cv
                 []Select relevant info to feed 
                     OR
@@ -38,13 +22,20 @@
                     []Hierarchical Summarization??
                 []Change prompt
 
-
-    [0.98]
+            []Simplify make_cover_letter_text
+                []Select relevant info to feed 
+                    OR 
+                    find way to feed it lots of data
+                    []Hierarchical Summarization??
+                []Change prompt
         []Give fields a last used memory
     [0.99]
+        []Maybe filter output on each tailor function output
         []Make it a single window
         []Add output window
         []Add loading icon
+        []Change job_description_summary prompt
+        []Verify token count correctness
     
     [???]Convert to PDF button
         
@@ -159,3 +150,4 @@
         [DONE]Select relevant info to feed
         [DONE]Change prompt
     Implemented better tokenizer math (ouput too)
+    [DONE]Simplify tailor summary

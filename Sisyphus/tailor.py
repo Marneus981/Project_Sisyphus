@@ -659,19 +659,261 @@ def prune_experiences(model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL,
     print(f"tailor_experiences: step2_text:\n" + step2_text)
     return step2_text
 
-def tailor_summary(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", job_description="", section="Summary"):
-    
-    # - Summary (LAST; Based on Job Description AND Overall Resume)
-    
-    """
-    Tailors the summary section based on the job description using Ollama.
-    """
+#Longer input tailoring functions
+#Sliding Window + Hierarchical solution
+#Tailor Summary
+def summarize_section(section="", model = DEFAULT_MODEL, system = "", ollama_url = DEFAULT_URL, section_name = ""):
+    # Implement the logic to summarize the section based on the job description
     prompt = f"""
-    Given the following already tailored resume, with no summary section:
-    {cv_data}
+    Given the following section from a resume:
+    {section}
+    Summarize the section in a wholistic manner while highlighting competencies, achievements and skills.
+    Keep in mind that this summary will be used in a "Sliding Window" approach to summarize the entire resume effectively, so include information that is relevant for the overall context of the resume.
+    Return the summarized information as a single continuous string of text, following this format strictly:
+        
+    [S]{section_name} Section Summary: Summary of the section's relevant information, competencies, achievements, and key skills.
+    """
+    input_tks = helpers.token_math(model, prompt)
+    payload = {
+        "model": model,
+        "system": system,
+        "prompt": prompt,
+        "stream": False
+    }
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    try:
+        result = response.json()
+        response_text = result.get("response", "")
+        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        return response_text
+    except Exception:
+        print("Ollama response was not valid JSON:")
+        print(response.text)
+        return "Error: Ollama response was not valid JSON."
+
+def summarize_general_info(general_info_text = "", model = DEFAULT_MODEL, system = "", ollama_url = DEFAULT_URL):
+    prompt = f"""
+    Given the following general information from a resume:
+    {general_info_text}
+    Summarize the general information section of a resume in a wholistic manner, keeping the next as concise as possible.
+    Return the summarized general information as follows:
+    
+    [S]General Information Summary: Brief and concise summary of the resume's general information, presented as a single continuous string of text.
+    """
+    input_tks = helpers.token_math(model, prompt)
+    payload = {
+        "model": model,
+        "system": system,
+        "prompt": prompt,
+        "stream": False
+    }
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    try:
+        result = response.json()
+        response_text = result.get("response", "")
+        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        return response_text
+    except Exception:
+        print("Ollama response was not valid JSON:")
+        print(response.text)
+
+def sliding_window_two_sections(section1 = "", section2 ="", model=DEFAULT_MODEL, system1="", system2="", system = "", ollama_url=DEFAULT_URL,
+                                section1_name = "", section2_name = "", candidate_name = "", candidate_title = ""):
+    summary1 = summarize_section(section1, model=model, system=system1, ollama_url=ollama_url, section_name=section1_name)
+    summary2 = summarize_section(section2, model=model, system=system2, ollama_url=ollama_url, section_name=section2_name)
+    summary1 = helpers.filter_output(summary1.strip(), mode= "cap_letters")
+    summary2 = helpers.filter_output(summary2.strip(), mode= "cap_letters")
+    prompt = f"""
+    Given the following 2 resume section summaries:
+    {summary1}
+    {summary2}
+    Create a new summary that incorporates both summaries, following these guidelines:
+    - Make sure to include key information, competencies, achievements, and skills.
+    - Maintain the context and flow between the two sections.
+    - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
+    Return the summarized information as a single continuous string of text, following this format strictly:
+    [S]{section1_name} + {section2_name} Sections Summary: Summary of the section's relevant information, competencies, achievements, and key skills.
+    """
+    input_tks = helpers.token_math(model, prompt)
+    payload = {
+        "model": model,
+        "system": system,
+        "prompt": prompt,
+        "stream": False
+    }
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    try:
+        result = response.json()
+        response_text = result.get("response", "")
+        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        response_text = helpers.filter_output(response_text.strip(), mode= "cap_letters")
+        return response_text
+    except Exception:
+        print("Ollama response was not valid JSON:")
+        print(response.text)
+        return "Error: Ollama response was not valid JSON."
+
+def sliding_window_three_sections(section1 = "", section2 = "", section3 = "", model=DEFAULT_MODEL, system1="", system2="", system3="", system = "", ollama_url=DEFAULT_URL,
+                                section1_name = "", section2_name = "", section3_name = "", candidate_name = "", candidate_title = ""):
+    summary1 = summarize_section(section1, model=model, system=system1, ollama_url=ollama_url, section_name=section1_name)
+    summary2 = summarize_section(section2, model=model, system=system2, ollama_url=ollama_url, section_name=section2_name)
+    summary3 = summarize_section(section3, model=model, system=system3, ollama_url=ollama_url, section_name=section3_name)
+    summary1 = helpers.filter_output(summary1.strip(), mode= "cap_letters")
+    summary2 = helpers.filter_output(summary2.strip(), mode= "cap_letters")
+    summary3 = helpers.filter_output(summary3.strip(), mode= "cap_letters")
+    prompt = f"""
+    Given the following 3 resume section summaries:
+    {summary1}
+    {summary2}
+    {summary3}
+     Create a new summary that incorporates both summaries, following these guidelines:
+    - Make sure to include key information, competencies, achievements, and skills.
+    - Maintain the context and flow between the three sections.
+    - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
+    Return the summarized information as a single continuous string of text, following this format strictly:
+    [S]{section1_name} + {section2_name} + {section3_name} Sections Summary: Summary of the section's relevant information, competencies, achievements, and key skills.
+    """
+    input_tks = helpers.token_math(model, prompt)
+    payload = {
+        "model": model,
+        "system": system,
+        "prompt": prompt,
+        "stream": False
+    }
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    try:
+        result = response.json()
+        response_text = result.get("response", "")
+        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        response_text = helpers.filter_output(response_text.strip(), mode= "cap_letters")
+        return response_text
+    except Exception:
+        print("Ollama response was not valid JSON:")
+        print(response.text)
+        return "Error: Ollama response was not valid JSON."
+
+def slide_summary(sections_dct_list = [], model = DEFAULT_MODEL, system_s = "",system = "", system1 = "", system2 = "", system3 = "", ollama_url = DEFAULT_URL, windows = 2):
+    #Divide sections_dct_list into 2 lists: one with dicts that contain "unchanging" data (general info, really) and one containing list/tailored data
+    #Note: resume has no summary or skills section
+    general_keys = ['name','contact_information',
+                    'title','languages']
+    special_keys = ['education',
+                    'certifications',
+                    'awards_and_scholarships',
+                    'volunteering_and_leadership',
+                    'work_experience',
+                    'projects']
+    general_txts = []
+    special_txts = []
+    candidate_name = ""
+    candidate_title = ""    
+    for item in sections_dct_list:
+        key = next(iter(item))
+        if key == "name":
+            candidate_name = item[key]
+        elif key == "title":
+            candidate_title = item[key]
+        if key in general_keys:
+            temp = helpers.filter_output(parsers.inv_parse_cv(item).strip())
+            general_txts.append(temp)
+        elif key in special_keys:
+            temp = helpers.filter_output(parsers.inv_parse_cv(item).strip())
+            special_txts.append(temp)
+    print(f"slide_summary: candidate_name: {candidate_name}")
+    print(f"slide_summary: candidate_title: {candidate_title}")
+    print(f"slide_summary: general_txts: {len(general_txts)}")
+    print(f"slide_summary: special_txts: {len(special_txts)}")
+    slide_results = []
+    if windows == 2: track = len(special_keys)-1
+    elif windows == 3: track = len(special_keys)-2
+    else:
+        raise ValueError("Invalid number of windows, must be 2 or 3.")
+    for i in range(0, track):
+        if windows == 2:
+            slide = sliding_window_two_sections(
+                section1=special_txts[i],
+                section2=special_txts[i+1],
+                model=model,
+                system=system,
+                system1=system1,
+                system2=system2,
+                section1_name=special_keys[i],
+                section2_name=special_keys[i+1],
+                candidate_name=candidate_name,
+                candidate_title=candidate_title,
+                ollama_url=ollama_url
+            )
+            slide_results.append(slide)
+        elif windows == 3:
+            slide = sliding_window_three_sections(
+                section1=special_txts[i],
+                section2=special_txts[i+1],
+                section3=special_txts[i+2],
+                model=model,
+                system=system,
+                system1=system1,
+                system2=system2,
+                system3=system3,
+                section1_name=special_keys[i],
+                section2_name=special_keys[i+1],
+                section3_name=special_keys[i+2],
+                candidate_name=candidate_name,
+                candidate_title=candidate_title,
+                ollama_url=ollama_url
+            )
+            slide_results.append(slide)
+    general_info = "\n".join(general_txts).strip()
+    general_info_summary = summarize_general_info(general_info, model=model, system=system_s, ollama_url=ollama_url)
+    #Append general_info_summary to slide_results at the start
+    slide_results.insert(0, general_info_summary)
+    return slide_results
+
+def step0_tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, raw_cv_data = ""
+                         , system_s = "", system = "", system1 = "", system2 = "", system3 = "", system0 = "",
+                         windows = 2):
+    sections_dct = parsers.parse_cv(raw_cv_data)
+    sections_dct_list = parsers.dict_spliter(sections_dct)
+    slides = slide_summary(sections_dct_list,
+                            model=model,
+                            system_s=system_s, system=system, system1=system1, system2=system2, system3=system3,
+                            ollama_url=ollama_url, windows=windows)
+    #Join slides
+    slides_txt = "\n".join(slides).strip()
+    prompt = f"""
+    Given the following resume sections summarized:
+    {slides_txt}
+    Create a wholistic summary of all of them, following these guidelines:
+    - Make sure to include key information, competencies, achievements, and skills.
+    - Maintain the context and flow between the sections.
+    Return the summarized information as a single continuous string of text, following this format strictly:
+
+    [0]Summary: Wholistic summary of all sections.
+    """
+    input_tks = helpers.token_math(model, prompt)
+    payload = {
+        "model": model,
+        "system": system0,
+        "prompt": prompt,
+        "stream": False
+    }
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    try:
+        result = response.json()
+        response_text = result.get("response", "")
+        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        return helpers.filter_output(response_text.strip())
+    except Exception:
+        print("Ollama response was not valid JSON:")
+        print(response.text)
+
+def step1_tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, 
+                         prev_summary = "", job_description  = "", system = ""):
+    prompt = f"""
+    Given the following wholistic summary:
+    {prev_summary}
     And the following job description:
     {job_description}
-    Tailor a '{section}' section for a resume to best match the job description;
+    Tailor a Summary section for a resume to best match the job description;
     Make sure to mention the most relevant skills and experiences from the CV that match the job description, as well as the amount of languages known.
     Return only the revised section and strictly follow the format:
 
@@ -693,12 +935,24 @@ def tailor_summary(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_da
         result = response.json()
         response_text = result.get("response", "")
         output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
-        return response_text
+        return helpers.filter_output(response_text.strip())
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
+def tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL,
+                    raw_cv_data="", job_description="",
+                    system_s="", system00="", system1="", system2="", system3="", system0="", windows=2,
+                    system01=""):
+    # - Summary (LAST; Based on Job Description AND Overall Resume)
+    print(f"tailor_summary: raw_cv_data:\n" + raw_cv_data)
+    step0 = step0_tailor_summary(model=model, ollama_url=ollama_url, raw_cv_data=raw_cv_data,
+                                  system_s=system_s, system=system00, system1=system1, system2=system2, system3=system3, system0=system0,
+                                  windows=windows)
+    step1 = step1_tailor_summary(model=model, ollama_url=ollama_url, prev_summary=step0, job_description=job_description,
+                                  system=system01)
+    return step1.strip()
 def return_text_with_skills(cv_text):
     #Note: text: comma separated skills, dict: section to subsections to lists
     return_list = []

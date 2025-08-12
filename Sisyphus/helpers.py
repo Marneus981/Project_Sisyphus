@@ -543,7 +543,7 @@ def format_checker_out_cl(cl_text):
         'empty_subsections': empty_subsections
     }
 
-def filter_output(model_output):
+def filter_output(model_output, mode = "digits"):
     """
     Filters model output, keeping only lines that start with [X], where X is a number (e.g., [0], [1], etc.).
     Returns the filtered output as a string.
@@ -551,8 +551,13 @@ def filter_output(model_output):
     filtered_lines = []
     for line in model_output.splitlines():
         line = line.strip()
-        if line.startswith("[") and len(line) > 2 and line[2] == "]" and line[1].isdigit():
-            filtered_lines.append(line)
+        if mode == "digits":
+            if line.startswith("[") and len(line) > 2 and line[2] == "]" and line[1].isdigit():
+                filtered_lines.append(line)
+        elif mode == "cap_letters":
+            if line.startswith("[") and len(line) > 2 and line[2] == "]" and line[1].isupper():
+                filtered_lines.append(line)
+
     return "\n".join(filtered_lines)
 
 def read_format_checker(format_checker_output):
