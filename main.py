@@ -57,13 +57,15 @@ def tailor_cv(root):
     system_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", system_file))
 
     print("Selected Model: \n" + str(selected_model))
-    print("CV Text: \n" + helpers.indent_text(str(cv_text)))
+    print("CV Text: \n" + helpers.indent_text(str(cv_text).strip()))
     print("System: \n" + str(system_text))
     print("Job Description: \n" + str(job_desc))
     #Summarize job description
     job_description_summary = tailor.summarize_job_description(job_desc, model=selected_model, system=system_text)
     print(f"tailor_experiences: job_description_summary:\n" + job_description_summary)
     job_desc = job_description_summary
+    cv_text = cv_text.strip()
+    cv_text = helpers.label_repeated_experiences(cv_text)
     cv_dict = parsers.parse_cv(cv_text)
     unchanged_dict = {}
     # Copy over unchanged fields
@@ -235,17 +237,35 @@ def tailor_cv(root):
         windows=2,
         system01=system_text
     )
+    print("Tailored summary section:\n" + str(tailored_s))
     tailored_s = helpers.filter_output(tailored_s)
-    if tailored_s:
-        # Add the tailored summary to the dict
-        tailored_list.append(parsers.parse_cv(tailored_s))
-        #tailored_dict['summary'] = tailored_s
-    final_tailored_dict = parsers.dict_grafter(tailored_list)
-    #Merge unchanged fields back into the final tailored dict
-    for key, value in unchanged_dict.items():
-        final_tailored_dict[key] = value
+    print("Tailored summary section (filtered):\n" + str(tailored_s))
 
-    final_cv_text = helpers.format_output(parsers.inv_parse_cv(final_tailored_dict))
+    s_dict = parsers.parse_cv(s_text)
+    tailored_s_dict = parsers.parse_cv(tailored_s)
+    s_dict_list = parsers.dict_spliter(s_dict)
+    s_dict_list.append(tailored_s_dict)
+    s_dict_grafted = parsers.dict_grafter(s_dict_list)
+    final_cv_text = helpers.format_output(parsers.inv_parse_cv(s_dict_grafted))
+
+
+    # if tailored_s:
+    #     # Add the tailored summary to the dict
+    #     tailored_list.append(parsers.parse_cv(tailored_s))
+    #     #tailored_dict['summary'] = tailored_s
+    # for item in tailored_list:
+    #     print("Tailored summary section (item):\n" + str(item))
+    # final_tailored_dict = parsers.dict_grafter(tailored_list)
+    # #Merge unchanged fields back into the final tailored dict
+    # for key, value in unchanged_dict.items():
+    #     final_tailored_dict[key] = value
+    # for key, value in final_tailored_dict.items():
+    #     print(f"Final tailored section '{key}': {value}")
+    # final_cv_text_unformated = parsers.inv_parse_cv(final_tailored_dict)
+    # print("Final CV text before formatting:\n" + helpers.indent_text(str(final_cv_text_unformated)))
+    # final_cv_text = helpers.format_output(final_cv_text_unformated)
+
+    # print("Final CV text after formatting:\n" + helpers.indent_text(str(final_cv_text)))
     #endregion
     print("[STEP 3][COMPLETE]")
     print("All sections tailored successfully")
@@ -333,6 +353,7 @@ def tailor_cv(root):
         #print("Ordered awards and scholarships section: " + str(temp_dct['awards_and_scholarships']))
 
     current_cv_text = parsers.inv_parse_cv_out(temp_dct)
+    current_cv_text = helpers.clean_labels(current_cv_text)
     print("Ordering complete")
     #endregion
     print("[STEP 5][COMPLETE]")

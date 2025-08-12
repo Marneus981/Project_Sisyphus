@@ -96,7 +96,7 @@
     [1]Description: Presented workshops on Python programming and career development for women in technology. Delivered sessions to 80+ attendees, received positive feedback for clarity and motivation, and helped increase program enrollment by 20%. Developed interactive presentations and hands-on coding exercises to engage participants. Provided mentorship and career advice, supporting professional growth and advancement. Collaborated with program organizers to expand workshop offerings and reach. Recognized for impact on participant confidence and skill development. Created follow-up resources and support networks to help attendees continue learning and advancing in their careers.
     [1]Skills: Programming Languages: Python, JavaScript, Java, C++, SQL, Dart; Technical Skills: Public Speaking, Workshop Design, Web Development, REST APIs, Docker, Kubernetes; Soft Skills: Communication, Motivation, Leadership, Problem Solving, Teamwork, Adaptability
 [0]Work Experience:
-    [1]Job Title: Senior Backend Engineer
+    [1]Job Title: Software Engineer
     [1]Company: FinTech Solutions
     [1]Location: Springfield, USA
     [1]Duration: 2019/07 - Present

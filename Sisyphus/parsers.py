@@ -41,15 +41,9 @@ def dict_spliter(cv_dict):
 def dict_grafter(split_dicts):
 
     cv_dict = {}
-    for d in split_dicts:
-        for key, value in d.items():
-            if key in cv_dict:
-                if isinstance(cv_dict[key], list):
-                    cv_dict[key].append(value)
-                else:
-                    cv_dict[key] = [cv_dict[key], value]
-            else:
-                cv_dict[key] = value
+    for dict in split_dicts:
+        for key, value in dict.items():
+            cv_dict[key] = value
     return cv_dict
 
 def parse_cv(cv_text):

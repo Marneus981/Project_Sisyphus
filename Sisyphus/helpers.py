@@ -5,6 +5,7 @@ import datetime
 import transformers
 import subprocess
 import logging
+import re
 # Set up logging
 print = logging.info
 
@@ -590,6 +591,7 @@ def parse_date(date_str):
     print("[DEBUG] parse_date")
     year, month = map(int, date_str.split('/'))
     return datetime.date(year, month, 1)
+
 def parse_duration(duration_str):
     """
     Parse a duration string in the format 'Start Year/Start Month - End Year/End Month'
@@ -610,6 +612,7 @@ def parse_duration(duration_str):
     else:
         end_date = None
     return start_date, end_date
+
 def order_section(section, type_key = 'end_date', reverse = False):
     """
     Order the items in a section based on their start and end dates.
@@ -806,4 +809,48 @@ def order_chronologically(cv_dict, mode = 'end_date', reverse = False):
         print(f"[DEBUG] order_chronologically: {entry} with ordered content {return_dict[entry]}")
     return return_dict
 
+def label_repeated_experiences(cv_text):
+    #Given a complete resume text:
+    #Transform to dct
+    resume_dct =parsers.parse_cv(cv_text)
+    #Scan keys that have lists as their value
+    for key, value in resume_dct.items():
+        if isinstance(value, list):
+            #Add a [XX] label at the end of each entry, corresponding to the times its repeated
+            if key in ['education', 'certifications', 'awards_and_scholarships', 'work_experience', 'projects', 'volunteering_and_leadership']:
+                #Create dict of labels, along with the number of occurrences
+                labels = {}
+                label_dct = {
+                    'education': 'degree',
+                    'certifications': 'certification_name',
+                    'awards_and_scholarships': 'award_name',
+                    'volunteering_and_leadership': 'role',
+                    'work_experience': 'job_title',
+                    'projects': 'project_title'
+                }
+                for item in value:
+                    strp = item[label_dct[key]].strip()
+                    labels[strp] = labels.get(strp, 0) + 1
+                #Scan value and add a [X] label at the end of entry that matches with an object in labels
+                for item in value:
+                    strp = item[label_dct[key]].strip()
+                    if strp in labels:
+                        if labels[strp] > 1:
+                            item[label_dct[key]] = strp + f"({labels[strp]-1})"
+                            labels[strp] -= 1
+                        else:
+                            continue
+    return_txt = parsers.inv_parse_cv(resume_dct)
+    return return_txt
 
+    #Transform back to text
+
+def clean_labels(cv_text):
+    #Remove all [X] labels from the text
+    #Search lines in cv_text for the pattern (digit)
+    lines = cv_text.splitlines()
+    for line in lines:
+        if re.search(r"\(\d+\)", line):
+            line = re.sub(r"\(\d+\)", "", line)
+    return_txt = "\n".join(lines).strip()
+    return return_txt

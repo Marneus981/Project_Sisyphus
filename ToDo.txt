@@ -3,8 +3,8 @@
     [][1.0 PRIVATE RELEASE] Add own CV; verify code performance and good practices
 [WIP]      
     [0.98]
-                []Make output > 90% consistent
-            []Debug missing sections
+        []Make output > 90% consistent
+            [FIXED?]Debug missing sections (likely model output error)
             []Simplify consistency_checker_vs_cv
                 []Select relevant info to feed 
                     OR
@@ -21,7 +21,6 @@
                     make it a step by step process
                     []Hierarchical Summarization??
                 []Change prompt
-
             []Simplify make_cover_letter_text
                 []Select relevant info to feed 
                     OR 
@@ -30,6 +29,7 @@
                 []Change prompt
         []Give fields a last used memory
     [0.99]
+        []Outsource formatting to classic functions (even simpler tailoring output)
         []Maybe filter output on each tailor function output
         []Make it a single window
         []Add output window

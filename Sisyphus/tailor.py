@@ -282,8 +282,8 @@ Given the following "Volunteering and Leadership" resume section:
 {raw_cv_data}
 And the following job description:
 {job_description}
-Select up to 4 relevant experiences that best match the job description. If there are 4 or fewer experiences, include all of them. If there are no experiences, return an empty section.
-Output the selected experiences strictly in the following format:
+Select the 4 most relevant experiences that best match the job description. If there are 4 or fewer experiences total, include all of them. If there are no experiences, return an empty section.
+Output the selected projects strictly in the following format, without changing the role/job title/project title text:
 [R]Role Name 1
 [R]Role Name 2
 [R]Role Name 3
@@ -316,6 +316,7 @@ And the following job description:
 {job_description}
 Rewrite the experience to best match the job description, following these guidelines:
 - Keep all original subsections: Role, Organization, Location, Duration, Description, and Skills.
+- Keep subsection names unchanged ("Project Title", "Type", "Duration", "Description", "Skills")
 - In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
 - In the Skills subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
 - Do not use line breaks inside any subsection. Do not use the ":" character in the Description.
@@ -395,8 +396,8 @@ Given the following "Work Experience" resume section:
 {raw_cv_data}
 And the following job description:
 {job_description}
-Select up to 4 relevant experiences that best match the job description. If there are 4 or fewer experiences, include all of them. If there are no experiences, return an empty section.
-Output the selected experiences strictly in the following format:
+Select the 4 most relevant experiences that best match the job description. If there are 4 or fewer experiences total, include all of them. If there are no experiences, return an empty section.
+Output the selected projects strictly in the following format, without changing the role/job title/project title text:
 [J]Job Title 1
 [J]Job Title 2
 [J]Job Title 3
@@ -429,6 +430,7 @@ And the following job description:
 {job_description}
 Rewrite the experience to best match the job description, following these guidelines:
 - Keep all original subsections: Job Title, Company, Location, Duration, Description, and Skills.
+- Keep subsection names unchanged ("Project Title", "Type", "Duration", "Description", "Skills")
 - In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
 - In the Skills subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
 - Do not use line breaks inside any subsection. Do not use the ":" character in the Description.
@@ -504,8 +506,8 @@ Given the following "Projects" resume section:
 {raw_cv_data}
 And the following job description:
 {job_description}
-Select up to 4 relevant projects that best match the job description. If there are 4 or fewer projects, include all of them. If there are no projects, return an empty section.
-Output the selected projects strictly in the following format:
+Select the 4 most relevant experiences that best match the job description. If there are 4 or fewer experiences total, include all of them. If there are no projects, return an empty section.
+Output the selected projects strictly in the following format, without changing the role/job title/project title text:
 [P]Project Title 1
 [P]Project Title 2
 [P]Project Title 3
@@ -538,6 +540,7 @@ And the following job description:
 {job_description}
 Rewrite the project to best match the job description, following these guidelines:
 - Keep all original subsections: Project Title, Type, Duration, Description, and Skills.
+- Keep subsection names unchanged ("Project Title", "Type", "Duration", "Description", "Skills")
 - In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
 - In the Skills subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
 - Do not use line breaks inside any subsection. Do not use the ":" character in the Description.
@@ -617,7 +620,8 @@ def step0_prune_experiences(model = DEFAULT_MODEL, system1 = "", ollama_url = DE
     - If the total number of experiences/roles is less than 6, return all of them.
     - If the total number of experiences/roles is greater than or equal to 6 before selection: Select the most relevant 6 experiences/roles based on the job description.
     - If possible, select 1 experience from each section (Volunteering and Leadership, Work Experience, and Projects).
-    Return your response strictly in the following format:
+    - Do not change 
+    Return your response strictly in the following format, without changing the role/job title/project title text:
     [X]Role/Job Title/Project Title 1
     ...
     [X]Role/Job Title/Project Title 6
@@ -953,6 +957,7 @@ def tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL,
     step1 = step1_tailor_summary(model=model, ollama_url=ollama_url, prev_summary=step0, job_description=job_description,
                                   system=system01)
     return step1.strip()
+
 def return_text_with_skills(cv_text):
     #Note: text: comma separated skills, dict: section to subsections to lists
     return_list = []
