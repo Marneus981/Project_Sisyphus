@@ -1066,7 +1066,126 @@ def tailor_skills(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_dat
         print("Ollama response was not valid JSON:")
         print(response.text)
         return "Error: Ollama response was not valid JSON."
+
+#Resume/Cover Letter Consistency Checker VS Old Resume
+#Chain: old resume, new resume >>> new_vs_old_section >>> consistency_checker_vs_cv
+#Chain: new resume, cover letter >>> summarize resume >>> consistency_checker_vs_cv
+def new_vs_old_section(old_resume_s_txt, new_resume_s_txt, section_name = "", model = DEFAULT_MODEL, system = "", ollama_url = DEFAULT_URL):
+    prompt = f"""
+    Given the following raw untailored resume section:
+    {old_resume_s_txt}
+    And the following tailored resume section:
+    {new_resume_s_txt}
+    Compare the two resume sections and:
+    - Confirm that the tailored section does not contain any made-up information.
+    - Ensure that all information in the tailored section is present in the raw section, even if paraphrased.
+    Output your analysis as a single continuous string of text, strictly following the format below:
+    [0]{section_name} Analysis:
+    """
+    input_tks = helpers.token_math(model, prompt)
+    payload = {
+        "model": model,
+        "system": system,
+        "prompt": prompt,
+        "stream": False
+    }
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    try:
+        result = response.json()
+        response_text = result.get("response", "")
+        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        return helpers.filter_output(response_text.strip())
+    except Exception:
+        print("Ollama response was not valid JSON:")
+        print(response.text)
+    return
+
+def new_vs_old_resume(old_resume_txt = "", new_resume_txt = "", model = DEFAULT_MODEL, system = "", system_s = "", ollama_url = DEFAULT_URL):
+    old_resume_txt0 = return_text_with_skills(old_resume_txt)
+    old_dcts = parsers.dict_spliter(parsers.parse_cv_out(helpers.filter_output(old_resume_txt0.strip())))
+    new_dcts = parsers.dict_spliter(parsers.parse_cv_out(helpers.filter_output(new_resume_txt.strip())))
+    old_txts = [parsers.inv_parse_cv_out(dct).strip() for dct in old_dcts]
+    new_txts = [parsers.inv_parse_cv_out(dct).strip() for dct in new_dcts]
+    analysis_txts = []
+    print("Length of old_txts:", len(old_txts))
+    print("Length of new_txts:", len(new_txts))
+    if len(old_txts) != len(new_txts):
+        raise ValueError("The number of sections in the old and new resumes do not match.")
+    for i in range(len(old_txts)):
+        analysis_txt = new_vs_old_section(old_txts[i], new_txts[i], model=model, system=system, ollama_url=ollama_url)
+        analysis_txts.append(analysis_txt)
+    return analysis_txts
+
+def consistency_checker_vs_cv(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", cv_data_orig ="", type="CV"):
+    if type == "CV":
+        prompt = f"""
+        Given the following already-tailored resume:
+        {cv_data}
+        And the original untailored curriculum data:
+        {cv_data_orig}
+        Perform a consistency check on the tailored resume against the original curriculum data. This consistency check should include:
+        1. Check if the resume is consistent with the original curriculum data, meaning that all skills and experiences mentioned in the resume should be present in the original CV data.
+        2. Check if the resume is consistent with itself, meaning that there should be no contradictions or inconsistencies in the information provided.
+        3. Provide suggestions for improvement.
+        The consistency check should be returned strictly in the following format:
+
+        [0]Consistency Checker Vs Cv:
+        [1]CV Consistency: [Yes/No]
+        [1]Inconsistencies With CV: [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+        [1]Self Consistency: [Yes/No]
+        [1]Inconsistencies With Self: [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+        [1]Suggestions for Improvement: [List of suggestions for improvement, if any; return 'None' if no suggestions; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+
+        Be mindful not to include any line breaks in  the content of any of the sections/subsections.
+        Be as objective as possible, and do not make any assumptions about the data; this also means that you should create nor imagine any data that is not present in the original CV data.
+        """
+    elif type == "CL":
+        prompt = f"""
+        Given the following already-tailored cover letter:
+        {cv_data}
+        And the resume meant to accompany it on a job application:
+        {cv_data_orig}
+        Perform a consistency check on the tailored cover letter against the resume. This consistency check should include:
+        1. Check if the cover letter is consistent with the resume, meaning that all skills and experiences mentioned in the cover letter should be present in the resume.
+        2. Check if the cover letter is consistent with itself, meaning that there should be no contradictions or inconsistencies in the information provided.
+        3. Provide suggestions for improvement.
+        The consistency check should be returned strictly in the following format:
+
+        [0]Consistency Checker Vs Resume:
+        [1]Resume Consistency: [Yes/No]
+        [1]Inconsistencies With Resume: [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+        [1]Self Consistency: [Yes/No]
+        [1]Inconsistencies With Self: [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+        [1]Suggestions for Improvement: [List of suggestions for improvement, if any; return 'None' if no suggestions; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+
+        Be mindful not to include any line breaks in  the content of any of the sections/subsections.
+        Be as objective as possible, and do not make any assumptions about the data; this also means that you should create nor imagine any data that is not present in the original CV data.
+        """
     
+    input_tks = helpers.token_math(model, prompt)
+    payload = {
+        "model": model,
+        "system": system,
+        "prompt": prompt,
+        "stream": False
+    }
+    
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    
+    try:
+        result = response.json()
+        response_text = result.get("response", "")
+        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        return response_text
+    except Exception:
+        print("Ollama response was not valid JSON:")
+        print(response.text)
+        return "Error: Ollama response was not valid JSON."
+
+
+#Resume/Cover Letter Consistency Checker VS Job Description
+#Chain: cover letter, job_desc >>> summarize job desc >>> consistency_checker_vs_job_desc
+#Chain: new resume, job_desc >>> summarize resume, job desc >>> consistency_checker_vs_job_desc
 def consistency_checker_vs_job_desc(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", job_description="", type="CV"):
 
     if type == "CV":
@@ -1127,73 +1246,9 @@ def consistency_checker_vs_job_desc(model=DEFAULT_MODEL, system="", ollama_url=D
         print("Ollama response was not valid JSON:")
         print(response.text)
         return "Error: Ollama response was not valid JSON."
-    
-def consistency_checker_vs_cv(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", cv_data_orig ="", type="CV"):
-    if type == "CV":
-        prompt = f"""
-        Given the following already-tailored resume:
-        {cv_data}
-        And the original untoilored curriculum data:
-        {cv_data_orig}
-        Perform a consistency check on the tailored resume against the original curriculum data. This consistency check should include:
-        1. Check if the resume is consistent with the original curriculum data, meaning that all skills and experiences mentioned in the resume should be present in the original CV data.
-        2. Check if the resume is consistent with itself, meaning that there should be no contradictions or inconsistencies in the information provided.
-        3. Provide suggestions for improvement.
-        The consistency check should be returned strictly in the following format:
 
-        [0]Consistency Checker Vs Cv:
-        [1]CV Consistency: [Yes/No]
-        [1]Inconsistencies With CV: [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-        [1]Self Consistency: [Yes/No]
-        [1]Inconsistencies With Self: [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-        [1]Suggestions for Improvement: [List of suggestions for improvement, if any; return 'None' if no suggestions; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-
-        Be mindful not to include any line breaks in  the content of any of the sections/subsections.
-        Be as objective as possible, and do not make any assumptions about the data; this also means that you should create nor imagine any data that is not present in the original CV data.
-        """
-    elif type == "CL":
-        prompt = f"""
-        Given the following already-tailored cover letter:
-        {cv_data}
-        And the resume meant to accompany it on a job application:
-        {cv_data_orig}
-        Perform a consistency check on the tailored cover letter against the resume. This consistency check should include:
-        1. Check if the cover letter is consistent with the resume, meaning that all skills and experiences mentioned in the cover letter should be present in the resume.
-        2. Check if the cover letter is consistent with itself, meaning that there should be no contradictions or inconsistencies in the information provided.
-        3. Provide suggestions for improvement.
-        The consistency check should be returned strictly in the following format:
-
-        [0]Consistency Checker Vs Resume:
-        [1]Resume Consistency: [Yes/No]
-        [1]Inconsistencies With Resume: [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-        [1]Self Consistency: [Yes/No]
-        [1]Inconsistencies With Self: [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-        [1]Suggestions for Improvement: [List of suggestions for improvement, if any; return 'None' if no suggestions; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-
-        Be mindful not to include any line breaks in  the content of any of the sections/subsections.
-        Be as objective as possible, and do not make any assumptions about the data; this also means that you should create nor imagine any data that is not present in the original CV data.
-        """
-    
-    input_tks = helpers.token_math(model, prompt)
-    payload = {
-        "model": model,
-        "system": system,
-        "prompt": prompt,
-        "stream": False
-    }
-    
-    response = requests.post(f"{ollama_url}/api/generate", json=payload)
-    
-    try:
-        result = response.json()
-        response_text = result.get("response", "")
-        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
-        return response_text
-    except Exception:
-        print("Ollama response was not valid JSON:")
-        print(response.text)
-        return "Error: Ollama response was not valid JSON."
-    
+#Tailor Cover Letter
+#Chain: new resume, job_desc >>> summarize resume, job desc >>> make_cover_letter_text
 def make_cover_letter_text(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", job_description="", section="Cover Letter"):
     """
     Given a tailored resume containing education, experiences, projects and skills considered 
@@ -1242,7 +1297,7 @@ def make_cover_letter_text(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_UR
         print("Ollama response was not valid JSON:")
         print(response.text)
         return "Error: Ollama response was not valid JSON."
-    
+
 def compose_cover_letter_dictionary(model,cv_text, job_description):
     """
     Given a resume containing education, experiences, projects and skills considered 
