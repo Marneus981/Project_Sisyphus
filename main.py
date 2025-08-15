@@ -31,7 +31,21 @@ logging.basicConfig(
 # Replace all print statements with logging.info, logging.warning, etc. as needed.
 print = logging.info
 
+def check_summaries(root, update_job_desc = False, update_resume = False):
+    selected_model = model_var.get()
+    cv_text = cv_var.get().strip()
+    system_text = system_var.get().strip()
+    job_desc = job_desc_textbox.get("1.0", tk.END).strip()
+    global summarized_job_desc, summarized_resume, current_cv_text
+    if summarized_job_desc == "" or update_job_desc:
+        summarized_job_desc = tailor.summarize_job_description(job_desc, model=selected_model, system=system_text)
+    if (summarized_resume == "" or update_resume) and current_cv_text:
+        #current_cv_text is supposed to be the end product, but it gets assigned after step 4, so do keep that in mind when debugging
+        summarized_resume = tailor.step0_tailor_summary(model=selected_model, raw_cv_data=current_cv_text, system_s=system_text,
+                                                    system=system_text, system0=system_text, system1=system_text, system2=system_text, system3=system_text,
+                                                     windows=2, skill_section=True)
 def tailor_cv(root):
+    global summarized_job_desc, summarized_resume
     global tailor_cl_button
     global result_window, result_textbox, show_output_cv_button, save_output_cv_button, save_current_cv_text_button
     global format_check_current_cv_button, filter_output_cv_button, current_cv_text
@@ -60,12 +74,14 @@ def tailor_cv(root):
     print("CV Text: \n" + helpers.indent_text(str(cv_text).strip()))
     print("System: \n" + str(system_text))
     print("Job Description: \n" + str(job_desc))
-    #Summarize job description
-    job_description_summary = tailor.summarize_job_description(job_desc, model=selected_model, system=system_text)
-    print(f"tailor_experiences: job_description_summary:\n" + job_description_summary)
-    job_desc = job_description_summary
     cv_text = cv_text.strip()
     cv_text = helpers.label_repeated_experiences(cv_text)
+        #Step 0 summarize raw cv and job description
+    print("[STEP 0][INPUT] Raw Job Description, Raw CV text: \n" + helpers.indent_text(str(job_desc)))
+    print("[STEP 0][START] Summarizing Job Description")
+    check_summaries(update_job_desc=True)
+    print("[STEP 0][COMPLETE]")
+    job_desc = summarized_job_desc
     cv_dict = parsers.parse_cv(cv_text)
     unchanged_dict = {}
     # Copy over unchanged fields
@@ -359,8 +375,10 @@ def tailor_cv(root):
     print("[STEP 5][COMPLETE]")
     print("[STEP 5][OUTPUT]>>>[STEP 6][INPUT] Tailored resume text (with Summary; pruned; skills tailored; ordered): \n" + helpers.indent_text(str(current_cv_text)))
     print("[STEP 6][START] Formatting/Consistency check for tailored resume...")
+    check_summaries(update_resume = True)
     #region STEP 6
-    format_check_current_cv_text(root)
+    print("[STEP 6][SKIP]Please use the formatting button in the UI.")
+    # format_check_current_cv_text(root)
     #endregion
     print("[STEP 6][COMPLETE]") 
     print("The climb has ended, the CV is tailored!")
@@ -393,9 +411,9 @@ def tailor_cl(root):
     global show_output_cl_button
     global save_output_cl_button
     global format_check_current_cl_button
+    global summarized_resume,summarized_job_desc
     selected_model = model_var.get()  
     job_desc = job_desc_textbox.get("1.0", tk.END)
-
     if not job_desc.strip():
         print("Job description is empty. Please enter a job description.")
         return
@@ -411,16 +429,16 @@ def tailor_cl(root):
     # Compose cover letter dictionary
     cover_letter_dict = tailor.compose_cover_letter_dictionary(
         model=selected_model,
-        cv_text=current_cv_text,
-        job_description=job_desc
+        cv_text=summarized_resume,
+        job_description=summarized_job_desc,
     )
     cover_letter_text = parsers.inv_parse_cl(cover_letter_dict)
     current_cl_text = cover_letter_text
 
 
     print("Cover letter text generated successfully.")
-
-    format_check_current_cl_text(root)
+    print("Formatting and consistency check skipped. Please use the formatting button in the UI.")
+    # format_check_current_cl_text(root)
 
     global cl_window, cl_textbox
     
@@ -482,85 +500,112 @@ def format_check_input_cv_file(root, cv_file):
     analysis_textbox.pack(expand=True, fill=tk.BOTH)
 
 def format_check_current_cv_text(root):
-    if job_desc_textbox.get("1.0", tk.END).strip() == "":
-        print("Job description is empty. Please enter a job description.")
-        return
-    cv_text = current_cv_text
+    global summarized_job_desc, summarized_resume, current_cv_text
+    if summarized_job_desc == "":
+        print("Summary of job description is empty. Generating summary...")
+        if job_desc_textbox.get("1.0", tk.END).strip() == "":
+            print("Job description is empty. Please enter a job description.")
+            return
+        check_summaries(root,update_job_desc=True)
+    if summarized_resume == "":
+        print("Summary of resume is empty. Generating summary...")
+        if current_cv_text == "" or not current_cv_text:
+            print("Resume is empty. Please enter a resume.")
+            return
+        check_summaries(root,update_resume=True)
 
     # Prepare CV analysis output as a string
     # analysis_stream = io.StringIO()
     # old_stdout = sys.stdout
     # sys.stdout = analysis_stream
-    integrity = helpers.read_format_checker(helpers.format_checker_out(cv_text))
+    integrity = helpers.read_format_checker(helpers.format_checker_out(current_cv_text))
     # sys.stdout = old_stdout
     # analysis_text = analysis_stream.getvalue()
     analysis_text = integrity
     cv_text_og = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "cvs", cv_var.get()))
     selected_model = model_var.get()
-    job_desc = job_desc_textbox.get("1.0", tk.END)
+    system_file = system_var.get()  
     con_systemm_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", "system_consistency.txt"))
     con_vs_job_desc = tailor.consistency_checker_vs_job_desc(
         model=selected_model,
+        cv_data=summarized_resume,
+        job_description=summarized_job_desc,
         system=con_systemm_text,
-        cv_data=cv_text,
-        job_description=job_desc
     )
+    print(con_vs_job_desc)
+    print(helpers.filter_output(con_vs_job_desc))
     con_vs_cv = tailor.consistency_checker_vs_cv(
         model=selected_model,
+        cv_data=current_cv_text,
+        cv_data_orig=cv_text_og,
         system=con_systemm_text,
-        cv_data=cv_text,
-        cv_data_orig=cv_text_og
+        system_s=system_file,
     )
+    print(con_vs_cv)
+    print(helpers.filter_output(con_vs_cv))
 
     #Append consistency check results to analysis text
     analysis_text += "\n\nConsistency Checker Vs Job Description:\n"
     analysis_text += helpers.filter_output(con_vs_job_desc) + "\n\n"
-    analysis_text += "Consistency Checker Vs CV:\n"
+    analysis_text += "Consistency Checker Vs Untailored Resume:\n"
     analysis_text += helpers.filter_output(con_vs_cv) + "\n\n"
 
     # Show the CV analysis in a new window
     analysis_window = tk.Toplevel(root)
-    analysis_window.title("Current Output CV Analysis:")
-    analysis_label = tk.Label(analysis_window, text="Current Output CV Analysis:")
+    analysis_window.title("Current Output Resume Analysis:")
+    analysis_label = tk.Label(analysis_window, text="Current Output Resume Analysis:")
     analysis_label.pack()
     analysis_textbox = tk.Text(analysis_window, height=20, width=80)
     analysis_textbox.insert(tk.END, analysis_text)
     analysis_textbox.pack(expand=True, fill=tk.BOTH)
 
 def format_check_current_cl_text(root):
-    if job_desc_textbox.get("1.0", tk.END).strip() == "":
-        print("Job description is empty. Please enter a job description.")
-        return
+    global current_cl_text, current_cv_text, summarized_job_desc, summarized_resume
+    if summarized_job_desc == "":
+        print("Summary of job description is empty. Generating summary...")
+        if job_desc_textbox.get("1.0", tk.END).strip() == "":
+            print("Job description is empty. Please enter a job description.")
+            return
+        check_summaries(root,update_job_desc=True)
+    if summarized_resume == "":
+        print("Summary of resume is empty. Generating summary...")
+        if current_cv_text == "" or not current_cv_text:
+            print("Resume is empty. Please enter a resume.")
+            return
+        check_summaries(root,update_resume=True)
+        
     #Assumes current_cv_text is already defined and is the tailored resume relevant to the cover letter
-    cl_text = current_cl_text
     # Prepare CV analysis output as a string
-    analysis_stream = io.StringIO()
-    old_stdout = sys.stdout
-    sys.stdout = analysis_stream
-    helpers.read_format_checker(helpers.format_checker_out_cl(cl_text))
-    sys.stdout = old_stdout
-    analysis_text = analysis_stream.getvalue()
+    # analysis_stream = io.StringIO()
+    # old_stdout = sys.stdout
+    # sys.stdout = analysis_stream
+    # helpers.read_format_checker(helpers.format_checker_out_cl(current_cl_text))
+    # sys.stdout = old_stdout
+    integrity = helpers.read_format_checker(helpers.format_checker_out(current_cv_text))
+    analysis_text = integrity
     
-    cv_text = current_cv_text
     selected_model = model_var.get()
-    job_desc = job_desc_textbox.get("1.0", tk.END)
-
+    system_file = system_var.get()
     con_system_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", "system_consistency_cl.txt"))
     con_vs_job_desc = tailor.consistency_checker_vs_job_desc(
         model=selected_model,
+        cv_data=current_cl_text,
+        job_description=summarized_job_desc,
         system=con_system_text,
-        cv_data=cl_text,
-        job_description=job_desc,
         type = "CL"
     )
+    print(con_vs_job_desc)
+    print(helpers.filter_output(con_vs_job_desc))
     con_vs_cv = tailor.consistency_checker_vs_cv(
         model=selected_model,
+        cv_data=current_cl_text,
+        cv_data_orig=summarized_resume,
         system=con_system_text,
-        cv_data=cl_text,
-        cv_data_orig=cv_text,
+        system_s=system_file, 
         type = "CL"
     )
-
+    print(con_vs_cv)
+    print(helpers.filter_output(con_vs_cv))
     #Append consistency check results to analysis text
     analysis_text += "\n\nConsistency Checker Vs Job Description:\n"
     analysis_text += helpers.filter_output(con_vs_job_desc) + "\n\n"
@@ -754,6 +799,7 @@ def load_cv_text(file_name):
     with open(file_path, 'r', encoding='utf-8') as f:
         #load the text from the file to string
         current_cv_text = f.read()
+    
     format_check_current_cv_button.config(state="normal")
     filter_output_cv_button.config(state="normal")
     show_output_cv_button.config(state="normal")
@@ -826,6 +872,7 @@ def init_color(root, bg_color, fg_color):
 def main():
     
     # Save Output CV Button (initially disabled)
+    global summarized_job_desc, summarized_resume
     global current_cl_text
     global tailor_cl_button
     global save_output_cv_button
@@ -870,7 +917,10 @@ def main():
 
     cl_template_var = tk.StringVar()
     cl_templates = []
-    
+
+    summarized_job_desc = ""
+    summarized_resume = ""
+
     # models = options[0]
     # systems = options[1]
     # cvs = options[2]

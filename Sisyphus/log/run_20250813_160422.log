@@ -1,0 +1,15 @@
+2025-08-13 16:04:22,991 INFO: Waiting for Ollama to be ready...
+2025-08-13 16:06:53,526 INFO: Ollama did not start in time.
+2025-08-13 16:06:53,526 INFO: Ollama server is not running. Starting Ollama.
+2025-08-13 16:06:53,538 INFO: Starting Ollama server...
+2025-08-13 16:06:53,538 INFO: Waiting for Ollama to be ready...
+2025-08-13 16:06:55,866 INFO: Ollama is running.
+2025-08-13 16:06:56,530 INFO: Refreshing options...
+2025-08-13 16:06:58,615 INFO: Options refreshed:
+2025-08-13 16:06:58,615 INFO: Models: ['deepseek-r1:8b', 'llama3:8b']
+2025-08-13 16:06:58,615 INFO: Systems: ['system1.txt', 'system_consistency.txt', 'system_consistency_cl.txt', 'system_cover_letter.txt']
+2025-08-13 16:06:58,615 INFO: CVs: ['cv1.txt']
+2025-08-13 16:06:58,615 INFO: CV Templates: ['cv_template.docx', 'cv_template2.docx', 'cv_template21.docx', 'cv_template21_simplest.docx']
+2025-08-13 16:06:58,615 INFO: CL Templates: ['cl_template.docx']
+2025-08-13 16:06:58,615 INFO: Previously Saved CV Outputs: ['cltrials.txt', 'out_cv_20250724_213613.txt', 'out_cv_20250725_000423.txt', 'out_cv_20250725_001236.txt', 'out_cv_20250725_003414.txt', 'out_cv_20250725_004330.txt', 'out_cv_20250725_005646.txt', 'out_cv_20250730_011841.txt', 'out_cv_20250730_020338.txt', 'stableish0.txt']
+2025-08-13 16:06:58,615 INFO: Previously Saved CL Outputs: ['out_cl_20250722_234433.txt', 'out_cl_20250723_230452.txt']

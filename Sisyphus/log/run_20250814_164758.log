@@ -1,0 +1,297 @@
+2025-08-14 16:47:58,580 INFO: Waiting for Ollama to be ready...
+2025-08-14 16:48:00,614 INFO: Ollama is running.
+2025-08-14 16:48:00,677 INFO: Refreshing options...
+2025-08-14 16:48:02,729 INFO: Options refreshed:
+2025-08-14 16:48:02,729 INFO: Models: ['deepseek-r1:8b', 'llama3:8b']
+2025-08-14 16:48:02,729 INFO: Systems: ['system1.txt', 'system_consistency.txt', 'system_consistency_cl.txt', 'system_cover_letter.txt']
+2025-08-14 16:48:02,729 INFO: CVs: ['cv1.txt']
+2025-08-14 16:48:02,729 INFO: CV Templates: ['cv_template.docx', 'cv_template2.docx', 'cv_template21.docx', 'cv_template21_simplest.docx']
+2025-08-14 16:48:02,729 INFO: CL Templates: ['cl_template.docx']
+2025-08-14 16:48:02,729 INFO: Previously Saved CV Outputs: ['cltrials.txt', 'consistency_tests0.txt', 'out_cv_20250724_213613.txt', 'out_cv_20250725_000423.txt', 'out_cv_20250725_001236.txt', 'out_cv_20250725_003414.txt', 'out_cv_20250725_004330.txt', 'out_cv_20250725_005646.txt', 'out_cv_20250730_011841.txt', 'out_cv_20250730_020338.txt', 'stableish0.txt']
+2025-08-14 16:48:02,729 INFO: Previously Saved CL Outputs: ['out_cl_20250722_234433.txt', 'out_cl_20250723_230452.txt']
+2025-08-14 16:48:14,190 INFO: CV loaded from C:\CodeProjects\Sisyphus\Sisyphus\saved_outputs\consistency_tests0.txt
+2025-08-14 16:48:29,552 INFO: JS Output: 97
+
+2025-08-14 16:48:29,552 INFO: [MODEL: llama3:8b] Input token usage: 2.37%
+2025-08-14 16:48:29,552 INFO: [MODEL: llama3:8b] Input uses 97 tokens, remaining for response: 3999.
+2025-08-14 16:48:47,747 INFO: JS Output: 282
+
+2025-08-14 16:48:47,747 INFO: [MODEL: llama3:8b] Output token usage: 6.88%
+2025-08-14 16:48:47,747 INFO: [MODEL: llama3:8b] Output uses 282 tokens, remaining for response: 3717.
+2025-08-14 16:48:47,752 INFO: slide_summary: candidate_name: Jane Doe
+2025-08-14 16:48:47,752 INFO: slide_summary: candidate_title: Senior Software Engineer
+2025-08-14 16:48:47,752 INFO: slide_summary: general_txts: 4
+2025-08-14 16:48:47,752 INFO: slide_summary: special_txts: 6
+2025-08-14 16:48:48,217 INFO: JS Output: 241
+
+2025-08-14 16:48:48,217 INFO: [MODEL: llama3:8b] Input token usage: 5.88%
+2025-08-14 16:48:48,217 INFO: [MODEL: llama3:8b] Input uses 241 tokens, remaining for response: 3855.
+2025-08-14 16:48:56,896 INFO: JS Output: 130
+
+2025-08-14 16:48:56,899 INFO: [MODEL: llama3:8b] Output token usage: 3.17%
+2025-08-14 16:48:56,899 INFO: [MODEL: llama3:8b] Output uses 130 tokens, remaining for response: 3725.
+2025-08-14 16:48:57,359 INFO: JS Output: 191
+
+2025-08-14 16:48:57,359 INFO: [MODEL: llama3:8b] Input token usage: 4.66%
+2025-08-14 16:48:57,359 INFO: [MODEL: llama3:8b] Input uses 191 tokens, remaining for response: 3905.
+2025-08-14 16:49:04,292 INFO: JS Output: 93
+
+2025-08-14 16:49:04,292 INFO: [MODEL: llama3:8b] Output token usage: 2.27%
+2025-08-14 16:49:04,292 INFO: [MODEL: llama3:8b] Output uses 93 tokens, remaining for response: 3812.
+2025-08-14 16:49:04,754 INFO: JS Output: 344
+
+2025-08-14 16:49:04,754 INFO: [MODEL: llama3:8b] Input token usage: 8.40%
+2025-08-14 16:49:04,754 INFO: [MODEL: llama3:8b] Input uses 344 tokens, remaining for response: 3752.
+2025-08-14 16:49:16,111 INFO: JS Output: 186
+
+2025-08-14 16:49:16,111 INFO: [MODEL: llama3:8b] Output token usage: 4.54%
+2025-08-14 16:49:16,111 INFO: [MODEL: llama3:8b] Output uses 186 tokens, remaining for response: 3566.
+2025-08-14 16:49:16,559 INFO: JS Output: 191
+
+2025-08-14 16:49:16,559 INFO: [MODEL: llama3:8b] Input token usage: 4.66%
+2025-08-14 16:49:16,559 INFO: [MODEL: llama3:8b] Input uses 191 tokens, remaining for response: 3905.
+2025-08-14 16:49:24,047 INFO: JS Output: 104
+
+2025-08-14 16:49:24,047 INFO: [MODEL: llama3:8b] Output token usage: 2.54%
+2025-08-14 16:49:24,047 INFO: [MODEL: llama3:8b] Output uses 104 tokens, remaining for response: 3801.
+2025-08-14 16:49:24,516 INFO: JS Output: 194
+
+2025-08-14 16:49:24,516 INFO: [MODEL: llama3:8b] Input token usage: 4.74%
+2025-08-14 16:49:24,516 INFO: [MODEL: llama3:8b] Input uses 194 tokens, remaining for response: 3902.
+2025-08-14 16:49:31,898 INFO: JS Output: 103
+
+2025-08-14 16:49:31,898 INFO: [MODEL: llama3:8b] Output token usage: 2.51%
+2025-08-14 16:49:31,903 INFO: [MODEL: llama3:8b] Output uses 103 tokens, remaining for response: 3799.
+2025-08-14 16:49:32,368 INFO: JS Output: 334
+
+2025-08-14 16:49:32,368 INFO: [MODEL: llama3:8b] Input token usage: 8.15%
+2025-08-14 16:49:32,368 INFO: [MODEL: llama3:8b] Input uses 334 tokens, remaining for response: 3762.
+2025-08-14 16:49:43,109 INFO: JS Output: 170
+
+2025-08-14 16:49:43,109 INFO: [MODEL: llama3:8b] Output token usage: 4.15%
+2025-08-14 16:49:43,109 INFO: [MODEL: llama3:8b] Output uses 170 tokens, remaining for response: 3592.
+2025-08-14 16:49:43,575 INFO: JS Output: 194
+
+2025-08-14 16:49:43,575 INFO: [MODEL: llama3:8b] Input token usage: 4.74%
+2025-08-14 16:49:43,575 INFO: [MODEL: llama3:8b] Input uses 194 tokens, remaining for response: 3902.
+2025-08-14 16:49:50,341 INFO: JS Output: 88
+
+2025-08-14 16:49:50,341 INFO: [MODEL: llama3:8b] Output token usage: 2.15%
+2025-08-14 16:49:50,341 INFO: [MODEL: llama3:8b] Output uses 88 tokens, remaining for response: 3814.
+2025-08-14 16:49:50,814 INFO: JS Output: 350
+
+2025-08-14 16:49:50,814 INFO: [MODEL: llama3:8b] Input token usage: 8.54%
+2025-08-14 16:49:50,814 INFO: [MODEL: llama3:8b] Input uses 350 tokens, remaining for response: 3746.
+2025-08-14 16:50:00,449 INFO: JS Output: 145
+
+2025-08-14 16:50:00,449 INFO: [MODEL: llama3:8b] Output token usage: 3.54%
+2025-08-14 16:50:00,449 INFO: [MODEL: llama3:8b] Output uses 145 tokens, remaining for response: 3601.
+2025-08-14 16:50:00,931 INFO: JS Output: 364
+
+2025-08-14 16:50:00,931 INFO: [MODEL: llama3:8b] Input token usage: 8.89%
+2025-08-14 16:50:00,933 INFO: [MODEL: llama3:8b] Input uses 364 tokens, remaining for response: 3732.
+2025-08-14 16:50:15,025 INFO: JS Output: 242
+
+2025-08-14 16:50:15,025 INFO: [MODEL: llama3:8b] Output token usage: 5.91%
+2025-08-14 16:50:15,025 INFO: [MODEL: llama3:8b] Output uses 242 tokens, remaining for response: 3490.
+2025-08-14 16:50:15,485 INFO: JS Output: 350
+
+2025-08-14 16:50:15,485 INFO: [MODEL: llama3:8b] Input token usage: 8.54%
+2025-08-14 16:50:15,485 INFO: [MODEL: llama3:8b] Input uses 350 tokens, remaining for response: 3746.
+2025-08-14 16:50:25,333 INFO: JS Output: 150
+
+2025-08-14 16:50:25,333 INFO: [MODEL: llama3:8b] Output token usage: 3.66%
+2025-08-14 16:50:25,333 INFO: [MODEL: llama3:8b] Output uses 150 tokens, remaining for response: 3596.
+2025-08-14 16:50:25,819 INFO: JS Output: 269
+
+2025-08-14 16:50:25,819 INFO: [MODEL: llama3:8b] Input token usage: 6.57%
+2025-08-14 16:50:25,819 INFO: [MODEL: llama3:8b] Input uses 269 tokens, remaining for response: 3827.
+2025-08-14 16:50:33,282 INFO: JS Output: 94
+
+2025-08-14 16:50:33,282 INFO: [MODEL: llama3:8b] Output token usage: 2.29%
+2025-08-14 16:50:33,282 INFO: [MODEL: llama3:8b] Output uses 94 tokens, remaining for response: 3733.
+2025-08-14 16:50:33,765 INFO: JS Output: 372
+
+2025-08-14 16:50:33,765 INFO: [MODEL: llama3:8b] Input token usage: 9.08%
+2025-08-14 16:50:33,765 INFO: [MODEL: llama3:8b] Input uses 372 tokens, remaining for response: 3724.
+2025-08-14 16:50:44,665 INFO: JS Output: 164
+
+2025-08-14 16:50:44,665 INFO: [MODEL: llama3:8b] Output token usage: 4.00%
+2025-08-14 16:50:44,665 INFO: [MODEL: llama3:8b] Output uses 164 tokens, remaining for response: 3560.
+2025-08-14 16:50:45,158 INFO: JS Output: 269
+
+2025-08-14 16:50:45,158 INFO: [MODEL: llama3:8b] Input token usage: 6.57%
+2025-08-14 16:50:45,158 INFO: [MODEL: llama3:8b] Input uses 269 tokens, remaining for response: 3827.
+2025-08-14 16:50:52,313 INFO: JS Output: 90
+
+2025-08-14 16:50:52,313 INFO: [MODEL: llama3:8b] Output token usage: 2.20%
+2025-08-14 16:50:52,313 INFO: [MODEL: llama3:8b] Output uses 90 tokens, remaining for response: 3737.
+2025-08-14 16:50:52,782 INFO: JS Output: 187
+
+2025-08-14 16:50:52,782 INFO: [MODEL: llama3:8b] Input token usage: 4.57%
+2025-08-14 16:50:52,782 INFO: [MODEL: llama3:8b] Input uses 187 tokens, remaining for response: 3909.
+2025-08-14 16:51:00,729 INFO: JS Output: 107
+
+2025-08-14 16:51:00,729 INFO: [MODEL: llama3:8b] Output token usage: 2.61%
+2025-08-14 16:51:00,729 INFO: [MODEL: llama3:8b] Output uses 107 tokens, remaining for response: 3802.
+2025-08-14 16:51:01,243 INFO: JS Output: 319
+
+2025-08-14 16:51:01,243 INFO: [MODEL: llama3:8b] Input token usage: 7.79%
+2025-08-14 16:51:01,243 INFO: [MODEL: llama3:8b] Input uses 319 tokens, remaining for response: 3777.
+2025-08-14 16:51:13,280 INFO: JS Output: 185
+
+2025-08-14 16:51:13,280 INFO: [MODEL: llama3:8b] Output token usage: 4.52%
+2025-08-14 16:51:13,280 INFO: [MODEL: llama3:8b] Output uses 185 tokens, remaining for response: 3592.
+2025-08-14 16:51:13,770 INFO: JS Output: 184
+
+2025-08-14 16:51:13,770 INFO: [MODEL: llama3:8b] Input token usage: 4.49%
+2025-08-14 16:51:13,770 INFO: [MODEL: llama3:8b] Input uses 184 tokens, remaining for response: 3912.
+2025-08-14 16:51:20,309 INFO: JS Output: 76
+
+2025-08-14 16:51:20,309 INFO: [MODEL: llama3:8b] Output token usage: 1.86%
+2025-08-14 16:51:20,310 INFO: [MODEL: llama3:8b] Output uses 76 tokens, remaining for response: 3836.
+2025-08-14 16:51:20,762 INFO: JS Output: 72
+
+2025-08-14 16:51:20,772 INFO: [MODEL: llama3:8b] Input token usage: 1.76%
+2025-08-14 16:51:20,772 INFO: [MODEL: llama3:8b] Input uses 72 tokens, remaining for response: 4024.
+2025-08-14 16:51:24,335 INFO: JS Output: 19
+
+2025-08-14 16:51:24,335 INFO: [MODEL: llama3:8b] Output token usage: 0.46%
+2025-08-14 16:51:24,335 INFO: [MODEL: llama3:8b] Output uses 19 tokens, remaining for response: 4005.
+2025-08-14 16:51:24,815 INFO: JS Output: 942
+
+2025-08-14 16:51:24,815 INFO: [MODEL: llama3:8b] Input token usage: 23.00%
+2025-08-14 16:51:24,815 INFO: [MODEL: llama3:8b] Input uses 942 tokens, remaining for response: 3154.
+2025-08-14 16:52:03,690 INFO: JS Output: 539
+
+2025-08-14 16:52:03,690 INFO: [MODEL: llama3:8b] Output token usage: 13.16%
+2025-08-14 16:52:03,690 INFO: [MODEL: llama3:8b] Output uses 539 tokens, remaining for response: 2615.
+2025-08-14 16:52:04,166 INFO: JS Output: 692
+
+2025-08-14 16:52:04,166 INFO: [MODEL: llama3:8b] Input token usage: 16.89%
+2025-08-14 16:52:04,172 INFO: [MODEL: llama3:8b] Input uses 692 tokens, remaining for response: 3404.
+2025-08-14 16:52:10,641 INFO: JS Output: 63
+
+2025-08-14 16:52:10,641 INFO: [MODEL: llama3:8b] Output token usage: 1.54%
+2025-08-14 16:52:10,641 INFO: [MODEL: llama3:8b] Output uses 63 tokens, remaining for response: 3341.
+2025-08-14 16:52:10,643 INFO: [0]Consistency Checker Vs Job Description:
+1. Inconsistencies With Job Description: No; The resume mentions Jane's strong academic credentials, technical expertise, and valuable certifications relevant to the job description, which aligns with the requirements and needed skills specified.
+
+1. Suggestions for Improvement: None
+2025-08-14 16:52:10,643 INFO: [0]Consistency Checker Vs Job Description:
+2025-08-14 16:52:10,643 INFO: Consistency Checker: Tailored Resume VS Original Resume:
+2025-08-14 16:52:11,114 INFO: JS Output: 131
+
+2025-08-14 16:52:11,114 INFO: [MODEL: llama3:8b] Input token usage: 3.20%
+2025-08-14 16:52:11,114 INFO: [MODEL: llama3:8b] Input uses 131 tokens, remaining for response: 3965.
+2025-08-14 16:52:17,483 INFO: JS Output: 74
+
+2025-08-14 16:52:17,483 INFO: [MODEL: llama3:8b] Output token usage: 1.81%
+2025-08-14 16:52:17,483 INFO: [MODEL: llama3:8b] Output uses 74 tokens, remaining for response: 3891.
+2025-08-14 16:52:17,979 INFO: JS Output: 275
+
+2025-08-14 16:52:17,979 INFO: [MODEL: llama3:8b] Input token usage: 6.71%
+2025-08-14 16:52:17,979 INFO: [MODEL: llama3:8b] Input uses 275 tokens, remaining for response: 3821.
+2025-08-14 16:52:27,110 INFO: JS Output: 131
+
+2025-08-14 16:52:27,110 INFO: [MODEL: llama3:8b] Output token usage: 3.20%
+2025-08-14 16:52:27,110 INFO: [MODEL: llama3:8b] Output uses 131 tokens, remaining for response: 3690.
+2025-08-14 16:52:27,580 INFO: JS Output: 133
+
+2025-08-14 16:52:27,580 INFO: [MODEL: llama3:8b] Input token usage: 3.25%
+2025-08-14 16:52:27,580 INFO: [MODEL: llama3:8b] Input uses 133 tokens, remaining for response: 3963.
+2025-08-14 16:52:37,192 INFO: JS Output: 138
+
+2025-08-14 16:52:37,192 INFO: [MODEL: llama3:8b] Output token usage: 3.37%
+2025-08-14 16:52:37,192 INFO: [MODEL: llama3:8b] Output uses 138 tokens, remaining for response: 3825.
+2025-08-14 16:52:37,660 INFO: JS Output: 938
+
+2025-08-14 16:52:37,660 INFO: [MODEL: llama3:8b] Input token usage: 22.90%
+2025-08-14 16:52:37,660 INFO: [MODEL: llama3:8b] Input uses 938 tokens, remaining for response: 3158.
+2025-08-14 16:52:55,741 INFO: JS Output: 278
+
+2025-08-14 16:52:55,741 INFO: [MODEL: llama3:8b] Output token usage: 6.79%
+2025-08-14 16:52:55,741 INFO: [MODEL: llama3:8b] Output uses 278 tokens, remaining for response: 2880.
+2025-08-14 16:52:56,210 INFO: JS Output: 137
+
+2025-08-14 16:52:56,210 INFO: [MODEL: llama3:8b] Input token usage: 3.34%
+2025-08-14 16:52:56,210 INFO: [MODEL: llama3:8b] Input uses 137 tokens, remaining for response: 3959.
+2025-08-14 16:53:07,706 INFO: JS Output: 173
+
+2025-08-14 16:53:07,706 INFO: [MODEL: llama3:8b] Output token usage: 4.22%
+2025-08-14 16:53:07,706 INFO: [MODEL: llama3:8b] Output uses 173 tokens, remaining for response: 3786.
+2025-08-14 16:53:08,185 INFO: JS Output: 367
+
+2025-08-14 16:53:08,185 INFO: [MODEL: llama3:8b] Input token usage: 8.96%
+2025-08-14 16:53:08,185 INFO: [MODEL: llama3:8b] Input uses 367 tokens, remaining for response: 3729.
+2025-08-14 16:53:20,750 INFO: JS Output: 186
+
+2025-08-14 16:53:20,755 INFO: [MODEL: llama3:8b] Output token usage: 4.54%
+2025-08-14 16:53:20,755 INFO: [MODEL: llama3:8b] Output uses 186 tokens, remaining for response: 3543.
+2025-08-14 16:53:21,235 INFO: JS Output: 265
+
+2025-08-14 16:53:21,235 INFO: [MODEL: llama3:8b] Input token usage: 6.47%
+2025-08-14 16:53:21,235 INFO: [MODEL: llama3:8b] Input uses 265 tokens, remaining for response: 3831.
+2025-08-14 16:53:32,380 INFO: JS Output: 168
+
+2025-08-14 16:53:32,380 INFO: [MODEL: llama3:8b] Output token usage: 4.10%
+2025-08-14 16:53:32,382 INFO: [MODEL: llama3:8b] Output uses 168 tokens, remaining for response: 3663.
+2025-08-14 16:53:32,874 INFO: JS Output: 261
+
+2025-08-14 16:53:32,874 INFO: [MODEL: llama3:8b] Input token usage: 6.37%
+2025-08-14 16:53:32,874 INFO: [MODEL: llama3:8b] Input uses 261 tokens, remaining for response: 3835.
+2025-08-14 16:53:45,644 INFO: JS Output: 201
+
+2025-08-14 16:53:45,644 INFO: [MODEL: llama3:8b] Output token usage: 4.91%
+2025-08-14 16:53:45,644 INFO: [MODEL: llama3:8b] Output uses 201 tokens, remaining for response: 3634.
+2025-08-14 16:53:46,138 INFO: JS Output: 2290
+
+2025-08-14 16:53:46,138 INFO: [MODEL: llama3:8b] Input token usage: 55.91%
+2025-08-14 16:53:46,138 INFO: [MODEL: llama3:8b] Input uses 2290 tokens, remaining for response: 1806.
+2025-08-14 16:54:04,261 INFO: JS Output: 204
+
+2025-08-14 16:54:04,261 INFO: [MODEL: llama3:8b] Output token usage: 4.98%
+2025-08-14 16:54:04,262 INFO: [MODEL: llama3:8b] Output uses 204 tokens, remaining for response: 1602.
+2025-08-14 16:54:04,771 INFO: JS Output: 2065
+
+2025-08-14 16:54:04,772 INFO: [MODEL: llama3:8b] Input token usage: 50.42%
+2025-08-14 16:54:04,772 INFO: [MODEL: llama3:8b] Input uses 2065 tokens, remaining for response: 2031.
+2025-08-14 16:54:28,117 INFO: JS Output: 302
+
+2025-08-14 16:54:28,117 INFO: [MODEL: llama3:8b] Output token usage: 7.37%
+2025-08-14 16:54:28,117 INFO: [MODEL: llama3:8b] Output uses 302 tokens, remaining for response: 1729.
+2025-08-14 16:54:28,597 INFO: JS Output: 1700
+
+2025-08-14 16:54:28,597 INFO: [MODEL: llama3:8b] Input token usage: 41.50%
+2025-08-14 16:54:28,597 INFO: [MODEL: llama3:8b] Input uses 1700 tokens, remaining for response: 2396.
+2025-08-14 16:54:49,730 INFO: JS Output: 283
+
+2025-08-14 16:54:49,730 INFO: [MODEL: llama3:8b] Output token usage: 6.91%
+2025-08-14 16:54:49,730 INFO: [MODEL: llama3:8b] Output uses 283 tokens, remaining for response: 2113.
+2025-08-14 16:54:50,208 INFO: JS Output: 196
+
+2025-08-14 16:54:50,208 INFO: [MODEL: llama3:8b] Input token usage: 4.79%
+2025-08-14 16:54:50,208 INFO: [MODEL: llama3:8b] Input uses 196 tokens, remaining for response: 3900.
+2025-08-14 16:55:05,294 INFO: JS Output: 250
+
+2025-08-14 16:55:05,294 INFO: [MODEL: llama3:8b] Output token usage: 6.10%
+2025-08-14 16:55:05,294 INFO: [MODEL: llama3:8b] Output uses 250 tokens, remaining for response: 3650.
+2025-08-14 16:55:05,771 INFO: JS Output: 465
+
+2025-08-14 16:55:05,771 INFO: [MODEL: llama3:8b] Input token usage: 11.35%
+2025-08-14 16:55:05,771 INFO: [MODEL: llama3:8b] Input uses 465 tokens, remaining for response: 3631.
+2025-08-14 16:55:15,884 INFO: JS Output: 133
+
+2025-08-14 16:55:15,884 INFO: [MODEL: llama3:8b] Output token usage: 3.25%
+2025-08-14 16:55:15,884 INFO: [MODEL: llama3:8b] Output uses 133 tokens, remaining for response: 3498.
+2025-08-14 16:55:15,884 INFO: [0]Consistency Checker VS Original Resume:
+
+[1]Inconsistencies With Original Resume: No; The new resume is consistent with the original resume, as there are no inconsistencies or contradictions found between the two. All information presented in the new resume is present in the original resume, even if paraphrased.
+
+[1]Inconsistencies With Self: No; There are no contradictions or inconsistencies within the new resume itself, indicating that it is self-consistent.
+
+[1]Suggestions for Improvement: None; The new resume appears to be consistent with both the original resume and itself, suggesting that there are no areas that require improvement.
+2025-08-14 16:55:15,889 INFO: [0]Consistency Checker VS Original Resume:
+[1]Inconsistencies With Original Resume: No; The new resume is consistent with the original resume, as there are no inconsistencies or contradictions found between the two. All information presented in the new resume is present in the original resume, even if paraphrased.
+[1]Inconsistencies With Self: No; There are no contradictions or inconsistencies within the new resume itself, indicating that it is self-consistent.
+[1]Suggestions for Improvement: None; The new resume appears to be consistent with both the original resume and itself, suggesting that there are no areas that require improvement.

@@ -1,0 +1,205 @@
+2025-08-15 13:30:26,874 INFO: Waiting for Ollama to be ready...
+2025-08-15 13:30:28,914 INFO: Ollama is running.
+2025-08-15 13:30:28,974 INFO: Refreshing options...
+2025-08-15 13:30:31,057 INFO: Options refreshed:
+2025-08-15 13:30:31,057 INFO: Models: ['deepseek-r1:8b', 'llama3:8b']
+2025-08-15 13:30:31,057 INFO: Systems: ['system1.txt', 'system_consistency.txt', 'system_consistency_cl.txt', 'system_cover_letter.txt']
+2025-08-15 13:30:31,057 INFO: CVs: ['cv1.txt']
+2025-08-15 13:30:31,057 INFO: CV Templates: ['cv_template.docx', 'cv_template2.docx', 'cv_template21.docx', 'cv_template21_simplest.docx']
+2025-08-15 13:30:31,057 INFO: CL Templates: ['cl_template.docx']
+2025-08-15 13:30:31,057 INFO: Previously Saved CV Outputs: ['cltrials.txt', 'consistency_tests0.txt', 'out_cv_20250724_213613.txt', 'out_cv_20250725_000423.txt', 'out_cv_20250725_001236.txt', 'out_cv_20250725_003414.txt', 'out_cv_20250725_004330.txt', 'out_cv_20250725_005646.txt', 'out_cv_20250730_011841.txt', 'out_cv_20250730_020338.txt', 'stableish0.txt']
+2025-08-15 13:30:31,057 INFO: Previously Saved CL Outputs: ['cltest0.txt', 'out_cl_20250722_234433.txt', 'out_cl_20250723_230452.txt']
+2025-08-15 13:31:14,602 INFO: Cover letter loaded from C:\CodeProjects\Sisyphus\Sisyphus\saved_outputs_cl\cltest0.txt
+2025-08-15 13:31:17,506 INFO: Summary of job description is empty. Generating summary...
+2025-08-15 13:31:17,972 INFO: JS Output: 97
+
+2025-08-15 13:31:17,972 INFO: [MODEL: llama3:8b] Input token usage: 2.37%
+2025-08-15 13:31:17,972 INFO: [MODEL: llama3:8b] Input uses 97 tokens, remaining for response: 3999.
+2025-08-15 13:31:33,322 INFO: JS Output: 235
+
+2025-08-15 13:31:33,322 INFO: [MODEL: llama3:8b] Output token usage: 5.74%
+2025-08-15 13:31:33,322 INFO: [MODEL: llama3:8b] Output uses 235 tokens, remaining for response: 3764.
+2025-08-15 13:31:33,322 INFO: Summary of resume is empty. Generating summary...
+2025-08-15 13:31:33,336 INFO: Resume is empty. Please enter a resume.
+2025-08-15 13:32:38,273 INFO: CV loaded from C:\CodeProjects\Sisyphus\Sisyphus\saved_outputs\consistency_tests0.txt
+2025-08-15 13:32:41,937 INFO: Summary of resume is empty. Generating summary...
+2025-08-15 13:32:41,937 INFO: slide_summary: candidate_name: Jane Doe
+2025-08-15 13:32:41,937 INFO: slide_summary: candidate_title: Senior Software Engineer
+2025-08-15 13:32:41,937 INFO: slide_summary: general_txts: 4
+2025-08-15 13:32:41,937 INFO: slide_summary: special_txts: 6
+2025-08-15 13:32:42,393 INFO: JS Output: 241
+
+2025-08-15 13:32:42,393 INFO: [MODEL: llama3:8b] Input token usage: 5.88%
+2025-08-15 13:32:42,393 INFO: [MODEL: llama3:8b] Input uses 241 tokens, remaining for response: 3855.
+2025-08-15 13:32:49,841 INFO: JS Output: 100
+
+2025-08-15 13:32:49,841 INFO: [MODEL: llama3:8b] Output token usage: 2.44%
+2025-08-15 13:32:49,841 INFO: [MODEL: llama3:8b] Output uses 100 tokens, remaining for response: 3755.
+2025-08-15 13:32:50,331 INFO: JS Output: 191
+
+2025-08-15 13:32:50,331 INFO: [MODEL: llama3:8b] Input token usage: 4.66%
+2025-08-15 13:32:50,331 INFO: [MODEL: llama3:8b] Input uses 191 tokens, remaining for response: 3905.
+2025-08-15 13:32:56,790 INFO: JS Output: 82
+
+2025-08-15 13:32:56,790 INFO: [MODEL: llama3:8b] Output token usage: 2.00%
+2025-08-15 13:32:56,790 INFO: [MODEL: llama3:8b] Output uses 82 tokens, remaining for response: 3823.
+2025-08-15 13:32:57,295 INFO: JS Output: 303
+
+2025-08-15 13:32:57,295 INFO: [MODEL: llama3:8b] Input token usage: 7.40%
+2025-08-15 13:32:57,295 INFO: [MODEL: llama3:8b] Input uses 303 tokens, remaining for response: 3793.
+2025-08-15 13:33:09,552 INFO: JS Output: 202
+
+2025-08-15 13:33:09,552 INFO: [MODEL: llama3:8b] Output token usage: 4.93%
+2025-08-15 13:33:09,552 INFO: [MODEL: llama3:8b] Output uses 202 tokens, remaining for response: 3591.
+2025-08-15 13:33:10,117 INFO: JS Output: 191
+
+2025-08-15 13:33:10,118 INFO: [MODEL: llama3:8b] Input token usage: 4.66%
+2025-08-15 13:33:10,118 INFO: [MODEL: llama3:8b] Input uses 191 tokens, remaining for response: 3905.
+2025-08-15 13:33:17,246 INFO: JS Output: 93
+
+2025-08-15 13:33:17,246 INFO: [MODEL: llama3:8b] Output token usage: 2.27%
+2025-08-15 13:33:17,246 INFO: [MODEL: llama3:8b] Output uses 93 tokens, remaining for response: 3812.
+2025-08-15 13:33:17,733 INFO: JS Output: 194
+
+2025-08-15 13:33:17,733 INFO: [MODEL: llama3:8b] Input token usage: 4.74%
+2025-08-15 13:33:17,733 INFO: [MODEL: llama3:8b] Input uses 194 tokens, remaining for response: 3902.
+2025-08-15 13:33:26,379 INFO: JS Output: 121
+
+2025-08-15 13:33:26,379 INFO: [MODEL: llama3:8b] Output token usage: 2.95%
+2025-08-15 13:33:26,379 INFO: [MODEL: llama3:8b] Output uses 121 tokens, remaining for response: 3781.
+2025-08-15 13:33:26,895 INFO: JS Output: 341
+
+2025-08-15 13:33:26,895 INFO: [MODEL: llama3:8b] Input token usage: 8.33%
+2025-08-15 13:33:26,895 INFO: [MODEL: llama3:8b] Input uses 341 tokens, remaining for response: 3755.
+2025-08-15 13:33:38,914 INFO: JS Output: 180
+
+2025-08-15 13:33:38,914 INFO: [MODEL: llama3:8b] Output token usage: 4.39%
+2025-08-15 13:33:38,914 INFO: [MODEL: llama3:8b] Output uses 180 tokens, remaining for response: 3575.
+2025-08-15 13:33:39,476 INFO: JS Output: 194
+
+2025-08-15 13:33:39,477 INFO: [MODEL: llama3:8b] Input token usage: 4.74%
+2025-08-15 13:33:39,477 INFO: [MODEL: llama3:8b] Input uses 194 tokens, remaining for response: 3902.
+2025-08-15 13:33:47,935 INFO: JS Output: 111
+
+2025-08-15 13:33:47,935 INFO: [MODEL: llama3:8b] Output token usage: 2.71%
+2025-08-15 13:33:47,935 INFO: [MODEL: llama3:8b] Output uses 111 tokens, remaining for response: 3791.
+2025-08-15 13:33:48,516 INFO: JS Output: 350
+
+2025-08-15 13:33:48,517 INFO: [MODEL: llama3:8b] Input token usage: 8.54%
+2025-08-15 13:33:48,517 INFO: [MODEL: llama3:8b] Input uses 350 tokens, remaining for response: 3746.
+2025-08-15 13:33:59,608 INFO: JS Output: 157
+
+2025-08-15 13:33:59,608 INFO: [MODEL: llama3:8b] Output token usage: 3.83%
+2025-08-15 13:33:59,608 INFO: [MODEL: llama3:8b] Output uses 157 tokens, remaining for response: 3589.
+2025-08-15 13:34:00,193 INFO: JS Output: 399
+
+2025-08-15 13:34:00,194 INFO: [MODEL: llama3:8b] Input token usage: 9.74%
+2025-08-15 13:34:00,195 INFO: [MODEL: llama3:8b] Input uses 399 tokens, remaining for response: 3697.
+2025-08-15 13:34:15,977 INFO: JS Output: 234
+
+2025-08-15 13:34:15,977 INFO: [MODEL: llama3:8b] Output token usage: 5.71%
+2025-08-15 13:34:15,977 INFO: [MODEL: llama3:8b] Output uses 234 tokens, remaining for response: 3463.
+2025-08-15 13:34:16,548 INFO: JS Output: 350
+
+2025-08-15 13:34:16,549 INFO: [MODEL: llama3:8b] Input token usage: 8.54%
+2025-08-15 13:34:16,549 INFO: [MODEL: llama3:8b] Input uses 350 tokens, remaining for response: 3746.
+2025-08-15 13:34:28,148 INFO: JS Output: 153
+
+2025-08-15 13:34:28,148 INFO: [MODEL: llama3:8b] Output token usage: 3.74%
+2025-08-15 13:34:28,148 INFO: [MODEL: llama3:8b] Output uses 153 tokens, remaining for response: 3593.
+2025-08-15 13:34:28,733 INFO: JS Output: 269
+
+2025-08-15 13:34:28,734 INFO: [MODEL: llama3:8b] Input token usage: 6.57%
+2025-08-15 13:34:28,734 INFO: [MODEL: llama3:8b] Input uses 269 tokens, remaining for response: 3827.
+2025-08-15 13:34:38,111 INFO: JS Output: 113
+
+2025-08-15 13:34:38,111 INFO: [MODEL: llama3:8b] Output token usage: 2.76%
+2025-08-15 13:34:38,111 INFO: [MODEL: llama3:8b] Output uses 113 tokens, remaining for response: 3714.
+2025-08-15 13:34:38,684 INFO: JS Output: 394
+
+2025-08-15 13:34:38,684 INFO: [MODEL: llama3:8b] Input token usage: 9.62%
+2025-08-15 13:34:38,684 INFO: [MODEL: llama3:8b] Input uses 394 tokens, remaining for response: 3702.
+2025-08-15 13:34:57,744 INFO: JS Output: 268
+
+2025-08-15 13:34:57,744 INFO: [MODEL: llama3:8b] Output token usage: 6.54%
+2025-08-15 13:34:57,744 INFO: [MODEL: llama3:8b] Output uses 268 tokens, remaining for response: 3434.
+2025-08-15 13:34:58,317 INFO: JS Output: 269
+
+2025-08-15 13:34:58,318 INFO: [MODEL: llama3:8b] Input token usage: 6.57%
+2025-08-15 13:34:58,318 INFO: [MODEL: llama3:8b] Input uses 269 tokens, remaining for response: 3827.
+2025-08-15 13:35:07,002 INFO: JS Output: 97
+
+2025-08-15 13:35:07,002 INFO: [MODEL: llama3:8b] Output token usage: 2.37%
+2025-08-15 13:35:07,002 INFO: [MODEL: llama3:8b] Output uses 97 tokens, remaining for response: 3730.
+2025-08-15 13:35:07,579 INFO: JS Output: 187
+
+2025-08-15 13:35:07,579 INFO: [MODEL: llama3:8b] Input token usage: 4.57%
+2025-08-15 13:35:07,579 INFO: [MODEL: llama3:8b] Input uses 187 tokens, remaining for response: 3909.
+2025-08-15 13:35:15,119 INFO: JS Output: 83
+
+2025-08-15 13:35:15,119 INFO: [MODEL: llama3:8b] Output token usage: 2.03%
+2025-08-15 13:35:15,119 INFO: [MODEL: llama3:8b] Output uses 83 tokens, remaining for response: 3826.
+2025-08-15 13:35:15,710 INFO: JS Output: 302
+
+2025-08-15 13:35:15,710 INFO: [MODEL: llama3:8b] Input token usage: 7.37%
+2025-08-15 13:35:15,710 INFO: [MODEL: llama3:8b] Input uses 302 tokens, remaining for response: 3794.
+2025-08-15 13:35:28,907 INFO: JS Output: 167
+
+2025-08-15 13:35:28,907 INFO: [MODEL: llama3:8b] Output token usage: 4.08%
+2025-08-15 13:35:28,907 INFO: [MODEL: llama3:8b] Output uses 167 tokens, remaining for response: 3627.
+2025-08-15 13:35:29,492 INFO: JS Output: 184
+
+2025-08-15 13:35:29,492 INFO: [MODEL: llama3:8b] Input token usage: 4.49%
+2025-08-15 13:35:29,492 INFO: [MODEL: llama3:8b] Input uses 184 tokens, remaining for response: 3912.
+2025-08-15 13:35:36,661 INFO: JS Output: 73
+
+2025-08-15 13:35:36,661 INFO: [MODEL: llama3:8b] Output token usage: 1.78%
+2025-08-15 13:35:36,661 INFO: [MODEL: llama3:8b] Output uses 73 tokens, remaining for response: 3839.
+2025-08-15 13:35:37,236 INFO: JS Output: 128
+
+2025-08-15 13:35:37,236 INFO: [MODEL: llama3:8b] Input token usage: 3.12%
+2025-08-15 13:35:37,236 INFO: [MODEL: llama3:8b] Input uses 128 tokens, remaining for response: 3968.
+2025-08-15 13:35:42,646 INFO: JS Output: 46
+
+2025-08-15 13:35:42,646 INFO: [MODEL: llama3:8b] Output token usage: 1.12%
+2025-08-15 13:35:42,646 INFO: [MODEL: llama3:8b] Output uses 46 tokens, remaining for response: 3922.
+2025-08-15 13:35:43,245 INFO: JS Output: 986
+
+2025-08-15 13:35:43,245 INFO: [MODEL: llama3:8b] Input token usage: 24.07%
+2025-08-15 13:35:43,245 INFO: [MODEL: llama3:8b] Input uses 986 tokens, remaining for response: 3110.
+2025-08-15 13:36:12,433 INFO: JS Output: 396
+
+2025-08-15 13:36:12,433 INFO: [MODEL: llama3:8b] Output token usage: 9.67%
+2025-08-15 13:36:12,433 INFO: [MODEL: llama3:8b] Output uses 396 tokens, remaining for response: 2714.
+2025-08-15 13:36:13,035 INFO: JS Output: 904
+
+2025-08-15 13:36:13,035 INFO: [MODEL: llama3:8b] Input token usage: 22.07%
+2025-08-15 13:36:13,035 INFO: [MODEL: llama3:8b] Input uses 904 tokens, remaining for response: 3192.
+2025-08-15 13:36:25,534 INFO: JS Output: 133
+
+2025-08-15 13:36:25,534 INFO: [MODEL: llama3:8b] Output token usage: 3.25%
+2025-08-15 13:36:25,534 INFO: [MODEL: llama3:8b] Output uses 133 tokens, remaining for response: 3059.
+2025-08-15 13:36:25,541 INFO: [0]Consistency Checker Vs Job Description:
+[1]Inconsistencies With Job Description: No; The cover letter mentions relevant skills and experiences, such as cloud computing, distributed systems, advanced programming, algorithms, data structures, operating systems, and databases, which align with the job description's requirements. It also highlights proficiency in Java, Python, C++, and Go, and experience with microservices architecture and containerization using Docker, which are all relevant to the job description.
+
+[1]Suggestions for Improvement: None; The cover letter seems well-tailored to the job description, highlighting relevant skills and experiences that align with the position.
+2025-08-15 13:36:25,541 INFO: [0]Consistency Checker Vs Job Description:
+[1]Inconsistencies With Job Description: No; The cover letter mentions relevant skills and experiences, such as cloud computing, distributed systems, advanced programming, algorithms, data structures, operating systems, and databases, which align with the job description's requirements. It also highlights proficiency in Java, Python, C++, and Go, and experience with microservices architecture and containerization using Docker, which are all relevant to the job description.
+[1]Suggestions for Improvement: None; The cover letter seems well-tailored to the job description, highlighting relevant skills and experiences that align with the position.
+2025-08-15 13:36:25,541 INFO: Consistency Checker: Cover Letter VS Original Resume:
+2025-08-15 13:36:26,133 INFO: JS Output: 854
+
+2025-08-15 13:36:26,133 INFO: [MODEL: llama3:8b] Input token usage: 20.85%
+2025-08-15 13:36:26,133 INFO: [MODEL: llama3:8b] Input uses 854 tokens, remaining for response: 3242.
+2025-08-15 13:36:38,237 INFO: JS Output: 139
+
+2025-08-15 13:36:38,237 INFO: [MODEL: llama3:8b] Output token usage: 3.39%
+2025-08-15 13:36:38,237 INFO: [MODEL: llama3:8b] Output uses 139 tokens, remaining for response: 3103.
+2025-08-15 13:36:38,246 INFO: [0]Consistency Checker Vs Resume:
+[1]Inconsistencies With Resume: No; The cover letter mentions a Master's degree in Software Engineering from Capital Tech University, which is also mentioned on the resume. Similarly, certifications as an AWS Certified Solutions Architect and Scrum Master are also present on the resume. Additionally, the languages spoken (English, Spanish, French) are listed on both the cover letter and the resume.
+[1]Inconsistencies With Self: No; The cover letter does not contain any contradictions or inconsistencies with itself. Each paragraph builds upon the previous one to highlight Jane's relevant skills and experiences.
+[1]Suggestions for Improvement: None
+2025-08-15 13:36:38,246 INFO: [0]Consistency Checker Vs Resume:
+[1]Inconsistencies With Resume: No; The cover letter mentions a Master's degree in Software Engineering from Capital Tech University, which is also mentioned on the resume. Similarly, certifications as an AWS Certified Solutions Architect and Scrum Master are also present on the resume. Additionally, the languages spoken (English, Spanish, French) are listed on both the cover letter and the resume.
+[1]Inconsistencies With Self: No; The cover letter does not contain any contradictions or inconsistencies with itself. Each paragraph builds upon the previous one to highlight Jane's relevant skills and experiences.
+[1]Suggestions for Improvement: None

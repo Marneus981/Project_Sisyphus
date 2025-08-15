@@ -1,0 +1,27 @@
+2025-08-15 12:52:02,338 INFO: Waiting for Ollama to be ready...
+2025-08-15 12:54:32,898 INFO: Ollama did not start in time.
+2025-08-15 12:54:32,898 INFO: Ollama server is not running. Starting Ollama.
+2025-08-15 12:54:32,915 INFO: Starting Ollama server...
+2025-08-15 12:54:32,916 INFO: Waiting for Ollama to be ready...
+2025-08-15 12:54:34,948 INFO: Ollama is running.
+2025-08-15 12:54:35,091 INFO: Refreshing options...
+2025-08-15 12:54:37,152 INFO: Options refreshed:
+2025-08-15 12:54:37,153 INFO: Models: ['deepseek-r1:8b', 'llama3:8b']
+2025-08-15 12:54:37,154 INFO: Systems: ['system1.txt', 'system_consistency.txt', 'system_consistency_cl.txt', 'system_cover_letter.txt']
+2025-08-15 12:54:37,155 INFO: CVs: ['cv1.txt']
+2025-08-15 12:54:37,156 INFO: CV Templates: ['cv_template.docx', 'cv_template2.docx', 'cv_template21.docx', 'cv_template21_simplest.docx']
+2025-08-15 12:54:37,156 INFO: CL Templates: ['cl_template.docx']
+2025-08-15 12:54:37,156 INFO: Previously Saved CV Outputs: ['cltrials.txt', 'consistency_tests0.txt', 'out_cv_20250724_213613.txt', 'out_cv_20250725_000423.txt', 'out_cv_20250725_001236.txt', 'out_cv_20250725_003414.txt', 'out_cv_20250725_004330.txt', 'out_cv_20250725_005646.txt', 'out_cv_20250730_011841.txt', 'out_cv_20250730_020338.txt', 'stableish0.txt']
+2025-08-15 12:54:37,157 INFO: Previously Saved CL Outputs: ['cltest0.txt', 'out_cl_20250722_234433.txt', 'out_cl_20250723_230452.txt']
+2025-08-15 12:55:22,832 INFO: CV loaded from C:\CodeProjects\Sisyphus\Sisyphus\saved_outputs\consistency_tests0.txt
+2025-08-15 12:55:32,477 INFO: Summary of job description is empty. Generating summary...
+2025-08-15 12:55:32,477 INFO: Job description is empty. Please enter a job description.
+2025-08-15 12:55:42,277 INFO: Summary of job description is empty. Generating summary...
+2025-08-15 12:55:43,114 INFO: JS Output: 97
+
+2025-08-15 12:55:43,114 INFO: [MODEL: llama3:8b] Input token usage: 2.37%
+2025-08-15 12:55:43,130 INFO: [MODEL: llama3:8b] Input uses 97 tokens, remaining for response: 3999.
+2025-08-15 12:56:47,538 INFO: JS Output: 290
+
+2025-08-15 12:56:47,538 INFO: [MODEL: llama3:8b] Output token usage: 7.08%
+2025-08-15 12:56:47,538 INFO: [MODEL: llama3:8b] Output uses 290 tokens, remaining for response: 3709.

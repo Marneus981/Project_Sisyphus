@@ -2,23 +2,9 @@
     [][1.0 PUBLIC RELEASE] Clean code and prompt engineer a bit; make a single UI window;deal with debug prints in "a way"
     [][1.0 PRIVATE RELEASE] Add own CV; verify code performance and good practices
 [WIP]      
-    [0.98]
-        []Make output > MORE consistent:
-            [FIXED?]Debug missing sections (likely model output error)
-            []Verify that whenever the model chooses a duplicate experience, it does so without problems
-            []Simplify consistency_checker_vs_cv
-                IDEA: Analyze each section of the new resume vs each section of the old resume 
-                (change the old resume to only include the same data as the new resume)
-                NEW Functions: new_vs_old_section
-                Chain: old resume, new resume >>> preprocess >>> new_vs_old_section >>> consistency_checker_vs_cv
-            []Simplify consistency_checker_vs_job_desc
-                IDEA: Summarize resume and use that for analysis (additionally, also summarize job_desc)
-                IDEA: Go section by section vs job_desc (maybe feeding in the old resume as contrast)
-            []Simplify make_cover_letter_text
-                IDEA: Summarize resume and use that for analysis (wholistic) (additionally, maybe summarize job_desc) 
-
     [0.99]
-        []Make 2 consistency checkers for the cover letter (vs resume and vs job_desc)
+        []Introduce time analysis
+        []Cut down on times we summarize resume: pass it as an arg to functions = store it
         []Give fields a last used memory
         []Outsource formatting to classic functions (even simpler tailoring output)
         []Make it a single window
@@ -140,3 +126,11 @@
         [DONE]Change prompt
     Implemented better tokenizer math (ouput too)
     [DONE]Simplify tailor summary
+    [DONE]Make output > MORE consistent:
+    [DONE]Debug missing sections (likely model output error)
+    [DONE]Verify that whenever the model chooses a duplicate experience, it does so without problems
+    [DONE]Simplify consistency_checker_vs_cv
+    [DONE]Simplify consistency_checker_vs_job_desc
+        IDEA: Summarize resume and use that for analysis (additionally, also summarize job_desc)
+        IDEA: Go section by section vs job_desc (maybe feeding in the old resume as contrast)
+    [DONE]Simplify make_cover_letter_text
