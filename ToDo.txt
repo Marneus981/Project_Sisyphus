@@ -3,14 +3,14 @@
     [][1.0 PRIVATE RELEASE] Add own CV; verify code performance and good practices
 [WIP]      
     [0.99]
-        []Introduce time analysis
-        []Cut down on times we summarize resume: pass it as an arg to functions = store it
+
         []Give fields a last used memory
         []Outsource formatting to classic functions (even simpler tailoring output)
         []Make it a single window
         []Add output window
         []Add loading icon
         []Verify token count correctness
+        []Add config file
     
     [???]Convert to PDF button
         
@@ -22,6 +22,7 @@
 
 
 [???]
+    Add more time analysis?
     Add mode button for chronological ordering
     Miggrate to better UI package
     Wrap app
@@ -134,3 +135,5 @@
         IDEA: Summarize resume and use that for analysis (additionally, also summarize job_desc)
         IDEA: Go section by section vs job_desc (maybe feeding in the old resume as contrast)
     [DONE]Simplify make_cover_letter_text
+    [DONE]Introduce time analysis
+    [DONE]Cut down on times we summarize resume: pass it as an arg to functions = store it

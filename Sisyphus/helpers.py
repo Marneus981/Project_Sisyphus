@@ -2,15 +2,29 @@ import os
 from xml.parsers.expat import model
 from Sisyphus import parsers, runLocalModel
 import datetime
-import transformers
 import subprocess
 import logging
 import re
+import time
 # Set up logging
 print = logging.info
 
+from main import TIME_LOGGING
 TOKENIZER_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\tokenizers"
 LLAMA_MAX_TOKENS = 4096
+
+def log_time(func):
+    # Decorator to log the execution time of a function
+    def wrapper(*args, **kwargs):
+        start = time.perf_counter()
+        result = func(*args, **kwargs)
+        elapsed = time.perf_counter() - start
+        logging.info(f"[TIME] {func.__name__} took {elapsed:.4f} seconds")
+        return result
+    if TIME_LOGGING:
+        return wrapper
+    return func
+
 def count_tokens_with_js(text):
     tokenizer_js_path = os.path.join(TOKENIZER_PATH, "llama3", "tokenizer.js")
     result = subprocess.run(

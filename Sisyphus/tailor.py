@@ -9,6 +9,7 @@ DEFAULT_URL = "http://localhost:11434"
 # Set up logging
 print = logging.info
 
+@helpers.log_time
 def augment_output(input_text, reference_dict, type):
     allowed_types = ['volunteering_and_leadership','work_experience','projects', 'vl_w_p', ]
     if type not in allowed_types:
@@ -179,6 +180,7 @@ def augment_output(input_text, reference_dict, type):
         tmp_dict['projects'] = return_list[2]
     return tmp_dict
 
+@helpers.log_time
 def prepare_input_text(input_text, type):
     allowed_types = ['volunteering_and_leadership','work_experience','projects', 'vl_w_p', ]
     if type not in allowed_types:
@@ -236,6 +238,7 @@ def prepare_input_text(input_text, type):
             return_text += f"{item}\n"
         return return_text
 
+@helpers.log_time
 def clean_first_step(text):
     # Remove lines that do not start with [X] where X is a capitalized letter
     cleaned_lines = []
@@ -249,6 +252,7 @@ def clean_first_step(text):
 """
 #For each main tailor function (including pruning), we need to create 3 functions
 #Tailor Volunteering and Leadership
+@helpers.log_time
 def summarize_job_description(job_description = "", system = "", ollama_url=DEFAULT_URL, model=DEFAULT_MODEL):
     # Summarize the job description by extracting key responsibilities and requirements
     # This is a placeholder implementation
@@ -275,6 +279,7 @@ def summarize_job_description(job_description = "", system = "", ollama_url=DEFA
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
+@helpers.log_time
 def step0_volunteering_and_leadership(model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL, 
                                        raw_cv_data="", job_description=""):
     prompt = f"""
@@ -307,6 +312,7 @@ Output the selected projects strictly in the following format, without changing 
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
+@helpers.log_time
 def step3_volunteering_and_leadership(model=DEFAULT_MODEL, system2="", ollama_url=DEFAULT_URL, 
                                        experience="", job_description=""):
     prompt = f"""
@@ -348,6 +354,7 @@ Return only the revised section in the following format:
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
+@helpers.log_time
 def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system1="", system2="", ollama_url=DEFAULT_URL, 
                                        raw_cv_data="", job_description_summary="", 
                                        section="volunteering_and_leadership", reference_dct={}):
@@ -389,6 +396,7 @@ def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system1="", system2=
     return step4_text
 
 # Tailor Work Experience
+@helpers.log_time
 def step0_work_experience(model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL, 
                           raw_cv_data="", job_description=""):
     prompt = f"""
@@ -421,6 +429,7 @@ Output the selected projects strictly in the following format, without changing 
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
+@helpers.log_time
 def step3_work_experience(model=DEFAULT_MODEL, system2="", ollama_url=DEFAULT_URL, 
                           experience="", job_description=""):
     prompt = f"""
@@ -462,6 +471,7 @@ Return only the revised section in the following format:
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
+@helpers.log_time
 def tailor_work_experience(model=DEFAULT_MODEL, system1="", system2="", ollama_url=DEFAULT_URL, 
                           raw_cv_data="", job_description_summary="", section="work_experience", reference_dct={}):
     print(f"tailor_work_experience: raw_cv_data:\n" + raw_cv_data)
@@ -499,6 +509,7 @@ def tailor_work_experience(model=DEFAULT_MODEL, system1="", system2="", ollama_u
     print(f"tailor_work_experience: step4_text after filtering:\n" + step4_text)
     return step4_text
 # Tailor Projects
+@helpers.log_time
 def step0_projects(model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL, 
                    raw_cv_data="", job_description=""):
     prompt = f"""
@@ -531,6 +542,7 @@ Output the selected projects strictly in the following format, without changing 
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
+@helpers.log_time
 def step3_projects(model=DEFAULT_MODEL, system2="", ollama_url=DEFAULT_URL, 
                    experience="", job_description=""):
     prompt = f"""
@@ -571,6 +583,7 @@ Return only the revised section in the following format:
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
+@helpers.log_time
 def tailor_projects(model=DEFAULT_MODEL, system1="", system2="", ollama_url=DEFAULT_URL, 
                    raw_cv_data="", job_description_summary="", section="projects", reference_dct={}):
     print(f"tailor_projects: raw_cv_data:\n" + raw_cv_data)
@@ -608,6 +621,8 @@ def tailor_projects(model=DEFAULT_MODEL, system1="", system2="", ollama_url=DEFA
     print(f"tailor_projects: step4_text after filtering:\n" + step4_text)
     return step4_text
 #Prune Experiences
+
+@helpers.log_time
 def step0_prune_experiences(model = DEFAULT_MODEL, system1 = "", ollama_url = DEFAULT_URL,
                             experiences = "", job_description = ""):
     
@@ -647,6 +662,8 @@ def step0_prune_experiences(model = DEFAULT_MODEL, system1 = "", ollama_url = DE
         print("Ollama response was not valid JSON:")
         print(response.text)
         return "Error: Ollama response was not valid JSON."
+
+@helpers.log_time
 def prune_experiences(model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL, 
                    experiences="", job_description_summary="", section="vl_w_p", reference_dct={}):
     print(f"tailor_experiences: experiences:\n" + experiences)
@@ -666,6 +683,7 @@ def prune_experiences(model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL,
 #Longer input tailoring functions
 #Sliding Window + Hierarchical solution
 #Tailor Summary
+@helpers.log_time
 def summarize_section(section="", model = DEFAULT_MODEL, system = "", ollama_url = DEFAULT_URL, section_name = ""):
     # Implement the logic to summarize the section based on the job description
     prompt = f"""
@@ -695,6 +713,7 @@ def summarize_section(section="", model = DEFAULT_MODEL, system = "", ollama_url
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
+@helpers.log_time
 def summarize_general_info(general_info_text = "", model = DEFAULT_MODEL, system = "", ollama_url = DEFAULT_URL):
     prompt = f"""
     Given the following general information from a resume:
@@ -720,6 +739,8 @@ def summarize_general_info(general_info_text = "", model = DEFAULT_MODEL, system
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
+
+@helpers.log_time
 def summarize_skills( model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, skill_section=""):
     prompt = f"""
     Given the following skills information from a resume:
@@ -745,6 +766,8 @@ def summarize_skills( model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, sk
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
+
+@helpers.log_time
 def sliding_window_two_sections(section1 = "", section2 ="", model=DEFAULT_MODEL, system1="", system2="", system = "", ollama_url=DEFAULT_URL,
                                 section1_name = "", section2_name = "", candidate_name = "", candidate_title = ""):
     summary1 = summarize_section(section1, model=model, system=system1, ollama_url=ollama_url, section_name=section1_name)
@@ -781,6 +804,7 @@ def sliding_window_two_sections(section1 = "", section2 ="", model=DEFAULT_MODEL
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
+@helpers.log_time
 def sliding_window_three_sections(section1 = "", section2 = "", section3 = "", model=DEFAULT_MODEL, system1="", system2="", system3="", system = "", ollama_url=DEFAULT_URL,
                                 section1_name = "", section2_name = "", section3_name = "", candidate_name = "", candidate_title = ""):
     summary1 = summarize_section(section1, model=model, system=system1, ollama_url=ollama_url, section_name=section1_name)
@@ -820,6 +844,7 @@ def sliding_window_three_sections(section1 = "", section2 = "", section3 = "", m
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
+@helpers.log_time
 def slide_summary(sections_dct_list = [], model = DEFAULT_MODEL, system_s = "",system = "", system1 = "", system2 = "", system3 = "", ollama_url = DEFAULT_URL, windows = 2, skill_section = False):
     #Divide sections_dct_list into 2 lists: one with dicts that contain "unchanging" data (general info, really) and one containing list/tailored data
     #Note: resume has no summary or skills section
@@ -907,6 +932,7 @@ def slide_summary(sections_dct_list = [], model = DEFAULT_MODEL, system_s = "",s
     slide_results.append(skills_summary)
     return slide_results
 
+@helpers.log_time
 def step0_tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, raw_cv_data = ""
                          , system_s = "", system = "", system1 = "", system2 = "", system3 = "", system0 = "",
                          windows = 2, skill_section = False):
@@ -949,6 +975,7 @@ def step0_tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, raw_cv_dat
         print("Ollama response was not valid JSON:")
         print(response.text)
 
+@helpers.log_time
 def step1_tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, 
                          prev_summary = "", job_description  = "", system = ""):
     prompt = f"""
@@ -984,6 +1011,7 @@ def step1_tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL,
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
+@helpers.log_time
 def tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL,
                     raw_cv_data="", job_description="",
                     system_s="", system00="", system1="", system2="", system3="", system0="", windows=2,
@@ -997,6 +1025,7 @@ def tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL,
                                   system=system01)
     return step1.strip()
 
+@helpers.log_time
 def return_text_with_skills(cv_text):
     #Note: text: comma separated skills, dict: section to subsections to lists
     return_list = []
@@ -1059,6 +1088,7 @@ def return_text_with_skills(cv_text):
 
     return "\n".join([return_text,skill,prog,tech,soft])
 
+@helpers.log_time
 def tailor_skills(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", job_description="", section="Skills"):
     """
     Given a cv_data containing text pertaining to all the skills considered 
@@ -1109,6 +1139,7 @@ def tailor_skills(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_dat
 #Resume/Cover Letter Consistency Checker VS Old Resume
 #Chain: old resume, new resume >>> new_vs_old_section >>> consistency_checker_vs_cv
 #Chain: new resume, cover letter >>> summarize resume >>> consistency_checker_vs_cv
+@helpers.log_time
 def new_vs_old_section(old_resume_s_txt, new_resume_s_txt, section_name = "", model = DEFAULT_MODEL, system = "", ollama_url = DEFAULT_URL):
     prompt = f"""
     Given the following raw untailored resume section:
@@ -1141,6 +1172,7 @@ def new_vs_old_section(old_resume_s_txt, new_resume_s_txt, section_name = "", mo
         print(response.text)
     return
 
+@helpers.log_time
 def new_vs_old_resume(old_resume_txt = "", new_resume_txt = "", model = DEFAULT_MODEL, system_s = "", ollama_url = DEFAULT_URL):
     old_resume_txt0 = return_text_with_skills(old_resume_txt)
     old_dcts = parsers.dict_spliter(parsers.parse_cv_out(helpers.filter_output(old_resume_txt0.strip())))
@@ -1157,6 +1189,7 @@ def new_vs_old_resume(old_resume_txt = "", new_resume_txt = "", model = DEFAULT_
         analysis_txts.append(analysis_txt)
     return analysis_txts
 
+@helpers.log_time
 def consistency_checker_vs_cv(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, system = "", system_s="", cv_data="", cv_data_orig ="", type="CV"):
     if type == "CV":
         print("Consistency Checker: Tailored Resume VS Original Resume:")
@@ -1229,6 +1262,7 @@ def consistency_checker_vs_cv(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, syste
 
 #Tailor Cover Letter
 #Chain: new resume, job_desc >>> summarize resume, job desc >>> make_cover_letter_text
+@helpers.log_time
 def make_cover_letter_text(model=DEFAULT_MODEL,system = "",
                            ollama_url=DEFAULT_URL, cv_data="", job_description=""):
     """
@@ -1279,6 +1313,7 @@ def make_cover_letter_text(model=DEFAULT_MODEL,system = "",
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
+@helpers.log_time
 def compose_cover_letter_dictionary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, cv_text="", job_description=""):
     """
     Given a resume containing education, experiences, projects and skills considered 
@@ -1313,6 +1348,7 @@ def compose_cover_letter_dictionary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL,
 #Resume/Cover Letter Consistency Checker VS Job Description
 #Chain: cover letter, job_desc >>> summarize job desc >>> consistency_checker_vs_job_desc
 #Chain: new resume, job_desc >>> summarize resume, job desc >>> consistency_checker_vs_job_desc
+@helpers.log_time
 def consistency_checker_vs_job_desc(model=DEFAULT_MODEL,  ollama_url=DEFAULT_URL, system="", cv_data="", job_description="", type="CV"):
     if type == "CV":
         prompt = f"""
