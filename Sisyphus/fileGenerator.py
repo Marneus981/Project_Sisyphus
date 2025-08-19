@@ -3,6 +3,7 @@ import subprocess
 import os
 import time
 import logging
+from Sisyphus.decorators import log_time
 # Set up logging
 print = logging.info
 

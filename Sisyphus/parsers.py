@@ -4,9 +4,11 @@
 #The idea is to support both a UI for manual input (each field) and a raw text input for parsing.
 import re
 import logging
+from Sisyphus.decorators import log_time
 # Set up logging
 print = logging.info
 
+@log_time
 def format_key(key, parent_key=None):
         # Special case for LinkedIn under Contact Information
         if parent_key == 'contact_information' and key.lower() == 'linkedin':
@@ -21,6 +23,7 @@ def format_key(key, parent_key=None):
                 formatted.append(w.capitalize())
         return ' '.join(formatted)
 
+@log_time
 def dict_spliter(cv_dict):
     split_dicts = []
     for key, value in cv_dict.items():
@@ -38,6 +41,7 @@ def dict_spliter(cv_dict):
             split_dicts.append(new_dict)
     return split_dicts
 
+@log_time
 def dict_grafter(split_dicts):
 
     cv_dict = {}
@@ -46,6 +50,7 @@ def dict_grafter(split_dicts):
             cv_dict[key] = value
     return cv_dict
 
+@log_time
 def parse_cv(cv_text):
     """
     Parses a CV in text format and returns structured data.
@@ -150,6 +155,7 @@ def parse_cv(cv_text):
             continue
     return cv_data
 
+@log_time
 def inv_parse_cv(cv_dict):
     """
     Converts a cv_dict dictionary back to multiline text in the format expected by parse_cv.
@@ -198,6 +204,7 @@ def inv_parse_cv(cv_dict):
     return '\n'.join(lines)
 
 #New parse_cv_out to take into account the addition of skills as a section rather than a subsection
+@log_time
 def parse_cv_out(cv_text):
     """
     inout us a cv_text with skills as a section in the format:
@@ -303,6 +310,7 @@ def parse_cv_out(cv_text):
             continue
     return cv_data
 
+@log_time
 def inv_parse_cv_out(cv_dict):
     """
     Converts a cv_dict dictionary back to multiline text in the format expected by parse_cv.
@@ -354,6 +362,7 @@ def inv_parse_cv_out(cv_dict):
             lines.append(f"[0]{parent_field}: {parent_value}")
     return '\n'.join(lines)
 
+@log_time
 def parse_cl(cl_text):
     """
     [0]Name: Name
@@ -437,7 +446,7 @@ def parse_cl(cl_text):
 
     return cl_data
         
-
+@log_time
 def inv_parse_cl(cl_dict):
     """
     Converts a cl_dict dictionary back to multiline text in the format expected by parse_cl.

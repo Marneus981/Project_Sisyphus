@@ -3,13 +3,15 @@ import requests
 from Sisyphus import helpers
 from Sisyphus import parsers
 import logging
+from Sisyphus.decorators import log_time
+import config
 DEFAULT_MODEL = "llama3:8b"
 DEFAULT_URL = "http://localhost:11434"
 
 # Set up logging
 print = logging.info
 
-@helpers.log_time
+@log_time
 def augment_output(input_text, reference_dict, type):
     allowed_types = ['volunteering_and_leadership','work_experience','projects', 'vl_w_p', ]
     if type not in allowed_types:
@@ -180,7 +182,7 @@ def augment_output(input_text, reference_dict, type):
         tmp_dict['projects'] = return_list[2]
     return tmp_dict
 
-@helpers.log_time
+@log_time
 def prepare_input_text(input_text, type):
     allowed_types = ['volunteering_and_leadership','work_experience','projects', 'vl_w_p', ]
     if type not in allowed_types:
@@ -238,7 +240,7 @@ def prepare_input_text(input_text, type):
             return_text += f"{item}\n"
         return return_text
 
-@helpers.log_time
+@log_time
 def clean_first_step(text):
     # Remove lines that do not start with [X] where X is a capitalized letter
     cleaned_lines = []
@@ -252,7 +254,7 @@ def clean_first_step(text):
 """
 #For each main tailor function (including pruning), we need to create 3 functions
 #Tailor Volunteering and Leadership
-@helpers.log_time
+@log_time
 def summarize_job_description(job_description = "", system = "", ollama_url=DEFAULT_URL, model=DEFAULT_MODEL):
     # Summarize the job description by extracting key responsibilities and requirements
     # This is a placeholder implementation
@@ -261,7 +263,7 @@ def summarize_job_description(job_description = "", system = "", ollama_url=DEFA
     Also, highlight needed skills, both technical and soft.
     {job_description}
     """
-    input_tks = helpers.token_math(model, prompt)
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -272,14 +274,14 @@ def summarize_job_description(job_description = "", system = "", ollama_url=DEFA
     try:
         result = response.json()
         response_text = result.get("response", "")
-        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
         return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
-@helpers.log_time
+@log_time
 def step0_volunteering_and_leadership(model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL, 
                                        raw_cv_data="", job_description=""):
     prompt = f"""
@@ -294,7 +296,7 @@ Output the selected projects strictly in the following format, without changing 
 [R]Role Name 3
 [R]Role Name 4
     """
-    input_tks = helpers.token_math(model, prompt)
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system1,
@@ -305,14 +307,14 @@ Output the selected projects strictly in the following format, without changing 
     try:
         result = response.json()
         response_text = result.get("response", "")
-        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
         return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
-@helpers.log_time
+@log_time
 def step3_volunteering_and_leadership(model=DEFAULT_MODEL, system2="", ollama_url=DEFAULT_URL, 
                                        experience="", job_description=""):
     prompt = f"""
@@ -326,8 +328,9 @@ Rewrite the experience to best match the job description, following these guidel
 - In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
 - In the Skills subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
 - Do not use line breaks inside any subsection. Do not use the ":" character in the Description.
-- If any subsection is missing, include it as empty.
-- Skills must be comma-separated and follow the format below.
+- Skills must be comma-separated and follow the format below. 
+- If there are no skills in a given category, use " ", then follow up as the format below indicates 
+    - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
 Return only the revised section in the following format:
 [1]Role: Role Name 1
 [1]Organization: Organization Name 1
@@ -336,7 +339,7 @@ Return only the revised section in the following format:
 [1]Description: Brief description for Role 1.
 [1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
     """
-    input_tks = helpers.token_math(model, prompt)
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system2,
@@ -347,14 +350,14 @@ Return only the revised section in the following format:
     try:
         result = response.json()
         response_text = result.get("response", "")
-        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
         return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
-@helpers.log_time
+@log_time
 def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system1="", system2="", ollama_url=DEFAULT_URL, 
                                        raw_cv_data="", job_description_summary="", 
                                        section="volunteering_and_leadership", reference_dct={}):
@@ -396,7 +399,7 @@ def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system1="", system2=
     return step4_text
 
 # Tailor Work Experience
-@helpers.log_time
+@log_time
 def step0_work_experience(model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL, 
                           raw_cv_data="", job_description=""):
     prompt = f"""
@@ -411,7 +414,7 @@ Output the selected projects strictly in the following format, without changing 
 [J]Job Title 3
 [J]Job Title 4
     """
-    input_tks = helpers.token_math(model, prompt)
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system1,
@@ -422,14 +425,14 @@ Output the selected projects strictly in the following format, without changing 
     try:
         result = response.json()
         response_text = result.get("response", "")
-        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
         return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
-@helpers.log_time
+@log_time
 def step3_work_experience(model=DEFAULT_MODEL, system2="", ollama_url=DEFAULT_URL, 
                           experience="", job_description=""):
     prompt = f"""
@@ -443,8 +446,9 @@ Rewrite the experience to best match the job description, following these guidel
 - In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
 - In the Skills subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
 - Do not use line breaks inside any subsection. Do not use the ":" character in the Description.
-- If any subsection is missing, include it as empty.
 - Skills must be comma-separated and follow the format below.
+- If there are no skills in a given category, use " ", then follow up as the format below indicates 
+    - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
 Return only the revised section in the following format:
 [1]Job Title: Job Title 1
 [1]Company: Company Name 1
@@ -453,7 +457,7 @@ Return only the revised section in the following format:
 [1]Description: Brief description for Job Title 1.
 [1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
     """
-    input_tks = helpers.token_math(model, prompt)
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system2,
@@ -464,14 +468,14 @@ Return only the revised section in the following format:
     try:
         result = response.json()
         response_text = result.get("response", "")
-        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
         return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
-@helpers.log_time
+@log_time
 def tailor_work_experience(model=DEFAULT_MODEL, system1="", system2="", ollama_url=DEFAULT_URL, 
                           raw_cv_data="", job_description_summary="", section="work_experience", reference_dct={}):
     print(f"tailor_work_experience: raw_cv_data:\n" + raw_cv_data)
@@ -509,7 +513,7 @@ def tailor_work_experience(model=DEFAULT_MODEL, system1="", system2="", ollama_u
     print(f"tailor_work_experience: step4_text after filtering:\n" + step4_text)
     return step4_text
 # Tailor Projects
-@helpers.log_time
+@log_time
 def step0_projects(model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL, 
                    raw_cv_data="", job_description=""):
     prompt = f"""
@@ -524,7 +528,7 @@ Output the selected projects strictly in the following format, without changing 
 [P]Project Title 3
 [P]Project Title 4
     """
-    input_tks = helpers.token_math(model, prompt)
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system1,
@@ -535,14 +539,14 @@ Output the selected projects strictly in the following format, without changing 
     try:
         result = response.json()
         response_text = result.get("response", "")
-        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
         return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
-@helpers.log_time
+@log_time
 def step3_projects(model=DEFAULT_MODEL, system2="", ollama_url=DEFAULT_URL, 
                    experience="", job_description=""):
     prompt = f"""
@@ -556,8 +560,9 @@ Rewrite the project to best match the job description, following these guideline
 - In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
 - In the Skills subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
 - Do not use line breaks inside any subsection. Do not use the ":" character in the Description.
-- If any subsection is missing, include it as empty.
 - Skills must be comma-separated and follow the format below.
+- If there are no skills in a given category, use " ", then follow up as the format below indicates 
+    - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
 Return only the revised section in the following format:
 [1]Project Title: Project Title 1
 [1]Type: Type of Project 1
@@ -565,7 +570,7 @@ Return only the revised section in the following format:
 [1]Description: Brief description for Project Title 1.
 [1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
     """
-    input_tks = helpers.token_math(model, prompt)
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system2,
@@ -576,14 +581,14 @@ Return only the revised section in the following format:
     try:
         result = response.json()
         response_text = result.get("response", "")
-        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
         return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
-@helpers.log_time
+@log_time
 def tailor_projects(model=DEFAULT_MODEL, system1="", system2="", ollama_url=DEFAULT_URL, 
                    raw_cv_data="", job_description_summary="", section="projects", reference_dct={}):
     print(f"tailor_projects: raw_cv_data:\n" + raw_cv_data)
@@ -622,7 +627,7 @@ def tailor_projects(model=DEFAULT_MODEL, system1="", system2="", ollama_url=DEFA
     return step4_text
 #Prune Experiences
 
-@helpers.log_time
+@log_time
 def step0_prune_experiences(model = DEFAULT_MODEL, system1 = "", ollama_url = DEFAULT_URL,
                             experiences = "", job_description = ""):
     
@@ -645,7 +650,7 @@ def step0_prune_experiences(model = DEFAULT_MODEL, system1 = "", ollama_url = DE
     - [J] Job Title: Work Experience
     - [P] Project Title: Project
     """
-    input_tks = helpers.token_math(model, prompt)
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system1,
@@ -656,14 +661,14 @@ def step0_prune_experiences(model = DEFAULT_MODEL, system1 = "", ollama_url = DE
     try:
         result = response.json()
         response_text = result.get("response", "")
-        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
         return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
-@helpers.log_time
+@log_time
 def prune_experiences(model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL, 
                    experiences="", job_description_summary="", section="vl_w_p", reference_dct={}):
     print(f"tailor_experiences: experiences:\n" + experiences)
@@ -683,7 +688,7 @@ def prune_experiences(model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL,
 #Longer input tailoring functions
 #Sliding Window + Hierarchical solution
 #Tailor Summary
-@helpers.log_time
+@log_time
 def summarize_section(section="", model = DEFAULT_MODEL, system = "", ollama_url = DEFAULT_URL, section_name = ""):
     # Implement the logic to summarize the section based on the job description
     prompt = f"""
@@ -695,7 +700,7 @@ def summarize_section(section="", model = DEFAULT_MODEL, system = "", ollama_url
         
     [S]{section_name} Section Summary: Summary of the section's relevant information, competencies, achievements, and key skills.
     """
-    input_tks = helpers.token_math(model, prompt)
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -706,14 +711,46 @@ def summarize_section(section="", model = DEFAULT_MODEL, system = "", ollama_url
     try:
         result = response.json()
         response_text = result.get("response", "")
-        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
         return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
-@helpers.log_time
+@log_time
+def batch_summarize_sections(sections = [], section_names = [], model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL):
+    # Implement the logic to summarize the section based on the job description
+    sections_text = "\n".join(sections)
+    prompt = f"""
+    Given the following sections from a resume:
+    {sections_text}
+    Summarize the sections in a wholistic manner while highlighting competencies, achievements and skills.
+    Keep in mind that these summaries will be used in a "Sliding Window" approach to summarize the entire resume effectively, so include information that is relevant for the overall context of the resume.
+    Return the summarized information as a single continuous string of text, following this format strictly:
+    """
+    for name in section_names:
+        prompt += f"[S]{name} Section Summary: Summary of the section's relevant information, competencies, achievements, and key skills.\n"
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
+    payload = {
+        "model": model,
+        "system": system,
+        "prompt": prompt,
+        "stream": False
+    }
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    try:
+        result = response.json()
+        response_text = result.get("response", "")
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        return response_text
+    except Exception:
+        print("Ollama response was not valid JSON:")
+        print(response.text)
+        return "Error: Ollama response was not valid JSON."
+
+
+@log_time
 def summarize_general_info(general_info_text = "", model = DEFAULT_MODEL, system = "", ollama_url = DEFAULT_URL):
     prompt = f"""
     Given the following general information from a resume:
@@ -723,7 +760,7 @@ def summarize_general_info(general_info_text = "", model = DEFAULT_MODEL, system
     
     [S]General Information Summary: Brief and concise summary of the resume's general information, presented as a single continuous string of text.
     """
-    input_tks = helpers.token_math(model, prompt)
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -734,13 +771,13 @@ def summarize_general_info(general_info_text = "", model = DEFAULT_MODEL, system
     try:
         result = response.json()
         response_text = result.get("response", "")
-        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
         return helpers.filter_output(response_text.strip(), mode= "cap_letters")
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
 
-@helpers.log_time
+@log_time
 def summarize_skills( model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, skill_section=""):
     prompt = f"""
     Given the following skills information from a resume:
@@ -750,7 +787,7 @@ def summarize_skills( model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, sk
 
     [S]Skills Summary: Brief and concise summary of the resume's skills, presented as a single continuous string of text.
     """
-    input_tks = helpers.token_math(model, prompt)
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -761,21 +798,27 @@ def summarize_skills( model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, sk
     try:
         result = response.json()
         response_text = result.get("response", "")
-        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
         return helpers.filter_output(response_text.strip(), mode= "cap_letters")
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
 
-@helpers.log_time
+@log_time
 def sliding_window_two_sections(section1 = "", section2 ="", model=DEFAULT_MODEL, system1="", system2="", system = "", ollama_url=DEFAULT_URL,
-                                section1_name = "", section2_name = "", candidate_name = "", candidate_title = ""):
-    summary1 = summarize_section(section1, model=model, system=system1, ollama_url=ollama_url, section_name=section1_name)
-    summary2 = summarize_section(section2, model=model, system=system2, ollama_url=ollama_url, section_name=section2_name)
-    summary1 = helpers.filter_output(summary1.strip(), mode= "cap_letters")
-    summary2 = helpers.filter_output(summary2.strip(), mode= "cap_letters")
+                                section1_name = "", section2_name = "", candidate_name = "", candidate_title = "", batch =False):
+    if not batch:
+        summary1 = summarize_section(section1, model=model, system=system1, ollama_url=ollama_url, section_name=section1_name)
+        summary2 = summarize_section(section2, model=model, system=system2, ollama_url=ollama_url, section_name=section2_name)
+        summary1 = helpers.filter_output(summary1.strip(), mode= "cap_letters")
+        summary2 = helpers.filter_output(summary2.strip(), mode= "cap_letters")
+    else:
+        summaries = batch_summarize_sections(sections=[section1, section2], section_names=[section1_name, section2_name], model=model, system=system1, ollama_url=ollama_url)
+        summaries_list = helpers.filter_output(summaries.strip(), mode= "cap_letters").split("\n")
+        summary1 = summaries_list[0] if len(summaries_list) > 0 else ""
+        summary2 = summaries_list[1] if len(summaries_list) > 1 else ""
     prompt = f"""
-    Given the following 2 resume section summaries:
+    Given the following resume section summaries:
     {summary1}
     {summary2}
     Create a new summary that incorporates both summaries, following these guidelines:
@@ -785,7 +828,7 @@ def sliding_window_two_sections(section1 = "", section2 ="", model=DEFAULT_MODEL
     Return the summarized information as a single continuous string of text, following this format strictly:
     [S]{section1_name} + {section2_name} Sections Summary: Summary of the section's relevant information, competencies, achievements, and key skills.
     """
-    input_tks = helpers.token_math(model, prompt)
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -796,7 +839,7 @@ def sliding_window_two_sections(section1 = "", section2 ="", model=DEFAULT_MODEL
     try:
         result = response.json()
         response_text = result.get("response", "")
-        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
         response_text = helpers.filter_output(response_text.strip(), mode= "cap_letters")
         return response_text
     except Exception:
@@ -804,17 +847,24 @@ def sliding_window_two_sections(section1 = "", section2 ="", model=DEFAULT_MODEL
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
-@helpers.log_time
+@log_time
 def sliding_window_three_sections(section1 = "", section2 = "", section3 = "", model=DEFAULT_MODEL, system1="", system2="", system3="", system = "", ollama_url=DEFAULT_URL,
-                                section1_name = "", section2_name = "", section3_name = "", candidate_name = "", candidate_title = ""):
-    summary1 = summarize_section(section1, model=model, system=system1, ollama_url=ollama_url, section_name=section1_name)
-    summary2 = summarize_section(section2, model=model, system=system2, ollama_url=ollama_url, section_name=section2_name)
-    summary3 = summarize_section(section3, model=model, system=system3, ollama_url=ollama_url, section_name=section3_name)
-    summary1 = helpers.filter_output(summary1.strip(), mode= "cap_letters")
-    summary2 = helpers.filter_output(summary2.strip(), mode= "cap_letters")
-    summary3 = helpers.filter_output(summary3.strip(), mode= "cap_letters")
+                                section1_name = "", section2_name = "", section3_name = "", candidate_name = "", candidate_title = "", batch =False):
+    if not batch:
+        summary1 = summarize_section(section1, model=model, system=system1, ollama_url=ollama_url, section_name=section1_name)
+        summary2 = summarize_section(section2, model=model, system=system2, ollama_url=ollama_url, section_name=section2_name)
+        summary3 = summarize_section(section3, model=model, system=system3, ollama_url=ollama_url, section_name=section3_name)
+        summary1 = helpers.filter_output(summary1.strip(), mode= "cap_letters")
+        summary2 = helpers.filter_output(summary2.strip(), mode= "cap_letters")
+        summary3 = helpers.filter_output(summary3.strip(), mode= "cap_letters")
+    else:
+        summaries = batch_summarize_sections(sections=[section1, section2, section3], section_names=[section1_name, section2_name, section3_name], model=model, system=system1, ollama_url=ollama_url)
+        summaries_list = helpers.filter_output(summaries.strip(), mode= "cap_letters").split("\n")
+        summary1 = summaries_list[0] if len(summaries_list) > 0 else ""
+        summary2 = summaries_list[1] if len(summaries_list) > 1 else ""
+        summary3 = summaries_list[2] if len(summaries_list) > 2 else ""
     prompt = f"""
-    Given the following 3 resume section summaries:
+    Given the following resume section summaries:
     {summary1}
     {summary2}
     {summary3}
@@ -825,7 +875,7 @@ def sliding_window_three_sections(section1 = "", section2 = "", section3 = "", m
     Return the summarized information as a single continuous string of text, following this format strictly:
     [S]{section1_name} + {section2_name} + {section3_name} Sections Summary: Summary of the section's relevant information, competencies, achievements, and key skills.
     """
-    input_tks = helpers.token_math(model, prompt)
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -836,7 +886,7 @@ def sliding_window_three_sections(section1 = "", section2 = "", section3 = "", m
     try:
         result = response.json()
         response_text = result.get("response", "")
-        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
         response_text = helpers.filter_output(response_text.strip(), mode= "cap_letters")
         return response_text
     except Exception:
@@ -844,24 +894,107 @@ def sliding_window_three_sections(section1 = "", section2 = "", section3 = "", m
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
-@helpers.log_time
-def slide_summary(sections_dct_list = [], model = DEFAULT_MODEL, system_s = "",system = "", system1 = "", system2 = "", system3 = "", ollama_url = DEFAULT_URL, windows = 2, skill_section = False):
-    #Divide sections_dct_list into 2 lists: one with dicts that contain "unchanging" data (general info, really) and one containing list/tailored data
-    #Note: resume has no summary or skills section
-    general_keys = ['name','contact_information',
-                    'title','languages']
-    special_keys = ['education',
-                    'certifications',
-                    'awards_and_scholarships',
-                    'volunteering_and_leadership',
-                    'work_experience',
-                    'projects']
+@log_time
+def sliding_window_four_sections(
+    section1="",
+    section2="",
+    section3="",
+    section4="",
+    model=DEFAULT_MODEL,
+    system1="",
+    system2="",
+    system3="",
+    system4="",
+    system="",
+    ollama_url=DEFAULT_URL,
+    section1_name="",
+    section2_name="",
+    section3_name="",
+    section4_name="",
+    candidate_name="",
+    candidate_title="",
+    batch=False
+):
+    if not batch:
+        summary1 = summarize_section(section1, model=model, system=system1, ollama_url=ollama_url, section_name=section1_name)
+        summary2 = summarize_section(section2, model=model, system=system2, ollama_url=ollama_url, section_name=section2_name)
+        summary3 = summarize_section(section3, model=model, system=system3, ollama_url=ollama_url, section_name=section3_name)
+        summary4 = summarize_section(section4, model=model, system=system4, ollama_url=ollama_url, section_name=section4_name)
+        summary1 = helpers.filter_output(summary1.strip(), mode="cap_letters")
+        summary2 = helpers.filter_output(summary2.strip(), mode="cap_letters")
+        summary3 = helpers.filter_output(summary3.strip(), mode="cap_letters")
+        summary4 = helpers.filter_output(summary4.strip(), mode="cap_letters")
+    else:
+        summaries = batch_summarize_sections(sections=[section1, section2, section3, section4], section_names=[section1_name, section2_name, section3_name, section4_name], model=model, system=system1, ollama_url=ollama_url)
+        summary1 = helpers.filter_output(summaries[0].strip(), mode="cap_letters")
+        summary2 = helpers.filter_output(summaries[1].strip(), mode="cap_letters")
+        summary3 = helpers.filter_output(summaries[2].strip(), mode="cap_letters")
+        summary4 = helpers.filter_output(summaries[3].strip(), mode="cap_letters")
+    prompt = f"""
+    Given the following resume section summaries:
+    {summary1}
+    {summary2}
+    {summary3}
+    {summary4}
+    Create a new summary that incorporates all four summaries, following these guidelines:
+    - Make sure to include key information, competencies, achievements, and skills.
+    - Maintain the context and flow between the four sections.
+    - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
+    Return the summarized information as a single continuous string of text, following this format strictly:
+    [S]{section1_name} + {section2_name} + {section3_name} + {section4_name} Sections Summary: Summary of the sections' relevant information, competencies, achievements, and key skills.
+    """
+    if config.DEBUG["TOKEN_LOGGING"]:
+        input_tks = helpers.token_math(model, prompt)
+    payload = {
+        "model": model,
+        "system": system,
+        "prompt": prompt,
+        "stream": False
+    }
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    try:
+        result = response.json()
+        response_text = result.get("response", "")
+        if config.DEBUG["TOKEN_LOGGING"]:
+            output_tks = helpers.token_math(model, response_text, type="output", offset=input_tks)
+        response_text = helpers.filter_output(response_text.strip(), mode="cap_letters")
+        return response_text
+    except Exception:
+        print("Ollama response was not valid JSON:")
+        print(response.text)
+        return "Error: Ollama response was not valid JSON."
+
+
+@log_time
+def slide_summary(
+    sections_dct_list=[],
+    model=DEFAULT_MODEL,
+    system_s="",
+    system="",
+    system1="",
+    system2="",
+    system3="",
+    system4="",
+    ollama_url=DEFAULT_URL,
+    windows=2,
+    skill_section=False,
+    batch=False
+):
+    general_keys = ['name', 'contact_information', 'title', 'languages']
+    special_keys = [
+        'education',
+        'certifications',
+        'awards_and_scholarships',
+        'volunteering_and_leadership',
+        'work_experience',
+        'projects'
+    ]
     skills_key = ['skills']
     general_txts = []
     special_txts = []
     skill_txt = ""
     candidate_name = ""
-    candidate_title = ""    
+    candidate_title = ""
     for item in sections_dct_list:
         key = next(iter(item))
         if key == "name":
@@ -885,57 +1018,83 @@ def slide_summary(sections_dct_list = [], model = DEFAULT_MODEL, system_s = "",s
     print(f"slide_summary: general_txts: {len(general_txts)}")
     print(f"slide_summary: special_txts: {len(special_txts)}")
     slide_results = []
-    if windows == 2: track = len(special_keys)-1
-    elif windows == 3: track = len(special_keys)-2
+    if windows == 2:
+        track = len(special_keys) - 1
+    elif windows == 3:
+        track = len(special_keys) - 2
+    elif windows == 4:
+        track = len(special_keys) - 3
     else:
-        raise ValueError("Invalid number of windows, must be 2 or 3.")
+        raise ValueError("Invalid number of windows, must be 2, 3, or 4.")
     for i in range(0, track):
         if windows == 2:
             slide = sliding_window_two_sections(
                 section1=special_txts[i],
-                section2=special_txts[i+1],
+                section2=special_txts[i + 1],
                 model=model,
                 system=system,
                 system1=system1,
                 system2=system2,
                 section1_name=special_keys[i],
-                section2_name=special_keys[i+1],
+                section2_name=special_keys[i + 1],
                 candidate_name=candidate_name,
                 candidate_title=candidate_title,
-                ollama_url=ollama_url
+                ollama_url=ollama_url,
+                batch=batch
             )
             slide_results.append(slide)
         elif windows == 3:
             slide = sliding_window_three_sections(
                 section1=special_txts[i],
-                section2=special_txts[i+1],
-                section3=special_txts[i+2],
+                section2=special_txts[i + 1],
+                section3=special_txts[i + 2],
                 model=model,
                 system=system,
                 system1=system1,
                 system2=system2,
                 system3=system3,
                 section1_name=special_keys[i],
-                section2_name=special_keys[i+1],
-                section3_name=special_keys[i+2],
+                section2_name=special_keys[i + 1],
+                section3_name=special_keys[i + 2],
                 candidate_name=candidate_name,
                 candidate_title=candidate_title,
-                ollama_url=ollama_url
+                ollama_url=ollama_url,
+                batch=batch
+            )
+            slide_results.append(slide)
+        elif windows == 4:
+            slide = sliding_window_four_sections(
+                section1=special_txts[i],
+                section2=special_txts[i + 1],
+                section3=special_txts[i + 2],
+                section4=special_txts[i + 3],
+                model=model,
+                system=system,
+                system1=system1,
+                system2=system2,
+                system3=system3,
+                system4=system4,
+                section1_name=special_keys[i],
+                section2_name=special_keys[i + 1],
+                section3_name=special_keys[i + 2],
+                section4_name=special_keys[i + 3],
+                candidate_name=candidate_name,
+                candidate_title=candidate_title,
+                ollama_url=ollama_url,
+                batch=batch
             )
             slide_results.append(slide)
     general_info = "\n".join(general_txts).strip()
     general_info_summary = summarize_general_info(general_info, model=model, system=system_s, ollama_url=ollama_url)
-    skills_summary = summarize_skills( model=model, system=system_s, ollama_url=ollama_url, skill_section=skill_txt)
-    #Append general_info_summary to slide_results at the start
+    skills_summary = summarize_skills(model=model, system=system_s, ollama_url=ollama_url, skill_section=skill_txt)
     slide_results.insert(0, general_info_summary)
-    #Insert skills summary at end
     slide_results.append(skills_summary)
     return slide_results
 
-@helpers.log_time
+@log_time
 def step0_tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, raw_cv_data = ""
-                         , system_s = "", system = "", system1 = "", system2 = "", system3 = "", system0 = "",
-                         windows = 2, skill_section = False):
+                         , system_s = "", system = "", system1 = "", system2 = "", system3 = "", system4 = "", system0 = "",
+                         windows = 2, skill_section = False, batch=False):
 
     if skill_section:
         sections_dct = parsers.parse_cv_out(raw_cv_data)
@@ -944,8 +1103,8 @@ def step0_tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, raw_cv_dat
     sections_dct_list = parsers.dict_spliter(sections_dct)
     slides = slide_summary(sections_dct_list,
                             model=model,
-                            system_s=system_s, system=system, system1=system1, system2=system2, system3=system3,
-                            ollama_url=ollama_url, windows=windows)
+                            system_s=system_s, system=system, system1=system1, system2=system2, system3=system3, system4=system4,
+                            ollama_url=ollama_url, windows=windows, batch=batch)
     #Join slides
     slides_txt = "\n".join(slides).strip()
     prompt = f"""
@@ -958,7 +1117,7 @@ def step0_tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, raw_cv_dat
 
     [0]Summary: Wholistic summary of all sections.
     """
-    input_tks = helpers.token_math(model, prompt)
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system0,
@@ -969,13 +1128,13 @@ def step0_tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, raw_cv_dat
     try:
         result = response.json()
         response_text = result.get("response", "")
-        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
         return helpers.filter_output(response_text.strip())
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
 
-@helpers.log_time
+@log_time
 def step1_tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, 
                          prev_summary = "", job_description  = "", system = ""):
     prompt = f"""
@@ -993,7 +1152,7 @@ def step1_tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL,
     Do not line break the summary section, it should be a continuous block of text.
     Do note that the section may not exist in the CV, in which case you should return an empty section. Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
     """
-    input_tks = helpers.token_math(model, prompt)
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -1004,28 +1163,28 @@ def step1_tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL,
     try:
         result = response.json()
         response_text = result.get("response", "")
-        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
         return helpers.filter_output(response_text.strip())
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
-@helpers.log_time
+@log_time
 def tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL,
                     raw_cv_data="", job_description="",
-                    system_s="", system00="", system1="", system2="", system3="", system0="", windows=2,
-                    system01=""):
+                    system_s="", system00="", system1="", system2="", system3="", system4="", system0="", windows=2,
+                    system01="", batch=False):
     # - Summary (LAST; Based on Job Description AND Overall Resume)
     print(f"tailor_summary: raw_cv_data:\n" + raw_cv_data)
     step0 = step0_tailor_summary(model=model, ollama_url=ollama_url, raw_cv_data=raw_cv_data,
-                                  system_s=system_s, system=system00, system1=system1, system2=system2, system3=system3, system0=system0,
-                                  windows=windows)
+                                  system_s=system_s, system=system00, system1=system1, system2=system2, system3=system3, system4=system4, system0=system0,
+                                  windows=windows, batch=batch)
     step1 = step1_tailor_summary(model=model, ollama_url=ollama_url, prev_summary=step0, job_description=job_description,
                                   system=system01)
     return step1.strip()
 
-@helpers.log_time
+@log_time
 def return_text_with_skills(cv_text):
     #Note: text: comma separated skills, dict: section to subsections to lists
     return_list = []
@@ -1088,7 +1247,7 @@ def return_text_with_skills(cv_text):
 
     return "\n".join([return_text,skill,prog,tech,soft])
 
-@helpers.log_time
+@log_time
 def tailor_skills(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", job_description="", section="Skills"):
     """
     Given a cv_data containing text pertaining to all the skills considered 
@@ -1118,7 +1277,7 @@ def tailor_skills(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_dat
         [1]Technical Skills: Technical Skill 1, Technical Skill 2, Technical Skill 3, Technical Skill 4, Technical Skill 5
         [1]Soft Skills: Soft Skill 1, Soft Skill 2, Soft Skill 3, Soft Skill 4
     """
-    input_tks = helpers.token_math(model, prompt)
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -1129,7 +1288,7 @@ def tailor_skills(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_dat
     try:
         result = response.json()
         response_text = result.get("response", "")
-        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
         return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
@@ -1139,7 +1298,7 @@ def tailor_skills(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_dat
 #Resume/Cover Letter Consistency Checker VS Old Resume
 #Chain: old resume, new resume >>> new_vs_old_section >>> consistency_checker_vs_cv
 #Chain: new resume, cover letter >>> summarize resume >>> consistency_checker_vs_cv
-@helpers.log_time
+@log_time
 def new_vs_old_section(old_resume_s_txt, new_resume_s_txt, section_name = "", model = DEFAULT_MODEL, system = "", ollama_url = DEFAULT_URL):
     prompt = f"""
     Given the following raw untailored resume section:
@@ -1154,7 +1313,7 @@ def new_vs_old_section(old_resume_s_txt, new_resume_s_txt, section_name = "", mo
     Output your analysis as a single continuous string of text, strictly following the format below:
     [0]{section_name} Analysis:
     """
-    input_tks = helpers.token_math(model, prompt)
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -1165,14 +1324,14 @@ def new_vs_old_section(old_resume_s_txt, new_resume_s_txt, section_name = "", mo
     try:
         result = response.json()
         response_text = result.get("response", "")
-        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
         return helpers.filter_output(response_text.strip())
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
     return
 
-@helpers.log_time
+@log_time
 def new_vs_old_resume(old_resume_txt = "", new_resume_txt = "", model = DEFAULT_MODEL, system_s = "", ollama_url = DEFAULT_URL):
     old_resume_txt0 = return_text_with_skills(old_resume_txt)
     old_dcts = parsers.dict_spliter(parsers.parse_cv_out(helpers.filter_output(old_resume_txt0.strip())))
@@ -1189,7 +1348,7 @@ def new_vs_old_resume(old_resume_txt = "", new_resume_txt = "", model = DEFAULT_
         analysis_txts.append(analysis_txt)
     return analysis_txts
 
-@helpers.log_time
+@log_time
 def consistency_checker_vs_cv(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, system = "", system_s="", cv_data="", cv_data_orig ="", type="CV"):
     if type == "CV":
         print("Consistency Checker: Tailored Resume VS Original Resume:")
@@ -1240,7 +1399,7 @@ def consistency_checker_vs_cv(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, syste
         Be as objective as possible, and if you must make assumptions, make very conservative assumptions; this also means that you should create nor imagine any data that is not present in the original resume data.
         """
     
-    input_tks = helpers.token_math(model, prompt)
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -1253,7 +1412,7 @@ def consistency_checker_vs_cv(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, syste
     try:
         result = response.json()
         response_text = result.get("response", "")
-        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
         return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
@@ -1262,7 +1421,7 @@ def consistency_checker_vs_cv(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, syste
 
 #Tailor Cover Letter
 #Chain: new resume, job_desc >>> summarize resume, job desc >>> make_cover_letter_text
-@helpers.log_time
+@log_time
 def make_cover_letter_text(model=DEFAULT_MODEL,system = "",
                            ollama_url=DEFAULT_URL, cv_data="", job_description=""):
     """
@@ -1293,7 +1452,7 @@ def make_cover_letter_text(model=DEFAULT_MODEL,system = "",
 
     """
     
-    input_tks = helpers.token_math(model, prompt)
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -1306,14 +1465,14 @@ def make_cover_letter_text(model=DEFAULT_MODEL,system = "",
     try:
         result = response.json()
         response_text = result.get("response", "")
-        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
         return response_text
     except Exception:
         print("Ollama response was not valid JSON:")
         print(response.text)
         return "Error: Ollama response was not valid JSON."
 
-@helpers.log_time
+@log_time
 def compose_cover_letter_dictionary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, cv_text="", job_description=""):
     """
     Given a resume containing education, experiences, projects and skills considered 
@@ -1348,7 +1507,7 @@ def compose_cover_letter_dictionary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL,
 #Resume/Cover Letter Consistency Checker VS Job Description
 #Chain: cover letter, job_desc >>> summarize job desc >>> consistency_checker_vs_job_desc
 #Chain: new resume, job_desc >>> summarize resume, job desc >>> consistency_checker_vs_job_desc
-@helpers.log_time
+@log_time
 def consistency_checker_vs_job_desc(model=DEFAULT_MODEL,  ollama_url=DEFAULT_URL, system="", cv_data="", job_description="", type="CV"):
     if type == "CV":
         prompt = f"""
@@ -1388,7 +1547,7 @@ def consistency_checker_vs_job_desc(model=DEFAULT_MODEL,  ollama_url=DEFAULT_URL
         Be as objective as possible, and do not make any assumptions about the data; this also means that you should create nor imagine any data that is not present in the original CV data.
         """
     
-    input_tks = helpers.token_math(model, prompt)
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
         "model": model,
         "system": system,
@@ -1401,7 +1560,7 @@ def consistency_checker_vs_job_desc(model=DEFAULT_MODEL,  ollama_url=DEFAULT_URL
     try:
         result = response.json()
         response_text = result.get("response", "")
-        output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
         return response_text
     except Exception:
         print("Ollama response was not valid JSON:")

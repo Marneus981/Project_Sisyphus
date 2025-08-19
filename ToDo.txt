@@ -1,17 +1,16 @@
 [1.0 RELEASE CHECKBOX]
     [][1.0 PUBLIC RELEASE] Clean code and prompt engineer a bit; make a single UI window;deal with debug prints in "a way"
     [][1.0 PRIVATE RELEASE] Add own CV; verify code performance and good practices
+        
 [WIP]      
     [0.99]
-
         []Give fields a last used memory
-        []Outsource formatting to classic functions (even simpler tailoring output)
-        []Make it a single window
-        []Add output window
-        []Add loading icon
+        []Add sounds
         []Verify token count correctness
-        []Add config file
-    
+        []Performance Optimization:
+            []Maybe check prompt size/time ratios for each prompt function
+            []Minimize runtime by testing batch modes 2 and 4
+
     [???]Convert to PDF button
         
 
@@ -22,6 +21,11 @@
 
 
 [???]
+    Move all things that need to be moved to the config file
+    Make it a single window
+    Add output window
+    Add loading icon
+    Outsource formatting to classic functions (even simpler tailoring output)?
     Add more time analysis?
     Add mode button for chronological ordering
     Miggrate to better UI package

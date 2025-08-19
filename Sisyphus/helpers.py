@@ -5,26 +5,47 @@ import datetime
 import subprocess
 import logging
 import re
-import time
+from Sisyphus.decorators import log_time
+from Sisyphus.decorators import FUNCTION_STATS
 # Set up logging
 print = logging.info
 
-from main import TIME_LOGGING
+
 TOKENIZER_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\tokenizers"
 LLAMA_MAX_TOKENS = 4096
 
-def log_time(func):
-    # Decorator to log the execution time of a function
-    def wrapper(*args, **kwargs):
-        start = time.perf_counter()
-        result = func(*args, **kwargs)
-        elapsed = time.perf_counter() - start
-        logging.info(f"[TIME] {func.__name__} took {elapsed:.4f} seconds")
-        return result
-    if TIME_LOGGING:
-        return wrapper
-    return func
 
+def performance_check(descending=True, mode="runtime"):
+    # Log performance statistics, in descending order of runtime
+    for fname, stats in sorted(FUNCTION_STATS.items(), key=lambda item: item[1][mode], reverse=descending):
+        logging.info(f"[PERFORMANCE] {fname} called {stats['counter']} times, total {mode}: {stats[mode]:.4f} seconds")
+    # Provide summary statistics
+    total_calls = sum(stats['counter'] for stats in FUNCTION_STATS.values())
+    total_runtime = sum(stats['runtime'] for stats in FUNCTION_STATS.values())
+    logging.info(f"[PERFORMANCE] Total function calls: {total_calls}, Total runtime: {total_runtime:.4f} seconds")
+    # Clear function statistics
+    FUNCTION_STATS.clear()
+
+
+@log_time
+def optimize_summarize_sections_calls(no_sections = 0, chunk_sz = 4):
+    return_calls = []
+    if no_sections <= 0:
+        raise ValueError("[ERROR]optimize_summarize_section_calls: No sections to summarize")
+    remainder = no_sections
+    chunk_size = chunk_sz # Number of sections to summarize in one call
+    while chunk_size > 0:
+        # Optimize calls to summarize_sections
+        times = remainder // chunk_size
+        remainder = remainder % chunk_size
+        return_calls += [chunk_size] * times
+        chunk_size -= 1
+    return return_calls
+        
+        
+
+
+@log_time
 def count_tokens_with_js(text):
     tokenizer_js_path = os.path.join(TOKENIZER_PATH, "llama3", "tokenizer.js")
     result = subprocess.run(
@@ -40,6 +61,7 @@ def count_tokens_with_js(text):
         raise RuntimeError("Token JS script did not return a valid number.")
     return int(result.stdout.strip())
 
+@log_time
 def token_math(model, input_text, type = "input", offset = 0):
     
     
@@ -68,6 +90,7 @@ def token_math(model, input_text, type = "input", offset = 0):
             print(f"[MODEL: {model}] Output uses {tokens} tokens, remaining for response: {remaining_tokens}.")
     return tokens
 
+@log_time
 def read_text_file(file_path):
     """
     Reads a text file from the given file location and returns its contents as a string.
@@ -75,6 +98,7 @@ def read_text_file(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:
         return f.read()
 
+@log_time
 def indent_text(text):
     #Indents text based on first 3 characters of each line: [0] indicates no indent, [1] indicates 1 indent, etc.
     lines = text.splitlines()
@@ -89,18 +113,21 @@ def indent_text(text):
             indented_lines.append(f"{indent}{line.strip()}")
     return "\n".join(indented_lines)
 
+@log_time
 def list_text_files(folder_path):
     """
     Returns a list of strings denoting the text files present in the given folder.
     """
     return [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f)) and f.lower().endswith('.txt')]
 
+@log_time
 def list_docx_files(folder_path):
     """
     Returns a list of strings denoting the docx files present in the given folder.
     """
     return [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f)) and f.lower().endswith('.docx')]
 
+@log_time
 def format_output(cv_text):
     """
     Takes a CV text string, parses it to a dict, and formats keys in the following order, returning a string:
@@ -137,6 +164,7 @@ def format_output(cv_text):
             output += "\n"
     return output
 
+@log_time
 def refresh_options():
     print("Refreshing options...")
     # Fetch available models, systems, and CVs
@@ -158,6 +186,7 @@ def refresh_options():
 
     return [models, systems, cvs, templates, saved_outs, saved_outs_cl, cl_templates]
 
+@log_time
 def format_checker(cv_text):
     """
     Checks if cv_text follows the strict format/order of sections/subsections.
@@ -317,6 +346,7 @@ def format_checker(cv_text):
         'empty_subsections': empty_subsections
     }
 
+@log_time
 def format_checker_out (cv_text):
     """
     Checks if cv_text follows the strict format/order of sections/subsections.
@@ -479,6 +509,7 @@ def format_checker_out (cv_text):
         'empty_subsections': empty_subsections
     }
 
+@log_time
 def format_checker_out_cl(cl_text):
     """
     Checks if cv_text follows the strict format/order of sections/subsections.
@@ -558,6 +589,7 @@ def format_checker_out_cl(cl_text):
         'empty_subsections': empty_subsections
     }
 
+@log_time
 def filter_output(model_output, mode = "digits"):
     """
     Filters model output, keeping only lines that start with [X], where X is a number (e.g., [0], [1], etc.).
@@ -575,6 +607,7 @@ def filter_output(model_output, mode = "digits"):
 
     return "\n".join(filtered_lines)
 
+@log_time
 def read_format_checker(format_checker_output):
     """
     Prints out sequentially:
@@ -598,6 +631,7 @@ def read_format_checker(format_checker_output):
         return_str += f"  {sub} (empty {count})\n"
     return return_str
 
+@log_time
 def parse_date(date_str):
     """
     Parse a date string in the format 'Year/Month' and return a datetime.date object.
@@ -606,6 +640,7 @@ def parse_date(date_str):
     year, month = map(int, date_str.split('/'))
     return datetime.date(year, month, 1)
 
+@log_time
 def parse_duration(duration_str):
     """
     Parse a duration string in the format 'Start Year/Start Month - End Year/End Month'
@@ -627,6 +662,7 @@ def parse_duration(duration_str):
         end_date = None
     return start_date, end_date
 
+@log_time
 def order_section(section, type_key = 'end_date', reverse = False):
     """
     Order the items in a section based on their start and end dates.
@@ -667,6 +703,7 @@ def order_section(section, type_key = 'end_date', reverse = False):
         else:
             raise ValueError("Invalid section. Choose from 'education', 'work_experience', 'projects', 'volunteering_and_leadership', 'certifications', or 'awards_and_scholarships'.")
 
+@log_time
 def order_chronologically(cv_dict, mode = 'end_date', reverse = False):
     """
     This will be called once the CV is tailored and the final dict is ready.
@@ -823,6 +860,7 @@ def order_chronologically(cv_dict, mode = 'end_date', reverse = False):
         print(f"[DEBUG] order_chronologically: {entry} with ordered content {return_dict[entry]}")
     return return_dict
 
+@log_time
 def label_repeated_experiences(cv_text):
     #Given a complete resume text:
     #Transform to dct
@@ -859,6 +897,7 @@ def label_repeated_experiences(cv_text):
 
     #Transform back to text
 
+@log_time
 def clean_labels(cv_text):
     #Remove all [X] labels from the text
     #Search lines in cv_text for the pattern (digit)

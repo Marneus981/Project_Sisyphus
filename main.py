@@ -7,13 +7,13 @@ import sys
 import Sisyphus.fileGenerator as fileGenerator
 import datetime
 import logging
+from Sisyphus.decorators import log_time
 
 
 SISYPHUS_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus"
 DOCS_PATH =r"C:\CodeProjects\Sisyphus\Sisyphus\saved_docs"
 OUT_CV_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\saved_outputs"
 OUT_CL_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\saved_outputs_cl"
-TIME_LOGGING = True
 
 # Create a logs directory if it doesn't exist
 log_dir = os.path.join(SISYPHUS_PATH, "log")
@@ -32,8 +32,8 @@ logging.basicConfig(
 # Replace all print statements with logging.info, logging.warning, etc. as needed.
 print = logging.info
 
-@helpers.log_time
-def check_summaries(root, update_job_desc = False, update_resume = False):
+@log_time
+def check_summaries(update_job_desc = False, update_resume = False):
     selected_model = model_var.get()
     system_text = system_var.get().strip()
     job_desc = job_desc_textbox.get("1.0", tk.END).strip()
@@ -43,10 +43,10 @@ def check_summaries(root, update_job_desc = False, update_resume = False):
     if (summarized_resume == "" or update_resume) and current_cv_text:
         #current_cv_text is supposed to be the end product, but it gets assigned after step 4, so do keep that in mind when debugging
         summarized_resume = tailor.step0_tailor_summary(model=selected_model, raw_cv_data=current_cv_text, system_s=system_text,
-                                                    system=system_text, system0=system_text, system1=system_text, system2=system_text, system3=system_text,
-                                                     windows=2, skill_section=True)
+                                                    system=system_text, system0=system_text, system1=system_text, system2=system_text, system3=system_text, system4=system_text,
+                                                     windows=3, skill_section=True, batch=True)
 
-@helpers.log_time
+@log_time
 def tailor_cv(root):
     global summarized_job_desc, summarized_resume
     global tailor_cl_button
@@ -252,9 +252,11 @@ def tailor_cv(root):
         system1=system_text,
         system2=system_text,
         system3=system_text,
+        system4=system_text,
         system0=system_text,
-        windows=2,
-        system01=system_text
+        windows=3,
+        system01=system_text,
+        batch=True
     )
     print("Tailored summary section:\n" + str(tailored_s))
     tailored_s = helpers.filter_output(tailored_s)
@@ -402,8 +404,9 @@ def tailor_cv(root):
     format_check_current_cv_button.config(state="normal")
     filter_output_cv_button.config(state="normal")
     tailor_cl_button.config(state="normal")
+    helpers.performance_check()
 
-@helpers.log_time
+@log_time
 def tailor_cl(root):
     #Assumes existing system
     global filter_output_cl_button
@@ -456,6 +459,7 @@ def tailor_cl(root):
     filter_output_cl_button.config(state="normal")
     save_output_cl_button.config(state="normal")
     format_check_current_cl_button.config(state="normal")
+    helpers.performance_check()
 
 def show_output_cl(root):
     global cl_window, cl_textbox, current_cl_text
@@ -476,7 +480,7 @@ def show_output_cl(root):
         cl_textbox.insert(tk.END, current_cl_text)
         cl_textbox.pack(expand=True, fill=tk.BOTH)
 
-@helpers.log_time
+@log_time
 def format_check_input_cv_file(root, cv_file):
     """
     Reads a CV file and checks its format.
@@ -503,7 +507,7 @@ def format_check_input_cv_file(root, cv_file):
     analysis_textbox.insert(tk.END, analysis_text)
     analysis_textbox.pack(expand=True, fill=tk.BOTH)
 
-@helpers.log_time
+@log_time
 def format_check_current_cv_text(root):
     global summarized_job_desc, summarized_resume, current_cv_text
     if summarized_job_desc == "":
@@ -511,13 +515,13 @@ def format_check_current_cv_text(root):
         if job_desc_textbox.get("1.0", tk.END).strip() == "":
             print("Job description is empty. Please enter a job description.")
             return
-        check_summaries(root,update_job_desc=True)
+        check_summaries(update_job_desc=True)
     if summarized_resume == "":
         print("Summary of resume is empty. Generating summary...")
         if current_cv_text == "" or not current_cv_text:
             print("Resume is empty. Please enter a resume.")
             return
-        check_summaries(root,update_resume=True)
+        check_summaries(update_resume=True)
 
     # Prepare CV analysis output as a string
     # analysis_stream = io.StringIO()
@@ -564,7 +568,7 @@ def format_check_current_cv_text(root):
     analysis_textbox.insert(tk.END, analysis_text)
     analysis_textbox.pack(expand=True, fill=tk.BOTH)
 
-@helpers.log_time
+@log_time
 def format_check_current_cl_text(root):
     global current_cl_text, current_cv_text, summarized_job_desc, summarized_resume
     if summarized_job_desc == "":
@@ -572,13 +576,13 @@ def format_check_current_cl_text(root):
         if job_desc_textbox.get("1.0", tk.END).strip() == "":
             print("Job description is empty. Please enter a job description.")
             return
-        check_summaries(root,update_job_desc=True)
+        check_summaries(update_job_desc=True)
     if summarized_resume == "":
         print("Summary of resume is empty. Generating summary...")
         if current_cv_text == "" or not current_cv_text:
             print("Resume is empty. Please enter a resume.")
             return
-        check_summaries(root,update_resume=True)
+        check_summaries(update_resume=True)
         
     #Assumes current_cv_text is already defined and is the tailored resume relevant to the cover letter
     # Prepare CV analysis output as a string
@@ -627,7 +631,7 @@ def format_check_current_cl_text(root):
     analysis_textbox.insert(tk.END, analysis_text)
     analysis_textbox.pack(expand=True, fill=tk.BOTH)
 
-@helpers.log_time
+@log_time
 def filter_output_cv_text(root):
     global current_cv_text, result_window, result_textbox
     filtered_text = helpers.filter_output(current_cv_text)
@@ -649,7 +653,7 @@ def filter_output_cv_text(root):
         result_textbox.insert(tk.END, current_cv_text)
         result_textbox.pack(expand=True, fill=tk.BOTH)
 
-@helpers.log_time
+@log_time
 def filter_output_cl_text(root):
     global current_cl_text, cl_window, cl_textbox
     filtered_text = helpers.filter_output(current_cl_text)
@@ -671,7 +675,7 @@ def filter_output_cl_text(root):
         cl_textbox.insert(tk.END, current_cl_text)
         cl_textbox.pack(expand=True, fill=tk.BOTH)
 
-@helpers.log_time
+@log_time
 def refresh_options_callback():
         global model_dropdown, cv_dropdown, system_dropdown, model_var, models, cv_var, cvs, system_var, systems, template_dropdown,templates, template_var
         global saved_out_dropdown, saved_outs, saved_out_var, load_cv_text_button
@@ -710,7 +714,7 @@ def refresh_options_callback():
             saved_out_var_cl.set(saved_outs_cl[0])
             load_cl_text_button.config(state="normal")
 
-@helpers.log_time        
+@log_time        
 def save_output_cv(template_name,output_name):
     output_n = output_name
     template_n = template_name.get().strip()
@@ -728,7 +732,7 @@ def save_output_cv(template_name,output_name):
         print(f"Warning: {output_path} already exists and will be overwritten.")
     fileGenerator.generate_docx(template_path, cv_dict, output_path)
 
-@helpers.log_time
+@log_time
 def save_output_cl(template_name, output_name):
     output_n = output_name
     template_n = template_name.get().strip()
@@ -746,7 +750,7 @@ def save_output_cl(template_name, output_name):
         print(f"Warning: {output_path} already exists and will be overwritten.")
     fileGenerator.generate_docx(template_path, cl_dict, output_path)
 
-@helpers.log_time
+@log_time
 def show_output_cv(root):
     global result_window, result_textbox, current_cv_text
     try:
@@ -766,7 +770,7 @@ def show_output_cv(root):
         result_textbox.insert(tk.END, current_cv_text)
         result_textbox.pack(expand=True, fill=tk.BOTH)
 
-@helpers.log_time
+@log_time
 def save_cv_text(file_name):
     #On cv output, this function can be used to save the current CV text to a text file as a text file
     global current_cv_text
@@ -783,7 +787,7 @@ def save_cv_text(file_name):
     print(f"CV saved to {output_path}")
     return
 
-@helpers.log_time
+@log_time
 def save_cl_text(file_name):
     #On cl output, this function can be used to save the current CL text to a text file as a text file
     global current_cl_text
@@ -800,7 +804,7 @@ def save_cl_text(file_name):
     print(f"Cover letter saved to {output_path}")
     return
 
-@helpers.log_time
+@log_time
 def load_cv_text(file_name):
     """
     Loads CV text from a file and returns it.
@@ -824,7 +828,7 @@ def load_cv_text(file_name):
     print(f"CV loaded from {file_path}")
     return 
 
-@helpers.log_time
+@log_time
 def load_cl_text(file_name):
     """
     Loads Cover Letter text from a file and returns it.

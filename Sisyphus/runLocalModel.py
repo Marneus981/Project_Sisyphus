@@ -2,6 +2,7 @@ import requests
 import subprocess
 import time
 import logging
+from Sisyphus.decorators import log_time
 DEFAULT_MODEL = "llama3:8b"
 DEFAULT_URL = "http://localhost:11434"
 
