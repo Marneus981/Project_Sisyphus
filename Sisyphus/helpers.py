@@ -7,13 +7,30 @@ import logging
 import re
 from Sisyphus.decorators import log_time
 from Sisyphus.decorators import FUNCTION_STATS
+from plyer import notification
+import pygame
+from config import CONFIG
 # Set up logging
 print = logging.info
 
 
 TOKENIZER_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\tokenizers"
 LLAMA_MAX_TOKENS = 4096
+NOTIFICATION_SOUND_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\sounds\notification_sound.mp3"
 
+
+def notify_sound():
+    pygame.mixer.init()
+    pygame.mixer.music.load(NOTIFICATION_SOUND_PATH)
+    pygame.mixer.music.play()
+
+def notify(title, message):
+    if CONFIG["NOTIFICATIONS"]["ENABLED"]:
+        if CONFIG["NOTIFICATIONS"]["WINDOWS"]:
+            notification.notify(title=title, message=message)
+        if CONFIG["NOTIFICATIONS"]["SOUND"]:
+            notify_sound()
+    return
 
 def performance_check(descending=True, mode="runtime"):
     # Log performance statistics, in descending order of runtime

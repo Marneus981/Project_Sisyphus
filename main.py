@@ -406,6 +406,10 @@ def tailor_cv(root):
     filter_output_cv_button.config(state="normal")
     tailor_cl_button.config(state="normal")
     helpers.performance_check()
+    helpers.notify(
+        "Resume Tailoring Complete",
+        "Your Resume has been successfully tailored."
+    )
 
 @log_time
 def tailor_cl(root):
@@ -461,6 +465,10 @@ def tailor_cl(root):
     save_output_cl_button.config(state="normal")
     format_check_current_cl_button.config(state="normal")
     helpers.performance_check()
+    helpers.notify(
+        "Cover Letter Tailoring Complete",
+        "Your Cover Letter has been successfully tailored."
+    )
 
 def show_output_cl(root):
     global cl_window, cl_textbox, current_cl_text
@@ -507,6 +515,10 @@ def format_check_input_cv_file(root, cv_file):
     analysis_textbox = tk.Text(analysis_window, height=20, width=80)
     analysis_textbox.insert(tk.END, analysis_text)
     analysis_textbox.pack(expand=True, fill=tk.BOTH)
+    helpers.notify(
+        "Raw CV format checking complete",
+        "Your CV has been successfully checked."
+    )
 
 @log_time
 def format_check_current_cv_text(root):
@@ -568,6 +580,10 @@ def format_check_current_cv_text(root):
     analysis_textbox = tk.Text(analysis_window, height=20, width=80)
     analysis_textbox.insert(tk.END, analysis_text)
     analysis_textbox.pack(expand=True, fill=tk.BOTH)
+    helpers.notify(
+        "Tailored Resume format checking complete",
+        "Your Tailored Resume has been successfully checked."
+    )
 
 @log_time
 def format_check_current_cl_text(root):
@@ -631,6 +647,10 @@ def format_check_current_cl_text(root):
     analysis_textbox = tk.Text(analysis_window, height=20, width=80)
     analysis_textbox.insert(tk.END, analysis_text)
     analysis_textbox.pack(expand=True, fill=tk.BOTH)
+    helpers.notify(
+        "Cover Letter format checking complete",
+        "Your Cover Letter has been successfully checked."
+    )
 
 @log_time
 def filter_output_cv_text(root):

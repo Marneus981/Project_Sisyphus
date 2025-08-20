@@ -1446,12 +1446,13 @@ def step1_tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL,
     And the following job description:
     {job_description}
     Tailor a Summary section for a resume to best match the job description;
-    Make sure to mention the most relevant skills and experiences from the CV that match the job description, as well as the amount of languages known.
+    Make sure to mention the most relevant skills and experiences from the CV that match the job description.
     Return only the revised section and strictly follow the format:
 
     [0]Summary: Brief summary of the candidate's qualifications, skills, and experiences relevant to the job description.
     
     Notes:
+    - Write the tailored summary section as the candidate, not as an external observer.
     - Do not include any characters before [0]
     - The "Summary" section may have up to 150 words.
     - Do not line break the summary section, it should be a continuous block of text.

@@ -5,5 +5,10 @@ DEBUG = {
 CONFIG = {
     "WINDOWS": 4,
     "SUMMARY_MODE": "batch", #Options: "single", "batch" or "parallel"
-    "SUMMARY_REQUESTS": 2
+    "SUMMARY_REQUESTS": 2,
+    "NOTIFICATIONS": {
+        "ENABLED": True,
+        "WINDOWS": True,
+        "SOUND": True
+    }
 }
