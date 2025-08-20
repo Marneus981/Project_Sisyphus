@@ -290,8 +290,7 @@ def summarize_job_description(job_description = "", system = "", ollama_url=DEFA
     # Summarize the job description by extracting key responsibilities and requirements
     # This is a placeholder implementation
     prompt = f"""
-    Summarize the following job description by extracting key responsibilities and requirements.
-    Also, highlight needed skills, both technical and soft.
+    Summarize the following job description by extracting key responsibilities and requirements; highlight needed skills, both technical and soft:
     {job_description}
     """
     if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)

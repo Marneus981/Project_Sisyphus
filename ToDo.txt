@@ -1,11 +1,8 @@
-[1.0 RELEASE CHECKBOX]
-    [][1.0 PUBLIC RELEASE] Clean code and prompt engineer a bit; make a single UI window;deal with debug prints in "a way"
-    [][1.0 PRIVATE RELEASE] Add own CV; verify code performance and good practices
-        
-[WIP]      
-    [0.99]
-        
-
+[1.0 DEV RELEASE CHECKBOX]
+    [][1.0 DEV PUBLIC RELEASE] Clean code and prompt engineer a bit; make a single UI window;deal with debug prints in "a way"
+        [ALPHA]
+            Add own CV (untracked)
+            [OTHER STUFF]
 [Hubris tracker]
     []Check if correct inputs are used for consistency checks since outputs differ a lot
     []Confirm format checker is run correctly on cl/cv tailor
@@ -13,37 +10,41 @@
 
 
 [???]
-    Add more sounds
-    Add humanize layer 
-    Convert to PDF button
-    Check hugging face model performance
-    Verify token count correctness (llama3.1,3.2)
-    Give fields a last used memory
-    Make all error warnings appear in logs 
-    Move all things that need to be moved to the config file
-    Make it a single window
-    Add output window
-    Add loading icon
-    Outsource formatting to classic functions (even simpler tailoring output)?
-    Add more time analysis?
-    Add mode button for chronological ordering
-    Miggrate to better UI package
-    Wrap app
-    Add reqs description / batch file for install
-    Relabel format check to format and consistency check
-    Make consistency check exclusive button
-        Give program ability to take in user input to modify tailored resumes for eeasier consistency check iterating
-    Unchoke deepseek
-    Maybe add tailored courses under education?
-    Change format checker
-    Stop docx corruption: Maybe save to a new folder instead?
-    Allow asking before overwritting documents
-    Move console ouput to a window
-    Make program more robust:
-        Give it the ability to arrange unarranged cv Formats
-        Make it detect unarranged cv formats
-    Multiple resumes at once?
-    Climb flavor text??
+    [PRIORITY]
+        [HIGH]
+            Others:
+                Check hugging face model performance
+                Verify 3.2 model reliability
+                Outsource more stuff to classic functions for even simpler tailoring output
+            New features:
+                Give fields a last used memory
+                Tailor education courses
+                Add mode button for chronological ordering
+                Add output window
+                Add humanize layer 
+                Convert to PDF button
+            Clean code:
+                Miggrate to better UI package
+                Clean config file
+                Move all errors/warnings to log
+                Improve format consistency in log
+                Add more logging options
+            Make release build:
+                Wrap app
+                Add reqs description / batch file for install
+        [LOW]
+            Unchoke deepseek
+            Verify token count correctness (llama3.1,3.2)
+            Add more sounds
+            Stop docx corruption: Maybe save to a new folder instead?
+            Allow asking before overwritting documents
+            Climb flavor text??
+            Multiple resumes at once?
+            Make program more robust:
+                Give it the ability to arrange unarranged cv Formats
+                Make it detect unarranged cv formats
+            Add loading icon
+            Give program ability to take in user input to modify tailored resumes for easier consistency check iterating
 
 [DONE]
     Organize resume printout (maybe stop using dicts for final output).
