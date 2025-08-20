@@ -8,6 +8,7 @@ import Sisyphus.fileGenerator as fileGenerator
 import datetime
 import logging
 from Sisyphus.decorators import log_time
+from config import CONFIG
 
 
 SISYPHUS_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus"
@@ -44,7 +45,7 @@ def check_summaries(update_job_desc = False, update_resume = False):
         #current_cv_text is supposed to be the end product, but it gets assigned after step 4, so do keep that in mind when debugging
         summarized_resume = tailor.step0_tailor_summary(model=selected_model, raw_cv_data=current_cv_text, system_s=system_text,
                                                     system=system_text, system0=system_text, system1=system_text, system2=system_text, system3=system_text, system4=system_text,
-                                                     windows=3, skill_section=True, batch=True)
+                                                     windows=CONFIG["WINDOWS"], skill_section=True, mode=CONFIG["SUMMARY_MODE"])
 
 @log_time
 def tailor_cv(root):
@@ -254,9 +255,9 @@ def tailor_cv(root):
         system3=system_text,
         system4=system_text,
         system0=system_text,
-        windows=3,
+        windows=CONFIG["WINDOWS"],
         system01=system_text,
-        batch=True
+        mode=CONFIG["SUMMARY_MODE"]
     )
     print("Tailored summary section:\n" + str(tailored_s))
     tailored_s = helpers.filter_output(tailored_s)

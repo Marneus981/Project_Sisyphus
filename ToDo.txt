@@ -4,12 +4,8 @@
         
 [WIP]      
     [0.99]
-        []Give fields a last used memory
         []Add sounds
-        []Verify token count correctness
-        []Performance Optimization:
-            []Maybe check prompt size/time ratios for each prompt function
-            []Minimize runtime by testing batch modes 2 and 4
+
 
     [???]Convert to PDF button
         
@@ -21,6 +17,10 @@
 
 
 [???]
+    Check hugging face model performance
+    Verify token count correctness (llama3.1,3.2)
+    Give fields a last used memory
+    Make all error warnings appear in logs 
     Move all things that need to be moved to the config file
     Make it a single window
     Add output window
@@ -141,3 +141,8 @@
     [DONE]Simplify make_cover_letter_text
     [DONE]Introduce time analysis
     [DONE]Cut down on times we summarize resume: pass it as an arg to functions = store it
+    [DONE]Performance Optimization:
+        [DONE]Maybe check prompt size/time ratios for each prompt function
+        [DONE]Minimize runtime by testing batch modes 2 and 4
+        [DONE]Check other models performance
+        [DONE]Implement asynchronous calls for tailoring functions

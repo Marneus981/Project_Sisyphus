@@ -1,0 +1,362 @@
+2025-08-19 19:24:55,631 INFO: Waiting for Ollama to be ready...
+2025-08-19 19:24:57,664 INFO: Ollama is running.
+2025-08-19 19:24:57,765 INFO: Refreshing options...
+2025-08-19 19:24:59,831 INFO: [TIME] list_text_files took 0.0006 seconds
+2025-08-19 19:24:59,831 INFO: [TIME] list_text_files took 0.0007 seconds
+2025-08-19 19:24:59,831 INFO: [TIME] list_docx_files took 0.0007 seconds
+2025-08-19 19:24:59,831 INFO: [TIME] list_text_files took 0.0006 seconds
+2025-08-19 19:24:59,831 INFO: [TIME] list_text_files took 0.0003 seconds
+2025-08-19 19:24:59,831 INFO: [TIME] list_docx_files took 0.0002 seconds
+2025-08-19 19:24:59,831 INFO: Options refreshed:
+2025-08-19 19:24:59,831 INFO: Models: ['llama3.2:latest', 'llama3.1:latest', 'deepseek-r1:8b', 'llama3:8b']
+2025-08-19 19:24:59,831 INFO: Systems: ['system1.txt', 'system_consistency.txt', 'system_consistency_cl.txt', 'system_cover_letter.txt']
+2025-08-19 19:24:59,839 INFO: CVs: ['cv1.txt']
+2025-08-19 19:24:59,840 INFO: CV Templates: ['cv_template.docx', 'cv_template2.docx', 'cv_template21.docx', 'cv_template21_simplest.docx']
+2025-08-19 19:24:59,840 INFO: CL Templates: ['cl_template.docx']
+2025-08-19 19:24:59,841 INFO: Previously Saved CV Outputs: ['cltrials.txt', 'consistency_tests0.txt', 'out_cv_20250724_213613.txt', 'out_cv_20250725_000423.txt', 'out_cv_20250725_001236.txt', 'out_cv_20250725_003414.txt', 'out_cv_20250725_004330.txt', 'out_cv_20250725_005646.txt', 'out_cv_20250730_011841.txt', 'out_cv_20250730_020338.txt', 'stableish0.txt']
+2025-08-19 19:24:59,841 INFO: Previously Saved CL Outputs: ['cltest0.txt', 'out_cl_20250722_234433.txt', 'out_cl_20250723_230452.txt']
+2025-08-19 19:24:59,841 INFO: [TIME] refresh_options took 2.0695 seconds
+2025-08-19 19:24:59,843 INFO: [TIME] refresh_options_callback took 2.0705 seconds
+2025-08-19 19:25:12,110 INFO: [TIME] read_text_file took 0.0013 seconds
+2025-08-19 19:25:12,110 INFO: [TIME] read_text_file took 0.0008 seconds
+2025-08-19 19:25:12,110 INFO: Selected Model: 
+llama3.2:latest
+2025-08-19 19:25:12,110 INFO: [TIME] indent_text took 0.0003 seconds
+2025-08-19 19:25:12,110 INFO: CV Text: 
+[0]Name: Jane Doe
+[0]Contact Information:
+[0]Title: Senior Software Engineer
+[0]Summary: Jane Doe is a dynamic and accomplished Senior Software Engineer with more than 15 years of experience leading complex technology initiatives and delivering innovative solutions across multiple industries, including finance, education, e-commerce, and media. Her career is marked by a consistent record of architecting, developing, and deploying scalable backend systems, cloud infrastructure, and distributed applications that have driven measurable improvements in performance, reliability, and cost efficiency. Jane has demonstrated exceptional leadership in managing and mentoring teams of up to 20 engineers and volunteers, fostering a culture of collaboration, adaptability, and continuous improvement. She has spearheaded cloud migration projects that resulted in a 30% reduction in operational costs and a 95% stakeholder satisfaction rate, and has led the design and implementation of microservices architectures that reduced system downtime by 40% and increased transaction throughput by 25%. Her technical expertise encompasses Python, Java, JavaScript, C++, SQL, Dart, Go, and R, with advanced proficiency in Docker, Kubernetes, cloud computing, machine learning, NLP, IoT, and API integration. Jane’s project portfolio includes real-time analytics dashboards, mobile applications, IoT automation systems, recommendation engines, and sentiment analysis tools, each of which has delivered significant business value and user engagement improvements. She has mentored over 100 aspiring developers, achieving a 90% bootcamp completion rate and a 35% improvement in job placement, and has contributed to open source projects, enhancing code quality and adoption by 20%. Jane’s commitment to quality assurance, security, and customer service is reflected in her achievements as a QA tester, IT support specialist, and data analyst, where she improved release quality, lab uptime, and business decision-making through automation and analytics. Her experience in event planning, curriculum development, public speaking, and community outreach has expanded program reach and impact, earning her recognition for dedication, expertise, and positive influence. Fluent in English, Spanish, and French, Jane is passionate about mentoring, empowering others, and bridging the digital divide. She has received the Dean’s List and Tech Innovation Scholarship for academic excellence and holds certifications as an AWS Solutions Architect and Scrum Master. Throughout her career, Jane has demonstrated exceptional problem-solving, analytical thinking, and attention to detail, consistently delivering projects on time and within budget. Her ability to analyze complex problems, architect robust solutions, and build strong relationships with clients, stakeholders, and team members positions her as a valuable asset to any organization seeking to innovate and excel in today’s competitive landscape. Jane’s technical acumen, leadership, and interpersonal skills have enabled her to drive organizational success, foster inclusive environments, and inspire the next generation of engineers. Her history of exceeding performance metrics and delivering impactful results is a testament to her dedication, creativity, and adaptability, making her an ideal candidate for senior engineering and leadership roles in dynamic, forward-thinking organizations. She is committed to continuous learning and professional development, ensuring her contributions remain relevant and valuable. Jane’s experience spans the full software development lifecycle, from requirements gathering and design to implementation, testing, and deployment. She is passionate about fostering inclusive environments, promoting diversity in tech, and inspiring the next generation of engineers through mentorship and community engagement. Her technical acumen, combined with her leadership and interpersonal skills, positions her as a valuable asset to any organization seeking to innovate and excel in today's competitive landscape.
+[0]Languages: English, Spanish, French
+[0]Education:
+[0]Certifications:
+[0]Awards and Scholarships:
+[0]Volunteering and Leadership:
+[0]Work Experience:
+[0]Projects:
+2025-08-19 19:25:12,110 INFO: System: 
+You are a resume tailoring assistant. Only output the section requested, in the exact format specified. You are to follow the following guidelines when tailoring all resume sections:
+You may only draw from the provided descriptions, no making assumptions.
+Do not invent any data or roles, only use the data provided.
+You may not add any untrue statements outside of what has been provided in the untailored resume section.
+The tailored sections and overall resume must be brief, concise and professional. It must cater to recruiters and make the resume stand out.
+Use simple to understand language when possible, unless direct technical terminology is employed.
+2025-08-19 19:25:12,110 INFO: Job Description: 
+DoorDash is building the world's most reliable on-demand, logistics engine for delivery. We are continuing to grow rapidly and expanding our Engineering offices globally! We are looking for Backend Engineers to build and maintain a large scale 24x7 global infrastructure system that powers DoorDash's 3-sided marketplace of Consumers, Merchants and Dashers.
+
+
+2025-08-19 19:25:12,122 INFO: [TIME] parse_cv took 0.0028 seconds
+2025-08-19 19:25:12,122 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,122 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,122 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,122 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,122 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,122 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,122 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,122 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,122 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,122 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,122 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,126 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,126 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,127 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,127 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,127 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,127 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,127 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,130 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,130 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,130 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,131 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,131 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,131 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,131 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,133 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,133 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,133 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,133 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,133 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,133 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,133 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,133 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,133 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,133 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,133 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,133 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,133 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,133 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,133 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,138 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,138 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,138 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,138 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,138 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,138 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,138 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,138 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,138 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,142 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,142 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,143 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,143 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,143 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,144 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,144 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,144 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,144 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,144 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,146 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,146 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,146 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,146 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,148 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,148 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,148 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,149 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,149 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,149 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,149 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,149 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,149 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,149 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,149 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,149 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,149 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,149 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,149 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,149 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,149 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,153 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,153 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,153 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,154 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,154 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,154 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,154 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,154 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,157 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,157 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,157 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,157 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,159 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,159 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,159 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,159 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,159 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,159 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,159 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,159 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,159 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,163 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,163 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,163 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,163 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,163 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,163 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,163 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,163 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,163 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,163 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,163 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,163 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,163 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,163 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,163 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,163 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,163 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,163 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,168 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,168 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,168 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,168 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,168 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,168 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,168 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,171 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,171 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,171 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,171 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,171 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,171 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,171 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,171 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,174 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,174 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,174 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,174 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,174 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,174 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,174 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,174 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,174 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,174 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,174 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,174 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,179 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,179 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,179 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,179 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,179 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,179 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,179 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,179 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,179 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,179 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,179 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,184 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,184 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,184 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,184 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,184 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,184 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,184 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,184 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,188 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,188 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,188 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,188 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,188 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,191 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,191 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,191 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,191 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,191 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,195 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,195 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,195 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,197 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,197 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,197 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,199 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,199 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,199 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,199 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,201 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,201 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,202 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,202 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,202 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,202 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,202 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,202 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,202 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,202 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,202 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,202 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,202 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,202 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,202 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,207 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,207 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,208 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,209 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,209 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,209 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,209 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,209 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,209 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,212 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,212 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,212 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,212 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,212 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,212 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,212 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,212 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,212 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,215 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,215 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,215 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,215 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,215 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,215 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,215 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,218 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,219 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,219 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,219 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,219 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,219 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,219 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,219 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,219 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,219 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,219 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,219 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,219 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,223 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,224 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,224 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,224 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,224 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,224 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,224 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,224 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,224 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,228 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,228 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,228 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,228 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,228 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,231 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,231 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,231 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,232 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,232 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,233 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,233 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,233 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,233 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,233 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,233 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,233 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,233 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,233 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,233 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,233 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,233 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,233 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,233 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,233 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,233 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,233 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,233 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,233 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,233 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,233 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,233 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,233 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,240 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,240 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,240 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,240 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,241 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,241 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,241 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,241 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,241 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,243 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,243 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,244 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,244 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,244 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,245 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,245 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,245 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,245 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,245 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-19 19:25:12,245 INFO: [TIME] inv_parse_cv took 0.1246 seconds
+2025-08-19 19:25:12,245 INFO: [TIME] label_repeated_experiences took 0.1287 seconds
+2025-08-19 19:25:12,245 INFO: [TIME] indent_text took 0.0000 seconds
+2025-08-19 19:25:12,248 INFO: [STEP 0][INPUT] Raw Job Description, Raw CV text: 
+
+2025-08-19 19:25:12,248 INFO: [STEP 0][START] Summarizing Job Description
+2025-08-19 19:25:12,248 INFO: [OLLAMA]summarize_job_description: payload field model with value llama3.2:latest found
+2025-08-19 19:25:12,248 INFO: [OLLAMA]summarize_job_description: payload field system with value system1.txt found
+2025-08-19 19:25:12,248 INFO: [OLLAMA]summarize_job_description: payload field prompt with value 
+    Summarize the following job description by extracting key responsibilities and requirements.
+    Also, highlight needed skills, both technical and soft.
+    DoorDash is building the world's most reliable on-demand, logistics engine for delivery. We are continuing to grow rapidly and expanding our Engineering offices globally! We are looking for Backend Engineers to build and maintain a large scale 24x7 global infrastructure system that powers DoorDash's 3-sided marketplace of Consumers, Merchants and Dashers.
+     found
+2025-08-19 19:25:12,248 INFO: [OLLAMA]summarize_job_description: payload field stream with value False found
+2025-08-19 19:25:49,312 INFO: [SUCCESS][OLLAMA]summarize_job_description: {'model': 'llama3.2:latest', 'created_at': '2025-08-20T01:25:49.310508Z', 'response': "Here is a summary of the job description:\n\n**Key Responsibilities:**\n\n1. Build and maintain a large-scale, 24x7 global infrastructure system to power DoorDash's platform.\n2. Design, develop, test, and deploy backend systems that support the company's rapidly growing business.\n\n**Requirements:**\n\n1. The role requires expertise in building scalable and reliable systems.\n2. Experience with large-scale distributed systems and microservices architecture is preferred.\n\n**Needed Skills (Technical):**\n\n1. Programming languages: Proficiency in one or more programming languages such as Java, Python, C++, or others.\n2. Cloud computing: Experience with cloud platforms like AWS, Azure, or Google Cloud.\n3. Database management: Knowledge of relational databases and NoSQL databases.\n4. Networking: Understanding of networking protocols and architectures.\n\n**Needed Skills (Soft):**\n\n1. Communication: Ability to collaborate with cross-functional teams and communicate technical ideas effectively.\n2. Problem-solving: Strong problem-solving skills to troubleshoot and resolve complex issues.\n3. Adaptability: Willingness to adapt to changing priorities and requirements in a rapidly growing company.\n4. Teamwork: Experience working in a team environment to achieve common goals.\n\nNote that the job description does not provide explicit requirements for specific education or certifications, but the context suggests that a strong technical background is expected, along with good communication and teamwork skills.", 'done': True, 'done_reason': 'stop', 'context': [128006, 9125, 128007, 271, 38766, 1303, 33025, 2696, 25, 6790, 220, 2366, 18, 271, 9125, 16, 3996, 128009, 128006, 882, 128007, 1432, 262, 8279, 5730, 553, 279, 2768, 2683, 4096, 555, 60508, 1401, 28423, 323, 8670, 627, 262, 7429, 11, 11415, 4460, 7512, 11, 2225, 11156, 323, 8579, 627, 262, 25166, 43363, 374, 4857, 279, 1917, 596, 1455, 15062, 389, 57364, 11, 43257, 4817, 369, 9889, 13, 1226, 527, 14691, 311, 3139, 19019, 323, 24050, 1057, 17005, 19672, 31550, 0, 1226, 527, 3411, 369, 56360, 49796, 311, 1977, 323, 10519, 264, 3544, 5569, 220, 1187, 87, 22, 3728, 14054, 1887, 430, 13736, 25166, 43363, 596, 220, 18, 50858, 30633, 315, 83091, 11, 66125, 1821, 323, 37770, 388, 627, 257, 128009, 128006, 78191, 128007, 271, 8586, 374, 264, 12399, 315, 279, 2683, 4096, 1473, 334, 1622, 74112, 25, 57277, 16, 13, 8012, 323, 10519, 264, 3544, 13230, 11, 220, 1187, 87, 22, 3728, 14054, 1887, 311, 2410, 25166, 43363, 596, 5452, 627, 17, 13, 7127, 11, 2274, 11, 1296, 11, 323, 10739, 19713, 6067, 430, 1862, 279, 2883, 596, 19019, 7982, 2626, 382, 334, 60302, 25, 57277, 16, 13, 578, 3560, 7612, 19248, 304, 4857, 69311, 323, 15062, 6067, 627, 17, 13, 21460, 449, 3544, 13230, 4332, 6067, 323, 8162, 13069, 18112, 374, 15236, 382, 334, 57806, 31340, 320, 63326, 1680, 57277, 16, 13, 39524, 15823, 25, 8626, 10603, 304, 832, 477, 810, 15840, 15823, 1778, 439, 8102, 11, 13325, 11, 356, 23240, 477, 3885, 627, 17, 13, 15161, 25213, 25, 21460, 449, 9624, 15771, 1093, 24124, 11, 35219, 11, 477, 5195, 15161, 627, 18, 13, 10199, 6373, 25, 33025, 315, 72283, 32906, 323, 2360, 6827, 32906, 627, 19, 13, 60563, 25, 46551, 315, 29130, 32885, 323, 78335, 382, 334, 57806, 31340, 320, 31631, 1680, 57277, 16, 13, 31966, 25, 37083, 311, 51696, 449, 5425, 99616, 7411, 323, 19570, 11156, 6848, 13750, 627, 17, 13, 22854, 99246, 25, 27191, 3575, 99246, 7512, 311, 20498, 97508, 323, 9006, 6485, 4819, 627, 18, 13, 59531, 2968, 25, 4946, 287, 2136, 311, 10737, 311, 10223, 30601, 323, 8670, 304, 264, 19019, 7982, 2883, 627, 19, 13, 8068, 1816, 25, 21460, 3318, 304, 264, 2128, 4676, 311, 11322, 4279, 9021, 382, 9290, 430, 279, 2683, 4096, 1587, 539, 3493, 11720, 8670, 369, 3230, 6873, 477, 82571, 11, 719, 279, 2317, 13533, 430, 264, 3831, 11156, 4092, 374, 3685, 11, 3235, 449, 1695, 10758, 323, 84633, 7512, 13], 'total_duration': 35009313200, 'load_duration': 3147891200, 'prompt_eval_count': 125, 'prompt_eval_duration': 610302400, 'eval_count': 279, 'eval_duration': 31242347200}

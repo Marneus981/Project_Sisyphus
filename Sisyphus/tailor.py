@@ -5,11 +5,42 @@ from Sisyphus import parsers
 import logging
 from Sisyphus.decorators import log_time
 import config
+import aiohttp
+import asyncio
+import warnings
+from config import CONFIG
 DEFAULT_MODEL = "llama3:8b"
 DEFAULT_URL = "http://localhost:11434"
 
 # Set up logging
 print = logging.info
+
+@log_time
+async def ollama_request(session, payload, ollama_url):
+    # Check payload fields
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]ollama_request: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]ollama_request: payload field {field} is missing or is NoneType")
+    async with session.post(f"{ollama_url}/api/generate", json=payload) as resp:
+        data = await resp.json()
+        if resp.status == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={data}")
+        return data.get("response", "")
+    
+@log_time
+async def parallel_requests(payloads, ollama_url):
+    async with aiohttp.ClientSession() as session:
+        tasks = []
+        for i in range(len(payloads)):
+            payload = payloads[i].copy()
+            # payload["prompt"] = f"Prompt {i+1}"  
+            tasks.append(ollama_request(session, payload, ollama_url))
+        results = await asyncio.gather(*tasks)
+    return results
+
 
 @log_time
 def augment_output(input_text, reference_dict, type):
@@ -270,16 +301,26 @@ def summarize_job_description(job_description = "", system = "", ollama_url=DEFA
         "prompt": prompt,
         "stream": False
     }
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]summarize_job_description: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]summarize_job_description: payload field {field} is missing or is NoneType")
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
+        if response.status_code == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        print(f"[SUCCESS][OLLAMA]summarize_job_description: {result}")
         return response_text
-    except Exception:
-        print("Ollama response was not valid JSON:")
-        print(response.text)
-        return "Error: Ollama response was not valid JSON."
+    
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error("[ERROR][OLLAMA]summarize_job_description: Ollama response was not valid JSON.", exc_info=True)
+        logging.error(f"Response text: {response.text}")
+        return "[ERROR][OLLAMA]summarize_job_description: Ollama response was not valid JSON."
 
 @log_time
 def step0_volunteering_and_leadership(model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL, 
@@ -295,6 +336,9 @@ Output the selected projects strictly in the following format, without changing 
 [R]Role Name 2
 [R]Role Name 3
 [R]Role Name 4
+Notes:
+- Do not include any characters before [R]
+- Display the Role Names explicitly; do not write "Role:" before the Role Name
     """
     if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
@@ -303,16 +347,25 @@ Output the selected projects strictly in the following format, without changing 
         "prompt": prompt,
         "stream": False
     }
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]step0_volunteering_and_leadership: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]step0_volunteering_and_leadership: payload field {field} is missing or is NoneType")
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
+        if response.status_code == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        print(f"[SUCCESS][OLLAMA]step0_volunteering_and_leadership: {result}")
         return response_text
-    except Exception:
-        print("Ollama response was not valid JSON:")
-        print(response.text)
-        return "Error: Ollama response was not valid JSON."
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error("[ERROR][OLLAMA]step0_volunteering_and_leadership: Ollama response was not valid JSON.", exc_info=True)
+        logging.error(f"Response text: {response.text}")
+        return "[ERROR][OLLAMA]step0_volunteering_and_leadership: Ollama response was not valid JSON."
 
 @log_time
 def step3_volunteering_and_leadership(model=DEFAULT_MODEL, system2="", ollama_url=DEFAULT_URL, 
@@ -323,6 +376,7 @@ Given the following "Volunteering and Leadership" resume experience:
 And the following job description:
 {job_description}
 Rewrite the experience to best match the job description, following these guidelines:
+- Do not include any information not present in the original experience.
 - Keep all original subsections: Role, Organization, Location, Duration, Description, and Skills.
 - Keep subsection names unchanged ("Project Title", "Type", "Duration", "Description", "Skills")
 - In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
@@ -331,6 +385,7 @@ Rewrite the experience to best match the job description, following these guidel
 - Skills must be comma-separated and follow the format below. 
 - If there are no skills in a given category, use " ", then follow up as the format below indicates 
     - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
+- Include the prefix [1] at the start of each line (as seen in the format below).
 Return only the revised section in the following format:
 [1]Role: Role Name 1
 [1]Organization: Organization Name 1
@@ -346,16 +401,26 @@ Return only the revised section in the following format:
         "prompt": prompt,
         "stream": False
     }
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]step3_volunteering_and_leadership: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]step3_volunteering_and_leadership: payload field {field} is missing or is NoneType")
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
+        
+        if response.status_code == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        print(f"[SUCCESS][OLLAMA]step3_volunteering_and_leadership: {result}")
         return response_text
-    except Exception:
-        print("Ollama response was not valid JSON:")
-        print(response.text)
-        return "Error: Ollama response was not valid JSON."
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error("[ERROR][OLLAMA]step3_volunteering_and_leadership: Ollama response was not valid JSON.", exc_info=True)
+        logging.error(f"Response text: {response.text}")
+        return "[ERROR][OLLAMA]step3_volunteering_and_leadership: Ollama response was not valid JSON."
 
 @log_time
 def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system1="", system2="", ollama_url=DEFAULT_URL, 
@@ -413,6 +478,9 @@ Output the selected projects strictly in the following format, without changing 
 [J]Job Title 2
 [J]Job Title 3
 [J]Job Title 4
+Notes:
+- Do not include any characters before [J]
+- Display the Job Titles explicitly; do not write "Job Title:" before the Job Title
     """
     if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
@@ -421,16 +489,26 @@ Output the selected projects strictly in the following format, without changing 
         "prompt": prompt,
         "stream": False
     }
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]step0_work_experience: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]step0_work_experience: payload field {field} is missing or is NoneType")
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
+        
+        if response.status_code == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        print(f"[SUCCESS][OLLAMA]step0_work_experience: {result}")
         return response_text
-    except Exception:
-        print("Ollama response was not valid JSON:")
-        print(response.text)
-        return "Error: Ollama response was not valid JSON."
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error("[ERROR][OLLAMA]step0_work_experience: Ollama response was not valid JSON.", exc_info=True)
+        logging.error(f"Response text: {response.text}")
+        return "[ERROR][OLLAMA]step0_work_experience: Ollama response was not valid JSON."
 
 @log_time
 def step3_work_experience(model=DEFAULT_MODEL, system2="", ollama_url=DEFAULT_URL, 
@@ -441,6 +519,7 @@ Given the following "Work Experience" resume experience:
 And the following job description:
 {job_description}
 Rewrite the experience to best match the job description, following these guidelines:
+- Do not include any information not present in the original experience.
 - Keep all original subsections: Job Title, Company, Location, Duration, Description, and Skills.
 - Keep subsection names unchanged ("Project Title", "Type", "Duration", "Description", "Skills")
 - In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
@@ -449,6 +528,7 @@ Rewrite the experience to best match the job description, following these guidel
 - Skills must be comma-separated and follow the format below.
 - If there are no skills in a given category, use " ", then follow up as the format below indicates 
     - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
+- Include the prefix [1] at the start of each line (as seen in the format below).
 Return only the revised section in the following format:
 [1]Job Title: Job Title 1
 [1]Company: Company Name 1
@@ -464,16 +544,26 @@ Return only the revised section in the following format:
         "prompt": prompt,
         "stream": False
     }
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]step3_work_experience: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]step3_work_experience: payload field {field} is missing or is NoneType")
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
+        
+        if response.status_code == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        print(f"[SUCCESS][OLLAMA]step3_work_experience: {result}")
         return response_text
-    except Exception:
-        print("Ollama response was not valid JSON:")
-        print(response.text)
-        return "Error: Ollama response was not valid JSON."
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error("[ERROR][OLLAMA]step3_work_experience: Ollama response was not valid JSON.", exc_info=True)
+        logging.error(f"Response text: {response.text}")
+        return "[ERROR][OLLAMA]step3_work_experience: Ollama response was not valid JSON."
 
 @log_time
 def tailor_work_experience(model=DEFAULT_MODEL, system1="", system2="", ollama_url=DEFAULT_URL, 
@@ -527,6 +617,9 @@ Output the selected projects strictly in the following format, without changing 
 [P]Project Title 2
 [P]Project Title 3
 [P]Project Title 4
+Notes:
+- Do not include any characters before [P]
+- Display the Project Titles explicitly; do not write "Project Title:" before the Project Title
     """
     if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
@@ -535,16 +628,26 @@ Output the selected projects strictly in the following format, without changing 
         "prompt": prompt,
         "stream": False
     }
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]step0_projects: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]step0_projects: payload field {field} is missing or is NoneType")
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
+        
+        if response.status_code == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        print(f"[SUCCESS][OLLAMA]step0_projects: {result}")
         return response_text
-    except Exception:
-        print("Ollama response was not valid JSON:")
-        print(response.text)
-        return "Error: Ollama response was not valid JSON."
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error("[ERROR][OLLAMA]step0_projects: Ollama response was not valid JSON.", exc_info=True)
+        logging.error(f"Response text: {response.text}")
+        return "[ERROR][OLLAMA]step0_projects: Ollama response was not valid JSON."
 
 @log_time
 def step3_projects(model=DEFAULT_MODEL, system2="", ollama_url=DEFAULT_URL, 
@@ -555,14 +658,16 @@ Given the following "Projects" resume experience:
 And the following job description:
 {job_description}
 Rewrite the project to best match the job description, following these guidelines:
+- Do not include any information not present in the original experience.
 - Keep all original subsections: Project Title, Type, Duration, Description, and Skills.
 - Keep subsection names unchanged ("Project Title", "Type", "Duration", "Description", "Skills")
 - In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
 - In the Skills subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
 - Do not use line breaks inside any subsection. Do not use the ":" character in the Description.
 - Skills must be comma-separated and follow the format below.
-- If there are no skills in a given category, use " ", then follow up as the format below indicates 
+- If there are no skills in a given category, use " ", then follow up as the format below indicates. 
     - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
+- Include the prefix [1] at the start of each line (as seen in the format below).
 Return only the revised section in the following format:
 [1]Project Title: Project Title 1
 [1]Type: Type of Project 1
@@ -577,16 +682,26 @@ Return only the revised section in the following format:
         "prompt": prompt,
         "stream": False
     }
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]step3_projects: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]step3_projects: payload field {field} is missing or is NoneType")
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
+        
+        if response.status_code == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        print(f"[SUCCESS][OLLAMA]step3_projects: {result}")
         return response_text
-    except Exception:
-        print("Ollama response was not valid JSON:")
-        print(response.text)
-        return "Error: Ollama response was not valid JSON."
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error("[ERROR][OLLAMA]step3_projects: Ollama response was not valid JSON.", exc_info=True)
+        logging.error(f"Response text: {response.text}")
+        return "[ERROR][OLLAMA]step3_projects: Ollama response was not valid JSON."
 
 @log_time
 def tailor_projects(model=DEFAULT_MODEL, system1="", system2="", ollama_url=DEFAULT_URL, 
@@ -649,6 +764,8 @@ def step0_prune_experiences(model = DEFAULT_MODEL, system1 = "", ollama_url = DE
     - [R] Role: Volunteering and Leadership
     - [J] Job Title: Work Experience
     - [P] Project Title: Project
+    Notes:
+    - Do not include any characters before [R], [J], or [P]
     """
     if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
@@ -657,16 +774,26 @@ def step0_prune_experiences(model = DEFAULT_MODEL, system1 = "", ollama_url = DE
         "prompt": prompt,
         "stream": False
     }
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]step0_prune_experiences: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]step0_prune_experiences: payload field {field} is missing or is NoneType")
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
+        
+        if response.status_code == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        print(f"[SUCCESS][OLLAMA]step0_prune_experiences: {result}")
         return response_text
-    except Exception:
-        print("Ollama response was not valid JSON:")
-        print(response.text)
-        return "Error: Ollama response was not valid JSON."
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error("[ERROR][OLLAMA]step0_prune_experiences: Ollama response was not valid JSON.", exc_info=True)
+        logging.error(f"Response text: {response.text}")
+        return "[ERROR][OLLAMA]step0_prune_experiences: Ollama response was not valid JSON."
 
 @log_time
 def prune_experiences(model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL, 
@@ -689,6 +816,36 @@ def prune_experiences(model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL,
 #Sliding Window + Hierarchical solution
 #Tailor Summary
 @log_time
+def generate_payloads_summarize_section(sections, section_names, systems, model=DEFAULT_MODEL, ollama_url=DEFAULT_URL):
+    payloads = []
+    requests = len(sections)
+    for i in range(requests):
+        prompt = f"""
+        Given the following section from a resume:
+        {sections[i]}
+        Summarize the section in a wholistic manner while highlighting competencies, achievements and skills.
+        Keep in mind that this summary will be used in a "Sliding Window" approach to summarize the entire resume effectively, so include information that is relevant for the overall context of the resume.
+        Return the summarized information as a single continuous string of text, following this format strictly:
+
+        [S]{section_names[i]} Section Summary: Summary of the section's relevant information, competencies, achievements, and key skills.
+        """
+        if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
+        payload = {
+            "model": model,
+            "system": systems[i],
+            "prompt": prompt,
+            "stream": False
+        }
+        for field in ["model", "system", "prompt", "stream"]:
+            value = payload.get(field, None)
+            if value is not None:
+                logging.info(f"[OLLAMA]generate_payloads_summarize_section: payload field {field} with value {value} found")
+            else:
+                logging.error(f"[ERROR][OLLAMA]generate_payloads_summarize_section: payload field {field} is missing or is NoneType")
+        payloads.append(payload)
+    return payloads
+
+@log_time
 def summarize_section(section="", model = DEFAULT_MODEL, system = "", ollama_url = DEFAULT_URL, section_name = ""):
     # Implement the logic to summarize the section based on the job description
     prompt = f"""
@@ -707,16 +864,26 @@ def summarize_section(section="", model = DEFAULT_MODEL, system = "", ollama_url
         "prompt": prompt,
         "stream": False
     }
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]summarize_section: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]summarize_section: payload field {field} is missing or is NoneType")
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
+        
+        if response.status_code == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        print(f"[SUCCESS][OLLAMA]summarize_section: {result}")
         return response_text
-    except Exception:
-        print("Ollama response was not valid JSON:")
-        print(response.text)
-        return "Error: Ollama response was not valid JSON."
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error("[ERROR][OLLAMA]summarize_section: Ollama response was not valid JSON.", exc_info=True)
+        logging.error(f"Response text: {response.text}")
+        return "[ERROR][OLLAMA]summarize_section: Ollama response was not valid JSON."
 
 @log_time
 def batch_summarize_sections(sections = [], section_names = [], model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL):
@@ -738,16 +905,26 @@ def batch_summarize_sections(sections = [], section_names = [], model=DEFAULT_MO
         "prompt": prompt,
         "stream": False
     }
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]batch_summarize_section: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]batch_summarize_section: payload field {field} is missing or is NoneType")
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
+        
+        if response.status_code == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        print(f"[SUCCESS][OLLAMA]batch_summarize_section: {result}")
         return response_text
-    except Exception:
-        print("Ollama response was not valid JSON:")
-        print(response.text)
-        return "Error: Ollama response was not valid JSON."
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error("[ERROR][OLLAMA]batch_summarize_section: Ollama response was not valid JSON.", exc_info=True)
+        logging.error(f"Response text: {response.text}")
+        return "[ERROR][OLLAMA]batch_summarize_section: Ollama response was not valid JSON."
 
 
 @log_time
@@ -767,15 +944,26 @@ def summarize_general_info(general_info_text = "", model = DEFAULT_MODEL, system
         "prompt": prompt,
         "stream": False
     }
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]summarize_general_info: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]summarize_general_info: payload field {field} is missing or is NoneType")
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
+        
+        if response.status_code == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        print(f"[SUCCESS][OLLAMA]summarize_general_info: {result}")
         return helpers.filter_output(response_text.strip(), mode= "cap_letters")
-    except Exception:
-        print("Ollama response was not valid JSON:")
-        print(response.text)
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error("[ERROR][OLLAMA]summarize_general_info: Ollama response was not valid JSON.", exc_info=True)
+        logging.error(f"Response text: {response.text}")
+        return "[ERROR][OLLAMA]summarize_general_info: Ollama response was not valid JSON."
 
 @log_time
 def summarize_skills( model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, skill_section=""):
@@ -794,29 +982,51 @@ def summarize_skills( model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, sk
         "prompt": prompt,
         "stream": False
     }
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]summarize_skills: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]summarize_skills: payload field {field} is missing or is NoneType")
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
+        
+        if response.status_code == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        print(f"[SUCCESS][OLLAMA]summarize_skills: {result}")
         return helpers.filter_output(response_text.strip(), mode= "cap_letters")
-    except Exception:
-        print("Ollama response was not valid JSON:")
-        print(response.text)
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error("[ERROR][OLLAMA]summarize_skills: Ollama response was not valid JSON.", exc_info=True)
+        logging.error(f"Response text: {response.text}")
+        return "[ERROR][OLLAMA]summarize_skills: Ollama response was not valid JSON."
 
 @log_time
 def sliding_window_two_sections(section1 = "", section2 ="", model=DEFAULT_MODEL, system1="", system2="", system = "", ollama_url=DEFAULT_URL,
-                                section1_name = "", section2_name = "", candidate_name = "", candidate_title = "", batch =False):
-    if not batch:
-        summary1 = summarize_section(section1, model=model, system=system1, ollama_url=ollama_url, section_name=section1_name)
-        summary2 = summarize_section(section2, model=model, system=system2, ollama_url=ollama_url, section_name=section2_name)
-        summary1 = helpers.filter_output(summary1.strip(), mode= "cap_letters")
-        summary2 = helpers.filter_output(summary2.strip(), mode= "cap_letters")
-    else:
-        summaries = batch_summarize_sections(sections=[section1, section2], section_names=[section1_name, section2_name], model=model, system=system1, ollama_url=ollama_url)
-        summaries_list = helpers.filter_output(summaries.strip(), mode= "cap_letters").split("\n")
-        summary1 = summaries_list[0] if len(summaries_list) > 0 else ""
-        summary2 = summaries_list[1] if len(summaries_list) > 1 else ""
+                                section1_name = "", section2_name = "", candidate_name = "", candidate_title = "", mode = "single"):
+    if CONFIG["SUMMARY_REQUESTS"] > 2:
+        warnings.warn("[WARNING]sliding_window_two_sections: number of requests exceeds sliding window size, using maximum possible request number (2)")
+    if CONFIG["SUMMARY_REQUESTS"] < 0:
+        raise ValueError("[ERROR]sliding_window_two_sections: SUMMARY_REQUESTS must be a positive integer")
+    sections = [section1, section2]
+    section_names = [section1_name, section2_name]
+    systems = [system1, system2]
+    summaries = []
+    if mode == "single":
+        for i in range(0, 2):
+                summary = summarize_section(sections[i], model=model, system=systems[i], ollama_url=ollama_url, section_name=section_names[i])
+                summaries.append(helpers.filter_output(summary.strip(), mode= "cap_letters"))
+    elif mode == "batch":
+        summaries_raw = batch_summarize_sections(sections=sections, section_names=section_names, model=model, system=system1, ollama_url=ollama_url)
+        summaries = helpers.filter_output(summaries_raw.strip(), mode= "cap_letters").split("\n")
+    elif mode == "parallel":
+        payloads = generate_payloads_summarize_section(sections=[section1, section2], section_names=[section1_name, section2_name], systems=[system1, system2], model=model, ollama_url=ollama_url)
+        responses = asyncio.run(parallel_requests(payloads, ollama_url=ollama_url))
+        summaries = [helpers.filter_output(response.strip(), mode="cap_letters") for response in responses]
+    summary1 = summaries[0] if len(summaries) > 0 else ""
+    summary2 = summaries[1] if len(summaries) > 1 else ""
     prompt = f"""
     Given the following resume section summaries:
     {summary1}
@@ -835,34 +1045,71 @@ def sliding_window_two_sections(section1 = "", section2 ="", model=DEFAULT_MODEL
         "prompt": prompt,
         "stream": False
     }
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]sliding_window_two_sections: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]sliding_window_two_sections: payload field {field} is missing or is NoneType")
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
+        
+        if response.status_code == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
         response_text = helpers.filter_output(response_text.strip(), mode= "cap_letters")
+        print(f"[SUCCESS][OLLAMA]sliding_window_two_sections: {result}")
         return response_text
-    except Exception:
-        print("Ollama response was not valid JSON:")
-        print(response.text)
-        return "Error: Ollama response was not valid JSON."
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error("[ERROR][OLLAMA]sliding_window_two_sections: Ollama response was not valid JSON.", exc_info=True)
+        logging.error(f"Response text: {response.text}")
+        return "[ERROR][OLLAMA]sliding_window_two_sections: Ollama response was not valid JSON."
 
 @log_time
 def sliding_window_three_sections(section1 = "", section2 = "", section3 = "", model=DEFAULT_MODEL, system1="", system2="", system3="", system = "", ollama_url=DEFAULT_URL,
-                                section1_name = "", section2_name = "", section3_name = "", candidate_name = "", candidate_title = "", batch =False):
-    if not batch:
-        summary1 = summarize_section(section1, model=model, system=system1, ollama_url=ollama_url, section_name=section1_name)
-        summary2 = summarize_section(section2, model=model, system=system2, ollama_url=ollama_url, section_name=section2_name)
-        summary3 = summarize_section(section3, model=model, system=system3, ollama_url=ollama_url, section_name=section3_name)
-        summary1 = helpers.filter_output(summary1.strip(), mode= "cap_letters")
-        summary2 = helpers.filter_output(summary2.strip(), mode= "cap_letters")
-        summary3 = helpers.filter_output(summary3.strip(), mode= "cap_letters")
-    else:
-        summaries = batch_summarize_sections(sections=[section1, section2, section3], section_names=[section1_name, section2_name, section3_name], model=model, system=system1, ollama_url=ollama_url)
-        summaries_list = helpers.filter_output(summaries.strip(), mode= "cap_letters").split("\n")
-        summary1 = summaries_list[0] if len(summaries_list) > 0 else ""
-        summary2 = summaries_list[1] if len(summaries_list) > 1 else ""
-        summary3 = summaries_list[2] if len(summaries_list) > 2 else ""
+                                section1_name = "", section2_name = "", section3_name = "", candidate_name = "", candidate_title = "", mode = "single"):
+    if CONFIG["SUMMARY_REQUESTS"] > 3:
+        warnings.warn("[WARNING]sliding_window_three_sections: number of requests exceeds sliding window size, using maximum possible request number (3)")
+    if CONFIG["SUMMARY_REQUESTS"] < 0:
+        raise ValueError("[ERROR]sliding_window_three_sections: SUMMARY_REQUESTS must be a positive integer")
+    sections = [section1, section2, section3]
+    section_names = [section1_name, section2_name, section3_name]
+    systems = [system1, system2, system3]
+    summaries = []
+
+    for i in range(0, 3, CONFIG["SUMMARY_REQUESTS"]):
+        if mode == "single":
+            for j in range(0,CONFIG["SUMMARY_REQUESTS"]):
+                if i+j >= 3:
+                    break
+                else:
+                    summary = summarize_section(sections[i+j], model=model, system=systems[i+j], ollama_url=ollama_url, section_name=section_names[i+j])
+                    summaries.append(helpers.filter_output(summary.strip(), mode= "cap_letters"))
+        if mode == "batch":
+            upper_bound = i + CONFIG["SUMMARY_REQUESTS"]
+            if upper_bound > 3:
+                upper_bound = 3
+            summary = batch_summarize_sections(sections=sections[i:upper_bound], section_names=section_names[i:upper_bound], model=model, system=system1, ollama_url=ollama_url)
+            summaries.append(helpers.filter_output(summary.strip(), mode= "cap_letters"))
+            if upper_bound == 3:
+                break
+        if mode == "parallel":
+            upper_bound = i + CONFIG["SUMMARY_REQUESTS"]
+            if upper_bound > 3:
+                upper_bound = 3
+            payloads = generate_payloads_summarize_section(sections=sections[i:upper_bound], section_names=section_names[i:upper_bound], systems=systems[i:upper_bound], model=model, ollama_url=ollama_url)
+            responses = asyncio.run(parallel_requests(payloads, ollama_url=ollama_url))
+            for response in responses:
+                summaries.append(helpers.filter_output(response.strip(), mode= "cap_letters"))
+            if upper_bound == 3:
+                break
+
+    summary1 = summaries[0] if len(summaries) > 0 else ""
+    summary2 = summaries[1] if len(summaries) > 1 else ""
+    summary3 = summaries[2] if len(summaries) > 2 else ""
+
     prompt = f"""
     Given the following resume section summaries:
     {summary1}
@@ -882,17 +1129,27 @@ def sliding_window_three_sections(section1 = "", section2 = "", section3 = "", m
         "prompt": prompt,
         "stream": False
     }
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]sliding_window_three_sections: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]sliding_window_three_sections: payload field {field} is missing or is NoneType")
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
+        
+        if response.status_code == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
         response_text = helpers.filter_output(response_text.strip(), mode= "cap_letters")
+        print(f"[SUCCESS][OLLAMA]sliding_window_three_sections: {result}")
         return response_text
-    except Exception:
-        print("Ollama response was not valid JSON:")
-        print(response.text)
-        return "Error: Ollama response was not valid JSON."
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error("[ERROR][OLLAMA]sliding_window_three_sections: Ollama response was not valid JSON.", exc_info=True)
+        logging.error(f"Response text: {response.text}")
+        return "[ERROR][OLLAMA]sliding_window_three_sections: Ollama response was not valid JSON."
 
 @log_time
 def sliding_window_four_sections(
@@ -913,23 +1170,48 @@ def sliding_window_four_sections(
     section4_name="",
     candidate_name="",
     candidate_title="",
-    batch=False
+    mode="single"
 ):
-    if not batch:
-        summary1 = summarize_section(section1, model=model, system=system1, ollama_url=ollama_url, section_name=section1_name)
-        summary2 = summarize_section(section2, model=model, system=system2, ollama_url=ollama_url, section_name=section2_name)
-        summary3 = summarize_section(section3, model=model, system=system3, ollama_url=ollama_url, section_name=section3_name)
-        summary4 = summarize_section(section4, model=model, system=system4, ollama_url=ollama_url, section_name=section4_name)
-        summary1 = helpers.filter_output(summary1.strip(), mode="cap_letters")
-        summary2 = helpers.filter_output(summary2.strip(), mode="cap_letters")
-        summary3 = helpers.filter_output(summary3.strip(), mode="cap_letters")
-        summary4 = helpers.filter_output(summary4.strip(), mode="cap_letters")
-    else:
-        summaries = batch_summarize_sections(sections=[section1, section2, section3, section4], section_names=[section1_name, section2_name, section3_name, section4_name], model=model, system=system1, ollama_url=ollama_url)
-        summary1 = helpers.filter_output(summaries[0].strip(), mode="cap_letters")
-        summary2 = helpers.filter_output(summaries[1].strip(), mode="cap_letters")
-        summary3 = helpers.filter_output(summaries[2].strip(), mode="cap_letters")
-        summary4 = helpers.filter_output(summaries[3].strip(), mode="cap_letters")
+    if CONFIG["SUMMARY_REQUESTS"] > 4:
+        warnings.warn("[WARNING]sliding_window_four_sections: number of requests exceeds sliding window size, using maximum possible request number (4)")
+    if CONFIG["SUMMARY_REQUESTS"] < 0:
+        raise ValueError("[ERROR]sliding_window_four_sections: SUMMARY_REQUESTS must be a positive integer")
+    sections = [section1, section2, section3, section4]
+    section_names = [section1_name, section2_name, section3_name, section4_name]
+    systems = [system1, system2, system3, system4]
+    summaries = []
+
+    for i in range(0, 4, CONFIG["SUMMARY_REQUESTS"]):
+        if mode == "single":
+            for j in range(0,CONFIG["SUMMARY_REQUESTS"]):
+                if i+j >= 4:
+                    break
+                else:
+                    summary = summarize_section(sections[i+j], model=model, system=systems[i+j], ollama_url=ollama_url, section_name=section_names[i+j])
+                    summaries.append(helpers.filter_output(summary.strip(), mode= "cap_letters"))
+        if mode == "batch":
+            upper_bound = i + CONFIG["SUMMARY_REQUESTS"]
+            if upper_bound > 4:
+                upper_bound = 4
+            summary = batch_summarize_sections(sections=sections[i:upper_bound], section_names=section_names[i:upper_bound], model=model, system=system1, ollama_url=ollama_url)
+            summaries.append(helpers.filter_output(summary.strip(), mode= "cap_letters"))
+            if upper_bound == 4:
+                break
+        if mode == "parallel":
+            upper_bound = i + CONFIG["SUMMARY_REQUESTS"]
+            if upper_bound > 4:
+                upper_bound = 4
+            payloads = generate_payloads_summarize_section(sections=sections[i:upper_bound], section_names=section_names[i:upper_bound], systems=systems[i:upper_bound], model=model, ollama_url=ollama_url)
+            responses = asyncio.run(parallel_requests(payloads, ollama_url=ollama_url))
+            for response in responses:
+                summaries.append(helpers.filter_output(response.strip(), mode= "cap_letters"))
+            if upper_bound == 4:
+                break
+
+    summary1 = summaries[0] if len(summaries) > 0 else ""
+    summary2 = summaries[1] if len(summaries) > 1 else ""
+    summary3 = summaries[2] if len(summaries) > 2 else ""
+    summary4 = summaries[3] if len(summaries) > 3 else ""
     prompt = f"""
     Given the following resume section summaries:
     {summary1}
@@ -951,18 +1233,28 @@ def sliding_window_four_sections(
         "prompt": prompt,
         "stream": False
     }
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]sliding_window_four_sections: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]sliding_window_four_sections: payload field {field} is missing or is NoneType")
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
+        
+        if response.status_code == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]:
             output_tks = helpers.token_math(model, response_text, type="output", offset=input_tks)
         response_text = helpers.filter_output(response_text.strip(), mode="cap_letters")
+        print(f"[SUCCESS][OLLAMA]sliding_window_four_sections: {result}")
         return response_text
-    except Exception:
-        print("Ollama response was not valid JSON:")
-        print(response.text)
-        return "Error: Ollama response was not valid JSON."
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error("[ERROR][OLLAMA]sliding_window_four_sections: Ollama response was not valid JSON.", exc_info=True)
+        logging.error(f"Response text: {response.text}")
+        return "[ERROR][OLLAMA]sliding_window_four_sections: Ollama response was not valid JSON."
 
 
 @log_time
@@ -978,7 +1270,7 @@ def slide_summary(
     ollama_url=DEFAULT_URL,
     windows=2,
     skill_section=False,
-    batch=False
+    mode="single"
 ):
     general_keys = ['name', 'contact_information', 'title', 'languages']
     special_keys = [
@@ -1040,7 +1332,7 @@ def slide_summary(
                 candidate_name=candidate_name,
                 candidate_title=candidate_title,
                 ollama_url=ollama_url,
-                batch=batch
+                mode=mode
             )
             slide_results.append(slide)
         elif windows == 3:
@@ -1059,7 +1351,7 @@ def slide_summary(
                 candidate_name=candidate_name,
                 candidate_title=candidate_title,
                 ollama_url=ollama_url,
-                batch=batch
+                mode=mode
             )
             slide_results.append(slide)
         elif windows == 4:
@@ -1081,7 +1373,7 @@ def slide_summary(
                 candidate_name=candidate_name,
                 candidate_title=candidate_title,
                 ollama_url=ollama_url,
-                batch=batch
+                mode=mode
             )
             slide_results.append(slide)
     general_info = "\n".join(general_txts).strip()
@@ -1094,7 +1386,7 @@ def slide_summary(
 @log_time
 def step0_tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, raw_cv_data = ""
                          , system_s = "", system = "", system1 = "", system2 = "", system3 = "", system4 = "", system0 = "",
-                         windows = 2, skill_section = False, batch=False):
+                         windows = 2, skill_section = False, mode="single"):
 
     if skill_section:
         sections_dct = parsers.parse_cv_out(raw_cv_data)
@@ -1104,7 +1396,7 @@ def step0_tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, raw_cv_dat
     slides = slide_summary(sections_dct_list,
                             model=model,
                             system_s=system_s, system=system, system1=system1, system2=system2, system3=system3, system4=system4,
-                            ollama_url=ollama_url, windows=windows, batch=batch)
+                            ollama_url=ollama_url, windows=windows, mode=mode, skill_section=skill_section)
     #Join slides
     slides_txt = "\n".join(slides).strip()
     prompt = f"""
@@ -1124,15 +1416,26 @@ def step0_tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, raw_cv_dat
         "prompt": prompt,
         "stream": False
     }
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]step0_tailor_summary: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]step0_tailor_summary: payload field {field} is missing or is NoneType")
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
+        
+        if response.status_code == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        print(f"[SUCCESS][OLLAMA]step0_tailor_summary: {result}")
         return helpers.filter_output(response_text.strip())
-    except Exception:
-        print("Ollama response was not valid JSON:")
-        print(response.text)
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error("[ERROR][OLLAMA]step0_tailor_summary: Ollama response was not valid JSON.", exc_info=True)
+        logging.error(f"Response text: {response.text}")
+        return "[ERROR][OLLAMA]step0_tailor_summary: Ollama response was not valid JSON."
 
 @log_time
 def step1_tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, 
@@ -1148,9 +1451,11 @@ def step1_tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL,
 
     [0]Summary: Brief summary of the candidate's qualifications, skills, and experiences relevant to the job description.
     
-    The "Summary" section may have up to 150 words.
-    Do not line break the summary section, it should be a continuous block of text.
-    Do note that the section may not exist in the CV, in which case you should return an empty section. Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
+    Notes:
+    - Do not include any characters before [0]
+    - The "Summary" section may have up to 150 words.
+    - Do not line break the summary section, it should be a continuous block of text.
+    - Do note that the section may not exist in the CV, in which case you should return an empty section. Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
     """
     if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
     payload = {
@@ -1159,27 +1464,37 @@ def step1_tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL,
         "prompt": prompt,
         "stream": False
     }
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]step1_tailor_summary: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]step1_tailor_summary: payload field {field} is missing or is NoneType")
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
+        
+        if response.status_code == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        print(f"[SUCCESS][OLLAMA]step1_tailor_summary: {result}")
         return helpers.filter_output(response_text.strip())
-    except Exception:
-        print("Ollama response was not valid JSON:")
-        print(response.text)
-        return "Error: Ollama response was not valid JSON."
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error("[ERROR][OLLAMA]step1_tailor_summary: Ollama response was not valid JSON.", exc_info=True)
+        logging.error(f"Response text: {response.text}")
+        return "[ERROR][OLLAMA]step1_tailor_summary: Ollama response was not valid JSON."
 
 @log_time
 def tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL,
                     raw_cv_data="", job_description="",
                     system_s="", system00="", system1="", system2="", system3="", system4="", system0="", windows=2,
-                    system01="", batch=False):
+                    system01="", mode="single"):
     # - Summary (LAST; Based on Job Description AND Overall Resume)
     print(f"tailor_summary: raw_cv_data:\n" + raw_cv_data)
     step0 = step0_tailor_summary(model=model, ollama_url=ollama_url, raw_cv_data=raw_cv_data,
                                   system_s=system_s, system=system00, system1=system1, system2=system2, system3=system3, system4=system4, system0=system0,
-                                  windows=windows, batch=batch)
+                                  windows=windows, mode=mode)
     step1 = step1_tailor_summary(model=model, ollama_url=ollama_url, prev_summary=step0, job_description=job_description,
                                   system=system01)
     return step1.strip()
@@ -1284,16 +1599,26 @@ def tailor_skills(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_dat
         "prompt": prompt,
         "stream": False
     }
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]tailor_skills: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]tailor_skills: payload field {field} is missing or is NoneType")
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
+        
+        if response.status_code == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        print(f"[SUCCESS][OLLAMA]tailor_skills: {result}")
         return response_text
-    except Exception:
-        print("Ollama response was not valid JSON:")
-        print(response.text)
-        return "Error: Ollama response was not valid JSON."
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error("[ERROR][OLLAMA]tailor_skills: Ollama response was not valid JSON.", exc_info=True)
+        logging.error(f"Response text: {response.text}")
+        return "[ERROR][OLLAMA]tailor_skills: Ollama response was not valid JSON."
 
 #Resume/Cover Letter Consistency Checker VS Old Resume
 #Chain: old resume, new resume >>> new_vs_old_section >>> consistency_checker_vs_cv
@@ -1320,15 +1645,26 @@ def new_vs_old_section(old_resume_s_txt, new_resume_s_txt, section_name = "", mo
         "prompt": prompt,
         "stream": False
     }
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]new_vs_old_section: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]new_vs_old_section: payload field {field} is missing or is NoneType")
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     try:
         result = response.json()
+        
+        if response.status_code == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        print(f"[SUCCESS][OLLAMA]new_vs_old_section: {result}")
         return helpers.filter_output(response_text.strip())
-    except Exception:
-        print("Ollama response was not valid JSON:")
-        print(response.text)
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error("[ERROR][OLLAMA]new_vs_old_section: Ollama response was not valid JSON.", exc_info=True)
+        logging.error(f"Response text: {response.text}")
+        return "[ERROR][OLLAMA]new_vs_old_section: Ollama response was not valid JSON."
     return
 
 @log_time
@@ -1406,18 +1742,27 @@ def consistency_checker_vs_cv(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, syste
         "prompt": prompt,
         "stream": False
     }
-    
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]consistency_checker_vs_cv: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]consistency_checker_vs_cv: payload field {field} is missing or is NoneType")
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     
     try:
         result = response.json()
+        
+        if response.status_code == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        print(f"[SUCCESS][OLLAMA]consistency_checker_vs_cv: {result}")
         return response_text
-    except Exception:
-        print("Ollama response was not valid JSON:")
-        print(response.text)
-        return "Error: Ollama response was not valid JSON."
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error("[ERROR][OLLAMA]consistency_checker_vs_cv: Ollama response was not valid JSON.", exc_info=True)
+        logging.error(f"Response text: {response.text}")
+        return "[ERROR][OLLAMA]consistency_checker_vs_cv: Ollama response was not valid JSON."
 
 #Tailor Cover Letter
 #Chain: new resume, job_desc >>> summarize resume, job desc >>> make_cover_letter_text
@@ -1459,18 +1804,27 @@ def make_cover_letter_text(model=DEFAULT_MODEL,system = "",
         "prompt": prompt,
         "stream": False
     }
-    
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]make_cover_letter_text: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]make_cover_letter_text: payload field {field} is missing or is NoneType")
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     
     try:
         result = response.json()
+        
+        if response.status_code == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        print(f"[SUCCESS][OLLAMA]make_cover_letter_text: {result}")
         return response_text
-    except Exception:
-        print("Ollama response was not valid JSON:")
-        print(response.text)
-        return "Error: Ollama response was not valid JSON."
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error("[ERROR][OLLAMA]make_cover_letter_text: Ollama response was not valid JSON.", exc_info=True)
+        logging.error(f"Response text: {response.text}")
+        return "[ERROR][OLLAMA]make_cover_letter_text: Ollama response was not valid JSON."
 
 @log_time
 def compose_cover_letter_dictionary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, cv_text="", job_description=""):
@@ -1554,16 +1908,25 @@ def consistency_checker_vs_job_desc(model=DEFAULT_MODEL,  ollama_url=DEFAULT_URL
         "prompt": prompt,
         "stream": False
     }
-    
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]consistency_checker_vs_job_desc: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]consistency_checker_vs_job_desc: payload field {field} is missing or is NoneType")
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
     
     try:
         result = response.json()
+        
+        if response.status_code == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        print(f"[SUCCESS][OLLAMA]consistency_checker_vs_job_desc: {result}")
         return response_text
-    except Exception:
-        print("Ollama response was not valid JSON:")
-        print(response.text)
-        return "Error: Ollama response was not valid JSON."
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error("[ERROR][OLLAMA]consistency_checker_vs_job_desc: Ollama response was not valid JSON.", exc_info=True)
+        logging.error(f"Response text: {response.text}")
+        return "[ERROR][OLLAMA]consistency_checker_vs_job_desc: Ollama response was not valid JSON."
 
