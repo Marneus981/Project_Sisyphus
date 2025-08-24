@@ -3,6 +3,9 @@
         [ALPHA]
             Add own CV (untracked)
             [OTHER STUFF]
+                Give fields a last used memory
+                Add desired job title implementation
+                Tailor education courses
 [Hubris tracker]
     []Check if correct inputs are used for consistency checks since outputs differ a lot
     []Confirm format checker is run correctly on cl/cv tailor
@@ -17,12 +20,11 @@
                 Verify 3.2 model reliability
                 Outsource more stuff to classic functions for even simpler tailoring output
             New features:
-                Give fields a last used memory
-                Tailor education courses
+                Add hyperlinks to titles?
                 Add mode button for chronological ordering
                 Add output window
                 Add humanize layer 
-                Convert to PDF button
+                Convert to PDF button  
             Clean code:
                 Miggrate to better UI package
                 Clean config file

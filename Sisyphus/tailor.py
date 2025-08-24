@@ -1929,4 +1929,60 @@ def consistency_checker_vs_job_desc(model=DEFAULT_MODEL,  ollama_url=DEFAULT_URL
         logging.error("[ERROR][OLLAMA]consistency_checker_vs_job_desc: Ollama response was not valid JSON.", exc_info=True)
         logging.error(f"Response text: {response.text}")
         return "[ERROR][OLLAMA]consistency_checker_vs_job_desc: Ollama response was not valid JSON."
+#Tailor courses
+@log_time
+def tailor_courses(courses = "", job_description = "", model = DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL):
+    # Given a block of text with all courses taken in a given program
+    # and a job description, this function will extract relevant courses
+    # that match the skills and requirements outlined in the job description.
+        # The format of each course is XXXYYY Course Name, where XXXYYY is the course code (e.g. CSC101, ECE201)
+        # Courses are comma-separated
+    prompt = f"""
+    Given the following courses taken on a given program:
+    {courses}
+    And the following job description:
+    {job_description}
+    Extract the 10 most relevant courses that match the skills and requirements outlined in the job description.
+    Follow these guidelines when extracting courses and returning them:
+    - Do not include any courses not present in the original courses list.
+    - Do not use line breaks inside any subsection.
+    - Courses must be comma-separated and follow the format below.
+    - Include the prefix [1] at the start of each line (as seen in the format below).
+    - Return the list of courses in a single comma-separated line, strictly following the format below:
 
+        [1]Courses: XXX001 Course Name1, XXX002 Course Name2, XXX003 Course Name3...
+
+    Example output:
+    [1]Courses: CSC101 Computer Science I, ECE201 Introduction to Electronics, CIV301 Advanced Civil Engineering...
+    """
+    
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
+    payload = {
+        "model": model,
+        "system": system,
+        "prompt": prompt,
+        "stream": False
+    }
+    for field in ["model", "system", "prompt", "stream"]:
+        value = payload.get(field, None)
+        if value is not None:
+            logging.info(f"[OLLAMA]tailor_courses: payload field {field} with value {value} found")
+        else:
+            logging.error(f"[ERROR][OLLAMA]tailor_courses: payload field {field} is missing or is NoneType")
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    
+    try:
+        result = response.json()
+        
+        if response.status_code == 400:
+            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
+        response_text = result.get("response", "")
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
+        print(f"[SUCCESS][OLLAMA]tailor_courses: {result}")
+        return response_text
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error("[ERROR][OLLAMA]tailor_courses: Ollama response was not valid JSON.", exc_info=True)
+        logging.error(f"Response text: {response.text}")
+        return "[ERROR][OLLAMA]tailor_courses: Ollama response was not valid JSON."
+    
+    
