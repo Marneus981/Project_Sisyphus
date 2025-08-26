@@ -3,9 +3,10 @@
         [ALPHA]
             Add own CV (untracked)
             [OTHER STUFF]
-                Give fields a last used memory
-                Add desired job title implementation
-                Tailor education courses
+                []Give fields a last used memory (save to file on choosing; load on start?)
+                []Add desired job title implementation
+                [WIP]Add duplicate removal on skills
+                [WIP]Tailor education courses
 [Hubris tracker]
     []Check if correct inputs are used for consistency checks since outputs differ a lot
     []Confirm format checker is run correctly on cl/cv tailor

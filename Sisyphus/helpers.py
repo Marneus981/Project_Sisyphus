@@ -924,3 +924,13 @@ def clean_labels(cv_text):
             line = re.sub(r"\(\d+\)", "", line)
     return_txt = "\n".join(lines).strip()
     return return_txt
+
+@log_time
+def remove_duplicates(text):
+    
+    text_d = text.split(":")
+    text_d = text_d.strip()
+    #Given a colon separated list as a single line of text
+    items = text_d[1].split(",")
+    unique_items = list(set(item.strip() for item in items))
+    return ", ".join(unique_items)
