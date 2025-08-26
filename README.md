@@ -1,3 +1,3 @@
-# Sisyphus
+# Project: Sisyphus
 
-A Python application. Describe your project here.
+The climb never stops.
