@@ -48,6 +48,23 @@ def check_summaries(update_job_desc = False, update_resume = False):
                                                      windows=CONFIG["WINDOWS"], skill_section=True, mode=CONFIG["SUMMARY_MODE"])
 
 @log_time
+def title_type(cv_text):
+    global desired_job_title_checkbox_var, desired_job_title_textbox
+
+    if desired_job_title_checkbox_var.get():
+        #Replace line that starts with [0]Title with [0]Title: <desired_job_title_textbox>
+        if desired_job_title_textbox.get("1.0", tk.END).strip() == "":
+            print("[ERROR][INPUT] Desired job title is empty. Please enter a desired job title or uncheck the box.")
+            # Stop operation to try again
+            return None
+        new_title = f"[0]Title: {desired_job_title_textbox.get('1.0', tk.END).strip()}"
+        lines = cv_text.splitlines()
+        for i, line in enumerate(lines):
+            if line.startswith("[0]Title"):
+                lines[i] = new_title
+        cv_text = "\n".join(lines)
+    return cv_text
+@log_time
 def tailor_cv(root):
     global summarized_job_desc, summarized_resume
     global tailor_cl_button
@@ -80,7 +97,11 @@ def tailor_cv(root):
     print("Job Description: \n" + str(job_desc))
     cv_text = cv_text.strip()
     cv_text = helpers.label_repeated_experiences(cv_text)
+    cv_text = title_type(cv_text)
+    if cv_text is None:
+        return
         #Step 0 summarize raw cv and job description
+    cv_text = helpers.rmv_dupe_skills(cv_text)
     print("[STEP 0][INPUT] Raw Job Description, Raw CV text: \n" + helpers.indent_text(str(job_desc)))
     print("[STEP 0][START] Summarizing Job Description")
     check_summaries(update_job_desc=True)
@@ -913,6 +934,7 @@ def init_color(root, bg_color, fg_color):
 def main():
     
     # Save Output CV Button (initially disabled)
+    global desired_job_title_checkbox_var, desired_job_title_textbox
     global summarized_job_desc, summarized_resume
     global current_cl_text
     global tailor_cl_button
@@ -1017,41 +1039,40 @@ def main():
     ttk.Label(root, text="Select Saved Output CV:").grid(row=5, column=0)
 
     #Dropdown for saved output CLs
+
     saved_out_dropdown_cl = ttk.Combobox(root, textvariable=saved_out_var_cl, values=saved_outs_cl)
     saved_out_dropdown_cl.grid(row=6, column=1)
     ttk.Label(root, text="Select Saved Output CL:").grid(row=6, column=0)
 
-    #2. 1 Text fields:
-        #Job Description
-    # Text fields
-    # ttk.Label(root, text="CV Text:").grid(row=2, column=0)
-    # cv_textbox = tk.Text(root, height=5, width=40)
-    # cv_textbox.grid(row=2, column=1)
+    # Move all other elements below row 6 down by one row
+    # Desired Job Title Textbox (now at row 7)
+    ttk.Label(root, text="Desired Job Title:").grid(row=7, column=0)
+    desired_job_title_textbox = tk.Text(root, height=1, width=40)
+    desired_job_title_textbox.grid(row=7, column=1)
+    # Add checkbox to the right of Desired Job Title textbox
+    desired_job_title_checkbox_var = tk.BooleanVar()
+    desired_job_title_checkbox = ttk.Checkbutton(root, text="Enable", variable=desired_job_title_checkbox_var)
+    desired_job_title_checkbox.grid(row=7, column=2, sticky="w")
 
-    # ttk.Label(root, text="System:").grid(row=2, column=0)
-    # system_textbox = tk.Text(root, height=2, width=40)
-    # system_textbox.grid(row=2, column=1)
-
-    # Job Description Textbox
-
-    ttk.Label(root, text="Job Description:").grid(row=7, column=0)
+    # Job Description Textbox (now at row 8)
+    ttk.Label(root, text="Job Description:").grid(row=8, column=0)
     job_desc_textbox = tk.Text(root, height=5, width=40)
-    job_desc_textbox.grid(row=7, column=1)
+    job_desc_textbox.grid(row=8, column=1)
 
-    #Output file Textbox
-    ttk.Label(root, text="Output CV Name:").grid(row=7, column=2)
+    #Output file Textbox (now at row 8)
+    ttk.Label(root, text="Output CV Name:").grid(row=8, column=2)
     out_file_textbox = tk.Text(root, height=1, width=20)
-    out_file_textbox.grid(row=7, column=3)
+    out_file_textbox.grid(row=8, column=3)
 
-    #Output Cover Letter Textbox
-    ttk.Label(root, text="Output CL File Name:").grid(row=7, column=4)
+    #Output Cover Letter Textbox (now at row 8)
+    ttk.Label(root, text="Output CL File Name:").grid(row=8, column=4)
     out_file_cl_textbox = tk.Text(root, height=1, width=20)
-    out_file_cl_textbox.grid(row=7, column=5)
+    out_file_cl_textbox.grid(row=8, column=5)
 
-    #Saved Text File Name
-    ttk.Label(root, text="Saved Text File Name:").grid(row=7, column=6)
+    #Saved Text File Name (now at row 8)
+    ttk.Label(root, text="Saved Text File Name:").grid(row=8, column=6)
     save_file_textbox = tk.Text(root, height=1, width=20)
-    save_file_textbox.grid(row=7, column=7)
+    save_file_textbox.grid(row=8, column=7)
 
 
     
@@ -1076,62 +1097,58 @@ def main():
     
     #Tailor Button
     tailor_button = ttk.Button(root, text="Tailor CV", command=lambda: tailor_cv(root))
-    tailor_button.grid(row=8, column=0)
-
-    
+    tailor_button.grid(row=9, column=0)
 
     # Show CV Output Button (initially disabled)
     show_output_cv_button = ttk.Button(root, text="Show Output CV", command=lambda: show_output_cv(root), state="disabled")
-    show_output_cv_button.grid(row=8, column=1)
+    show_output_cv_button.grid(row=9, column=1)
 
     # Filter Output CV Text Button (initially disabled)
     filter_output_cv_button = ttk.Button(root, text="Filter Output CV Text", command=lambda: filter_output_cv_text(root), state="disabled")
-    filter_output_cv_button.grid(row=8, column=2)
+    filter_output_cv_button.grid(row=9, column=2)
 
     # Format Check Current CV Text Button (initially disabled)
     format_check_current_cv_button = ttk.Button(root, text="Format Check Current CV Text", command=lambda: format_check_current_cv_text(root), state="disabled")
-    format_check_current_cv_button.grid(row=8, column=3)
-
-    
+    format_check_current_cv_button.grid(row=9, column=3)
 
     # Save Output CV Button (initially disabled)
     save_output_cv_button = ttk.Button(root, text="Save Output CV to DOCX", command=lambda:save_output_cv(template_name= template_var,output_name= out_file_textbox.get("1.0", tk.END).strip()), state="disabled")
-    save_output_cv_button.grid(row=8, column=4)
+    save_output_cv_button.grid(row=9, column=4)
 
     # Save Current CV Text Button to text file (disabled if no text in current_cv_text)
     save_current_cv_text_button = ttk.Button(root, text="Save Current CV Text", command=lambda: save_cv_text(save_file_textbox.get("1.0", tk.END).strip()), state="disabled")
-    save_current_cv_text_button.grid(row=8, column=5)
+    save_current_cv_text_button.grid(row=9, column=5)
     
     # Load CV Text Button (disabled if no saved output CVs)
     load_cv_text_button = ttk.Button(root, text="Load CV Text", command=lambda: load_cv_text(saved_out_var.get()), state="disabled")
-    load_cv_text_button.grid(row=8, column=6)
+    load_cv_text_button.grid(row=9, column=6)
 
     #Tailor Cover Letter Button (Initially disabled)
     tailor_cl_button =ttk.Button(root, text="Tailor CL", command=lambda: tailor_cl(root), state="disabled")
-    tailor_cl_button.grid(row=9, column=0)
+    tailor_cl_button.grid(row=10, column=0)
 
     # Show Output Cover Letter Button (Initially disabled)
     show_output_cl_button = ttk.Button(root, text="Show Output CL", command=lambda: show_output_cl(root), state="disabled")
-    show_output_cl_button.grid(row=9, column=1)
+    show_output_cl_button.grid(row=10, column=1)
 
     # Filter Output Cover Letter Button (Initially disabled)
     filter_output_cl_button = ttk.Button(root, text="Filter Output CL Text", command=lambda: filter_output_cl_text(root), state="disabled")
-    filter_output_cl_button.grid(row=9, column=2)
+    filter_output_cl_button.grid(row=10, column=2)
 
     # Format Check Current CL Text Button (initially disabled)
     format_check_current_cl_button = ttk.Button(root, text="Format Check Current CL Text", command=lambda: format_check_current_cl_text(root), state="disabled")
-    format_check_current_cl_button.grid(row=9, column=3)
+    format_check_current_cl_button.grid(row=10, column=3)
 
     save_output_cl_button = ttk.Button(root, text="Save Output CL to DOCX", command=lambda:save_output_cl(template_name= cl_template_var,output_name= out_file_cl_textbox.get("1.0", tk.END).strip()), state="disabled")
-    save_output_cl_button.grid(row=9, column=4)
+    save_output_cl_button.grid(row=10, column=4)
 
     # Save Output Cover Letter Button (Initially disabled)
     save_current_cl_text_button = ttk.Button(root, text="Save Current CL Text", command=lambda:save_cl_text(save_file_textbox.get("1.0", tk.END).strip()), state="disabled")
-    save_current_cl_text_button.grid(row=9, column=5)
+    save_current_cl_text_button.grid(row=10, column=5)
 
     # Load Cover Letter Text Button (Initially disabled)
     load_cl_text_button = ttk.Button(root, text="Load CL Text", command=lambda: load_cl_text(saved_out_var_cl.get()), state="disabled")
-    load_cl_text_button.grid(row=9, column=6)
+    load_cl_text_button.grid(row=10, column=6)
 
     refresh_options_callback()
 

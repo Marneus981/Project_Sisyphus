@@ -3,9 +3,8 @@
         [ALPHA]
             Add own CV (untracked)
             [OTHER STUFF]
-                []Give fields a last used memory (save to file on choosing; load on start?)
-                []Add desired job title implementation
-                [WIP]Add duplicate removal on skills
+                [WIP]Prompt engineer with emphasis on keyword matching
+                []Add hyperlink section for projects
                 [WIP]Tailor education courses
 [Hubris tracker]
     []Check if correct inputs are used for consistency checks since outputs differ a lot
@@ -21,7 +20,7 @@
                 Verify 3.2 model reliability
                 Outsource more stuff to classic functions for even simpler tailoring output
             New features:
-                Add hyperlinks to titles?
+                Give fields a last used memory (save to file on choosing; load on start?)
                 Add mode button for chronological ordering
                 Add output window
                 Add humanize layer 

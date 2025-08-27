@@ -927,10 +927,31 @@ def clean_labels(cv_text):
 
 @log_time
 def remove_duplicates(text):
-    
-    text_d = text.split(":")
-    text_d = text_d.strip()
-    #Given a colon separated list as a single line of text
-    items = text_d[1].split(",")
+    items = text.strip().split(",")
     unique_items = list(set(item.strip() for item in items))
-    return ", ".join(unique_items)
+    #rejoin
+    text = ", ".join(unique_items)
+    return text
+
+@log_time
+def rmv_dupe_skills(cv_text):
+    print("[DEBUG] rmv_dupe_skills")
+    # Remove duplicate skills from the CV text
+    #[1]Skills: Programming Languages: Prog1, Prog2...; Technical Skills: Tech1, Tech2...; Soft Skills: Soft1, Soft2...
+    lines = cv_text.splitlines()
+    for line in lines:
+        if line.startswith("[1]Skills"):
+            print(f"[DEBUG] rmv_dupe_skills: line (before): {line}")
+            types = line.split(":")
+            types = [type.strip() for type in types]
+            header = types[0]
+            content = ": ".join(types[1:]).strip()
+            subheaders = content.split(";")
+            for subheader in subheaders:
+                subheader = subheader.strip()
+                subheader_temp = subheader.split(": ")
+                subheader_temp[1] = remove_duplicates(subheader_temp[1])
+                subheader = ": ".join(subheader_temp)
+            line = header + ": " + "; ".join(subheaders)
+            print(f"[DEBUG] rmv_dupe_skills: line (after): {line}")
+    return "\n".join(lines)

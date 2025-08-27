@@ -290,7 +290,8 @@ def summarize_job_description(job_description = "", system = "", ollama_url=DEFA
     # Summarize the job description by extracting key responsibilities and requirements
     # This is a placeholder implementation
     prompt = f"""
-    Summarize the following job description by extracting key responsibilities and requirements; highlight needed skills, both technical and soft:
+    Summarize the following job description by extracting key responsibilities, requirements, and highlighting needed skills, both technical and soft.
+    Job Description:
     {job_description}
     """
     if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
@@ -1582,6 +1583,7 @@ def tailor_skills(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_dat
         Return 3 MAXIMUM entries under "Programming Languages" (MINIMUM 0 entries)
         Return 5 MAXIMUM entries under "Technical Skills" (MINIMUM 0 entries)
         Return 4 MAXIMUM entries under "Soft Skills" (MINIMUM 0 entries)
+        Prioritize skills that are explicitly mentioned in the job description.
         Do not line break any line containing the relevant skills, it should follow the format below strictly.
         Do note that the section may not exist in the CV, in which case you should return an empty section. 
         Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
