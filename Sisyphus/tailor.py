@@ -1981,6 +1981,9 @@ def tailor_courses(courses = "", job_description = "", model = DEFAULT_MODEL, sy
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
         print(f"[SUCCESS][OLLAMA]tailor_courses: {result}")
+        response_text = helpers.filter_output(response_text.strip())
+        #remove [1]Courses: 
+        response_text = response_text.replace("[1]Courses:", "").strip()
         return response_text
     except requests.exceptions.JSONDecodeError as e:
         logging.error("[ERROR][OLLAMA]tailor_courses: Ollama response was not valid JSON.", exc_info=True)

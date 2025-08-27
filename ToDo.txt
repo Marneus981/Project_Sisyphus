@@ -3,9 +3,8 @@
         [ALPHA]
             Add own CV (untracked)
             [OTHER STUFF]
-                [WIP]Prompt engineer with emphasis on keyword matching
                 []Add hyperlink section for projects
-                [WIP]Tailor education courses
+                []Check output for spacing errors
 [Hubris tracker]
     []Check if correct inputs are used for consistency checks since outputs differ a lot
     []Confirm format checker is run correctly on cl/cv tailor

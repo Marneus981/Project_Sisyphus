@@ -204,6 +204,10 @@ def tailor_cv(root):
     tailored_dict = parsers.dict_grafter(tailored_list)
     # Merge unchanged fields back into the tailored dict
     for key, value in unchanged_dict.items():
+        if key == "education":
+            for i in range(len(value)):
+                unchanged_dict[key][i]["courses"] = tailor.tailor_courses(unchanged_dict[key][i]["courses"])
+
         tailored_dict[key] = value
 
     # Convert the tailored dict back to text (no summary section yet)
