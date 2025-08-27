@@ -2,19 +2,17 @@
     [][1.0 DEV PUBLIC RELEASE] Clean code and prompt engineer a bit; make a single UI window;deal with debug prints in "a way"
         [ALPHA]
             Add own CV (untracked)
-            [OTHER STUFF]
-                []Add hyperlink section for projects
-                []Check output for spacing errors
+
+                
 [Hubris tracker]
-    []Check if correct inputs are used for consistency checks since outputs differ a lot
-    []Confirm format checker is run correctly on cl/cv tailor
-    []LinkedIn might be wrongly detectted on format cl (checked with presaved cl)
+    []Things might break if fields are missing
 
 
 [???]
     [PRIORITY]
         [HIGH]
             Others:
+                Check output for spacing errors
                 Check hugging face model performance
                 Verify 3.2 model reliability
                 Outsource more stuff to classic functions for even simpler tailoring output

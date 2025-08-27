@@ -13,6 +13,8 @@ def format_key(key, parent_key=None):
         # Special case for LinkedIn under Contact Information
         if parent_key == 'contact_information' and key.lower() == 'linkedin':
             return 'LinkedIn'
+        if key.lower() == 'url':
+            return 'URL'
         # Title-case except for 'and' (keep lowercase)
         words = key.replace('_', ' ').split()
         formatted = []
@@ -80,7 +82,7 @@ def parse_cv(cv_text):
         'awards_and_scholarships': ['award_name', 'issuing_organization', 'issue_date'],
         'volunteering_and_leadership': ['role', 'organization', 'location', 'duration', 'description', 'skills'],
         'work_experience': ['job_title', 'company', 'location', 'duration', 'description', 'skills'],
-        'projects': ['project_title', 'type', 'duration', 'description', 'skills']
+        'projects': ['project_title', 'url', 'type', 'duration', 'description', 'skills']
     }
     for line in lines:
         line = line.strip()
@@ -232,7 +234,7 @@ def parse_cv_out(cv_text):
         'awards_and_scholarships': ['award_name', 'issuing_organization', 'issue_date'],
         'volunteering_and_leadership': ['role', 'organization', 'location', 'duration', 'description'],
         'work_experience': ['job_title', 'company', 'location', 'duration', 'description'],
-        'projects': ['project_title', 'type', 'duration', 'description'],
+        'projects': ['project_title', 'url', 'type', 'duration', 'description'],
         'skills': ['programming_languages', 'technical_skills', 'soft_skills']
     }
     for line in lines:

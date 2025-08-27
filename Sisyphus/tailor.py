@@ -91,10 +91,12 @@ def augment_output(input_text, reference_dict, type):
     Output is in format (if type is 'projects'):
     [0]Projects:
     [1]Project Title: <Project Title 1>
+    [1]URL: <URL of Project 1>
     [1]Type: <Type of Project 1>
     [1]Duration: <Start Date 1> - <End Date 1>
     [1]Description: <Description 1>
     [1]Project Title: <Project Title 2>
+    [1]URL: <URL of Project 2>
     [1]Type: <Type of Project 2>
     [1]Duration: <Start Date 2> - <End Date 2>
     [1]Description: <Description 2>
@@ -122,6 +124,7 @@ def augment_output(input_text, reference_dict, type):
     ...
     [0]Projects:
     [1]Project Title: <Project Title 1>
+    [1]URL: <URL of Project 1>
     [1]Type: <Type of Project 1>
     [1]Duration: <Start Date 1> - <End Date 1>
     [1]Description: <Description 1>
@@ -252,7 +255,7 @@ def prepare_input_text(input_text, type):
         return return_text
     if type == 'projects':
         for line in input_lines:
-            if not line.startswith(("[0]Projects:", "[1]Type:", "[1]Duration:")):
+            if not line.startswith(("[0]Projects:", "[1]URL:", "[1]Type:", "[1]Duration:")):
                 line = line.replace("[1]Project Title: ", "[P]").replace("[1]Description: ", "Description: ").replace("[1]Skills: ", "Skills: ").strip()
                 if line:
                     return_list.append(line)
@@ -263,7 +266,7 @@ def prepare_input_text(input_text, type):
         for line in input_lines:
             if not line.startswith(("[0]Volunteering and Leadership:", "[1]Organization:", "[1]Location:", "[1]Duration:",
                                     "[0]Work Experience:", "[1]Company:",
-                                    "[0]Projects:", "[1]Type:")):
+                                    "[0]Projects:", "[1]URL:", "[1]Type:")):
                 line = line.replace("[1]Role: ", "[R]").replace("[1]Description: ", "Description: ").replace("[1]Skills: ", "Skills: ").replace("[1]Job Title: ", "[J]").replace("[1]Project Title: ", "[P]").strip()
                 if line:
                     return_list.append(line)
@@ -670,6 +673,7 @@ Rewrite the project to best match the job description, following these guideline
 - Include the prefix [1] at the start of each line (as seen in the format below).
 Return only the revised section in the following format:
 [1]Project Title: Project Title 1
+[1]URL: https://example.com/project1
 [1]Type: Type of Project 1
 [1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
 [1]Description: Brief description for Project Title 1.

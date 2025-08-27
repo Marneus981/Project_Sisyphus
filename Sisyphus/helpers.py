@@ -235,7 +235,7 @@ def format_checker(cv_text):
             '[1]Job Title:', '[1]Company:', '[1]Location:', '[1]Duration:', '[1]Description:', '[1]Skills:'
         ],
         '[0]Projects:': [
-            '[1]Project Title:', '[1]Type:', '[1]Duration:', '[1]Description:', '[1]Skills:'
+            '[1]Project Title:', '[1]URL:', '[1]Type:', '[1]Duration:', '[1]Description:', '[1]Skills:'
         ]
     }
 
@@ -330,6 +330,7 @@ def format_checker(cv_text):
                 n = count_entries(section, '[1]Project Title:')
                 entry_counts = {
                     '[1]Project Title:': n,
+                    '[1]URL:': n,
                     '[1]Type:': n,
                     '[1]Duration:': n,
                     '[1]Description:': n,
@@ -395,7 +396,7 @@ def format_checker_out (cv_text):
             '[1]Job Title:', '[1]Company:', '[1]Location:', '[1]Duration:', '[1]Description:'
         ],
         '[0]Projects:': [
-            '[1]Project Title:', '[1]Type:', '[1]Duration:', '[1]Description:'
+            '[1]Project Title:', '[1]URL:', '[1]Type:', '[1]Duration:', '[1]Description:'
         ],
          '[0]Skills:': [
             '[1]Programming Languages:', '[1]Technical Skills:', '[1]Soft Skills:'
@@ -493,6 +494,7 @@ def format_checker_out (cv_text):
                 n = count_entries(section, '[1]Project Title:')
                 entry_counts = {
                     '[1]Project Title:': n,
+                    '[1]URL:': n,
                     '[1]Type:': n,
                     '[1]Duration:': n,
                     '[1]Description:': n,
@@ -841,6 +843,7 @@ def order_chronologically(cv_dict, mode = 'end_date', reverse = False):
             'projects': [
                 {
                     'project_title': 'Project Title 1',
+                    'url': 'https://example.com/project1',
                     'type': 'Type of Project 1 (e.g., Personal, Academic, Professional)',
                     'duration': 'Start Year 1/Start Month 1 - End Year 1/End Month 1',
                     'description': 'Brief description of the role and responsibilities for Role 1.',
