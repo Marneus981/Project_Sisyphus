@@ -101,7 +101,7 @@ def tailor_cv(root):
     if cv_text is None:
         return
         #Step 0 summarize raw cv and job description
-    cv_text = helpers.rmv_dupe_skills(cv_text)
+    #cv_text = helpers.rmv_dupe_skills(cv_text)
     print("[STEP 0][INPUT] Raw Job Description, Raw CV text: \n" + helpers.indent_text(str(job_desc)))
     print("[STEP 0][START] Summarizing Job Description")
     check_summaries(update_job_desc=True)

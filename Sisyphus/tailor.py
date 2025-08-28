@@ -1588,6 +1588,7 @@ def tailor_skills(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_dat
         Return 5 MAXIMUM entries under "Technical Skills" (MINIMUM 0 entries)
         Return 4 MAXIMUM entries under "Soft Skills" (MINIMUM 0 entries)
         Prioritize skills that are explicitly mentioned in the job description.
+        For Soft Skills, prioritize skills mentioned in the job description, and if these skills are less than 4, fill the remaining slots with other relevant skills from the CV.
         Do not line break any line containing the relevant skills, it should follow the format below strictly.
         Do note that the section may not exist in the CV, in which case you should return an empty section. 
         Lastly, I reiterate that you will only return the tailored section, no explanations or additional text.
