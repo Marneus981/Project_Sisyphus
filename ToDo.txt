@@ -1,8 +1,6 @@
 [1.0 DEV RELEASE CHECKBOX]
     [][1.0 DEV PUBLIC RELEASE] Clean code and prompt engineer a bit; make a single UI window;deal with debug prints in "a way"
-        [ALPHA]
-            Add own CV (untracked)
-
+        []Clean code
                 
 [Hubris tracker]
     []Things might break if fields are missing
