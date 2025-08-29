@@ -2,7 +2,7 @@
 
 ## Foreword
 
-### tldr: Job Seeking bad; I ma developing Sisyphus to make "The Climb" a bit easier
+### tldr: Job Seeking bad; I am developing Sisyphus to make "The Climb" a bit easier
 
 If you have been a young adult (alive) for the last couple couple, you might have experienced the word of the modern-day job application process.
 
