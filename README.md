@@ -30,15 +30,21 @@ Sisyphus is currently an ***in-development*** application and tool suite for the
 #### What Sisyphus aims to offer: 
 
 1.- A free local LLM-powered application to help you generate tailored application packages (Cover Letter + Resume) given a Job Description and sufficient data about your experiences.
+
 2.- Flexibility to tailor your job application resources according to your own desires. This means that in order to make the most use out of this toolset you are encouraged to ask questions and read the documentation (to be written teehee).
 
 #### Things Sisyphus is not:
 
 1.- A baseline for your paid application (it's meant to help students and job seekers have you no heart?)
+
 2.- Paid
+
 3.- Complete:
+
     3.1.- Literally not ready to run on any other machines (yet)
-    3.2.- It has no documentation 
+
+    3.2.- It has no documentation
+
     3.3.- I will implement better UI and more user control
 
 
