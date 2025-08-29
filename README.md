@@ -10,7 +10,9 @@ The future is now old man, long gone are the days of walking up to a manager, lo
 
 Now, it is a numbers game, nothing less. You have AI systems vetoing your resume for not including the "self-starter" keyword, entry-level positions requiring 1-2 years of experience, online subscription-based services that "help" you with resume making (making as in hallucinating your job experience), and man let's not talk about ghosting and ghost jobs...
 
-Out of personal experience I can confirm with utmost confidence that such an environment will crush you emotionally and spiritually and still have the gall to tell you that you are the problem. I have come to dislike all the corporate applications, all the senseless complexity. That's why I am developing Sisyphus: A local LLM-powered application and tool suite to help you make the process of applying to your next job just a bit less dystopian.
+Out of personal experience I can confirm with utmost confidence that such an environment will crush you emotionally and spiritually and still have the gall to tell you that you are the problem. I have come to dislike all the corporate applications, all the senseless complexity. 
+
+Say hello to Sisyphus! A local LLM-powered application and tool suite to help you make the process of applying to your next job just a bit less dystopian.
 
 ## What **IS** Sisyphus? And who was the real life inspiration behind this application's name?
 
