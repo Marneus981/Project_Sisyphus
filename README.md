@@ -4,7 +4,7 @@
 
 ### tldr: Job Seeking bad; I am developing Sisyphus to make "The Climb" a bit easier
 
-If you have been a young adult (alive) for the last couple of hours, you might have experienced the word of the modern-day job application process.
+If you have been a young adult (alive) for the last couple of hours, you might have been subject to the horrors of modern-day job application process.
 
 The future is now old man, long gone are the days of walking up to a manager, looking them dead in the eye and offering them a firm handshake, then getting that dream job. I mean that could **still** happen, but you would most likely end up getting escorted out of some corporate building hands shaking, eyes bloodshot.
 
