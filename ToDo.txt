@@ -1,7 +1,8 @@
 [1.0 DEV RELEASE CHECKBOX]
     [][1.0 DEV PUBLIC RELEASE] Clean code and prompt engineer a bit; make a single UI window;deal with debug prints in "a way"
         []Clean code
-                
+        []Clean git files
+        []Prompt engineer to be more specific (provide specific information, etc).
 [Hubris tracker]
     []Things might break if fields are missing
 

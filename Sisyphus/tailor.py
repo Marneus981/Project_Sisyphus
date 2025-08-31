@@ -294,6 +294,7 @@ def summarize_job_description(job_description = "", system = "", ollama_url=DEFA
     # This is a placeholder implementation
     prompt = f"""
     Summarize the following job description by extracting key responsibilities, requirements, and highlighting needed skills, both technical and soft.
+    Don't forget to also include the Company Name and the Job Title.
     Job Description:
     {job_description}
     """
@@ -333,12 +334,13 @@ Given the following "Volunteering and Leadership" resume section:
 {raw_cv_data}
 And the following job description:
 {job_description}
-Select the 4 most relevant experiences that best match the job description. If there are 4 or fewer experiences total, include all of them. If there are no experiences, return an empty section.
+Select the 5 most relevant experiences that best match the job description. If there are 5 or fewer experiences total, include all of them. If there are no experiences, return an empty section.
 Output the selected projects strictly in the following format, without changing the role/job title/project title text:
 [R]Role Name 1
 [R]Role Name 2
 [R]Role Name 3
 [R]Role Name 4
+[R]Role Name 5
 Notes:
 - Do not include any characters before [R]
 - Display the Role Names explicitly; do not write "Role:" before the Role Name
@@ -475,12 +477,13 @@ Given the following "Work Experience" resume section:
 {raw_cv_data}
 And the following job description:
 {job_description}
-Select the 4 most relevant experiences that best match the job description. If there are 4 or fewer experiences total, include all of them. If there are no experiences, return an empty section.
+Select the 5 most relevant experiences that best match the job description. If there are 5 or fewer experiences total, include all of them. If there are no experiences, return an empty section.
 Output the selected projects strictly in the following format, without changing the role/job title/project title text:
 [J]Job Title 1
 [J]Job Title 2
 [J]Job Title 3
 [J]Job Title 4
+[J]Job Title 5
 Notes:
 - Do not include any characters before [J]
 - Display the Job Titles explicitly; do not write "Job Title:" before the Job Title
@@ -614,12 +617,13 @@ Given the following "Projects" resume section:
 {raw_cv_data}
 And the following job description:
 {job_description}
-Select the 4 most relevant experiences that best match the job description. If there are 4 or fewer experiences total, include all of them. If there are no projects, return an empty section.
+Select the 5 most relevant experiences that best match the job description. If there are 4 or fewer experiences total, include all of them. If there are no projects, return an empty section.
 Output the selected projects strictly in the following format, without changing the role/job title/project title text:
 [P]Project Title 1
 [P]Project Title 2
 [P]Project Title 3
 [P]Project Title 4
+[P]Project Title 5
 Notes:
 - Do not include any characters before [P]
 - Display the Project Titles explicitly; do not write "Project Title:" before the Project Title
@@ -750,20 +754,20 @@ def tailor_projects(model=DEFAULT_MODEL, system1="", system2="", ollama_url=DEFA
 def step0_prune_experiences(model = DEFAULT_MODEL, system1 = "", ollama_url = DEFAULT_URL,
                             experiences = "", job_description = ""):
     
+    #   - If possible, select 1 experience from each section (Volunteering and Leadership, Work Experience, and Projects).
     prompt = f"""
     Given the following experiences across 3 resume sections (Volunteering and Leadership, Work Experience, and Projects):
     {experiences}
     And the following job description:
     {job_description}
-    Select 6 experiences based on the job description. When selecting:
-    - If the total number of experiences/roles is less than 6, return all of them.
-    - If the total number of experiences/roles is greater than or equal to 6 before selection: Select the most relevant 6 experiences/roles based on the job description.
-    - If possible, select 1 experience from each section (Volunteering and Leadership, Work Experience, and Projects).
-    - Do not change 
+    Select up to 5 experiences based on the job description. When selecting:
+    - If the total number of experiences/roles is less than or equal to 5, return all of them.
+    - If the total number of experiences/roles is greater than or equal to 5 before selection: Select the most relevant 5 experiences/roles based on the job description.
+    - Do not change the name of the experiences/roles.
     Return your response strictly in the following format, without changing the role/job title/project title text:
     [X]Role/Job Title/Project Title 1
     ...
-    [X]Role/Job Title/Project Title 6
+    [X]Role/Job Title/Project Title 5
     Where [X] indicates the type of experience:
     - [R] Role: Volunteering and Leadership
     - [J] Job Title: Work Experience
@@ -1516,36 +1520,63 @@ def return_text_with_skills(cv_text):
     for line in lines:
         if line.startswith("[1]Skills:"):
             templine = line.replace("[1]Skills:", "").strip()
-            if templine != "":
-                parts = line.split("; ")
-                if "Programming Languages" in line:
-                    part0 = parts[0].split(": ")
-                    #[1]Skills
-                    #Programming Languages
-                    #Programming Language N1, ..., Programming Language NN
-                    part0_prog = part0[2]
-                    part0_prog_splt = part0_prog.split(", ")
-                    programming_skills += part0_prog_splt
-                else:
-                    print("No Programming Languages found in Skills section")
-                if "Technical Skills" in line:
-                    part1 = parts[1].split(": ")
-                    #Technical Skills
-                    #Technical Skill N1, ..., Techincal Skill NN
-                    part1_tech = part1[1]
-                    part1_tech_splt = part1_tech.split(", ")
-                    technical_skills += part1_tech_splt
-                else:
-                    print("No Technical Skills found in Skills section")
-                if "Soft Skills" in line:
-                    part2 = parts[2].split(": ")
-                    #Soft Skills
-                    #Soft Skill N1, ..., Soft Skill NN
-                    part2_soft = part2[1]
-                    part2_soft_splt = part2_soft.split(", ")
-                    soft_skills += part2_soft_splt
-                else:
-                    print("No Soft Skills found in Skills section")
+            if (templine != "") or templine:
+                parts = line.split(";")
+                parts = [part.strip() for part in parts]
+                    #Programming Languages: Programming Language N1, ..., Programming Language NN
+                    #Technical Skills: Technical Skill N1, ..., Technical Skill N2
+                    #Soft Skills: Soft Skill N1, ..., Soft Skill N2
+                for part in enumerate(parts):
+                    if "Programming Languages:" in part:
+                        skills = part.split(":")
+                        if len(skills) > 1:
+                            skills = [skill.strip() for skill in skills]
+                            skills_r = skills[1].split(",")
+                            skills_r = [skill.strip() for skill in skills_r]
+                            programming_skills += skills_r
+                        else:
+                            print("No Programming Languages found in Skills section")
+                    elif "Technical Skills:" in part:
+                        skills = part.split(":")
+                        if len(skills) > 1:
+                            skills = [skill.strip() for skill in skills]
+                            skills_r = skills[1].split(",")
+                            skills_r = [skill.strip() for skill in skills_r]
+                            technical_skills += skills_r
+                        else:
+                            print("No Technical Skills found in Skills section")
+                    elif "Soft Skills:" in part:
+                        skills = part.split(":")
+                        if len(skills) > 1:
+                            skills = [skill.strip() for skill in skills]
+                            skills_r = skills[1].split(",")
+                            skills_r = [skill.strip() for skill in skills_r]
+                            soft_skills += skills_r
+                        else:
+                            print("No Soft Skills found in Skills section")
+
+                # if "Programming Languages" in line:
+
+                #     part0 = parts[0].split(": ")
+                #     part0_prog = part0[2]
+                #     part0_prog_splt = part0_prog.split(", ")
+                #     programming_skills += part0_prog_splt
+                # else:
+                #     print("No Programming Languages found in Skills section")
+                # if "Technical Skills" in line:
+                #     part1 = parts[1].split(": ")
+                #     part1_tech = part1[1]
+                #     part1_tech_splt = part1_tech.split(", ")
+                #     technical_skills += part1_tech_splt
+                # else:
+                #     print("No Technical Skills found in Skills section")
+                # if "Soft Skills" in line:
+                #     part2 = parts[2].split(": ")
+                #     part2_soft = part2[1]
+                #     part2_soft_splt = part2_soft.split(", ")
+                #     soft_skills += part2_soft_splt
+                # else:
+                #     print("No Soft Skills found in Skills section")
             else:
                 print("No Skills subsection found")
         else:
@@ -1790,14 +1821,16 @@ def make_cover_letter_text(model=DEFAULT_MODEL,system = "",
         2.It should highlight the most relevant skills and experiences from the CV that match the job description.
         3.It should be written in a professional tone.
         4.It should include line breaks if deemed necessary to maintain good readability.
-        5.Whenever a line break occurs, it should start with "[1]New ParagraphX: " and then the text of the new paragraph; 
+        5.Do not invent information or experiences.
+        6.Do not make use of run-on sentences.
+        7.Whenever a line break occurs, it should start with "[1]New ParagraphX: " and then the text of the new paragraph; 
         X starts at 0 and goes up to 3.
-        6.Strictly follow the format:
+        8.Strictly follow the format:
 
         [0]Cover Letter: 
         [1]New Paragraph0: Cover Letter introduction, mentioning the job title and company.
-        [1]New Paragraph1: Briefly mention the most relevant skills and experiences from the CV that match the job description.
-        [1]New Paragraph2: Additional information about the candidate's qualifications and how they align with the job requirements.
+        [1]New Paragraph1: Briefly mention the most relevant skills, courses and experiences from the CV that match the job description.
+        [1]New Paragraph2: Additional information about the candidate's qualifications and how they align with the job requirements. Make use of specific examples and metrics to demonstrate impact (if applicable).
         [1]New Paragraph3: Closing statement, thanking the employer for their time and consideration.
 
         Note: the total words in the Cover Letter section should not exceed 400 words. This is a hard limit, so be concise and to the point.
@@ -1834,7 +1867,7 @@ def make_cover_letter_text(model=DEFAULT_MODEL,system = "",
         return "[ERROR][OLLAMA]make_cover_letter_text: Ollama response was not valid JSON."
 
 @log_time
-def compose_cover_letter_dictionary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, cv_text="", job_description=""):
+def compose_cover_letter_dictionary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, cv_text_summary="", cv_text="", job_description=""):
     """
     Given a resume containing education, experiences, projects and skills considered 
     to be relevant a job description: Return a cover letter tailored to the job description.
@@ -1853,7 +1886,7 @@ def compose_cover_letter_dictionary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL,
     #Make the cover letter text
     system = helpers.read_text_file(r"C:\CodeProjects\Sisyphus\Sisyphus\systems\system_cover_letter.txt")
     cover_letter_text = make_cover_letter_text(model=model,system = system,
-                           ollama_url=ollama_url, cv_data=cv_text, job_description=job_description)
+                           ollama_url=ollama_url, cv_data=cv_text_summary, job_description=job_description)
 
     clean_cover_letter_text = helpers.filter_output(cover_letter_text)
     

@@ -9,6 +9,9 @@ import datetime
 import logging
 from Sisyphus.decorators import log_time
 from config import CONFIG
+from tkinter import filedialog
+import csv
+import re
 
 
 SISYPHUS_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus"
@@ -64,8 +67,127 @@ def title_type(cv_text):
                 lines[i] = new_title
         cv_text = "\n".join(lines)
     return cv_text
+
 @log_time
-def tailor_cv(root):
+def extract_jobs(file_path, benchmark = False):
+    job_list = []
+    model_list = []
+    if not file_path or not os.path.exists(file_path):
+        print(f"CSV file not found: {file_path}")
+        return None
+    with open(file_path, 'r', encoding='utf-8') as f:
+        reader = csv.reader(f)
+        next(reader, None)  # Skip header row
+        for row in reader:
+            # Each row should have 2 columns: Job Title and Job Description
+            if len(row) >= 2:
+                job_title = row[0].strip()
+                job_desc = row[1].strip()
+                job_list.append((job_title, job_desc))
+            if len(row) >= 3 and benchmark:
+                model_list.append(row[2].strip())
+    
+    print(f"Extracted {len(job_list)} job entries from CSV (columns: Job Title, Job Description).")
+    if benchmark:
+        print(f"Extracted {len(model_list)} model entries from CSV (column: Model).")
+    return [job_list, model_list]
+
+def process_model_name(model_name):
+    #Remove all whitespace and special characters that are not allowed in file names
+    model_name = re.sub(r'[<>:"/\\|?*]', '', model_name)
+    return model_name
+
+@log_time
+def batch_application_packages(root, benchmark = False, cv = True, cl = True):
+    global models, model_var
+    global csv_path
+    global job_desc_textbox
+    global desired_job_title_checkbox_var, desired_job_title_textbox
+    if benchmark:
+        print(f"Benchmark mode initialized")
+    start_number = start_num_textbox.get("1.0", tk.END).strip()
+    name = candidate_name_textbox.get("1.0", tk.END).strip()
+    if int(start_number) < 0 or not start_number.isdigit():
+        print("Invalid start number. Please enter a non-negative integer.")
+        return
+    csv_file = csv_path.get()
+    if not csv_file or not os.path.exists(csv_file):
+        print(f"CSV file not found: {csv_file}")
+        return
+    job_list, model_list = extract_jobs(csv_file, benchmark=benchmark)
+    if job_list == []:
+        print("Failed to extract job entries.")
+        return
+    if model_list == [] and benchmark:
+        print("Failed to extract model entries.")
+        return
+    if name == "" and not benchmark:
+        print("No candidate name provided.")
+        return
+    #Check if all models are available
+    for model in model_list:
+        if model not in models:
+            print(f"Model not available: {model}")
+            return
+        print(f"Model found: {model}")
+    candidate = name.replace(" ", "")
+    
+    if not benchmark:
+        start_n = int(start_number)
+        for job in job_list:
+            job_title, job_desc = job
+            # Set the required variables
+            job_desc_textbox.delete("1.0", tk.END)
+            job_desc_textbox.insert("1.0", job_desc)
+            desired_job_title_checkbox_var.set(True)
+            desired_job_title_textbox.delete("1.0", tk.END)
+            desired_job_title_textbox.insert("1.0", job_title)
+
+            # Call tailor_cv and tailor_cl
+            if cv:
+                tailor_cv(root, show=False)
+                cv_name = f"{candidate}Resume{str(start_n)}"
+                save_cv_text(cv_name)
+                save_output_cv(template_var, cv_name)
+            if cl:
+                cl_name = f"{candidate}CoverLetter{str(start_n)}"
+                tailor_cl(root, show=False)
+                save_cl_text(cl_name)
+                save_output_cl(cl_template_var, cl_name)
+            start_n += 1
+    
+    
+    else:
+        for model in model_list:
+            #Set model to be used
+            model_var.set(model)
+            start_n = int(start_number)
+            for job in job_list:
+                job_title, job_desc = job
+                # Set the required variables
+                job_desc_textbox.delete("1.0", tk.END)
+                job_desc_textbox.insert("1.0", job_desc)
+                desired_job_title_checkbox_var.set(True)
+                desired_job_title_textbox.delete("1.0", tk.END)
+                desired_job_title_textbox.insert("1.0", job_title)
+
+                # Call tailor_cv and tailor_cl
+                if cv:
+                    tailor_cv(root, show=False)
+                    cv_name = f"{process_model_name(model)}Resume{str(start_n)}"
+                    save_cv_text(cv_name)
+                    save_output_cv(template_var, cv_name)
+                if cl:
+                    cl_name = f"{process_model_name(model)}CoverLetter{str(start_n)}"
+                    tailor_cl(root, show=False)
+                    save_cl_text(cl_name)
+                    save_output_cl(cl_template_var, cl_name)
+                start_n += 1
+        
+    print(f"Batch application packages created for {len(job_list)} jobs.")
+
+@log_time
+def tailor_cv(root, show = True):
     global summarized_job_desc, summarized_resume
     global tailor_cl_button
     global result_window, result_textbox, show_output_cv_button, save_output_cv_button, save_current_cv_text_button
@@ -414,14 +536,12 @@ def tailor_cv(root):
     print("[STEP 6][COMPLETE]") 
     print("The climb has ended, the CV is tailored!")
     # Show the tailored CV text in a new window
-    
-    
-    result_window = tk.Toplevel(root)
-    result_window.title("Tailored CV")
-    result_textbox = tk.Text(result_window, height=20, width=80)
-    result_textbox.insert(tk.END, current_cv_text)
-    result_textbox.pack(expand=True, fill=tk.BOTH)
-    
+    if show:
+        result_window = tk.Toplevel(root)
+        result_window.title("Tailored CV")
+        result_textbox = tk.Text(result_window, height=20, width=80)
+        result_textbox.insert(tk.END, current_cv_text)
+        result_textbox.pack(expand=True, fill=tk.BOTH)
 
     # Enable the save button when output is generated
     show_output_cv_button.config(state="normal")
@@ -437,7 +557,7 @@ def tailor_cv(root):
     )
 
 @log_time
-def tailor_cl(root):
+def tailor_cl(root, show = True):
     #Assumes existing system
     global filter_output_cl_button
     global save_current_cl_text_button
@@ -459,13 +579,20 @@ def tailor_cl(root):
     if not current_cv_text:
         print("No CV text available. Please tailor a CV first.")
         return
-    
+    if not summarized_job_desc:
+        print("Summary of job description is empty. Generating summary...")
+        check_summaries(update_job_desc=True)
+    if not summarized_resume:
+        print("Summary of resume is empty. Generating summary...")
+        check_summaries(update_resume=True)
+
     print("Tailoring cover letter with model: " + str(selected_model))
 
     # Compose cover letter dictionary
     cover_letter_dict = tailor.compose_cover_letter_dictionary(
         model=selected_model,
-        cv_text=summarized_resume,
+        cv_text=current_cv_text,
+        cv_text_summary = summarized_resume,
         job_description=summarized_job_desc,
     )
     cover_letter_text = parsers.inv_parse_cl(cover_letter_dict)
@@ -477,12 +604,13 @@ def tailor_cl(root):
     # format_check_current_cl_text(root)
 
     global cl_window, cl_textbox
-    
-    cl_window = tk.Toplevel(root)
-    cl_window.title("Tailored Cover Letter")
-    cl_textbox = tk.Text(cl_window, height=20, width=80)
-    cl_textbox.insert(tk.END, current_cl_text)
-    cl_textbox.pack(expand=True, fill=tk.BOTH)
+
+    if show:
+        cl_window = tk.Toplevel(root)
+        cl_window.title("Tailored Cover Letter")
+        cl_textbox = tk.Text(cl_window, height=20, width=80)
+        cl_textbox.insert(tk.END, current_cl_text)
+        cl_textbox.pack(expand=True, fill=tk.BOTH)
 
     show_output_cl_button.config(state="normal")
     save_current_cl_text_button.config(state="normal")
@@ -954,6 +1082,8 @@ def main():
     global filter_output_cl_button
     global show_output_cv_button, show_output_cl_button
     global format_check_current_cl_button
+    global csv_path
+    global start_num_textbox, candidate_name_textbox
 
     run = runLocalModel.wait_for_ollama()
     if not run:
@@ -1063,20 +1193,51 @@ def main():
     job_desc_textbox = tk.Text(root, height=5, width=40)
     job_desc_textbox.grid(row=8, column=1)
 
-    #Output file Textbox (now at row 8)
-    ttk.Label(root, text="Output CV Name:").grid(row=8, column=2)
+
+    # Batch Descriptions File (CSV) input (new row 9) with file explorer
+    ttk.Label(root, text="Batch Descriptions File:").grid(row=9, column=0)
+    csv_path = tk.StringVar()
+    def select_csv_file():
+        file_path = filedialog.askopenfilename(
+            title="Select Batch Descriptions CSV File",
+            filetypes=[("CSV Files", "*.csv"), ("All Files", "*.*")]
+        )
+        if file_path:
+            csv_path.set(file_path)
+    csv_file_entry = ttk.Entry(root, textvariable=csv_path, width=40)
+    csv_file_entry.grid(row=9, column=1, sticky="ew")
+    csv_file_button = ttk.Button(root, text="Browse...", command=select_csv_file)
+    csv_file_button.grid(row=9, column=2, sticky="ew")
+
+    # Start# text field and label at row 9, column 4
+    ttk.Label(root, text="Start#:").grid(row=9, column=4)
+    start_num_textbox = tk.Text(root, height=1, width=8)
+    start_num_textbox.grid(row=9, column=5)
+
+    ttk.Label(root, text="Candidate Name:").grid(row=9, column=6)
+    candidate_name_textbox = tk.Text(root, height=1, width=20)
+    candidate_name_textbox.grid(row=9, column=7)
+
+    # Add checkbox to the right of Desired Job Title textbox
+    benchmark_checkbox_var = tk.BooleanVar()
+    benchmark_checkbox = ttk.Checkbutton(root, text="Benchmark Mode", variable=benchmark_checkbox_var)
+    benchmark_checkbox.grid(row=9, column=8, sticky="w")
+
+
+    #Output file Textbox (now at row 10)
+    ttk.Label(root, text="Output CV Name:").grid(row=10, column=2)
     out_file_textbox = tk.Text(root, height=1, width=20)
-    out_file_textbox.grid(row=8, column=3)
+    out_file_textbox.grid(row=10, column=3)
 
-    #Output Cover Letter Textbox (now at row 8)
-    ttk.Label(root, text="Output CL File Name:").grid(row=8, column=4)
+    #Output Cover Letter Textbox (now at row 10)
+    ttk.Label(root, text="Output CL File Name:").grid(row=10, column=4)
     out_file_cl_textbox = tk.Text(root, height=1, width=20)
-    out_file_cl_textbox.grid(row=8, column=5)
+    out_file_cl_textbox.grid(row=10, column=5)
 
-    #Saved Text File Name (now at row 8)
-    ttk.Label(root, text="Saved Text File Name:").grid(row=8, column=6)
+    #Saved Text File Name (now at row 10)
+    ttk.Label(root, text="Saved Text File Name:").grid(row=10, column=6)
     save_file_textbox = tk.Text(root, height=1, width=20)
-    save_file_textbox.grid(row=8, column=7)
+    save_file_textbox.grid(row=10, column=7)
 
 
     
@@ -1099,60 +1260,66 @@ def main():
    
 
     
-    #Tailor Button
+
+
+    # Tailor Button
     tailor_button = ttk.Button(root, text="Tailor CV", command=lambda: tailor_cv(root))
-    tailor_button.grid(row=9, column=0)
+    tailor_button.grid(row=11, column=0)
+
+    # Batch Tailor Application Packages Button
+    batch_tailor_button = ttk.Button(root, text="Batch Tailor Application Packages", command=lambda: batch_application_packages(root, benchmark=benchmark_checkbox_var.get()))
+    batch_tailor_button.grid(row=9, column=3)
 
     # Show CV Output Button (initially disabled)
     show_output_cv_button = ttk.Button(root, text="Show Output CV", command=lambda: show_output_cv(root), state="disabled")
-    show_output_cv_button.grid(row=9, column=1)
+    show_output_cv_button.grid(row=11, column=1)
 
     # Filter Output CV Text Button (initially disabled)
     filter_output_cv_button = ttk.Button(root, text="Filter Output CV Text", command=lambda: filter_output_cv_text(root), state="disabled")
-    filter_output_cv_button.grid(row=9, column=2)
+    filter_output_cv_button.grid(row=11, column=2)
 
     # Format Check Current CV Text Button (initially disabled)
     format_check_current_cv_button = ttk.Button(root, text="Format Check Current CV Text", command=lambda: format_check_current_cv_text(root), state="disabled")
-    format_check_current_cv_button.grid(row=9, column=3)
+    format_check_current_cv_button.grid(row=11, column=3)
 
     # Save Output CV Button (initially disabled)
     save_output_cv_button = ttk.Button(root, text="Save Output CV to DOCX", command=lambda:save_output_cv(template_name= template_var,output_name= out_file_textbox.get("1.0", tk.END).strip()), state="disabled")
-    save_output_cv_button.grid(row=9, column=4)
+    save_output_cv_button.grid(row=11, column=4)
 
     # Save Current CV Text Button to text file (disabled if no text in current_cv_text)
     save_current_cv_text_button = ttk.Button(root, text="Save Current CV Text", command=lambda: save_cv_text(save_file_textbox.get("1.0", tk.END).strip()), state="disabled")
-    save_current_cv_text_button.grid(row=9, column=5)
+    save_current_cv_text_button.grid(row=11, column=5)
     
     # Load CV Text Button (disabled if no saved output CVs)
     load_cv_text_button = ttk.Button(root, text="Load CV Text", command=lambda: load_cv_text(saved_out_var.get()), state="disabled")
-    load_cv_text_button.grid(row=9, column=6)
+    load_cv_text_button.grid(row=11, column=6)
 
     #Tailor Cover Letter Button (Initially disabled)
     tailor_cl_button =ttk.Button(root, text="Tailor CL", command=lambda: tailor_cl(root), state="disabled")
-    tailor_cl_button.grid(row=10, column=0)
+    tailor_cl_button.grid(row=12, column=0)
 
     # Show Output Cover Letter Button (Initially disabled)
     show_output_cl_button = ttk.Button(root, text="Show Output CL", command=lambda: show_output_cl(root), state="disabled")
-    show_output_cl_button.grid(row=10, column=1)
+    show_output_cl_button.grid(row=12, column=1)
 
     # Filter Output Cover Letter Button (Initially disabled)
     filter_output_cl_button = ttk.Button(root, text="Filter Output CL Text", command=lambda: filter_output_cl_text(root), state="disabled")
-    filter_output_cl_button.grid(row=10, column=2)
+    filter_output_cl_button.grid(row=12, column=2)
 
     # Format Check Current CL Text Button (initially disabled)
     format_check_current_cl_button = ttk.Button(root, text="Format Check Current CL Text", command=lambda: format_check_current_cl_text(root), state="disabled")
-    format_check_current_cl_button.grid(row=10, column=3)
+    format_check_current_cl_button.grid(row=12, column=3)
 
     save_output_cl_button = ttk.Button(root, text="Save Output CL to DOCX", command=lambda:save_output_cl(template_name= cl_template_var,output_name= out_file_cl_textbox.get("1.0", tk.END).strip()), state="disabled")
-    save_output_cl_button.grid(row=10, column=4)
+    save_output_cl_button.grid(row=12, column=4)
 
     # Save Output Cover Letter Button (Initially disabled)
     save_current_cl_text_button = ttk.Button(root, text="Save Current CL Text", command=lambda:save_cl_text(save_file_textbox.get("1.0", tk.END).strip()), state="disabled")
-    save_current_cl_text_button.grid(row=10, column=5)
+    save_current_cl_text_button.grid(row=12, column=5)
 
     # Load Cover Letter Text Button (Initially disabled)
     load_cl_text_button = ttk.Button(root, text="Load CL Text", command=lambda: load_cl_text(saved_out_var_cl.get()), state="disabled")
-    load_cl_text_button.grid(row=10, column=6)
+    load_cl_text_button.grid(row=12, column=6)
 
     refresh_options_callback()
 

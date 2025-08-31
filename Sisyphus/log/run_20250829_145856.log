@@ -1,0 +1,92 @@
+2025-08-29 14:58:56,884 INFO: Waiting for Ollama to be ready...
+2025-08-29 14:58:58,914 INFO: Ollama is running.
+2025-08-29 14:58:58,983 INFO: Refreshing options...
+2025-08-29 14:59:01,055 INFO: [TIME] list_text_files took 0.0004 seconds
+2025-08-29 14:59:01,056 INFO: [TIME] list_text_files took 0.0002 seconds
+2025-08-29 14:59:01,056 INFO: [TIME] list_docx_files took 0.0003 seconds
+2025-08-29 14:59:01,057 INFO: [TIME] list_text_files took 0.0002 seconds
+2025-08-29 14:59:01,057 INFO: [TIME] list_text_files took 0.0001 seconds
+2025-08-29 14:59:01,057 INFO: [TIME] list_docx_files took 0.0001 seconds
+2025-08-29 14:59:01,058 INFO: Options refreshed:
+2025-08-29 14:59:01,058 INFO: Models: ['llama3.2:latest', 'llama3.1:latest', 'deepseek-r1:8b', 'llama3:8b']
+2025-08-29 14:59:01,058 INFO: Systems: ['system1.txt', 'system_consistency.txt', 'system_consistency_cl.txt', 'system_cover_letter.txt']
+2025-08-29 14:59:01,058 INFO: CVs: ['a_mycv.txt', 'cv.txt', 'cv_url.txt']
+2025-08-29 14:59:01,058 INFO: CV Templates: ['cv_template21.docx', 'cv_template21_url.docx']
+2025-08-29 14:59:01,058 INFO: CL Templates: ['cl_template.docx']
+2025-08-29 14:59:01,058 INFO: Previously Saved CV Outputs: ['batch4_3_0.txt', 'batch4_3_1.txt', 'batch4_3_2.txt', 'MarcosMadrigalResume001.txt', 'out_cv_20250829_145536.txt']
+2025-08-29 14:59:01,058 INFO: Previously Saved CL Outputs: []
+2025-08-29 14:59:01,059 INFO: [TIME] refresh_options took 2.0758 seconds
+2025-08-29 14:59:01,059 INFO: [TIME] refresh_options_callback took 2.0761 seconds
+2025-08-29 14:59:49,230 INFO: CV loaded from C:\CodeProjects\Sisyphus\Sisyphus\saved_outputs\MarcosMadrigalResume001.txt
+2025-08-29 14:59:49,230 INFO: [TIME] load_cv_text took 0.0125 seconds
+2025-08-29 14:59:52,443 INFO: [TIME] show_output_cv took 0.0020 seconds
+2025-08-29 15:00:33,503 INFO: Tailoring cover letter with model: llama3:8b
+2025-08-29 15:00:33,503 INFO: [TIME] parse_cv_out took 0.0004 seconds
+2025-08-29 15:00:33,504 INFO: [TIME] dict_spliter took 0.0000 seconds
+2025-08-29 15:00:33,504 INFO: [TIME] read_text_file took 0.0003 seconds
+2025-08-29 15:00:33,504 INFO: [OLLAMA]make_cover_letter_text: payload field model with value llama3:8b found
+2025-08-29 15:00:33,505 INFO: [OLLAMA]make_cover_letter_text: payload field system with value You are a resume and cover letter writing expert. Your job is to write cover letters for already-tailored resumes, given a particular job description.
+While writing the cover letters, you follow these guidelines:
+1. You may only draw from the provided resume, no making assumptions.
+2. You may not add any untrue statements outside of what has been provided.
+3. You must remain objective throughout. found
+2025-08-29 15:00:33,505 INFO: [OLLAMA]make_cover_letter_text: payload field prompt with value 
+    Given the following wholistic summary of an already-tailored resume:
+    
+    And the following summary of the job description it has been tailored to:
+    
+    Write a cover letter tailored to the job description, following the guidelines below:
+        2.It should highlight the most relevant skills and experiences from the CV that match the job description.
+        3.It should be written in a professional tone.
+        4.It should include line breaks if deemed necessary to maintain good readability.
+        5.Whenever a line break occurs, it should start with "[1]New ParagraphX: " and then the text of the new paragraph; 
+        X starts at 0 and goes up to 3.
+        6.Strictly follow the format:
+
+        [0]Cover Letter: 
+        [1]New Paragraph0: Cover Letter introduction, mentioning the job title and company.
+        [1]New Paragraph1: Briefly mention the most relevant skills and experiences from the CV that match the job description.
+        [1]New Paragraph2: Additional information about the candidate's qualifications and how they align with the job requirements.
+        [1]New Paragraph3: Closing statement, thanking the employer for their time and consideration.
+
+        Note: the total words in the Cover Letter section should not exceed 400 words. This is a hard limit, so be concise and to the point.
+
+     found
+2025-08-29 15:00:33,505 INFO: [OLLAMA]make_cover_letter_text: payload field stream with value False found
+2025-08-29 15:00:39,938 INFO: [SUCCESS][OLLAMA]make_cover_letter_text: {'model': 'llama3:8b', 'created_at': '2025-08-29T21:00:39.9371569Z', 'response': 'Please provide the wholistic summary of the already-tailored resume and the job description it has been tailored to. I will write a cover letter that follows the guidelines provided.', 'done': True, 'done_reason': 'stop', 'context': [128006, 9125, 128007, 271, 2675, 527, 264, 16063, 323, 3504, 6661, 4477, 6335, 13, 4718, 2683, 374, 311, 3350, 3504, 12197, 369, 2736, 2442, 607, 3093, 66313, 11, 2728, 264, 4040, 2683, 4096, 627, 8142, 4477, 279, 3504, 12197, 11, 499, 1833, 1521, 17959, 512, 16, 13, 1472, 1253, 1193, 4128, 505, 279, 3984, 16063, 11, 912, 3339, 32946, 627, 17, 13, 1472, 1253, 539, 923, 904, 88977, 12518, 4994, 315, 1148, 706, 1027, 3984, 627, 18, 13, 1472, 2011, 7293, 16945, 6957, 13, 128009, 128006, 882, 128007, 1432, 262, 16644, 279, 2768, 421, 337, 4633, 12399, 315, 459, 2736, 2442, 607, 3093, 16063, 512, 1084, 262, 1628, 279, 2768, 12399, 315, 279, 2683, 4096, 433, 706, 1027, 41891, 311, 512, 1084, 262, 9842, 264, 3504, 6661, 41891, 311, 279, 2683, 4096, 11, 2768, 279, 17959, 3770, 512, 286, 220, 17, 28628, 1288, 11415, 279, 1455, 9959, 7512, 323, 11704, 505, 279, 14499, 430, 2489, 279, 2683, 4096, 627, 286, 220, 18, 28628, 1288, 387, 5439, 304, 264, 6721, 16630, 627, 286, 220, 19, 28628, 1288, 2997, 1584, 18808, 422, 25660, 5995, 311, 10519, 1695, 92594, 627, 286, 220, 20, 18951, 31845, 264, 1584, 1464, 13980, 11, 433, 1288, 1212, 449, 10768, 16, 60, 3648, 50451, 55, 25, 330, 323, 1243, 279, 1495, 315, 279, 502, 14646, 26, 720, 286, 1630, 8638, 520, 220, 15, 323, 5900, 709, 311, 220, 18, 627, 286, 220, 21, 78528, 398, 1833, 279, 3645, 1473, 286, 510, 15, 60, 31996, 27757, 25, 720, 286, 510, 16, 60, 3648, 50451, 15, 25, 18230, 27757, 17219, 11, 45391, 279, 2683, 2316, 323, 2883, 627, 286, 510, 16, 60, 3648, 50451, 16, 25, 37618, 398, 6420, 279, 1455, 9959, 7512, 323, 11704, 505, 279, 14499, 430, 2489, 279, 2683, 4096, 627, 286, 510, 16, 60, 3648, 50451, 17, 25, 24086, 2038, 922, 279, 9322, 596, 43784, 323, 1268, 814, 5398, 449, 279, 2683, 8670, 627, 286, 510, 16, 60, 3648, 50451, 18, 25, 62213, 5224, 11, 94121, 279, 19683, 369, 872, 892, 323, 18361, 382, 286, 7181, 25, 279, 2860, 4339, 304, 279, 18230, 27757, 3857, 1288, 539, 12771, 220, 3443, 4339, 13, 1115, 374, 264, 2653, 4017, 11, 779, 387, 64694, 323, 311, 279, 1486, 382, 257, 128009, 128006, 78191, 128007, 271, 5618, 3493, 279, 421, 337, 4633, 12399, 315, 279, 2736, 2442, 607, 3093, 16063, 323, 279, 2683, 4096, 433, 706, 1027, 41891, 311, 13, 358, 690, 3350, 264, 3504, 6661, 430, 11263, 279, 17959, 3984, 13], 'total_duration': 4380248900, 'load_duration': 2208900400, 'prompt_eval_count': 377, 'prompt_eval_duration': 495098700, 'eval_count': 37, 'eval_duration': 1674219900}
+2025-08-29 15:00:39,939 INFO: [TIME] make_cover_letter_text took 6.4340 seconds
+2025-08-29 15:00:39,939 INFO: [TIME] filter_output took 0.0000 seconds
+2025-08-29 15:00:39,939 INFO: [TIME] parse_cl took 0.0000 seconds
+2025-08-29 15:00:39,939 INFO: [TIME] dict_grafter took 0.0000 seconds
+2025-08-29 15:00:39,939 INFO: [TIME] compose_cover_letter_dictionary took 6.4362 seconds
+2025-08-29 15:00:39,939 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-29 15:00:39,939 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-29 15:00:39,939 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-29 15:00:39,939 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-29 15:00:39,939 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-29 15:00:39,939 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-29 15:00:39,940 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-29 15:00:39,940 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-29 15:00:39,940 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-29 15:00:39,940 INFO: [TIME] format_key took 0.0000 seconds
+2025-08-29 15:00:39,940 INFO: [TIME] inv_parse_cl took 0.0010 seconds
+2025-08-29 15:00:39,940 INFO: Cover letter text generated successfully.
+2025-08-29 15:00:39,940 INFO: Formatting and consistency check skipped. Please use the formatting button in the UI.
+2025-08-29 15:00:39,941 INFO: [PERFORMANCE] compose_cover_letter_dictionary called 1 times, total runtime: 6.4362 seconds
+2025-08-29 15:00:39,942 INFO: [PERFORMANCE] make_cover_letter_text called 1 times, total runtime: 6.4340 seconds
+2025-08-29 15:00:39,942 INFO: [PERFORMANCE] refresh_options_callback called 1 times, total runtime: 2.0761 seconds
+2025-08-29 15:00:39,942 INFO: [PERFORMANCE] refresh_options called 1 times, total runtime: 2.0758 seconds
+2025-08-29 15:00:39,942 INFO: [PERFORMANCE] load_cv_text called 1 times, total runtime: 0.0125 seconds
+2025-08-29 15:00:39,942 INFO: [PERFORMANCE] show_output_cv called 1 times, total runtime: 0.0020 seconds
+2025-08-29 15:00:39,942 INFO: [PERFORMANCE] inv_parse_cl called 1 times, total runtime: 0.0010 seconds
+2025-08-29 15:00:39,942 INFO: [PERFORMANCE] list_text_files called 4 times, total runtime: 0.0009 seconds
+2025-08-29 15:00:39,942 INFO: [PERFORMANCE] list_docx_files called 2 times, total runtime: 0.0004 seconds
+2025-08-29 15:00:39,942 INFO: [PERFORMANCE] parse_cv_out called 1 times, total runtime: 0.0004 seconds
+2025-08-29 15:00:39,942 INFO: [PERFORMANCE] read_text_file called 1 times, total runtime: 0.0003 seconds
+2025-08-29 15:00:39,942 INFO: [PERFORMANCE] format_key called 10 times, total runtime: 0.0000 seconds
+2025-08-29 15:00:39,943 INFO: [PERFORMANCE] dict_spliter called 1 times, total runtime: 0.0000 seconds
+2025-08-29 15:00:39,943 INFO: [PERFORMANCE] dict_grafter called 1 times, total runtime: 0.0000 seconds
+2025-08-29 15:00:39,943 INFO: [PERFORMANCE] parse_cl called 1 times, total runtime: 0.0000 seconds
+2025-08-29 15:00:39,943 INFO: [PERFORMANCE] filter_output called 1 times, total runtime: 0.0000 seconds
+2025-08-29 15:00:39,943 INFO: [PERFORMANCE] Total function calls: 29, Total runtime: 17.0396 seconds
+2025-08-29 15:00:40,300 INFO: [TIME] tailor_cl took 6.7970 seconds

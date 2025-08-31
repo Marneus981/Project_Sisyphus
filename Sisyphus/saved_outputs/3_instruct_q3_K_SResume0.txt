@@ -1,0 +1,52 @@
+[0]Name: Marcos David Madrigal Albores
+[0]Contact Information:
+[1]Address: 308 Brunswick Ave, Toronto, ON, Canada
+[1]Phone: +1-437-981-2994
+[1]Email: marcosdma.compeng@outlook.com
+[1]LinkedIn: linkedin.com/in/marcosdma/
+[1]Github: github.com/marneus981
+[1]Portfolio: marneus981.github.io | donkeyponius981.itch.io
+[0]Title: New Grad Software Engineer
+[0]Languages: English, Spanish, French
+[0]Education:
+[1]Degree: Bachelor of Applied Science in Computer Engineering
+[1]University: University of Toronto
+[1]Location: Toronto, ON, Canada
+[1]Duration: 2018/09 - 2023/06
+[1]Courses: ESC190 Computer Algorithms and Data Structures, MAT195 Calculus II, ECE344 Operating Systems, ECE345 Algorithms and Data Structures, ECE421 Introduction to Machine Learning, APS360 Applied Fundamentals of Machine Learning, CSC384 Introduction to Artificial Intelligence, ECE496 Machine Learning Capstone Project, ECE368 Probabilistic Reasoning, MAT290 Advanced Engineering Mathematics
+[0]Certifications:
+[1]Certification Name: Minor in Artificial Intelligence
+[1]Issuing Organization: University of Toronto
+[1]Issue Date: 2023/06
+[0]Awards and Scholarships:
+[1]Award Name: United Nations Datathon 2023 Participation
+[1]Issuing Organization: United Nations
+[1]Issue Date: 2023/11
+[1]Award Name: University of Toronto Engineering Scholar
+[1]Issuing Organization: University of Toronto Faculty of Applied Science and Engineering
+[1]Issue Date: 2018/09
+[0]Volunteering and Leadership:
+[0]Work Experience:
+[1]Job Title: Software Engineer, New Grad
+[1]Company: Ontario Institute for Studies in Education
+[1]Location: Toronto, ON, Canada
+[1]Duration: 2022/03 - 2022/05
+[1]Description: Developed Python algorithms for video project management and collaborated with stakeholders to ensure timely delivery. Skilled in software development lifecycle and effective communication
+[0]Projects:
+[1]Project Title: TTRPG Tools
+[1]URL: https://github.com/Marneus981/TTRPGTools
+[1]Type: Open Source Personal Project
+[1]Duration: 2023/06 - Present
+[1]Description: Developed a set of software tools with AI integration for playing and creating TTRPG games, showcasing skills in Python programming language and version control. Implemented automated debugging and scripting for all software components
+[1]Project Title: Optical Music Recognition: Music Sheet Transcriber
+[1]Type: University Project
+[1]Duration: 2021/01 - 2021/06
+[1]Description: Developed a hybrid CRNN model to interpret sheet music, utilizing skills in Python and machine learning libraries. Implemented effective communication through detailed documentation
+[1]Project Title: MAPPA C++ Geographical Information System
+[1]Type: University Project
+[1]Duration: 2019/09 - 2020/06
+[1]Description: Improved algorithm efficiency by 200% and reduced memory usage by 50%. Utilized skills in algorithm optimization, UI/UX design, and C++ programming to develop a GIS system using OpenStreetMap data
+[0]Skills:
+[1]Programming Languages: Python, JavaScript
+[1]Technical Skills: Version control, Unit testing, Knowledge of algorithms and data structures, Object-oriented design principles, Implementation skills with programming languages
+[1]Soft Skills: Effective communication, Collaboration skills, Coaching and feedback skills

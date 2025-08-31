@@ -1,0 +1,15 @@
+[0]Name: Marcos David Madrigal Albores
+[0]Title: New Grad Software Engineer
+[0]Education: {'degree': 'Bachelor of Applied Science in Computer Engineering', 'university': 'University of Toronto', 'location': 'Toronto, ON, Canada', 'duration': '2018/09 - 2023/06', 'courses': ['ESC190 Computer Algorithms and Data Structures', 'MAT195 Calculus II', 'ECE344 Operating Systems', 'ECE345 Algorithms and Data Structures', 'ECE421 Introduction to Machine Learning', 'APS360 Applied Fundamentals of Machine Learning', 'CSC384 Introduction to Artificial Intelligence', 'ECE496 Machine Learning Capstone Project', 'ECE368 Probabilistic Reasoning', 'MAT290 Advanced Engineering Mathematics']}
+[0]Contact Information:
+[1]Address: 308 Brunswick Ave, Toronto, ON, Canada
+[1]Phone: +1-437-981-2994
+[1]Email: marcosdma.compeng@outlook.com
+[1]Linkedin: linkedin.com/in/marcosdma/
+[1]Github: github.com/marneus981
+[1]Portfolio: marneus981.github.io | donkeyponius981.itch.io
+[0]Cover Letter:
+[1]New Paragraph0: I am excited to apply for the Software Engineer, New Grad position at Sentry, where I can leverage my skills in Python programming and effective communication to contribute to the development of your innovative product.
+[1]New Paragraph1: With a Bachelor's degree in Computer Science and over [X] months of practical experience through internships, I have developed a strong foundation in software development lifecycle, including design, development, testing, and operating in production. My proficiency in Python programming language skills, version control, and unit testing makes me a great fit for this role.
+[1]New Paragraph2: During my previous internship, I had the opportunity to work on [X]-hour project that involved designing and implementing a software solution using algorithms and data structures. This experience not only honed my implementation skills but also taught me the importance of effective communication and collaboration with team members and stakeholders.
+[1]New Paragraph3: Thank you for considering my application. I am eager to discuss how my skills and experiences align with Sentry's requirements and goals. Please feel free to contact me at [Your Email Address] or [Your Phone Number].

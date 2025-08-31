@@ -1,0 +1,15 @@
+[0]Name: Marcos David Madrigal Albores
+[0]Title: New Grad Software Engineer
+[0]Languages: English, Spanish, French
+[0]Contact Information:
+[1]Address: 308 Brunswick Ave, Toronto, ON, Canada
+[1]Phone: +1-437-981-2994
+[1]Email: marcosdma.compeng@outlook.com
+[1]Linkedin: linkedin.com/in/marcosdma/
+[1]Github: github.com/marneus981
+[1]Portfolio: marneus981.github.io | donkeyponius981.itch.io
+[0]Cover Letter:
+[1]New Paragraph0: 
+[1]New Paragraph1: 
+[1]New Paragraph2: 
+[1]New Paragraph3: 
