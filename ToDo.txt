@@ -4,6 +4,17 @@
         []Clean git files
         []Prompt engineer to be more specific (provide specific information, etc).
         []Make templates
+        []Maybe add start and end to sections?
+        []Maybe format job description?
+    tailor_volunteering_and_leadership dropped (1) @step3 =>gone
+
+    tailor_work_experience renamed OISE to Software Eng @step3_work_experience: temp: dropped (1)
+
+    tailor_projects dropped (1) project @step3 => gone
+
+    tailor_experiences: step0_prune_experiences renamed a bunch of experiences to "Software Engineer"
+
+    step1_tailor summary messed up format => ignored by program, thus missing
 [Hubris tracker]
     []Things might break if fields are missing
 
