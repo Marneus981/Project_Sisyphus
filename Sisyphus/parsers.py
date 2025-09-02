@@ -8,7 +8,7 @@ from Sisyphus.decorators import log_time
 # Set up logging
 print = logging.info
 
-@log_time
+
 def format_key(key, parent_key=None):
         # Special case for LinkedIn under Contact Information
         if parent_key == 'contact_information' and key.lower() == 'linkedin':

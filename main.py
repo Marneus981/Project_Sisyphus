@@ -888,8 +888,31 @@ def refresh_options_callback():
             saved_out_var_cl.set(saved_outs_cl[0])
             load_cl_text_button.config(state="normal")
 
-@log_time        
-def save_output_cv(template_name,output_name):
+@log_time
+def dynamic_template_path(template_name, cv_dict):
+    #Depending on wether or not certain keys are non empty in the cv_dict, modify the template path
+    v = False
+    w = False
+    p = False
+    variant = ""
+    if cv_dict["volunteering_and_leadership"] != None or cv_dict["volunteering_and_leadership"] != []:
+        v = True
+        variant += "v_"
+    if cv_dict["work_experience"] != None or cv_dict["work_experience"] != []:
+        w = True
+        variant += "w_"
+    if cv_dict["projects"] != None or cv_dict["projects"] != []:
+        p = True
+        variant += "p_"
+    #remove trailing underscore
+    variant = variant.rstrip("_")
+
+    return os.path.join(SISYPHUS_PATH, "templates", f"{template_name}_{variant}")
+    
+    
+@log_time
+def save_output_cv(template_name,output_name, dynamic = False):
+    #If dynamic is True, use a dynamic template path, taking the current template as the base
     output_n = output_name
     template_n = template_name.get().strip()
     if output_n == "":
@@ -900,7 +923,10 @@ def save_output_cv(template_name,output_name):
         return
     global current_cv_text
     cv_dict = parsers.parse_cv_out(current_cv_text)
-    template_path = os.path.join(SISYPHUS_PATH, "templates", f"{template_n}")
+    if dynamic:
+        template_path = dynamic_template_path(template_n, cv_dict)
+    else:
+        template_path = os.path.join(SISYPHUS_PATH, "templates", f"{template_n}")
     output_path = os.path.join(SISYPHUS_PATH, "saved_docs", f"{output_n}.docx")
     if os.path.exists(output_path):
         print(f"Warning: {output_path} already exists and will be overwritten.")
@@ -1283,7 +1309,7 @@ def main():
     format_check_current_cv_button.grid(row=11, column=3)
 
     # Save Output CV Button (initially disabled)
-    save_output_cv_button = ttk.Button(root, text="Save Output CV to DOCX", command=lambda:save_output_cv(template_name= template_var,output_name= out_file_textbox.get("1.0", tk.END).strip()), state="disabled")
+    save_output_cv_button = ttk.Button(root, text="Save Output CV to DOCX", command=lambda:save_output_cv(template_name= template_var,output_name= out_file_textbox.get("1.0", tk.END).strip(), dynamic=False), state="disabled")
     save_output_cv_button.grid(row=11, column=4)
 
     # Save Current CV Text Button to text file (disabled if no text in current_cv_text)
