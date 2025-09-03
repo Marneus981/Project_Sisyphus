@@ -10,5 +10,8 @@ CONFIG = {
         "ENABLED": True,
         "WINDOWS": True,
         "SOUND": True
+    },
+    "MODELS": {
+        "TEMPERATURE": 0.8
     }
 }

@@ -16,9 +16,37 @@ DEFAULT_URL = "http://localhost:11434"
 print = logging.info
 
 @log_time
+def compare_start(output, sample_starts = ""):
+    # Compare the two outputs and return the differences
+    equal = True
+    start_lines = sample_starts.splitlines()
+    start_lines = [line.strip() for line in start_lines if line.strip()]
+    output_lines = output.splitlines()
+    output_lines = [line.strip() for line in output_lines if line.strip()]
+    if len(start_lines) != len(output_lines):
+        # Handle length mismatch
+        logging.warning(f"[OUTPUT][FAIL] compare_start: Length mismatch: {len(start_lines)} != {len(output_lines)}")
+        equal = False
+    else:
+        print("[OUTPUT][OK] Output matches expected length")
+        
+    for i in range(len(start_lines)):
+        #Check if output lines starts with start_lines
+        if output_lines[i].startswith(start_lines[i]):
+            continue
+        else:
+            equal = False
+            logging.warning(f"[OUTPUT][FAIL] compare_start: Output line {i} does not start with sample start line")
+            print(f"[OUTPUT][FAIL] compare_start: Output line: {output_lines[i]}")
+            print(f"[OUTPUT][FAIL] compare_start: Expected start line: {start_lines[i]}")
+    if equal:
+        print("[OUTPUT][OK] Output matches expected start lines")
+    return equal
+
+@log_time
 async def ollama_request(session, payload, ollama_url):
     # Check payload fields
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]ollama_request: payload field {field} with value {value} found")
@@ -148,10 +176,12 @@ def augment_output(input_text, reference_dict, type):
         reference_list = reference_dict[type]
         for line in input_lines:
             for item in reference_list:
-                if line.strip() == item['role']:
-                    return_list.append(item)
-                    reference_list.remove(item)
-                    break
+                #Check if role field exists in item
+                if 'role' in item:
+                    if line.strip() == item['role']:
+                        return_list.append(item)
+                        reference_list.remove(item)
+                        break
         tmp_dict[type] = return_list
 
     elif type == 'work_experience':
@@ -161,10 +191,12 @@ def augment_output(input_text, reference_dict, type):
         reference_list = reference_dict[type]
         for line in input_lines:
             for item in reference_list:
-                if line.strip() == item['job_title']:
-                    return_list.append(item)
-                    reference_list.remove(item)
-                    break
+                #Check if job_title field exists in item
+                if 'job_title' in item:
+                    if line.strip() == item['job_title']:
+                        return_list.append(item)
+                        reference_list.remove(item)
+                        break
         tmp_dict[type] = return_list
 
     elif type == 'projects':
@@ -174,10 +206,12 @@ def augment_output(input_text, reference_dict, type):
         reference_list = reference_dict[type]
         for line in input_lines:
             for item in reference_list:
-                if line.strip() == item['project_title']:
-                    return_list.append(item)
-                    reference_list.remove(item)
-                    break
+                #Check if project_title field exists in item
+                if 'project_title' in item:
+                    if line.strip() == item['project_title']:
+                        return_list.append(item)
+                        reference_list.remove(item)
+                        break
         tmp_dict[type] = return_list
 
     elif type == 'vl_w_p':
@@ -190,27 +224,33 @@ def augment_output(input_text, reference_dict, type):
         for line in input_lines:
             found = False
             for item in reference_list_vl:
-                if line.strip() == item['role']:
-                    return_list[0].append(item)
-                    reference_list_vl.remove(item)
-                    found = True
-                    break
+                #Check if role field exists in item
+                if 'role' in item:
+                    if line.strip() == item['role']:
+                        return_list[0].append(item)
+                        reference_list_vl.remove(item)
+                        found = True
+                        break
             if found:
                 continue
             for item in reference_list_w:
-                if line.strip() == item['job_title']:
-                    return_list[1].append(item)
-                    reference_list_w.remove(item)
-                    found = True
-                    break
+                #Check if job_title field exists in item
+                if 'job_title' in item:
+                    if line.strip() == item['job_title']:
+                        return_list[1].append(item)
+                        reference_list_w.remove(item)
+                        found = True
+                        break
             if found:
                 continue
             for item in reference_list_p:
-                if line.strip() == item['project_title']:
-                    return_list[2].append(item)
-                    reference_list_p.remove(item)
-                    found = True
-                    break
+                #Check if project_title field exists in item
+                if 'project_title' in item:
+                    if line.strip() == item['project_title']:
+                        return_list[2].append(item)
+                        reference_list_p.remove(item)
+                        found = True
+                        break
         tmp_dict['volunteering_and_leadership'] = return_list[0]
         tmp_dict['work_experience'] = return_list[1]
         tmp_dict['projects'] = return_list[2]
@@ -282,10 +322,7 @@ def clean_first_step(text):
         if line.startswith(("[R]", "[J]", "[P]")):
             cleaned_lines.append(line)
     return '\n'.join(cleaned_lines)  
-"""
-    raw text section>>>>prepare_input_text>>>Role;Description;Skills
-    >>>Tailor function>>>Text list of chosen items>>>augment_output>>>tailored_dict (section)
-"""
+
 #For each main tailor function (including pruning), we need to create 3 functions
 #Tailor Volunteering and Leadership
 @log_time
@@ -302,9 +339,10 @@ Job Description:
         "model": model,
         "system": system,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
     }
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]summarize_job_description: payload field {field} with value {value} found")
@@ -351,9 +389,10 @@ Output the selected roles strictly in the following format, without changing the
         "model": model,
         "system": system1,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
     }
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]step0_volunteering_and_leadership: payload field {field} with value {value} found")
@@ -376,14 +415,12 @@ Output the selected roles strictly in the following format, without changing the
 @log_time
 def step3_volunteering_and_leadership(model=DEFAULT_MODEL, system2="", ollama_url=DEFAULT_URL, 
                                        experience="", job_description=""):
-    prompt = f"""Given the following "Volunteering and Leadership" resume experience:
+    prompt = f"""Given the "Description" and "Skills" subsections of a role belonging to the "Volunteering and Leadership" section of a resume:
 {experience}
 And the following job description:
 {job_description}
 Rewrite the experience to best match the job description, following these guidelines:
 - Do not include any information not present in the original experience.
-- Keep all original subsections: Role, Organization, Location, Duration, Description, and Skills.
-- Keep subsection names unchanged ("Project Title", "Type", "Duration", "Description", "Skills")
 - In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
 - In the Skills subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
 - Do not use line breaks inside any subsection. Do not use the ":" character in the Description.
@@ -392,10 +429,6 @@ Rewrite the experience to best match the job description, following these guidel
     - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
 - Include the prefix [1] at the start of each line (as seen in the format below).
 Return only the revised section in the following format:
-[1]Role: Role Name 1
-[1]Organization: Organization Name 1
-[1]Location: Location Name 1
-[1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
 [1]Description: Brief description for Role 1.
 [1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
 """
@@ -404,9 +437,10 @@ Return only the revised section in the following format:
         "model": model,
         "system": system2,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
     }
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]step3_volunteering_and_leadership: payload field {field} with value {value} found")
@@ -450,15 +484,27 @@ def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system1="", system2=
     step2_text = helpers.filter_output(step2_text.strip())
     print(f"tailor_volunteering_and_leadership: step2_text after filtering:\n" + step2_text)
     #Split text into list of individual experiences (each experience starts with [1]Role)
-    step3_text = step2_text.split("\n[1]Role: ")[1:]
+    step3_text = step2_text.split("[1]Role: ")[1:]
     step3_text = ["[1]Role: " + exp for exp in step3_text]
     step3_list = []
     for exp in step3_text:
         print(f"tailor_volunteering_and_leadership: step3_volunteering_and_leadership: exp:\n" + exp)
-        temp = step3_volunteering_and_leadership(model=model, system2=system2, ollama_url=ollama_url, experience=exp, job_description=job_description_summary)
+        #Transform to dict
+        exp_dict = parsers.parse_subfields(helpers.filter_output(exp).strip())
+        #Separate dict in two: one containing description and skills, the other containing the rest
+        first_part_dict = {k: v for k, v in exp_dict.items() if k in ["description", "skills"]}
+        second_part_dict = {k: v for k, v in exp_dict.items() if k not in ["description", "skills"]}
+        #Convert to text
+        first_part_text = parsers.inv_parse_subfields(first_part_dict).strip()
+        second_part_text = parsers.inv_parse_subfields(second_part_dict).strip()
+        print(f"tailor_volunteering_and_leadership: step3_volunteering_and_leadership: second_part_text:\n" + second_part_text)
+        first_part_text_new = step3_volunteering_and_leadership(model=model, system2=system2, ollama_url=ollama_url, experience=first_part_text, job_description=job_description_summary)
+        print(f"tailor_volunteering_and_leadership: step3_volunteering_and_leadership: first_part_text_new:\n" + first_part_text_new)
+        first_part_text_new = helpers.filter_output(first_part_text_new.strip())
+        print(f"tailor_volunteering_and_leadership: step3_volunteering_and_leadership: first_part_text_new (filtered):\n" + first_part_text_new)
+        #Join with second part
+        temp = second_part_text + "\n" + first_part_text_new
         print(f"tailor_volunteering_and_leadership: step3_volunteering_and_leadership: temp:\n" + temp)
-        temp = helpers.filter_output(temp.strip())
-        print(f"tailor_volunteering_and_leadership: step3_volunteering_and_leadership: temp (filtered):\n" + temp)
         step3_list.append(temp)
     step3_text = "\n".join(step3_list)
     print(f"tailor_volunteering_and_leadership: step3_text:\n" + step3_text)
@@ -495,9 +541,10 @@ Output the selected jobs strictly in the following format, without changing the 
         "model": model,
         "system": system1,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
     }
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]step0_work_experience: payload field {field} with value {value} found")
@@ -521,27 +568,21 @@ Output the selected jobs strictly in the following format, without changing the 
 @log_time
 def step3_work_experience(model=DEFAULT_MODEL, system2="", ollama_url=DEFAULT_URL, 
                           experience="", job_description=""):
-    prompt = f"""Given the following "Work Experience" resume experience:
+    prompt = f"""Given the "Description" and "Skills" subsections of a role belonging to the "Work Experience" section of a resume:
 {experience}
 And the following job description:
 {job_description}
 Rewrite the experience to best match the job description, following these guidelines:
 - Do not include any information not present in the original experience.
-- Keep all original subsections: Job Title, Company, Location, Duration, Description, and Skills.
-- Keep subsection names unchanged ("Project Title", "Type", "Duration", "Description", "Skills")
-- In the "Description" subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
-- In the "Skills" subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
+- In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
+- In the Skills subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
 - Do not use line breaks inside any subsection. Do not use the ":" character in the Description.
-- Skills must be comma-separated and follow the format below.
+- Skills must be comma-separated and follow the format below. 
 - If there are no skills in a given category, use " ", then follow up as the format below indicates 
     - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
 - Include the prefix [1] at the start of each line (as seen in the format below).
 Return only the revised section in the following format:
-[1]Job Title: Job Title 1
-[1]Company: Company Name 1
-[1]Location: Location Name 1
-[1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
-[1]Description: Brief description for Job Title 1.
+[1]Description: Brief description for Role 1.
 [1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
 """
     if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
@@ -549,9 +590,10 @@ Return only the revised section in the following format:
         "model": model,
         "system": system2,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
     }
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]step3_work_experience: payload field {field} with value {value} found")
@@ -592,15 +634,26 @@ def tailor_work_experience(model=DEFAULT_MODEL, system1="", system2="", ollama_u
     print(f"tailor_work_experience: step2_text (No [0]):\n" + step2_text)
     step2_text = helpers.filter_output(step2_text.strip())
     print(f"tailor_work_experience: step2_text after filtering:\n" + step2_text)
-    step3_text = step2_text.split("\n[1]Job Title: ")[1:]
+    step3_text = step2_text.split("[1]Job Title: ")[1:]
     step3_text = ["[1]Job Title: " + exp for exp in step3_text]
     step3_list = []
     for exp in step3_text:
         print(f"tailor_work_experience: step3_work_experience: exp:\n" + exp)
-        temp = step3_work_experience(model=model, system2=system2, ollama_url=ollama_url, experience=exp, job_description=job_description_summary)
+        #Transform to dict
+        exp_dict = parsers.parse_subfields(helpers.filter_output(exp).strip())
+        #Separate dict in two: one containing description and skills, the other containing the rest
+        first_part_dict = {k: v for k, v in exp_dict.items() if k in ["description", "skills"]}
+        second_part_dict = {k: v for k, v in exp_dict.items() if k not in ["description", "skills"]}
+        #Convert to text
+        first_part_text = parsers.inv_parse_subfields(first_part_dict).strip()
+        second_part_text = parsers.inv_parse_subfields(second_part_dict).strip()
+        first_part_text_new = step3_work_experience(model=model, system2=system2, ollama_url=ollama_url, experience=first_part_text, job_description=job_description_summary)
+        print(f"tailor_work_experience: step3_work_experience: first_part_text_new:\n" + first_part_text_new)
+        first_part_text_new = helpers.filter_output(first_part_text_new.strip())
+        print(f"tailor_work_experience: step3_work_experience: first_part_text_new (filtered):\n" + first_part_text_new)
+        #Join with second part
+        temp = second_part_text + "\n" + first_part_text_new
         print(f"tailor_work_experience: step3_work_experience: temp:\n" + temp)
-        temp = helpers.filter_output(temp.strip())
-        print(f"tailor_work_experience: step3_work_experience: temp (filtered):\n" + temp)
         step3_list.append(temp)
     step3_text = "\n".join(step3_list)
     print(f"tailor_work_experience: step3_text:\n" + step3_text)
@@ -636,9 +689,10 @@ Output the selected projects strictly in the following format, without changing 
         "model": model,
         "system": system1,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
     }
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]step0_projects: payload field {field} with value {value} found")
@@ -662,27 +716,21 @@ Output the selected projects strictly in the following format, without changing 
 @log_time
 def step3_projects(model=DEFAULT_MODEL, system2="", ollama_url=DEFAULT_URL, 
                    experience="", job_description=""):
-    prompt = f"""Given the following "Projects" resume experience:
+    prompt = f"""Given the "Description" and "Skills" subsections of a project belonging to the "Projects" section of a resume:
 {experience}
 And the following job description:
 {job_description}
-Rewrite the project to best match the job description, following these guidelines:
+Rewrite the experience to best match the job description, following these guidelines:
 - Do not include any information not present in the original experience.
-- Keep all original subsections: Project Title, Type, Duration, Description, and Skills.
-- Keep subsection names unchanged ("Project Title", "URL", "Type", "Duration", "Description", "Skills")
-- In the "Description" subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
-- In the "Skills" subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
+- In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
+- In the Skills subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
 - Do not use line breaks inside any subsection. Do not use the ":" character in the Description.
-- Skills must be comma-separated and follow the format below.
-- If there are no skills in a given category, use " ", then follow up as the format below indicates. 
+- Skills must be comma-separated and follow the format below. 
+- If there are no skills in a given category, use " ", then follow up as the format below indicates 
     - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
 - Include the prefix [1] at the start of each line (as seen in the format below).
 Return only the revised section in the following format:
-[1]Project Title: Project Title 1
-[1]URL: https://example.com/project1
-[1]Type: Type of Project 1
-[1]Duration: Start Year 1/Start Month 1 - End Year 1/End Month 1
-[1]Description: Brief description for Project Title 1.
+[1]Description: Brief description for Project 1.
 [1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
 """
     if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
@@ -690,9 +738,10 @@ Return only the revised section in the following format:
         "model": model,
         "system": system2,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
     }
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]step3_projects: payload field {field} with value {value} found")
@@ -733,15 +782,26 @@ def tailor_projects(model=DEFAULT_MODEL, system1="", system2="", ollama_url=DEFA
     print(f"tailor_projects: step2_text (No [0]):\n" + step2_text)
     step2_text = helpers.filter_output(step2_text.strip())
     print(f"tailor_projects: step2_text after filtering:\n" + step2_text)
-    step3_text = step2_text.split("\n[1]Project Title: ")[1:]
+    step3_text = step2_text.split("[1]Project Title: ")[1:]
     step3_text = ["[1]Project Title: " + exp for exp in step3_text]
     step3_list = []
     for exp in step3_text:
         print(f"tailor_projects: step3_projects: exp:\n" + exp)
-        temp = step3_projects(model=model, system2=system2, ollama_url=ollama_url, experience=exp, job_description=job_description_summary)
+        #Transform to dict
+        exp_dict = parsers.parse_subfields(helpers.filter_output(exp).strip())
+        #Separate dict in two: one containing description and skills, the other containing the rest
+        first_part_dict = {k: v for k, v in exp_dict.items() if k in ["description", "skills"]}
+        second_part_dict = {k: v for k, v in exp_dict.items() if k not in ["description", "skills"]}
+        #Convert to text
+        first_part_text = parsers.inv_parse_subfields(first_part_dict).strip()
+        second_part_text = parsers.inv_parse_subfields(second_part_dict).strip()
+        first_part_text_new = step3_projects(model=model, system2=system2, ollama_url=ollama_url, experience=first_part_text, job_description=job_description_summary)
+        print(f"tailor_projects: step3_projects: first_part_text_new:\n" + first_part_text_new)
+        first_part_text_new = helpers.filter_output(first_part_text_new.strip())
+        print(f"tailor_projects: step3_projects: first_part_text_new (filtered):\n" + first_part_text_new)
+        #Join with second part
+        temp = second_part_text + "\n" + first_part_text_new
         print(f"tailor_projects: step3_projects: temp:\n" + temp)
-        temp = helpers.filter_output(temp.strip())
-        print(f"tailor_projects: step3_projects: temp (filtered):\n" + temp)
         step3_list.append(temp)
     step3_text = "\n".join(step3_list)
     print(f"tailor_projects: step3_text:\n" + step3_text)
@@ -781,9 +841,10 @@ Where [X] indicates the type of experience:
         "model": model,
         "system": system1,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
     }
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]step0_prune_experiences: payload field {field} with value {value} found")
@@ -842,9 +903,10 @@ Return the summarized information as a single continuous string of text, followi
             "model": model,
             "system": systems[i],
             "prompt": prompt,
-            "stream": False
+            "stream": False,
+            "temperature": CONFIG["MODELS"]["TEMPERATURE"]
         }
-        for field in ["model", "system", "prompt", "stream"]:
+        for field in ["model", "system", "prompt", "stream", "temperature"]:
             value = payload.get(field, None)
             if value is not None:
                 logging.info(f"[OLLAMA]generate_payloads_summarize_section: payload field {field} with value {value} found")
@@ -869,9 +931,10 @@ Return the summarized information as a single continuous string of text, followi
         "model": model,
         "system": system,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
     }
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]summarize_section: payload field {field} with value {value} found")
@@ -911,9 +974,10 @@ Return the summarized information as a single continuous string of text, followi
         "model": model,
         "system": system,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
     }
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]batch_summarize_section: payload field {field} with value {value} found")
@@ -949,9 +1013,10 @@ Return the summarized general information as follows:
         "model": model,
         "system": system,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
     }
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]summarize_general_info: payload field {field} with value {value} found")
@@ -985,9 +1050,10 @@ Return the summarized skills information as follows:
         "model": model,
         "system": system,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
     }
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]summarize_skills: payload field {field} with value {value} found")
@@ -1048,9 +1114,10 @@ Return the summarized information as a single continuous string of text, followi
         "model": model,
         "system": system,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
     }
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]sliding_window_two_sections: payload field {field} with value {value} found")
@@ -1132,9 +1199,10 @@ Return the summarized information as a single continuous string of text, followi
         "model": model,
         "system": system,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
     }
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]sliding_window_three_sections: payload field {field} with value {value} found")
@@ -1236,9 +1304,10 @@ Return the summarized information as a single continuous string of text, followi
         "model": model,
         "system": system,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
     }
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]sliding_window_four_sections: payload field {field} with value {value} found")
@@ -1422,9 +1491,10 @@ Return the summarized information as a single continuous string of text, followi
         "model": model,
         "system": system0,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
     }
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]step0_tailor_summary: payload field {field} with value {value} found")
@@ -1457,7 +1527,8 @@ Tailor a Summary section for a resume to best match the job description; follow 
 - The summary mustn't exceed 100 words.
 - Do not line break the summary section, it should be a continuous block of text.
 - When mentioning specific skills or experiences, these must be relevant to the job description; give preference to those that appear on both the resume and the job description, particularly those which demonstrate the candidate's technical expertise.
-Return only the revised section and strictly follow the format below, filling in the parts that have [fill-in:"text"] (do not include any text before [0]):
+- In the format below, do not include any text before "[0]" or after the requested information.
+Return only the revised section and strictly follow the format below, filling in the parts that have [fill-in:"text"]:
 [0]Summary: Despite limited work experience, I bring strong work ethic, adaptability and curiosity. Experienced in [fill-in:"specific skills thanks to certain experiences"]. Now seeking a position that offers growth and learning opportunities.
 """
     if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
@@ -1465,9 +1536,10 @@ Return only the revised section and strictly follow the format below, filling in
         "model": model,
         "system": system,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
     }
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]step1_tailor_summary: payload field {field} with value {value} found")
@@ -1619,9 +1691,10 @@ Return the revised information strictly following the format:
         "model": model,
         "system": system,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
     }
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]tailor_skills: payload field {field} with value {value} found")
@@ -1664,9 +1737,10 @@ Output your analysis as a single continuous string of text, strictly following t
         "model": model,
         "system": system,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
     }
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]new_vs_old_section: payload field {field} with value {value} found")
@@ -1757,9 +1831,10 @@ The consistency check should be returned strictly in the following format (inclu
         "model": model,
         "system": system,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
     }
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]consistency_checker_vs_cv: payload field {field} with value {value} found")
@@ -1812,9 +1887,10 @@ Strictly follow the format:
         "model": model,
         "system": system,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
     }
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]make_cover_letter_text: payload field {field} with value {value} found")
@@ -1910,9 +1986,10 @@ The consistency check should be returned strictly in the following format (inclu
         "model": model,
         "system": system,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
     }
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]consistency_checker_vs_job_desc: payload field {field} with value {value} found")
@@ -1962,9 +2039,10 @@ Example output:
         "model": model,
         "system": system,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
     }
-    for field in ["model", "system", "prompt", "stream"]:
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
             logging.info(f"[OLLAMA]tailor_courses: payload field {field} with value {value} found")

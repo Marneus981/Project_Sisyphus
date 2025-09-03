@@ -6,15 +6,22 @@
         []Make templates
         []Maybe add start and end to sections?
         []Maybe format job description?
-    tailor_volunteering_and_leadership dropped (1) @step3 =>gone
-
-    tailor_work_experience renamed OISE to Software Eng @step3_work_experience: temp: dropped (1)
-
-    tailor_projects dropped (1) project @step3 => gone
-
-    tailor_experiences: step0_prune_experiences renamed a bunch of experiences to "Software Engineer"
-
-    step1_tailor summary messed up format => ignored by program, thus missing
+    [ISSUES]
+        tailor_volunteering_and_leadership dropped (1) @step3 =>gone
+        tailor_work_experience renamed OISE to Software Eng @step3_work_experience: temp: dropped (1)
+        tailor_projects dropped (1) project @step3 => gone
+        tailor_experiences: step0_prune_experiences renamed a bunch of experiences to "Software Engineer"
+        step1_tailor summary messed up format => ignored by program, thus missing
+    [POSSIBLE SOLUTIONS]
+        []Prompt Engineering:
+            []Make prompts more instruction heavy
+            []Provide clearer templates
+            []Include several high quality examples in the prompt to guide the model
+            []Use stronger system rules 
+            []Use end start markers for sections
+        [WIP]Retry output if wrong - Maybe provide feedback to the model
+        [DONE]Feed the model only the absolute essential info; vut unnecessary info
+        [WIP]Lower model temperature
 [Hubris tracker]
     []Things might break if fields are missing
 

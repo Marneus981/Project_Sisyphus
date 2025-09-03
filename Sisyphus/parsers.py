@@ -53,6 +53,62 @@ def dict_grafter(split_dicts):
     return cv_dict
 
 @log_time
+def parse_subfields(subfields_text):
+    subfield_dict = {}
+    lines = subfields_text.splitlines()
+    comma_lists = ['courses', 'programming_languages', 'technical_skills', 'soft_skills']
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+        sub_match = re.match(r'\[1\](\w[\w ]*):\s*(.*)', line)
+        if sub_match:
+            field, value = sub_match.groups()
+            field_key = field.lower().replace(' ', '_')
+            if field_key in comma_lists:
+                subfield_dict[field_key] = [s.strip() for s in value.split(',') if s.strip()]
+            elif field_key == 'skills':
+                skills_dict = {}
+                for skill_line in value.split(';'):
+                    if ':' in skill_line:
+                        cat, vals = skill_line.split(':', 1)
+                        cat_key = cat.strip().lower().replace(' ', '_')
+                        if cat_key in ['programming_languages', 'technical_skills', 'soft_skills']:
+                            skills_dict[cat_key] = [s.strip() for s in vals.split(',') if s.strip()]
+                #Arrange dict to always have the same order: programming_languages, technical_skills, soft_skills
+                subfield_dict[field_key] = {
+                    'programming_languages': skills_dict.get('programming_languages', []),
+                    'technical_skills': skills_dict.get('technical_skills', []),
+                    'soft_skills': skills_dict.get('soft_skills', [])
+                }
+            elif field_key == 'description':
+                subfield_dict[field_key] = [s.strip() for s in value.split('.') if s.strip()]
+            else:
+                subfield_dict[field_key] = value
+    return subfield_dict
+
+@log_time
+def inv_parse_subfields(subfields_dict):
+    # Inverse to parse_subfields
+    subfields_text = []
+    for field, value in subfields_dict.items():
+        if isinstance(value, list):
+            if field == 'description':
+                value = '. '.join(value)
+            else:
+                value = ', '.join(value)
+        if isinstance(value, dict):
+            skill_lines = []
+            for skill_cat, skill_list in value.items():
+                skill_cat_field = format_key(skill_cat)
+                skill_lines.append(f"{skill_cat_field}: {', '.join(str(s) for s in skill_list)}")
+            #Arrange lines to always have the same order: programming_languages, technical_skills, soft_skills
+            skill_lines = sorted(skill_lines, key=lambda x: (x.split(': ')[0] not in ['programming_languages', 'technical_skills', 'soft_skills'], x))
+            value = '; '.join(skill_lines)
+        subfields_text.append(f"[1]{format_key(field)}: {value}")
+    return '\n'.join(subfields_text)
+
+@log_time
 def parse_cv(cv_text):
     """
     Parses a CV in text format and returns structured data.
