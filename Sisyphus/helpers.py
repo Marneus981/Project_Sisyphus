@@ -10,6 +10,7 @@ from Sisyphus.decorators import FUNCTION_STATS
 from plyer import notification
 import pygame
 from config import CONFIG
+import inspect
 # Set up logging
 print = logging.info
 
@@ -18,6 +19,9 @@ TOKENIZER_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\tokenizers"
 LLAMA_MAX_TOKENS = 4096
 NOTIFICATION_SOUND_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\sounds\notification_sound.mp3"
 
+def inspect_function():
+    return inspect.stack()[1].function
+    
 
 def notify_sound():
     pygame.mixer.init()

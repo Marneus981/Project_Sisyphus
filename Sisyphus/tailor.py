@@ -9,11 +9,14 @@ import aiohttp
 import asyncio
 import warnings
 from config import CONFIG
+import re
 DEFAULT_MODEL = "llama3:8b"
 DEFAULT_URL = "http://localhost:11434"
 
+
 # Set up logging
 print = logging.info
+
 
 @log_time
 def compare_start(output, sample_starts = ""):
@@ -42,6 +45,70 @@ def compare_start(output, sample_starts = ""):
     if equal:
         print("[OUTPUT][OK] Output matches expected start lines")
     return equal
+
+@log_time
+def standard_ollama_call(call_info ={"call_id": "", "payload_in": {"model": DEFAULT_MODEL,"system": "","stream": False,"temperature": CONFIG["MODELS"]["TEMPERATURE"]}, "format": {}, "prompt_in": "", "ollama_url": DEFAULT_URL}):
+    call_id = call_info.get("call_id", "")
+    payload_in = call_info.get("payload_in", {})
+    format = call_info.get("format", {})
+    prompt_in = call_info.get("prompt_in", "")
+    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
+    function_name = helpers.inspect_function()
+    if call_id == "":
+        logging.error(f"[ERROR][OLLAMA]{function_name}: call_id is empty string")
+    if prompt_in == "":
+        logging.error(f"[ERROR][OLLAMA]{function_name}: prompt_in is empty string")
+    pattern = r"\{[a-z0-9_]+\}"
+    if re.search(pattern, prompt_in) and format == {}:
+        logging.error(f"[ERROR][OLLAMA]{function_name}: prompt_in contains unformatted placeholders")
+    if config.DEBUG["INSPECTION_LOGGING"]: logging.info(f"[OLLAMA]{function_name}: call_id: {call_id}")
+    prompt = prompt_in.format(**format)
+    payload = payload_in.copy()
+    payload["prompt"] = prompt
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(payload["model"], payload["prompt"])
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
+        value = payload.get(field, None)
+        if value is not None:
+            if config.DEBUG["INSPECTION_LOGGING"]: logging.info(f"[OLLAMA]{function_name}: payload field {field} with value {value} found")
+        else:
+            if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: payload field {field} is missing or is NoneType")
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    try:
+        result = response.json()
+        if response.status_code == 400:
+            if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Bad Request: Payload={payload}, Response={result}")
+        response_text = result.get("response", "")
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(payload["model"], response_text, type="output", offset=input_tks)
+        print(f"[SUCCESS][OLLAMA]{function_name}: {result}")
+        return response_text
+    except requests.exceptions.JSONDecodeError as e:
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
+        return f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON"
+
+@log_time
+def ollama_call(retries=config.CONFIG["MODELS"]["RETRIES"], call_info = {}, sample_starts= "", function = standard_ollama_call):
+    function_name = helpers.inspect_function()
+    response = ""
+    if call_info == {}:
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_info is empty dictionary")
+    for i in range(retries):
+        try:
+            response = function(call_info)
+            response_tmp = response.strip()
+            if response_tmp.startswith("[ERROR]"):
+                if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama call returned error: {response}. Retrying {i+1}/{retries}...")
+                continue
+            if compare_start(response_tmp, sample_starts) == False:
+                if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Output does not match expected start lines or output length. Retrying {i+1}/{retries}...")
+                continue
+            if config.DEBUG["INSPECTION_LOGGING"]: logging.info(f"[SUCCESS][OLLAMA]{function_name}: Ollama call succeeded: {response}")
+            return response_tmp
+        except Exception as e:
+            if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: {e}")
+            if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Exception occurred during Ollama call. Retrying {i+1}/{retries}...")
+            continue
+
 
 @log_time
 async def ollama_request(session, payload, ollama_url):
@@ -323,8 +390,7 @@ def clean_first_step(text):
             cleaned_lines.append(line)
     return '\n'.join(cleaned_lines)  
 
-#For each main tailor function (including pruning), we need to create 3 functions
-#Tailor Volunteering and Leadership
+#STANDARD
 @log_time
 def summarize_job_description(job_description = "", system = "", ollama_url=DEFAULT_URL, model=DEFAULT_MODEL):
     # Summarize the job description by extracting key responsibilities and requirements
@@ -363,6 +429,7 @@ Job Description:
         logging.error(f"Response text: {response.text}")
         return "[ERROR][OLLAMA]summarize_job_description: Ollama response was not valid JSON."
 
+#STANDARD
 @log_time
 def step0_volunteering_and_leadership(model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL, 
                                        raw_cv_data="", job_description=""):
@@ -412,6 +479,7 @@ Output the selected roles strictly in the following format, without changing the
         logging.error(f"Response text: {response.text}")
         return "[ERROR][OLLAMA]step0_volunteering_and_leadership: Ollama response was not valid JSON."
 
+#STANDARD
 @log_time
 def step3_volunteering_and_leadership(model=DEFAULT_MODEL, system2="", ollama_url=DEFAULT_URL, 
                                        experience="", job_description=""):
@@ -514,7 +582,7 @@ def tailor_volunteering_and_leadership(model=DEFAULT_MODEL, system1="", system2=
     print(f"tailor_volunteering_and_leadership: step4_text after filtering:\n" + step4_text)
     return step4_text
 
-# Tailor Work Experience
+#STANDARD
 @log_time
 def step0_work_experience(model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL, 
                           raw_cv_data="", job_description=""):
@@ -565,6 +633,7 @@ Output the selected jobs strictly in the following format, without changing the 
         logging.error(f"Response text: {response.text}")
         return "[ERROR][OLLAMA]step0_work_experience: Ollama response was not valid JSON."
 
+#STANDARD
 @log_time
 def step3_work_experience(model=DEFAULT_MODEL, system2="", ollama_url=DEFAULT_URL, 
                           experience="", job_description=""):
@@ -662,7 +731,8 @@ def tailor_work_experience(model=DEFAULT_MODEL, system1="", system2="", ollama_u
     step4_text = helpers.filter_output(step4_text.strip())
     print(f"tailor_work_experience: step4_text after filtering:\n" + step4_text)
     return step4_text
-# Tailor Projects
+
+#STANDARD
 @log_time
 def step0_projects(model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL, 
                    raw_cv_data="", job_description=""):
@@ -713,6 +783,7 @@ Output the selected projects strictly in the following format, without changing 
         logging.error(f"Response text: {response.text}")
         return "[ERROR][OLLAMA]step0_projects: Ollama response was not valid JSON."
 
+#STANDARD
 @log_time
 def step3_projects(model=DEFAULT_MODEL, system2="", ollama_url=DEFAULT_URL, 
                    experience="", job_description=""):
@@ -812,6 +883,7 @@ def tailor_projects(model=DEFAULT_MODEL, system1="", system2="", ollama_url=DEFA
     return step4_text
 #Prune Experiences
 
+#STANDARD
 @log_time
 def step0_prune_experiences(model = DEFAULT_MODEL, system1 = "", ollama_url = DEFAULT_URL,
                             experiences = "", job_description = ""):
@@ -882,9 +954,6 @@ def prune_experiences(model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL,
     print(f"tailor_experiences: step2_text:\n" + step2_text)
     return step2_text
 
-#Longer input tailoring functions
-#Sliding Window + Hierarchical solution
-#Tailor Summary
 @log_time
 def generate_payloads_summarize_section(sections, section_names, systems, model=DEFAULT_MODEL, ollama_url=DEFAULT_URL):
     payloads = []
@@ -915,6 +984,7 @@ Return the summarized information as a single continuous string of text, followi
         payloads.append(payload)
     return payloads
 
+#STANDARD
 @log_time
 def summarize_section(section="", model = DEFAULT_MODEL, system = "", ollama_url = DEFAULT_URL, section_name = ""):
     # Implement the logic to summarize the section based on the job description
@@ -998,7 +1068,7 @@ Return the summarized information as a single continuous string of text, followi
         logging.error(f"Response text: {response.text}")
         return "[ERROR][OLLAMA]batch_summarize_section: Ollama response was not valid JSON."
 
-
+#STANDARD
 @log_time
 def summarize_general_info(general_info_text = "", model = DEFAULT_MODEL, system = "", ollama_url = DEFAULT_URL):
     prompt = f"""Given the following general information from a resume:
@@ -1037,6 +1107,7 @@ Return the summarized general information as follows:
         logging.error(f"Response text: {response.text}")
         return "[ERROR][OLLAMA]summarize_general_info: Ollama response was not valid JSON."
 
+#STANDARD
 @log_time
 def summarize_skills( model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, skill_section=""):
     prompt = f"""Given the following skills information from a resume:
@@ -1515,6 +1586,7 @@ Return the summarized information as a single continuous string of text, followi
         logging.error(f"Response text: {response.text}")
         return "[ERROR][OLLAMA]step0_tailor_summary: Ollama response was not valid JSON."
 
+#STANDARD
 @log_time
 def step1_tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, 
                          prev_summary = "", job_description  = "", system = ""):
@@ -1664,6 +1736,7 @@ def return_text_with_skills(cv_text):
 
     return "\n".join([return_text,skill,prog,tech,soft])
 
+#STANDARD
 @log_time
 def tailor_skills(model=DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL, cv_data="", job_description="", section="Skills"):
 
@@ -1715,9 +1788,7 @@ Return the revised information strictly following the format:
         logging.error(f"Response text: {response.text}")
         return "[ERROR][OLLAMA]tailor_skills: Ollama response was not valid JSON."
 
-#Resume/Cover Letter Consistency Checker VS Old Resume
-#Chain: old resume, new resume >>> new_vs_old_section >>> consistency_checker_vs_cv
-#Chain: new resume, cover letter >>> summarize resume >>> consistency_checker_vs_cv
+#STANDARD
 @log_time
 def new_vs_old_section(old_resume_s_txt, new_resume_s_txt, section_name = "", model = DEFAULT_MODEL, system = "", ollama_url = DEFAULT_URL):
     prompt = f"""Given the following raw untailored resume section:
@@ -1779,6 +1850,7 @@ def new_vs_old_resume(old_resume_txt = "", new_resume_txt = "", model = DEFAULT_
         analysis_txts.append(analysis_txt)
     return analysis_txts
 
+#STANDARD + NON
 @log_time
 def consistency_checker_vs_cv(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, system = "", system_s="", cv_data="", cv_data_orig ="", type="CV"):
     if type == "CV":
@@ -1856,8 +1928,7 @@ The consistency check should be returned strictly in the following format (inclu
         logging.error(f"Response text: {response.text}")
         return "[ERROR][OLLAMA]consistency_checker_vs_cv: Ollama response was not valid JSON."
 
-#Tailor Cover Letter
-#Chain: new resume, job_desc >>> summarize resume, job desc >>> make_cover_letter_text
+#STANDARD
 @log_time
 def make_cover_letter_text(model=DEFAULT_MODEL,system = "",
                            ollama_url=DEFAULT_URL, cv_data="", job_description=""):
@@ -1944,9 +2015,7 @@ def compose_cover_letter_dictionary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL,
     #Return the output_dict
     return output_dict
 
-#Resume/Cover Letter Consistency Checker VS Job Description
-#Chain: cover letter, job_desc >>> summarize job desc >>> consistency_checker_vs_job_desc
-#Chain: new resume, job_desc >>> summarize resume, job desc >>> consistency_checker_vs_job_desc
+#STANDARD
 @log_time
 def consistency_checker_vs_job_desc(model=DEFAULT_MODEL,  ollama_url=DEFAULT_URL, system="", cv_data="", job_description="", type="CV"):
     if type == "CV":
@@ -2010,14 +2079,10 @@ The consistency check should be returned strictly in the following format (inclu
         logging.error("[ERROR][OLLAMA]consistency_checker_vs_job_desc: Ollama response was not valid JSON.", exc_info=True)
         logging.error(f"Response text: {response.text}")
         return "[ERROR][OLLAMA]consistency_checker_vs_job_desc: Ollama response was not valid JSON."
-#Tailor courses
+
+#STANDARD
 @log_time
 def tailor_courses(courses = "", job_description = "", model = DEFAULT_MODEL, system="", ollama_url=DEFAULT_URL):
-    # Given a block of text with all courses taken in a given program
-    # and a job description, this function will extract relevant courses
-    # that match the skills and requirements outlined in the job description.
-        # The format of each course is XXXYYY Course Name, where XXXYYY is the course code (e.g. CSC101, ECE201)
-        # Courses are comma-separated
     prompt = f"""Given the following courses taken on a given program:
 {courses}
 And the following job description:

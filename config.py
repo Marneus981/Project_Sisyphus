@@ -1,6 +1,8 @@
 DEBUG = {
     "TIME_LOGGING": True,
-    "TOKEN_LOGGING": False
+    "TOKEN_LOGGING": False,
+    "ERROR_LOGGING": True,
+    "INSPECTION_LOGGING": True
 }
 CONFIG = {
     "WINDOWS": 4,
@@ -12,6 +14,7 @@ CONFIG = {
         "SOUND": True
     },
     "MODELS": {
-        "TEMPERATURE": 0.8
+        "TEMPERATURE": 0.8,
+        "RETRIES": 1
     }
 }
