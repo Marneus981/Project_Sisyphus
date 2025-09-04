@@ -2,7 +2,8 @@ DEBUG = {
     "TIME_LOGGING": True,
     "TOKEN_LOGGING": False,
     "ERROR_LOGGING": True,
-    "INSPECTION_LOGGING": True
+    "WARNING_LOGGING": True,
+    "INFO_LOGGING": True
 }
 CONFIG = {
     "WINDOWS": 4,

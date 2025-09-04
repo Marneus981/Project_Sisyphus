@@ -20,6 +20,10 @@
             []Use stronger system rules 
             []Use end start markers for sections
         [WIP]Retry output if wrong - Maybe provide feedback to the model
+            [DONE]Add "sample_starts" fields
+            []Add "MAYBE" tailor functions
+            []Fix tailor functions
+            []Fix main functions
         [DONE]Feed the model only the absolute essential info; vut unnecessary info
         [WIP]Lower model temperature
 [Hubris tracker]
