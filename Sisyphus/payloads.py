@@ -2,6 +2,7 @@ from config import CONFIG
 DEFAULT_MODEL = "llama3:8b"
 DEFAULT_URL = "http://localhost:11434"
 PAYLOADS= {
+    # STANDARD CALLS
     "summarize_job_description": {
         "call_id": "summarize_job_description", 
         "payload_in": {
@@ -18,7 +19,7 @@ PAYLOADS= {
                         Job Description:
                         {job_description}
                     """,
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": DEFAULT_URL, #Set at runtime
         "sample_starts": [] #[type, sample starts]
     },
     "step0_volunteering_and_leadership": {
@@ -292,7 +293,7 @@ PAYLOADS= {
                         [S]General Information Summary: Brief and concise summary of the resume's general information, presented as a single continuous string of text.
                     """,
         "ollama_url": DEFAULT_URL,
-        "sample_starts": ["strict", "cap_letters", "[S]"]
+        "sample_starts": ["strict", "cap_letters", "[S]General Information Summary:"]
     },
     "summarize_skills": {
         "call_id": "summarize_skills",
@@ -526,6 +527,143 @@ PAYLOADS= {
                     """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[1]Courses:"]
+    },
+    # NON-STANDARD CALLS
+    "batch_summarize_sections": {
+        "call_id": "batch_summarize_sections",
+        "payload_in": {
+            "model": DEFAULT_MODEL,
+            "system": "",
+            "stream": False,
+            "temperature": CONFIG["MODELS"]["TEMPERATURE"]
+        },
+        "format": {
+            "sections": [],
+            "section_names": []
+        },
+        "prompt_in": """Given the following sections from a resume:
+                        {sections_text}
+                        Summarize the sections in a wholistic manner while following these guidelines:
+                        - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
+                        - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
+                        - Keep in mind that these summaries will be used in a "Sliding Window" approach to summarize the entire resume effectively, so include information that is relevant for the overall context of the resume.
+                        Return the summarized information as a single continuous string of text, following this format strictly:
+                    """,
+        "ollama_url": DEFAULT_URL,
+        "sample_starts": ["flexible", "cap_letters", "[S]"]
+    },
+    ##similar start
+    "tailor_volunteering_and_leadership": {
+        "call_id": "tailor_volunteering_and_leadership", 
+        "payload_in": {"model": DEFAULT_MODEL,
+                       "system": "",
+                       "stream": False,
+                         "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+        "format": {
+            "raw_cv_data": "",
+            "job_description_summary": "",
+            "section": "volunteering_and_leadership",
+            "reference_dct": {},
+            "systems": ["", ""],
+            "standard_calls": ["step0_volunteering_and_leadership","step3_volunteering_and_leadership"]
+            }, 
+        "prompt_in": "", 
+        "ollama_url": DEFAULT_URL,
+        "sample_starts": ["flexible", "digits", "[0]", "[1]"]
+    },
+    "tailor_work_experience": {
+        "call_id": "tailor_work_experience", 
+        "payload_in": {"model": DEFAULT_MODEL,
+                       "system": "",
+                       "stream": False,
+                         "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+        "format": {
+            "raw_cv_data": "",
+            "job_description_summary": "",
+            "section": "work_experience",
+            "reference_dct": {},
+            "systems": ["", ""],
+            "standard_calls": ["step0_work_experience","step3_work_experience"]
+            }, 
+        "prompt_in": "", 
+        "ollama_url": DEFAULT_URL,
+        "sample_starts": ["flexible", "digits", "[0]", "[1]"]
+    },
+    "tailor_projects": {
+        "call_id": "tailor_projects", 
+        "payload_in": {"model": DEFAULT_MODEL,
+                       "system": "",
+                       "stream": False,
+                       "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+        "format": {
+            "raw_cv_data": "",
+            "job_description_summary": "",
+            "section": "projects",
+            "reference_dct": {},
+            "systems": ["", ""],
+            "standard_calls": ["step0_projects","step3_projects"]
+            }, 
+        "prompt_in": "", 
+        "ollama_url": DEFAULT_URL,
+        "sample_starts": ["flexible", "digits", "[0]", "[1]"]
+    },
+    ##similar end
+    "prune_experiences": {
+        "call_id": "prune_experiences", 
+        "payload_in": {"model": DEFAULT_MODEL,
+                       "system": "",
+                       "stream": False,
+                       "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+        "format": {
+            "experiences": "",
+            "job_description_summary": "",
+            "section": "vl_w_p",
+            "reference_dct": {}, #provide system through payload_in
+            "systems": ["", ""],
+            "standard_calls": ["step0_prune_experiences"]
+            }, 
+        "prompt_in": "", #Empty
+        "ollama_url": DEFAULT_URL,
+        "sample_starts": ["flexible", "digits", "[0]", "[1]"]#Might lead to error, check later
+    },
+    #ASYNC
+    "standard_async": {
+        "call_id": "standard_async", 
+        "payload_in": {
+            "model": DEFAULT_MODEL,
+            "system": "",
+            "stream": False,
+            "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+        "format": {
+
+            }, 
+        "prompt_in": "", #Set at runtime
+        "ollama_url": DEFAULT_URL,
+        "sample_starts": ["flexible", "cap_letters"]#Might lead to error, check later
     }
 
 }
+STANDARD= [
+    "summarize_job_description",
+    "step0_volunteering_and_leadership",
+    "step3_volunteering_and_leadership",
+    "step0_work_experience",
+    "step3_work_experience",
+    "step0_projects",
+    "step3_projects",
+    "step0_prune_experiences",
+    "summarize_section",
+    "summarize_general_info",
+    "summarize_skills",
+    "step1_tailor_summary",
+    "tailor_skills",
+    "new_vs_old_section",
+    "make_cover_letter_text",
+    "consistency_checker_vs_job_desc_cv",
+    "consistency_checker_vs_job_desc_cl",
+    "tailor_courses"
+
+]
+ASYNC = [
+    "standard_async"
+]
