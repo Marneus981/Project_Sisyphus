@@ -962,6 +962,625 @@ def prune_experiences(call_info = {"call_id": "prune_experiences",
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step2_text:\n" + step2_text)
     return step2_text
 
+@log_time
+def generate_call_infos_summarize_section(sections, section_names, systems, model=DEFAULT_MODEL, ollama_url=DEFAULT_URL):
+    function_name = helpers.inspect_function()
+    if len(sections) != len(section_names) or len(section_names) != len(systems) or len(systems) != len(sections):
+        raise ValueError(f"[ERROR]{function_name}: lenght mismatch len(sections) = {len(sections)}, len(section_names) = {len(section_names)}, len(systems) = {len(systems)}")
+    call_infos = []
+    requests = len(sections)
+    for i in range(requests):
+        prompt = f"""Given the following section from a resume:
+                    {sections[i]}
+                    Summarize the sections in a wholistic manner while following these guidelines:
+                    - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
+                    - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
+                    Return the summarized information as a single continuous string of text, following this format strictly:
+                    [S]{section_names[i]} Section Summary: Wholistic summary of the section's information.
+                    """
+        if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
+        call_info = {
+            "call_id": "standard_async",
+            "payload_in": {
+                "model": systems[i],
+                "system": "",
+                }, 
+            "format":{
+            },
+            "prompt_in": prompt,
+            "ollama_url":  ollama_url,
+        }
+        call_infos.append(call_info)
+    return call_infos
+
+@log_time
+def sliding_window_two_sections(call_info = {"call_id": "sliding_window_two_sections", 
+                                          "payload_in": {"model": DEFAULT_MODEL,
+                                                         "system": "",
+                                                         "stream": False,
+                                                         "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+                                          "format": {
+                                              "sections" : ["", ""],
+                                              "section_names":  ["", ""],
+                                              "systems": ["", ""],
+                                              "candidate_name": "",
+                                              "candidate_title":"",
+                                              "mode": "single", 
+                                              "standard_calls": ["summarize_section"],
+                                              "non_standard_calls": ["batch_summarize_sections"],                                             
+                                          }, #Async calls do not need a format section (yet)
+                                          "prompt_in": "", #Empty
+                                          "ollama_url": DEFAULT_URL,
+                                          "sample_starts": []
+                                          }):
+    
+    call_id = call_info.get("call_id", "")
+    payload_in = call_info.get("payload_in", {})
+    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
+    format = call_info.get("format", {})
+    function_name = helpers.inspect_function()
+    prompt_in = call_info.get("prompt_in", "")
+    if call_id == "":
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id is empty string")
+        return f"[ERROR][OLLAMA]{function_name}: call_id is empty string"
+    if call_id != function_name:
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
+        return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}"
+    sections = format.get("sections", [])
+    section_names = format.get("section_names", [])
+    systems=format.get("systems", ["",""])
+    mode =format.get("mode", "single")
+    candidate_name = format.get("candidate_name", "candidate")
+    candidate_title = format.get("candidate_title", "candidate")
+
+    #Original Aurguments: section1 = "", section2 ="", 
+                        # model=DEFAULT_MODEL, system1="", system2="", system = "", 
+                        # ollama_url=DEFAULT_URL,
+                        # section1_name = "", section2_name = "", 
+                        # candidate_name = "", candidate_title = "", 
+                        # mode = "single"
+    if CONFIG["SUMMARY_REQUESTS"] > 2:
+        if config.DEBUG["WARNING_LOGGING"]: logging.warning(f"[WARNING][OLLAMA]{function_name}: number of requests SUMMARY_REQUESTS exceeds sliding window size, using maximum possible request number (2)")
+    if CONFIG["SUMMARY_REQUESTS"] < 0:
+        return f"[ERROR][OLLAMA]{function_name}: number of requests SUMMARY_REQUESTS must be a positive integer"
+
+    summaries = []
+    if mode == "single":
+        for i in range(0, 2):
+                call_info_temp = {
+                    "call_id": format["standard_calls"][0],
+                    "payload_in":{
+                        "model": payload_in["model"],
+                        "system": systems[i]
+                    },
+                    "format": {
+                        "section": sections[i],
+                        "section_name": section_names[i]
+                    },
+                    "ollama_url":ollama_url
+                }
+                summary = ollama_call(runtime_info=call_info_temp, function=standard_ollama_call)
+                summaries.append(helpers.filter_output(summary.strip(), mode= "cap_letters"))
+    elif mode == "batch":
+        call_info_temp = {
+                    "call_id": format["non_standard_calls"][0],
+                    "payload_in":{
+                        "model": payload_in["model"],
+                        "system": systems[0]
+                    },
+                    "format": {
+                        "sections": sections,
+                        "section_names": section_names
+                    },
+                    "ollama_url":ollama_url
+                }
+        summaries_raw = ollama_call(runtime_info=call_info_temp, function=batch_summarize_sections)
+        summaries = helpers.filter_output(summaries_raw.strip(), mode= "cap_letters").split("\n")
+    elif mode == "parallel":
+        call_info_temps = generate_call_infos_summarize_section(sections=sections, section_names=section_names, systems=systems, model=payload_in["model"], ollama_url=ollama_url)
+        
+        responses = asyncio.run(ollama_call_async(runtime_infos=call_info_temps, function=standard_ollama_call_async))
+        summaries = [helpers.filter_output(response.strip(), mode="cap_letters") for response in responses]
+    summary1 = summaries[0] if len(summaries) > 0 else ""
+    summary2 = summaries[1] if len(summaries) > 1 else ""
+    formatting = {
+        "summary1": summary1,
+        "summary2": summary2,
+        "candidate_name": candidate_name,
+        "candidate_title": candidate_title,
+        "section1_name":section_names[0],
+        "section2_name":section_names[1]
+    }
+    prompt = prompt_in.format(**formatting)
+    payload = payload_in.copy()
+    payload["prompt"] = prompt
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(payload_in["model"], prompt)
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
+        value = payload.get(field, None)
+        if value is not None:
+            if config.DEBUG["INFO_LOGGING"]: logging.info(f"[OLLAMA]{function_name}: payload field {field} with value {value} found")
+        else:
+            if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: payload field {field} is missing or is NoneType")
+            return f"[ERROR][OLLAMA]{function_name}: payload field {field} is missing or is NoneType"
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    try:
+        result = response.json()
+        if response.status_code == 400:
+            if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Bad Request: Payload={payload}, Response={result}")
+            return f"[ERROR][OLLAMA]{function_name}: Ollama status_code 400"    
+        response_text = result.get("response", "")
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(payload["model"], response_text, type="output", offset=input_tks)
+        if config.DEBUG["INFO_LOGGING"]: print(f"[SUCCESS][OLLAMA]{function_name}: {result}")
+        return response_text #Allegedly cleaned on ollama_call
+    except requests.exceptions.JSONDecodeError as e:
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
+        return f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON"
+
+@log_time
+def sliding_window_three_sections(call_info = {"call_id": "sliding_window_three_sections", 
+                                          "payload_in": {"model": DEFAULT_MODEL,
+                                                         "system": "",
+                                                         "stream": False,
+                                                         "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+                                          "format": {
+                                              "sections" : ["", "", ""],
+                                              "section_names":  ["", "", ""],
+                                              "systems": ["", "", ""],
+                                              "candidate_name": "",
+                                              "candidate_title":"",
+                                              "mode": "single", 
+                                              "standard_calls": ["summarize_section"],
+                                              "non_standard_calls": ["batch_summarize_sections"],
+                                          }, 
+                                          "prompt_in": "", #Empty
+                                          "ollama_url": DEFAULT_URL,
+                                          "sample_starts": []
+                                          }):
+    call_id = call_info.get("call_id", "")
+    payload_in = call_info.get("payload_in", {})
+    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
+    format = call_info.get("format", {})
+    function_name = helpers.inspect_function()
+    prompt_in = call_info.get("prompt_in", "")
+    if call_id == "":
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id is empty string")
+        return f"[ERROR][OLLAMA]{function_name}: call_id is empty string"
+    if call_id != function_name:
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
+        return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}"
+    sections = format.get("sections", [])
+    section_names = format.get("section_names", [])
+    systems=format.get("systems", ["","",""])
+    mode =format.get("mode", "single")
+    candidate_name = format.get("candidate_name", "candidate")
+    candidate_title = format.get("candidate_title", "candidate")
+
+    #Original Arguments: section1 = "", section2 = "", section3 = "", 
+                       # model=DEFAULT_MODEL, system1="", system2="", system3="", system = "", ollama_url=DEFAULT_URL,
+                       # section1_name = "", section2_name = "", section3_name = "", 
+                       # candidate_name = "", candidate_title = "", mode = "single"
+    if CONFIG["SUMMARY_REQUESTS"] > 3:
+        warnings.warn("[WARNING]sliding_window_three_sections: number of requests exceeds sliding window size, using maximum possible request number (3)")
+    if CONFIG["SUMMARY_REQUESTS"] < 0:
+        raise ValueError("[ERROR]sliding_window_three_sections: SUMMARY_REQUESTS must be a positive integer")
+
+    summaries = []
+    for i in range(0, 3, CONFIG["SUMMARY_REQUESTS"]):
+        if mode == "single":
+            for j in range(0,CONFIG["SUMMARY_REQUESTS"]):
+                if i+j >= 3:
+                    break
+                else:
+                    call_info_temp = {
+                        "call_id": format["standard_calls"][0],
+                        "payload_in":{
+                            "model": payload_in["model"],
+                            "system": systems[i+j]
+                        },
+                        "format": {
+                            "section": sections[i+j],
+                            "section_name": section_names[i+j]
+                        },
+                        "ollama_url":ollama_url
+                    }
+                    summary = ollama_call(runtime_info=call_info_temp, function=standard_ollama_call)
+                    summaries.append(helpers.filter_output(summary.strip(), mode= "cap_letters"))
+        if mode == "batch":
+            upper_bound = i + CONFIG["SUMMARY_REQUESTS"]
+            if upper_bound > 3:
+                upper_bound = 3
+            call_info_temp = {
+                "call_id": format["non_standard_calls"][0],
+                "payload_in":{
+                    "model": payload_in["model"],
+                    "system": systems[0]
+                },
+                "format": {
+                    "sections": sections[i:upper_bound],
+                    "section_names": section_names[i:upper_bound]
+                },
+                "ollama_url":ollama_url
+            }
+            summary = ollama_call(runtime_info=call_info_temp, function=batch_summarize_sections)
+            summaries.append(helpers.filter_output(summary.strip(), mode= "cap_letters"))
+            if upper_bound == 3:
+                break
+        if mode == "parallel":
+            upper_bound = i + CONFIG["SUMMARY_REQUESTS"]
+            if upper_bound > 3:
+                upper_bound = 3
+            call_info_temps = generate_call_infos_summarize_section(sections=sections[i:upper_bound], section_names=section_names[i:upper_bound], systems=systems[i:upper_bound], model=payload_in["model"], ollama_url=ollama_url)
+            responses = asyncio.run(ollama_call_async(runtime_infos=call_info_temps, function=standard_ollama_call_async))
+            for response in responses:
+                summaries.append(helpers.filter_output(response.strip(), mode= "cap_letters"))
+            if upper_bound == 3:
+                break
+
+    summary1 = summaries[0] if len(summaries) > 0 else ""
+    summary2 = summaries[1] if len(summaries) > 1 else ""
+    summary3 = summaries[2] if len(summaries) > 2 else ""
+    formatting = {
+        "summary1": summary1,
+        "summary2": summary2,
+        "summary3": summary3,
+        "candidate_name": candidate_name,
+        "candidate_title": candidate_title,
+        "section1_name":section_names[0],
+        "section2_name":section_names[1],
+        "section3_name":section_names[2]
+    }
+    prompt = prompt_in.format(**formatting)
+    payload = payload_in.copy()
+    payload["prompt"] = prompt
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(payload_in["model"], prompt)
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
+        value = payload.get(field, None)
+        if value is not None:
+            if config.DEBUG["INFO_LOGGING"]: logging.info(f"[OLLAMA]{function_name}: payload field {field} with value {value} found")
+        else:
+            if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: payload field {field} is missing or is NoneType")
+            return f"[ERROR][OLLAMA]{function_name}: payload field {field} is missing or is NoneType"
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    try:
+        result = response.json()
+        if response.status_code == 400:
+            if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Bad Request: Payload={payload}, Response={result}")
+            return f"[ERROR][OLLAMA]{function_name}: Ollama status_code 400"
+        response_text = result.get("response", "")
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(payload["model"], response_text, type="output", offset=input_tks)
+        if config.DEBUG["INFO_LOGGING"]: print(f"[SUCCESS][OLLAMA]{function_name}: {result}")
+        return response_text #Allegedly cleaned on ollama_call
+    except requests.exceptions.JSONDecodeError as e:
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
+        return f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON"
+
+@log_time
+def sliding_window_four_sections(call_info = {"call_id": "sliding_window_four_sections", 
+                                          "payload_in": {"model": DEFAULT_MODEL,
+                                                         "system": "",
+                                                         "stream": False,
+                                                         "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+                                          "format": {
+                                              "sections" : ["", "", "", ""],
+                                              "section_names":  ["", "", "", ""],
+                                              "systems": ["", "", "", ""],
+                                              "candidate_name": "",
+                                              "candidate_title":"",
+                                              "mode": "single", 
+                                              "standard_calls": ["summarize_section"],
+                                              "non_standard_calls": ["batch_summarize_sections"],
+                                          }, 
+                                          "prompt_in": "", #Empty
+                                          "ollama_url": DEFAULT_URL,
+                                          "sample_starts": []
+                                          }):
+    call_id = call_info.get("call_id", "")
+    payload_in = call_info.get("payload_in", {})
+    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
+    format = call_info.get("format", {})
+    function_name = helpers.inspect_function()
+    prompt_in = call_info.get("prompt_in", "")
+    if call_id == "":
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id is empty string")
+        return f"[ERROR][OLLAMA]{function_name}: call_id is empty string"
+    if call_id != function_name:
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
+        return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}"
+    sections = format.get("sections", [])
+    section_names = format.get("section_names", [])
+    systems=format.get("systems", ["","",""])
+    mode =format.get("mode", "single")
+    candidate_name = format.get("candidate_name", "candidate")
+    candidate_title = format.get("candidate_title", "candidate")
+
+    #Original Arguments: section1="", section2="", section3="", section4="",
+                        #model=DEFAULT_MODEL,
+                        #system1="", system2="", system3="", system4="",
+                        #system="",
+                        #ollama_url=DEFAULT_URL,
+                        #section1_name="", section2_name="", section3_name="", section4_name="",
+                        #candidate_name="",
+                        #candidate_title="",
+                        #mode="single"
+
+    if CONFIG["SUMMARY_REQUESTS"] > 4:
+        warnings.warn("[WARNING]sliding_window_four_sections: number of requests exceeds sliding window size, using maximum possible request number (4)")
+    if CONFIG["SUMMARY_REQUESTS"] < 0:
+        raise ValueError("[ERROR]sliding_window_four_sections: SUMMARY_REQUESTS must be a positive integer")
+
+    summaries = []
+    for i in range(0, 4, CONFIG["SUMMARY_REQUESTS"]):
+        if mode == "single":
+            for j in range(0,CONFIG["SUMMARY_REQUESTS"]):
+                if i+j >= 4:
+                    break
+                else:
+                    call_info_temp = {
+                        "call_id": format["standard_calls"][0],
+                        "payload_in":{
+                            "model": payload_in["model"],
+                            "system": systems[i+j]
+                        },
+                        "format": {
+                            "section": sections[i+j],
+                            "section_name": section_names[i+j]
+                        },
+                        "ollama_url":ollama_url
+                    }
+                    summary = ollama_call(runtime_info=call_info_temp, function=standard_ollama_call)
+                    summaries.append(helpers.filter_output(summary.strip(), mode= "cap_letters"))
+        if mode == "batch":
+            upper_bound = i + CONFIG["SUMMARY_REQUESTS"]
+            if upper_bound > 4:
+                upper_bound = 4
+            call_info_temp = {
+                "call_id": format["non_standard_calls"][0],
+                "payload_in":{
+                    "model": payload_in["model"],
+                    "system": systems[0]
+                },
+                "format": {
+                    "sections": sections[i:upper_bound],
+                    "section_names": section_names[i:upper_bound]
+                },
+                "ollama_url":ollama_url
+            }
+            summary = ollama_call(runtime_info=call_info_temp, function=batch_summarize_sections)
+            summaries.append(helpers.filter_output(summary.strip(), mode= "cap_letters"))
+            if upper_bound == 4:
+                break
+        if mode == "parallel":
+            upper_bound = i + CONFIG["SUMMARY_REQUESTS"]
+            if upper_bound > 4:
+                upper_bound = 4
+            call_info_temps = generate_call_infos_summarize_section(sections=sections[i:upper_bound], section_names=section_names[i:upper_bound], systems=systems[i:upper_bound], model=payload_in["model"], ollama_url=ollama_url)
+            responses = asyncio.run(ollama_call_async(runtime_infos=call_info_temps, function=standard_ollama_call_async))
+            for response in responses:
+                summaries.append(helpers.filter_output(response.strip(), mode= "cap_letters"))
+            if upper_bound == 4:
+                break
+
+    summary1 = summaries[0] if len(summaries) > 0 else ""
+    summary2 = summaries[1] if len(summaries) > 1 else ""
+    summary3 = summaries[2] if len(summaries) > 2 else ""
+    summary4 = summaries[3] if len(summaries) > 3 else ""
+    formatting = {
+        "summary1": summary1,
+        "summary2": summary2,
+        "summary3": summary3,
+        "summary4": summary4,
+        "candidate_name": candidate_name,
+        "candidate_title": candidate_title,
+        "section1_name":section_names[0],
+        "section2_name":section_names[1],
+        "section3_name":section_names[2],
+        "section4_name":section_names[3]
+    }
+    prompt = prompt_in.format(**formatting)
+    payload = payload_in.copy()
+    payload["prompt"] = prompt
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(payload_in["model"], prompt)
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
+        value = payload.get(field, None)
+        if value is not None:
+            if config.DEBUG["INFO_LOGGING"]: logging.info(f"[OLLAMA]{function_name}: payload field {field} with value {value} found")
+        else:
+            if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: payload field {field} is missing or is NoneType")
+            return f"[ERROR][OLLAMA]{function_name}: payload field {field} is missing or is NoneType"
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    try:
+        result = response.json()
+        if response.status_code == 400:
+            if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Bad Request: Payload={payload}, Response={result}")
+            return f"[ERROR][OLLAMA]{function_name}: Ollama status_code 400"
+        response_text = result.get("response", "")
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(payload["model"], response_text, type="output", offset=input_tks)
+        if config.DEBUG["INFO_LOGGING"]: print(f"[SUCCESS][OLLAMA]{function_name}: {result}")
+        return response_text #Allegedly cleaned on ollama_call
+    except requests.exceptions.JSONDecodeError as e:
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
+        return f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON"
+
+@log_time
+def slide_summary(call_info = {"call_id": "slide_summary", 
+                                "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
+                                                "system": "", # #system="",
+                                                "stream": False,
+                                                "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+                                "format": {
+                                    "sections_dct_list" : [], #sections_dct_list=[]
+                                    "systems": [], #(min size: 3) system1="", system2="", system3="", system4="", system_s="",
+                                    "skill_section": False, #skill_section=False,
+                                    "windows":2, #windows=2,
+                                    "mode": "single", #mode="single"
+                                    "standard_calls": ["summarize_general_info", "summarize_skills"],
+                                    "non_standard_calls": ["sliding_window_two_sections",
+                                                           "sliding_window_three_sections",
+                                                           "sliding_window_four_sections"],
+                                }, 
+                                "prompt_in": "", #Empty
+                                "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
+                                "sample_starts": []
+                                }):
+    call_id = call_info.get("call_id", "")
+    payload_in = call_info.get("payload_in", {})
+    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
+    format = call_info.get("format", {})
+    function_name = helpers.inspect_function()
+    prompt_in = call_info.get("prompt_in", "")                       
+    if call_id == "":
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id is empty string")
+        return f"[ERROR][OLLAMA]{function_name}: call_id is empty string"
+    if call_id != function_name:
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
+        return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}" 
+    sys_len =   len(format["systems"])                     
+    if  sys_len< 3:                       
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: sys_len {sys_len} is less than operational minimum (3)")
+        return f"[ERROR][OLLAMA]{function_name}: sys_len {sys_len} is less than operational minimum (3)"                                            
+    systems=format.get("systems", ["","",""])
+    mode =format.get("mode", "single")
+    sections_dct_list = format.get("sections_dct_list", [])
+    skill_section = format.get("skill_section", False)
+    windows = format.get("windows", 2)
+
+    general_keys = ['name', 'contact_information', 'title', 'languages']
+    special_keys = [
+        'education',
+        'certifications',
+        'awards_and_scholarships',
+        'volunteering_and_leadership',
+        'work_experience',
+        'projects'
+    ]
+    skills_key = ['skills']
+    general_txts = []
+    special_txts = []
+    skill_txt = ""
+    candidate_name = ""
+    candidate_title = ""
+    for item in sections_dct_list:
+        key = next(iter(item))
+        if key == "name":
+            candidate_name = item[key]
+        elif key == "title":
+            candidate_title = item[key]
+        if key in general_keys:
+            temp = helpers.filter_output(parsers.inv_parse_cv(item).strip())
+            general_txts.append(temp)
+        elif key in skills_key:
+            temp = helpers.filter_output(parsers.inv_parse_cv_out(item).strip())
+            skill_txt += temp + "\n"
+        elif key in special_keys:
+            if skill_section:
+                temp = helpers.filter_output(parsers.inv_parse_cv_out(item).strip())
+            else:
+                temp = helpers.filter_output(parsers.inv_parse_cv(item).strip())
+            special_txts.append(temp)
+    if config.DEBUG["INFO_LOGING"]: 
+        print(f"[INFO][OLLAMA]{function_name}: candidate_name: {candidate_name}")
+        print(f"[INFO][OLLAMA]{function_name}: candidate_title: {candidate_title}")
+        print(f"[INFO][OLLAMA]{function_name}: general_txts: {len(general_txts)}")
+        print(f"[INFO][OLLAMA]{function_name}: special_txts: {len(special_txts)}")
+    slide_results = []
+    if windows == 2:
+        track = len(special_keys) - 1
+    elif windows == 3:
+        track = len(special_keys) - 2
+    elif windows == 4:
+        track = len(special_keys) - 3
+    else:
+        raise ValueError("Invalid number of windows, must be 2, 3, or 4.")
+    for i in range(0, track):
+        if windows == 2:
+            runtime_info_temp = {
+                                    "call_id": format["non_standard_calls"][0], 
+                                    "payload_in": {
+                                        "model": payload_in["model"],
+                                        "system": payload_in["system"],
+                                    },
+                                    "format": {
+                                        "sections" : [special_txts[i], special_txts[i + 1]],
+                                        "section_names":  [special_keys[i], special_keys[i + 1]],
+                                        "systems": systems[:2],
+                                        "candidate_name":candidate_name,
+                                        "candidate_title":candidate_title,
+                                        "mode": mode, 
+                                    }, 
+                                    "ollama_url": ollama_url,
+            }
+            slide = ollama_call(runtime_info=runtime_info_temp, function=sliding_window_two_sections)
+            slide_results.append(slide)
+        elif windows == 3:
+            runtime_info_temp = {
+                                    "call_id": format["non_standard_calls"][1], 
+                                    "payload_in": {
+                                        "model": payload_in["model"],
+                                        "system": payload_in["system"],
+                                    },
+                                    "format": {
+                                        "sections" : [special_txts[i], special_txts[i + 1], special_txts[i + 2]],
+                                        "section_names":  [special_keys[i], special_keys[i + 1], special_keys[i + 2]],
+                                        "systems": systems[:3],
+                                        "candidate_name":candidate_name,
+                                        "candidate_title":candidate_title,
+                                        "mode": mode, 
+                                    }, 
+                                    "ollama_url": ollama_url,
+            }
+            slide = ollama_call(runtime_info=runtime_info_temp, function=sliding_window_three_sections)
+            slide_results.append(slide)
+        elif windows == 4:
+            runtime_info_temp = {
+                                    "call_id": format["non_standard_calls"][2], 
+                                    "payload_in": {
+                                        "model": payload_in["model"],
+                                        "system": payload_in["system"],
+                                    },
+                                    "format": {
+                                        "sections" : [special_txts[i], special_txts[i + 1], special_txts[i + 2], special_txts[i + 3]],
+                                        "section_names":  [special_keys[i], special_keys[i + 1], special_keys[i + 2], special_keys[i + 3]],
+                                        "systems": systems[:4],
+                                        "candidate_name":candidate_name,
+                                        "candidate_title":candidate_title,
+                                        "mode": mode, 
+                                    }, 
+                                    "ollama_url": ollama_url,
+            }
+            slide = ollama_call(runtime_info=runtime_info_temp, function=sliding_window_four_sections)
+            slide_results.append(slide)
+    general_info = "\n".join(general_txts).strip()
+    runtime_info_temp = {
+        "call_id": format["standard_calls"][0],
+        "payload_in": {
+            "model": payload_in["model"],
+            "system": systems[-1],
+        },
+        "format": {
+            "general_info_text": general_info
+        },
+        "ollama_url": ollama_url
+    }
+    general_info_summary = ollama_call(runtime_info=runtime_info_temp) #standard call
+    runtime_info_temp = {
+        "call_id": format["standard_calls"][1],
+        "payload_in": {
+            "model": payload_in["model"],
+            "system": systems[-1],
+        },
+        "format": {
+            "skill_section": skill_txt
+        },
+        "ollama_url": ollama_url
+    }
+    skills_summary = ollama_call(runtime_info=runtime_info_temp) #standard call
+    slide_results.insert(0, general_info_summary)
+    slide_results.append(skills_summary)
+    return slide_results
+
 #ASYNC CALL SYSTEM
 async def standard_ollama_call_async(session, retries = config.CONFIG["MODELS"]["RETRIES"],call_info = {
                                 "call_id": "standard_async",
@@ -1050,460 +1669,6 @@ async def ollama_call_async(retries=config.CONFIG["MODELS"]["RETRIES"], runtime_
             if result.startswith("[ERROR]"):
                 raise ValueError(f"[ERROR]{function_name}: error in async processing of ollama calls")
     return results
-
-@log_time
-def generate_call_infos_summarize_section(sections, section_names, systems, model=DEFAULT_MODEL, ollama_url=DEFAULT_URL):
-    function_name = helpers.inspect_function()
-    if len(sections) != len(section_names) or len(section_names) != len(systems) or len(systems) != len(sections):
-        raise ValueError(f"[ERROR]{function_name}: lenght mismatch len(sections) = {len(sections)}, len(section_names) = {len(section_names)}, len(systems) = {len(systems)}")
-    call_infos = []
-    requests = len(sections)
-    for i in range(requests):
-        prompt = f"""Given the following section from a resume:
-                    {sections[i]}
-                    Summarize the sections in a wholistic manner while following these guidelines:
-                    - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
-                    - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
-                    Return the summarized information as a single continuous string of text, following this format strictly:
-                    [S]{section_names[i]} Section Summary: Wholistic summary of the section's information.
-                    """
-        if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
-        call_info = {
-            "call_id": "standard_async",
-            "payload_in": {
-                "model": systems[i],
-                "system": "",
-                }, 
-            "format":{
-            },
-            "prompt_in": prompt,
-            "ollama_url":  ollama_url,
-        }
-        call_infos.append(call_info)
-    return call_infos
-
-#MAYBE
-@log_time
-def sliding_window_two_sections(call_info = {"call_id": "sliding_window_two_sections", 
-                                          "payload_in": {"model": DEFAULT_MODEL,
-                                                         "system": "",
-                                                         "stream": False,
-                                                         "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
-                                          "format": {
-                                              "sections" : ["", ""],
-                                              "section_names":  ["", ""],
-                                              "systems": ["", "", ""],
-                                              "candidate_name": "",
-                                              "candidate_title":"",
-                                              "mode": "single", 
-                                              "standard_calls": ["summarize_section"]
-                                          }, 
-                                          "prompt_in": "", #Not empty
-                                          "ollama_url": DEFAULT_URL,
-                                          "sample_starts": []
-                                          }):
-    
-    call_id = call_info.get("call_id", "")
-    payload_in = call_info.get("payload_in", {})
-    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
-    format = call_info.get("format", {})
-    function_name = helpers.inspect_function()
-    prompt_in = call_info.get("prompt_in", "")
-    if call_id != function_name:
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not 'tailor_volunteering_and_leadership'")
-
-    sections = format.get("sections", [])
-    section_names = format.get("section_names", [])
-    systems=[format.get("systems", [])[1],format.get("systems", [])[2]]
-    mode =format.get("mode", "single")
-    candidate_name = format.get("candidate_name", "")
-    candidate_title = format.get("candidate_title", "")
-
-    #Original Aurguments: section1 = "", section2 ="", 
-                        # model=DEFAULT_MODEL, system1="", system2="", system = "", 
-                        # ollama_url=DEFAULT_URL,
-                        # section1_name = "", section2_name = "", 
-                        # candidate_name = "", candidate_title = "", 
-                        # mode = "single"
-    if CONFIG["SUMMARY_REQUESTS"] > 2:
-        warnings.warn("[WARNING]sliding_window_two_sections: number of requests exceeds sliding window size, using maximum possible request number (2)")
-    if CONFIG["SUMMARY_REQUESTS"] < 0:
-        raise ValueError("[ERROR]sliding_window_two_sections: SUMMARY_REQUESTS must be a positive integer")
-
-    summaries = []
-    if mode == "single":
-        for i in range(0, 2):
-                summary = summarize_section(sections[i], model=model, system=systems[i], ollama_url=ollama_url, section_name=section_names[i])
-                summaries.append(helpers.filter_output(summary.strip(), mode= "cap_letters"))
-    elif mode == "batch":
-        summaries_raw = batch_summarize_sections(sections=sections, section_names=section_names, model=model, system=system1, ollama_url=ollama_url)
-        summaries = helpers.filter_output(summaries_raw.strip(), mode= "cap_letters").split("\n")
-    elif mode == "parallel":
-        payloads = generate_payloads_summarize_section(sections=[section1, section2], section_names=[section1_name, section2_name], systems=[system1, system2], model=model, ollama_url=ollama_url)
-        responses = asyncio.run(parallel_requests(payloads, ollama_url=ollama_url))
-        summaries = [helpers.filter_output(response.strip(), mode="cap_letters") for response in responses]
-    summary1 = summaries[0] if len(summaries) > 0 else ""
-    summary2 = summaries[1] if len(summaries) > 1 else ""
-    prompt = f"""Given the following resume section summaries:
-{summary1}
-{summary2}
-Create a new summary that incorporates all two summaries, following these guidelines:
-- Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
-- Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
-- Maintain the context and flow between the two sections.
-- When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
-Return the summarized information as a single continuous string of text, following this format strictly:
-[S]{section1_name} + {section2_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and key skills.
-"""
-    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
-    payload = {
-        "model": model,
-        "system": system,
-        "prompt": prompt,
-        "stream": False,
-        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
-    }
-    for field in ["model", "system", "prompt", "stream", "temperature"]:
-        value = payload.get(field, None)
-        if value is not None:
-            logging.info(f"[OLLAMA]sliding_window_two_sections: payload field {field} with value {value} found")
-        else:
-            logging.error(f"[ERROR][OLLAMA]sliding_window_two_sections: payload field {field} is missing or is NoneType")
-    response = requests.post(f"{ollama_url}/api/generate", json=payload)
-    try:
-        result = response.json()
-        
-        if response.status_code == 400:
-            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
-        response_text = result.get("response", "")
-        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
-        response_text = helpers.filter_output(response_text.strip(), mode= "cap_letters")
-        print(f"[SUCCESS][OLLAMA]sliding_window_two_sections: {result}")
-        return response_text
-    except requests.exceptions.JSONDecodeError as e:
-        logging.error("[ERROR][OLLAMA]sliding_window_two_sections: Ollama response was not valid JSON.", exc_info=True)
-        logging.error(f"Response text: {response.text}")
-        return "[ERROR][OLLAMA]sliding_window_two_sections: Ollama response was not valid JSON."
-
-#MAYBE
-@log_time
-def sliding_window_three_sections(section1 = "", section2 = "", section3 = "", model=DEFAULT_MODEL, system1="", system2="", system3="", system = "", ollama_url=DEFAULT_URL,
-                                section1_name = "", section2_name = "", section3_name = "", candidate_name = "", candidate_title = "", mode = "single"):
-    if CONFIG["SUMMARY_REQUESTS"] > 3:
-        warnings.warn("[WARNING]sliding_window_three_sections: number of requests exceeds sliding window size, using maximum possible request number (3)")
-    if CONFIG["SUMMARY_REQUESTS"] < 0:
-        raise ValueError("[ERROR]sliding_window_three_sections: SUMMARY_REQUESTS must be a positive integer")
-    sections = [section1, section2, section3]
-    section_names = [section1_name, section2_name, section3_name]
-    systems = [system1, system2, system3]
-    summaries = []
-
-    for i in range(0, 3, CONFIG["SUMMARY_REQUESTS"]):
-        if mode == "single":
-            for j in range(0,CONFIG["SUMMARY_REQUESTS"]):
-                if i+j >= 3:
-                    break
-                else:
-                    summary = summarize_section(sections[i+j], model=model, system=systems[i+j], ollama_url=ollama_url, section_name=section_names[i+j])
-                    summaries.append(helpers.filter_output(summary.strip(), mode= "cap_letters"))
-        if mode == "batch":
-            upper_bound = i + CONFIG["SUMMARY_REQUESTS"]
-            if upper_bound > 3:
-                upper_bound = 3
-            summary = batch_summarize_sections(sections=sections[i:upper_bound], section_names=section_names[i:upper_bound], model=model, system=system1, ollama_url=ollama_url)
-            summaries.append(helpers.filter_output(summary.strip(), mode= "cap_letters"))
-            if upper_bound == 3:
-                break
-        if mode == "parallel":
-            upper_bound = i + CONFIG["SUMMARY_REQUESTS"]
-            if upper_bound > 3:
-                upper_bound = 3
-            payloads = generate_payloads_summarize_section(sections=sections[i:upper_bound], section_names=section_names[i:upper_bound], systems=systems[i:upper_bound], model=model, ollama_url=ollama_url)
-            responses = asyncio.run(parallel_requests(payloads, ollama_url=ollama_url))
-            for response in responses:
-                summaries.append(helpers.filter_output(response.strip(), mode= "cap_letters"))
-            if upper_bound == 3:
-                break
-
-    summary1 = summaries[0] if len(summaries) > 0 else ""
-    summary2 = summaries[1] if len(summaries) > 1 else ""
-    summary3 = summaries[2] if len(summaries) > 2 else ""
-
-    prompt = f"""Given the following resume section summaries:
-{summary1}
-{summary2}
-{summary3}
-Create a new summary that incorporates all three summaries, following these guidelines:
-- Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
-- Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
-- Maintain the context and flow between the three sections.
-- When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
-Return the summarized information as a single continuous string of text, following this format strictly:
-[S]{section1_name} + {section2_name} + {section3_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and key skills.
-"""
-    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
-    payload = {
-        "model": model,
-        "system": system,
-        "prompt": prompt,
-        "stream": False,
-        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
-    }
-    for field in ["model", "system", "prompt", "stream", "temperature"]:
-        value = payload.get(field, None)
-        if value is not None:
-            logging.info(f"[OLLAMA]sliding_window_three_sections: payload field {field} with value {value} found")
-        else:
-            logging.error(f"[ERROR][OLLAMA]sliding_window_three_sections: payload field {field} is missing or is NoneType")
-    response = requests.post(f"{ollama_url}/api/generate", json=payload)
-    try:
-        result = response.json()
-        
-        if response.status_code == 400:
-            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
-        response_text = result.get("response", "")
-        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
-        response_text = helpers.filter_output(response_text.strip(), mode= "cap_letters")
-        print(f"[SUCCESS][OLLAMA]sliding_window_three_sections: {result}")
-        return response_text
-    except requests.exceptions.JSONDecodeError as e:
-        logging.error("[ERROR][OLLAMA]sliding_window_three_sections: Ollama response was not valid JSON.", exc_info=True)
-        logging.error(f"Response text: {response.text}")
-        return "[ERROR][OLLAMA]sliding_window_three_sections: Ollama response was not valid JSON."
-
-#MAYBE
-@log_time
-def sliding_window_four_sections(
-    section1="",
-    section2="",
-    section3="",
-    section4="",
-    model=DEFAULT_MODEL,
-    system1="",
-    system2="",
-    system3="",
-    system4="",
-    system="",
-    ollama_url=DEFAULT_URL,
-    section1_name="",
-    section2_name="",
-    section3_name="",
-    section4_name="",
-    candidate_name="",
-    candidate_title="",
-    mode="single"
-):
-    if CONFIG["SUMMARY_REQUESTS"] > 4:
-        warnings.warn("[WARNING]sliding_window_four_sections: number of requests exceeds sliding window size, using maximum possible request number (4)")
-    if CONFIG["SUMMARY_REQUESTS"] < 0:
-        raise ValueError("[ERROR]sliding_window_four_sections: SUMMARY_REQUESTS must be a positive integer")
-    sections = [section1, section2, section3, section4]
-    section_names = [section1_name, section2_name, section3_name, section4_name]
-    systems = [system1, system2, system3, system4]
-    summaries = []
-
-    for i in range(0, 4, CONFIG["SUMMARY_REQUESTS"]):
-        if mode == "single":
-            for j in range(0,CONFIG["SUMMARY_REQUESTS"]):
-                if i+j >= 4:
-                    break
-                else:
-                    summary = summarize_section(sections[i+j], model=model, system=systems[i+j], ollama_url=ollama_url, section_name=section_names[i+j])
-                    summaries.append(helpers.filter_output(summary.strip(), mode= "cap_letters"))
-        if mode == "batch":
-            upper_bound = i + CONFIG["SUMMARY_REQUESTS"]
-            if upper_bound > 4:
-                upper_bound = 4
-            summary = batch_summarize_sections(sections=sections[i:upper_bound], section_names=section_names[i:upper_bound], model=model, system=system1, ollama_url=ollama_url)
-            summaries.append(helpers.filter_output(summary.strip(), mode= "cap_letters"))
-            if upper_bound == 4:
-                break
-        if mode == "parallel":
-            upper_bound = i + CONFIG["SUMMARY_REQUESTS"]
-            if upper_bound > 4:
-                upper_bound = 4
-            payloads = generate_payloads_summarize_section(sections=sections[i:upper_bound], section_names=section_names[i:upper_bound], systems=systems[i:upper_bound], model=model, ollama_url=ollama_url)
-            responses = asyncio.run(parallel_requests(payloads, ollama_url=ollama_url))
-            for response in responses:
-                summaries.append(helpers.filter_output(response.strip(), mode= "cap_letters"))
-            if upper_bound == 4:
-                break
-
-    summary1 = summaries[0] if len(summaries) > 0 else ""
-    summary2 = summaries[1] if len(summaries) > 1 else ""
-    summary3 = summaries[2] if len(summaries) > 2 else ""
-    summary4 = summaries[3] if len(summaries) > 3 else ""
-    prompt = f"""Given the following resume section summaries:
-{summary1}
-{summary2}
-{summary3}
-{summary4}
-Create a new summary that incorporates all four summaries, following these guidelines:
-- Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
-- Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
-- Maintain the context and flow between the four sections.
-- When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
-Return the summarized information as a single continuous string of text, following this format strictly:
-[S]{section1_name} + {section2_name} + {section3_name} + {section4_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and key skills.
-"""
-    if config.DEBUG["TOKEN_LOGGING"]:
-        input_tks = helpers.token_math(model, prompt)
-    payload = {
-        "model": model,
-        "system": system,
-        "prompt": prompt,
-        "stream": False,
-        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
-    }
-    for field in ["model", "system", "prompt", "stream", "temperature"]:
-        value = payload.get(field, None)
-        if value is not None:
-            logging.info(f"[OLLAMA]sliding_window_four_sections: payload field {field} with value {value} found")
-        else:
-            logging.error(f"[ERROR][OLLAMA]sliding_window_four_sections: payload field {field} is missing or is NoneType")
-    response = requests.post(f"{ollama_url}/api/generate", json=payload)
-    try:
-        result = response.json()
-        
-        if response.status_code == 400:
-            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
-        response_text = result.get("response", "")
-        if config.DEBUG["TOKEN_LOGGING"]:
-            output_tks = helpers.token_math(model, response_text, type="output", offset=input_tks)
-        response_text = helpers.filter_output(response_text.strip(), mode="cap_letters")
-        print(f"[SUCCESS][OLLAMA]sliding_window_four_sections: {result}")
-        return response_text
-    except requests.exceptions.JSONDecodeError as e:
-        logging.error("[ERROR][OLLAMA]sliding_window_four_sections: Ollama response was not valid JSON.", exc_info=True)
-        logging.error(f"Response text: {response.text}")
-        return "[ERROR][OLLAMA]sliding_window_four_sections: Ollama response was not valid JSON."
-
-#MAYBE
-@log_time
-def slide_summary(
-    sections_dct_list=[],
-    model=DEFAULT_MODEL,
-    system_s="",
-    system="",
-    system1="",
-    system2="",
-    system3="",
-    system4="",
-    ollama_url=DEFAULT_URL,
-    windows=2,
-    skill_section=False,
-    mode="single"
-):
-    general_keys = ['name', 'contact_information', 'title', 'languages']
-    special_keys = [
-        'education',
-        'certifications',
-        'awards_and_scholarships',
-        'volunteering_and_leadership',
-        'work_experience',
-        'projects'
-    ]
-    skills_key = ['skills']
-    general_txts = []
-    special_txts = []
-    skill_txt = ""
-    candidate_name = ""
-    candidate_title = ""
-    for item in sections_dct_list:
-        key = next(iter(item))
-        if key == "name":
-            candidate_name = item[key]
-        elif key == "title":
-            candidate_title = item[key]
-        if key in general_keys:
-            temp = helpers.filter_output(parsers.inv_parse_cv(item).strip())
-            general_txts.append(temp)
-        elif key in skills_key:
-            temp = helpers.filter_output(parsers.inv_parse_cv_out(item).strip())
-            skill_txt += temp + "\n"
-        elif key in special_keys:
-            if skill_section:
-                temp = helpers.filter_output(parsers.inv_parse_cv_out(item).strip())
-            else:
-                temp = helpers.filter_output(parsers.inv_parse_cv(item).strip())
-            special_txts.append(temp)
-    print(f"slide_summary: candidate_name: {candidate_name}")
-    print(f"slide_summary: candidate_title: {candidate_title}")
-    print(f"slide_summary: general_txts: {len(general_txts)}")
-    print(f"slide_summary: special_txts: {len(special_txts)}")
-    slide_results = []
-    if windows == 2:
-        track = len(special_keys) - 1
-    elif windows == 3:
-        track = len(special_keys) - 2
-    elif windows == 4:
-        track = len(special_keys) - 3
-    else:
-        raise ValueError("Invalid number of windows, must be 2, 3, or 4.")
-    for i in range(0, track):
-        if windows == 2:
-            slide = sliding_window_two_sections(
-                section1=special_txts[i],
-                section2=special_txts[i + 1],
-                model=model,
-                system=system,
-                system1=system1,
-                system2=system2,
-                section1_name=special_keys[i],
-                section2_name=special_keys[i + 1],
-                candidate_name=candidate_name,
-                candidate_title=candidate_title,
-                ollama_url=ollama_url,
-                mode=mode
-            )
-            slide_results.append(slide)
-        elif windows == 3:
-            slide = sliding_window_three_sections(
-                section1=special_txts[i],
-                section2=special_txts[i + 1],
-                section3=special_txts[i + 2],
-                model=model,
-                system=system,
-                system1=system1,
-                system2=system2,
-                system3=system3,
-                section1_name=special_keys[i],
-                section2_name=special_keys[i + 1],
-                section3_name=special_keys[i + 2],
-                candidate_name=candidate_name,
-                candidate_title=candidate_title,
-                ollama_url=ollama_url,
-                mode=mode
-            )
-            slide_results.append(slide)
-        elif windows == 4:
-            slide = sliding_window_four_sections(
-                section1=special_txts[i],
-                section2=special_txts[i + 1],
-                section3=special_txts[i + 2],
-                section4=special_txts[i + 3],
-                model=model,
-                system=system,
-                system1=system1,
-                system2=system2,
-                system3=system3,
-                system4=system4,
-                section1_name=special_keys[i],
-                section2_name=special_keys[i + 1],
-                section3_name=special_keys[i + 2],
-                section4_name=special_keys[i + 3],
-                candidate_name=candidate_name,
-                candidate_title=candidate_title,
-                ollama_url=ollama_url,
-                mode=mode
-            )
-            slide_results.append(slide)
-    general_info = "\n".join(general_txts).strip()
-    general_info_summary = summarize_general_info(general_info, model=model, system=system_s, ollama_url=ollama_url)
-    skills_summary = summarize_skills(model=model, system=system_s, ollama_url=ollama_url, skill_section=skill_txt)
-    slide_results.insert(0, general_info_summary)
-    slide_results.append(skills_summary)
-    return slide_results
 
 #MAYBE, USED IN MAIN
 @log_time

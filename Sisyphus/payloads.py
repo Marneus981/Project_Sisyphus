@@ -626,6 +626,123 @@ PAYLOADS= {
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["flexible", "digits", "[0]", "[1]"]#Might lead to error, check later
     },
+    "sliding_window_two_sections": {
+        "call_id": "sliding_window_two_sections", 
+        "payload_in": {
+            "model": DEFAULT_MODEL,
+            "system": "",
+            "stream": False,
+            "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+        "format": {
+            "sections" : ["", ""],
+            "section_names":  ["", ""],
+            "systems": ["", ""],
+            "candidate_name": "",
+            "candidate_title":"",
+            "mode": "single", 
+            "standard_calls": ["summarize_section"],
+            "non_standard_calls":["batch_summarize_sections"]
+            }, 
+        "prompt_in": """Given the following resume section summaries:
+                        {summary1}
+                        {summary2}
+                        Create a new summary that incorporates all two summaries, following these guidelines:
+                        - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
+                        - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
+                        - Maintain the context and flow between the two sections.
+                        - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
+                        Return the summarized information as a single continuous string of text, following this format strictly:
+                        [S]{section1_name} + {section2_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and key skills.
+                    """, #Set at runtime
+        "ollama_url": DEFAULT_URL,
+        "sample_starts": ["strict", "cap_letters", "[S]"]#Might lead to error, check later
+    },
+    "sliding_window_three_sections": {
+        "call_id": "sliding_window_three_sections", 
+        "payload_in": {
+            "model": DEFAULT_MODEL,
+            "system": "",
+            "stream": False,
+            "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+        "format": {
+            "sections" : ["", "", ""],
+            "section_names":  ["", "", ""],
+            "systems": ["", "", ""],
+            "candidate_name": "",
+            "candidate_title":"",
+            "mode": "single", 
+            "standard_calls": ["summarize_section"],
+            "non_standard_calls":["batch_summarize_sections"]
+            }, 
+        "prompt_in": """Given the following resume section summaries:
+                        {summary1}
+                        {summary2}
+                        {summary3}
+                        Create a new summary that incorporates all three summaries, following these guidelines:
+                        - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
+                        - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
+                        - Maintain the context and flow between the three sections.
+                        - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
+                        Return the summarized information as a single continuous string of text, following this format strictly:
+                        [S]{section1_name} + {section2_name} + {section3_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and key skills.
+                    """, #Set at runtime
+        "ollama_url": DEFAULT_URL,
+        "sample_starts": ["strict", "cap_letters", "[S]"]#Might lead to error, check later
+    },
+    "sliding_window_four_sections": {
+        "call_id": "sliding_window_four_sections", 
+        "payload_in": {
+            "model": DEFAULT_MODEL,
+            "system": "",
+            "stream": False,
+            "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+        "format": {
+            "sections" : ["", "", "", ""],
+            "section_names":  ["", "", "", ""],
+            "systems": ["", "", "", ""],
+            "candidate_name": "",
+            "candidate_title":"",
+            "mode": "single", 
+            "standard_calls": ["summarize_section"],
+            "non_standard_calls":["batch_summarize_sections"]
+            }, 
+        "prompt_in": """Given the following resume section summaries:
+                        {summary1}
+                        {summary2}
+                        {summary3}
+                        {summary4}
+                        Create a new summary that incorporates all four summaries, following these guidelines:
+                        - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
+                        - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
+                        - Maintain the context and flow between the four sections.
+                        - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
+                        Return the summarized information as a single continuous string of text, following this format strictly:
+                        [S]{section1_name} + {section2_name} + {section3_name} + {section4_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and key skills.
+                    """, #Set at runtime
+        "ollama_url": DEFAULT_URL,
+        "sample_starts": ["strict", "cap_letters", "[S]"]#Might lead to error, check later
+    },
+    "slide_summary": {
+        "call_id": "slide_summary", 
+        "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
+                        "system": "", # #system="",
+                        "stream": False,
+                        "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+        "format": {
+            "sections_dct_list" : [], #sections_dct_list=[]
+            "systems": [], #(min size: 3) system1="", system2="", system3="", system4="", system_s="",
+            "skill_section": False, #skill_section=False,
+            "windows":2, #windows=2,
+            "mode": "single", #mode="single"
+            "standard_calls": ["summarize_general_info", "summarize_skills"],
+            "non_standard_calls": ["sliding_window_two_sections",
+                                    "sliding_window_three_sections",
+                                    "sliding_window_four_sections"],
+        }, 
+        "prompt_in": "", #Empty
+        "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
+        "sample_starts": [] #Empty
+    },
     #ASYNC
     "standard_async": {
         "call_id": "standard_async", 
