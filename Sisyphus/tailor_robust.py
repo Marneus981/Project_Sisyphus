@@ -605,18 +605,20 @@ def batch_summarize_sections(call_info = template_call_info):
 @log_time #USED IN MAIN
 def tailor_volunteering_and_leadership(call_info = template_call_info):
     
-    call_id = call_info.get("call_id", "")
-    payload_in = call_info.get("payload_in", {})
-    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
-    format = call_info.get("format", {})
+    call_id = call_info["call_id"]
+    payload_in = call_info["payload_in"]
+    format = call_info["format"]
+    prompt_in = call_info["prompt_in"]
+    ollama_url = call_info["ollama_url"]
     function_name = helpers.inspect_function()
     if call_id != function_name:
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
         return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}"
-    raw_cv_data = format.get("raw_cv_data", "")
-    job_description_summary = format.get("job_description_summary", "")
-    section = format.get("section", "")
-    reference_dct = format.get("reference_dct", {})
+    
+    raw_cv_data = format["raw_cv_data"]
+    job_description_summary = format["job_description_summary"]
+    section = format["section"]
+    reference_dct = format["reference_dct"]
 
     #Original Arguments: model=DEFAULT_MODEL, system1="", system2="", ollama_url=DEFAULT_URL, 
                         #raw_cv_data="", job_description_summary="", 
@@ -629,7 +631,7 @@ def tailor_volunteering_and_leadership(call_info = template_call_info):
     step0 = prepare_input_text(raw_cv_data, type=section)
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step0:\n" + step0)
     
-    ollama_call_info_1 = {"call_id": format.get("standard_calls", "")[0],
+    runtime_info_temp = {"call_id": format["standard_calls"][0],
                           "ollama_url": ollama_url,
                           "format": {
                               "raw_cv_data": raw_cv_data,
@@ -637,10 +639,10 @@ def tailor_volunteering_and_leadership(call_info = template_call_info):
                           },
                           "payload_in":{
                               "system":system1,
-                              "model": payload_in.get("model", DEFAULT_MODEL)
+                              "model": payload_in["model"]
                           }                   
     }
-    step1 = ollama_call(call_info = ollama_call_info_1, function = standard_ollama_call)
+    step1 = ollama_call(runtime_info= runtime_info_temp)
     #step1 = step0_volunteering_and_leadership(model=model, system1=system1, ollama_url=ollama_url, raw_cv_data=step0, job_description=job_description_summary)
 
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: {format.get("standard_calls", "")[0]}:\n" + step1)
@@ -673,7 +675,7 @@ def tailor_volunteering_and_leadership(call_info = template_call_info):
         if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp: first_part_text:\n" + first_part_text)
         if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp: second_part_text:\n" + second_part_text)
 
-        ollama_call_info_temp = {"call_id": format.get("standard_calls", "")[1],
+        runtime_info_temp = {"call_id": format["standard_calls"][1],
                           "ollama_url": ollama_url,
                           "format": {
                               "experience": first_part_text,
@@ -681,10 +683,10 @@ def tailor_volunteering_and_leadership(call_info = template_call_info):
                           },
                           "payload_in":{
                               "system":system2,
-                              "model": payload_in.get("model", DEFAULT_MODEL)
+                              "model": payload_in["model"]
                           }                   
         }   
-        first_part_text_new = ollama_call(call_info = ollama_call_info_temp, function = standard_ollama_call)
+        first_part_text_new = ollama_call(runtime_info=runtime_info_temp)
 
         #first_part_text_new = step3_volunteering_and_leadership(model=model, system2=system2, ollama_url=ollama_url, experience=first_part_text, job_description=job_description_summary)
         if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp: {format.get("standard_calls", "")[1]}: first_part_text_new:\n" + first_part_text_new)
@@ -703,37 +705,21 @@ def tailor_volunteering_and_leadership(call_info = template_call_info):
     return step4_text
 
 @log_time #USED IN MAIN
-def tailor_work_experience(call_info = {"call_id": "tailor_work_experience", 
-                                          "payload_in": {"model": DEFAULT_MODEL,
-                                                         "system": "",
-                                                         "stream": False,
-                                                         "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
-                                          "format": {
-                                              "raw_cv_data": "",
-                                              "job_description_summary": "",
-                                              "section": "work_experience",
-                                              "reference_dct": {},
-                                              "systems": ["", ""],
-                                              "standard_calls": ["step0_work_experience",
-                                                                 "step3_work_experience"]
-                                          }, 
-                                          "prompt_in": "", 
-                                          "ollama_url": DEFAULT_URL,
-                                          "sample_starts": []
-                                          }):
-    call_id = call_info.get("call_id", "")
-    payload_in = call_info.get("payload_in", {})
-    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
-    format = call_info.get("format", {})
+def tailor_work_experience(call_info = template_call_info):
+    call_id = call_info["call_id"]
+    payload_in = call_info["payload_in"]
+    format = call_info["format"]
+    prompt_in = call_info["prompt_in"]
+    ollama_url = call_info["ollama_url"]
     function_name = helpers.inspect_function()
     if call_id != function_name:
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
         return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}"
-    raw_cv_data = format.get("raw_cv_data", "")
-    job_description_summary = format.get("job_description_summary", "")
-    section = format.get("section", "")
-    reference_dct = format.get("reference_dct", {})
-
+    
+    raw_cv_data = format["raw_cv_data"]
+    job_description_summary = format["job_description_summary"]
+    section = format["section"]
+    reference_dct = format["reference_dct"]
     #Original Arguments: model=DEFAULT_MODEL, system1="", system2="", ollama_url=DEFAULT_URL, 
                           #raw_cv_data="", job_description_summary="", 
                           #section="work_experience", reference_dct={}
@@ -744,7 +730,7 @@ def tailor_work_experience(call_info = {"call_id": "tailor_work_experience",
     step0 = prepare_input_text(raw_cv_data, type=section)
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step0:\n" + step0)
 
-    ollama_call_info_1 = {"call_id": format.get("standard_calls", "")[0],
+    runtime_info_temp = {"call_id": format["standard_calls"][0],
                           "ollama_url": ollama_url,
                           "format": {
                               "raw_cv_data": raw_cv_data,
@@ -752,10 +738,10 @@ def tailor_work_experience(call_info = {"call_id": "tailor_work_experience",
                           },
                           "payload_in":{
                               "system":system1,
-                              "model": payload_in.get("model", DEFAULT_MODEL)
+                              "model": payload_in["model"]
                           }               
     }
-    step1 = ollama_call(call_info = ollama_call_info_1, function = standard_ollama_call)
+    step1 = ollama_call(runtime_info= runtime_info_temp)
     #step1 = step0_work_experience(model=model, system1=system1, ollama_url=ollama_url, raw_cv_data=step0, job_description=job_description_summary)
     
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: {format.get("standard_calls", "")[0]}:\n" + step1)
@@ -786,7 +772,7 @@ def tailor_work_experience(call_info = {"call_id": "tailor_work_experience",
         if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp: first_part_text:\n" + first_part_text)
         if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp: second_part_text:\n" + second_part_text)
 
-        ollama_call_info_temp = {"call_id": format.get("standard_calls", "")[1],
+        runtime_info_temp = {"call_id": format["standard_calls"][1],
                           "ollama_url": ollama_url,
                           "format": {
                               "experience": first_part_text,
@@ -794,10 +780,10 @@ def tailor_work_experience(call_info = {"call_id": "tailor_work_experience",
                           },
                           "payload_in":{
                               "system":system2,
-                              "model": payload_in.get("model", DEFAULT_MODEL)
+                              "model": payload_in["model"]
                           }       
         }   
-        first_part_text_new = ollama_call(call_info = ollama_call_info_temp, function = standard_ollama_call)
+        first_part_text_new = ollama_call(runtime_info= runtime_info_temp)
 
         #first_part_text_new = step3_work_experience(model=model, system2=system2, ollama_url=ollama_url, experience=first_part_text, job_description=job_description_summary)
         if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp: {format.get("standard_calls", "")[1]}: first_part_text_new:\n" + first_part_text_new)
@@ -816,36 +802,21 @@ def tailor_work_experience(call_info = {"call_id": "tailor_work_experience",
     return step4_text
 
 @log_time #USED IN MAIN
-def tailor_projects(call_info = {"call_id": "tailor_projects", 
-                                          "payload_in": {"model": DEFAULT_MODEL,
-                                                         "system": "",
-                                                         "stream": False,
-                                                         "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
-                                          "format": {
-                                              "raw_cv_data": "",
-                                              "job_description_summary": "",
-                                              "section": "projects",
-                                              "reference_dct": {},
-                                              "systems": ["", ""],
-                                              "standard_calls": ["step0_projects",
-                                                                 "step3_projects"]
-                                          }, 
-                                          "prompt_in": "", 
-                                          "ollama_url": DEFAULT_URL,
-                                          "sample_starts": []
-                                          }):
-    call_id = call_info.get("call_id", "")
-    payload_in = call_info.get("payload_in", {})
-    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
-    format = call_info.get("format", {})
+def tailor_projects(call_info = template_call_info):
+    call_id = call_info["call_id"]
+    payload_in = call_info["payload_in"]
+    format = call_info["format"]
+    prompt_in = call_info["prompt_in"]
+    ollama_url = call_info["ollama_url"]
     function_name = helpers.inspect_function()
     if call_id != function_name:
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
         return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}"
-    raw_cv_data = format.get("raw_cv_data", "")
-    job_description_summary = format.get("job_description_summary", "")
-    section = format.get("section", "")
-    reference_dct = format.get("reference_dct", {})
+    
+    raw_cv_data = format["raw_cv_data"]
+    job_description_summary = format["job_description_summary"]
+    section = format["section"]
+    reference_dct = format["reference_dct"]
 
     #Original Arguments: model=DEFAULT_MODEL, system1="", system2="", ollama_url=DEFAULT_URL, 
                    #raw_cv_data="", job_description_summary="", 
@@ -857,7 +828,7 @@ def tailor_projects(call_info = {"call_id": "tailor_projects",
     step0 = prepare_input_text(raw_cv_data, type=section)
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step0:\n" + step0)
 
-    ollama_call_info_1 = {"call_id": format.get("standard_calls", "")[0],
+    runtime_info_temp = {"call_id": format["standard_calls"][0],
                           "ollama_url": ollama_url,
                           "format": {
                               "raw_cv_data": raw_cv_data,
@@ -865,10 +836,10 @@ def tailor_projects(call_info = {"call_id": "tailor_projects",
                           },
                           "payload_in":{
                               "system":system1,
-                              "model": payload_in.get("model", DEFAULT_MODEL)
-                          }
+                              "model": payload_in["model"]
+                          }               
     }
-    step1 = ollama_call(call_info = ollama_call_info_1, function = standard_ollama_call)
+    step1 = ollama_call(runtime_info= runtime_info_temp)
     #step1 = step0_projects(model=model, system1=system1, ollama_url=ollama_url, raw_cv_data=step0, job_description=job_description_summary)
     
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: {format.get("standard_calls", "")[0]}:\n" + step1)
@@ -899,19 +870,18 @@ def tailor_projects(call_info = {"call_id": "tailor_projects",
         if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp: first_part_text:\n" + first_part_text)
         if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp: second_part_text:\n" + second_part_text)
         
-        ollama_call_info_temp = {"call_id": format.get("standard_calls", "")[1],
+        runtime_info_temp = {"call_id": format["standard_calls"][1],
                           "ollama_url": ollama_url,
                           "format": {
                               "experience": first_part_text,
                               "job_description": job_description_summary,
                           },
-                          "payload_in":{                         
+                          "payload_in":{
                               "system":system2,
-                              "model": payload_in.get("model", DEFAULT_MODEL)
-                              }
- 
-        }   
-        first_part_text_new = ollama_call(call_info = ollama_call_info_temp, function = standard_ollama_call)
+                              "model": payload_in["model"]
+                          }       
+        }    
+        first_part_text_new = ollama_call(runtime_info = runtime_info_temp)
 
         #first_part_text_new = step3_projects(model=model, system2=system2, ollama_url=ollama_url, experience=first_part_text, job_description=job_description_summary)
         if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp: {format.get("standard_calls", "")[1]}: first_part_text_new:\n" + first_part_text_new)
@@ -930,35 +900,21 @@ def tailor_projects(call_info = {"call_id": "tailor_projects",
     return step4_text
 
 @log_time #USED IN MAIN
-def prune_experiences(call_info = {"call_id": "prune_experiences", 
-                                          "payload_in": {"model": DEFAULT_MODEL,
-                                                         "system": "",
-                                                         "stream": False,
-                                                         "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
-                                          "format": {
-                                              "experiences": "",
-                                              "job_description_summary": "",
-                                              "section": "vl_w_p",
-                                              "reference_dct": {}, #provide system through payload_in
-                                              "standard_calls": ["step0_prune_experiences"]
-                                          }, 
-                                          "prompt_in": "", #Empty
-                                          "ollama_url": DEFAULT_URL,
-                                          "sample_starts": []
-                                          }):
+def prune_experiences(call_info = template_call_info):
     
-    call_id = call_info.get("call_id", "")
-    payload_in = call_info.get("payload_in", {})
-    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
-    format = call_info.get("format", {})
+    call_id = call_info["call_id"]
+    payload_in = call_info["payload_in"]
+    format = call_info["format"]
+    prompt_in = call_info["prompt_in"]
+    ollama_url = call_info["ollama_url"]
     function_name = helpers.inspect_function()
     if call_id != function_name:
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
         return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}"
-    experiences = format.get("experiences","")
-    job_description_summary = format.get("job_description_summary", "")
-    section = format.get("section", "")
-    reference_dct = format.get("reference_dct", {})
+    experiences = format["experiences"]
+    job_description_summary = format["job_description_summary"]
+    section = format["section"]
+    reference_dct = format["reference_dct"]
 
     #Original Arguments: model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL, 
                    #experiences="", job_description_summary="", section="vl_w_p", reference_dct={}
@@ -968,19 +924,18 @@ def prune_experiences(call_info = {"call_id": "prune_experiences",
     step0 = prepare_input_text(experiences, type=section)
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step0:\n" + step0)
 
-    ollama_call_info_1 = {"call_id": format.get("standard_calls", "")[0],
+    runtime_info_temp = {"call_id": format["standard_calls"][0],
                           "ollama_url": ollama_url,
                           "format": {
                               "experiences": experiences,
                               "job_description": job_description_summary,
                           },
-                          "payload_in": {
+                          "payload_in":{
                               "system":system1,
-                              "model": payload_in.get("model", DEFAULT_MODEL)
-                          }
-
+                              "model": payload_in["model"]
+                          }               
     }
-    step1 = ollama_call(call_info = ollama_call_info_1, function = standard_ollama_call)
+    step1 = ollama_call(runtime_info= runtime_info_temp)
     #step1 = step0_prune_experiences(model=model, system1=system1, ollama_url=ollama_url, experiences=step0, job_description=job_description_summary)
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step1:\n" + step1)
     step1_clean = clean_first_step(step1).strip()
