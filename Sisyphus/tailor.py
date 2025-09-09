@@ -1848,8 +1848,13 @@ Output your analysis as a single continuous string of text, strictly following t
 @log_time
 def new_vs_old_resume(old_resume_txt = "", new_resume_txt = "", model = DEFAULT_MODEL, system_s = "", ollama_url = DEFAULT_URL):
     old_resume_txt0 = return_text_with_skills(old_resume_txt)
-    old_dcts = parsers.dict_spliter(parsers.parse_cv_out(helpers.filter_output(old_resume_txt0.strip())))
+    old_dct = parsers.parse_cv_out(helpers.filter_output(old_resume_txt0.strip()))
+    section_names = []
+    for key in old_dct:
+        section_names.append(key)
+    old_dcts = parsers.dict_spliter(old_dct)
     new_dcts = parsers.dict_spliter(parsers.parse_cv_out(helpers.filter_output(new_resume_txt.strip())))
+
     old_txts = [parsers.inv_parse_cv_out(dct).strip() for dct in old_dcts]
     new_txts = [parsers.inv_parse_cv_out(dct).strip() for dct in new_dcts]
     analysis_txts = []
@@ -1858,7 +1863,7 @@ def new_vs_old_resume(old_resume_txt = "", new_resume_txt = "", model = DEFAULT_
     if len(old_txts) != len(new_txts):
         raise ValueError("The number of sections in the old and new resumes do not match.")
     for i in range(len(old_txts)):
-        analysis_txt = new_vs_old_section(old_txts[i], new_txts[i], model=model, system=system_s, ollama_url=ollama_url)
+        analysis_txt = new_vs_old_section(old_txts[i], new_txts[i], section_names[i] ,model=model, system=system_s, ollama_url=ollama_url)
         analysis_txts.append(analysis_txt)
     return analysis_txts
 

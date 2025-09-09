@@ -14,6 +14,34 @@ import re
 DEFAULT_MODEL = "llama3:8b"
 DEFAULT_URL = "http://localhost:11434"
 
+template_call_info = {
+    "call_id": "", 
+    "payload_in": {
+                    "model": DEFAULT_MODEL, #Set at runtime
+                    "system": "",  #Set at runtime
+                    "stream": False,
+                    "temperature": CONFIG["MODELS"]["TEMPERATURE"]
+                    },
+    "format": {},
+    "prompt_in": "",
+    "ollama_url": DEFAULT_URL, #Set at runtime
+    "sample_starts": [] #[type, sample starts]
+}
+
+def fetch_complete_call_info(call_id = "", runtime_info = {}):
+    function_name =helpers.inspect_function()
+    if call_id not in payloads.PAYLOADS:
+        raise ValueError(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} not found in payloads.PAYLOADS")
+    if call_id == "":
+        raise ValueError(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} not provided")
+    runtime_info_tmp = runtime_info.copy()
+    fixed_call_info = payloads.PAYLOADS[call_id]
+    for key in runtime_info_tmp:
+        if key == "payload_in" or key == "format":
+            for key_n in runtime_info_tmp[key]:
+                fixed_call_info[key][key_n] = runtime_info_tmp[key][key_n]
+        fixed_call_info[key] = runtime_info_tmp[key]
+    return fixed_call_info
 
 # Set up logging
 print = logging.info
@@ -459,16 +487,8 @@ def ollama_call(retries=config.CONFIG["MODELS"]["RETRIES"], runtime_info = {}, f
     if runtime_info.get("call_id", "") == "":
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id is empty")
         return f"[ERROR][OLLAMA]{function_name}: call_id is empty"
-    call_info = payloads.PAYLOADS[runtime_info["call_id"]]
+    call_info = fetch_complete_call_info(call_id=runtime_info["call_id"], runtime_info=runtime_info)
     #For standard calls: "call_id": "", "model": DEFAULT_MODEL, "system": "", "format": {} , "ollama_url": DEFAULT_URL need to be set
-    for key in runtime_info:
-        if key == "call_id":
-            continue
-        elif key == "ollama_url" or key == "format" or key =="prompt_in":
-            call_info[key] = runtime_info[key]
-        else:
-            for key_pay in runtime_info["payload_in"]:
-                call_info["payload_in"][key_pay] = runtime_info["payload_in"][key_pay]
     for i in range(retries):
         try:
             #sample_starts key is unneeded, only useful for comparison and QA
@@ -546,7 +566,7 @@ def batch_summarize_sections(call_info = {"call_id": "batch_summarize_sections",
         result = response.json()
         if response.status_code == 400:
             if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Bad Request: Payload={payload}, Response={result}")
-            return f"[ERROR][OLLAMA]{function_name}: Bad Request: Payload={payload}, Response={result}
+            return f"[ERROR][OLLAMA]{function_name}: Bad Request: Payload={payload}, Response={result}"
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(payload["model"], response_text, type="output", offset=input_tks)
         print(f"[SUCCESS][OLLAMA]{function_name}: {result}")
@@ -1581,6 +1601,235 @@ def slide_summary(call_info = {"call_id": "slide_summary",
     slide_results.append(skills_summary)
     return slide_results
 
+@log_time #USED IN MAIN ; returns ERROR as text
+def step0_tailor_summary(call_info ={
+        "call_id": "step0_tailor_summary", 
+        "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
+                        "system": "", # #system="",
+                        "stream": False,
+                        "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+        "format": {
+            "raw_cv_data" : "", #raw_cv_data = ""
+            "systems": [], #(min size: 4) , system0 = "", system1 = "", system2 = "", system3 = "", system4 = "",system_s = ""
+            "skill_section": False, #skill_section=False,
+            "windows":2, #windows=2,
+            "mode": "single", #mode="single"
+            "standard_calls": [],
+            "non_standard_calls": ["slide_summary"],
+        }, 
+        "prompt_in":"",
+        "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
+        "sample_starts": []
+    }):
+    call_id = call_info.get("call_id", "")
+    payload_in = call_info.get("payload_in", {})
+    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
+    format = call_info.get("format", {})
+    function_name = helpers.inspect_function()
+    prompt_in = call_info.get("prompt_in", "")
+    non_standard_calls= format.get("non_standard_calls", [])
+    if call_id == "":
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id is empty string")
+        return f"[ERROR][OLLAMA]{function_name}: call_id is empty string"
+    if call_id != function_name:
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
+        return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}" 
+    sys_len =   len(format["systems"])                     
+    if  sys_len< 4:                       
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: sys_len {sys_len} is less than operational minimum (3)")
+        return f"[ERROR][OLLAMA]{function_name}: sys_len {sys_len} is less than operational minimum (4)"
+    systems=format.get("systems", ["","","",""])
+    mode =format.get("mode", "single")
+    raw_cv_data =format.get("raw_cv_data", "")
+    skill_section = format.get("skill_section", False)
+    windows = format.get("windows", 2)
+    #Original Arguments: raw_cv_data = ""
+                         #, system_s = "", system = "", system1 = "", system2 = "", system3 = "", system4 = "", system0 = "",
+                         #windows = 2, skill_section = False, mode="single"
+
+    if skill_section:
+        sections_dct = parsers.parse_cv_out(raw_cv_data)
+    else:
+        sections_dct = parsers.parse_cv(raw_cv_data)
+    sections_dct_list = parsers.dict_spliter(sections_dct)
+    runtime_info_temp = {"call_id": non_standard_calls[0], 
+                        "ollama_url": ollama_url, #ollama_url=DEFAULT_URL,
+                        "payload_in": {"model": payload_in["model"], #model=DEFAULT_MODEL,
+                                        "system": systems[0], # #system="",
+                                        }, 
+                        "format": {
+                            "sections_dct_list" : sections_dct_list, #sections_dct_list=[]
+                            "systems": systems[1:], #(min size: 3) system1="", system2="", system3="", system4="", system_s="",
+                            "skill_section": skill_section, #skill_section=False,
+                            "windows":windows, #windows=2,
+                            "mode": mode, #mode="single"
+                        }
+                        }
+    slides = ollama_call(runtime_info=runtime_info_temp, function=slide_summary)
+    #Join slides
+    slides_txt = "\n".join(slides).strip()
+    slides_txt_temp = {
+        "slides_txt": slides_txt
+    }
+    prompt = prompt_in.format(**slides_txt_temp)
+    payload = payload_in.copy()
+    payload["prompt"] = prompt
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(payload_in["model"], prompt)
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
+        value = payload.get(field, None)
+        if value is not None:
+            if config.DEBUG["INFO_LOGGING"]: logging.info(f"[OLLAMA]{function_name}: payload field {field} with value {value} found")
+        else:
+            if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: payload field {field} is missing or is NoneType")
+            return f"[ERROR][OLLAMA]{function_name}: payload field {field} is missing or is NoneType"
+    response = requests.post(f"{ollama_url}/api/generate", json=payload)
+    try:
+        result = response.json()
+        if response.status_code == 400:
+            if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Bad Request: Payload={payload}, Response={result}")
+            return f"[ERROR][OLLAMA]{function_name}: Ollama status_code 400"
+        response_text = result.get("response", "")
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(payload["model"], response_text, type="output", offset=input_tks)
+        if config.DEBUG["INFO_LOGGING"]: print(f"[SUCCESS][OLLAMA]{function_name}: {result}")
+        return response_text #Allegedly cleaned on ollama_call
+    except requests.exceptions.JSONDecodeError as e:
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
+        return f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON"
+
+@log_time #USED IN MAIN
+def tailor_summary(call_info = {
+                    "call_id": "step0_tailor_summary", 
+                    "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
+                                    "system": "", #system
+                                    "stream": False,
+                                    "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+                    "format": {
+                        "raw_cv_data" : "", #raw_cv_data=""
+                        "job_description" : "", #job_description=""
+                        "systems": [], # system0="",system1="", system2="", system3="", system4="", system_s="",
+                                        #system00="",system01="", (min 6)
+                        "skill_section": False, 
+                        "windows":2, #windows=2
+                        "mode": "single", #mode="single"
+                        "standard_calls": ["step1_tailor_summary"],
+                        "non_standard_calls": ["step0_tailor_summary"],
+                    }, 
+                    "prompt_in": "",#Empty
+                    "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
+                    "sample_starts": ["strict", "digits", "[0]Summary:"] 
+    }):
+    call_id = call_info.get("call_id", "")
+    payload_in = call_info.get("payload_in", {})
+    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
+    format = call_info.get("format", {})
+    prompt_in = call_info.get("prompt_in","") #Empty
+    
+    
+    function_name = helpers.inspect_function()
+    if call_id == "":
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id is empty string")
+        return f"[ERROR][OLLAMA]{function_name}: call_id is empty string"
+    if call_id != function_name:
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
+        return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}" 
+    sys_len =   len(format["systems"])                     
+    if  sys_len< 6:                       
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: sys_len {sys_len} is less than operational minimum (6)")
+        return f"[ERROR][OLLAMA]{function_name}: sys_len {sys_len} is less than operational minimum (6)"                                            
+
+    #Original Arguments: model=DEFAULT_MODEL, ollama_url=DEFAULT_URL,
+                        #raw_cv_data="", job_description="",
+                        #system_s="", system00="", system1="", system2="", system3="", system4="", system0="", windows=2,
+                        #system01="", mode="single"
+    systems = format.get("systems", ["","","","","","",])#min 6
+    raw_cv_data = format.get("raw_cv_data", "")
+    job_description = format.get("job_description", "")
+    windows = format.get("windows", 2)
+    skill_section = format.get("skill_section", False)
+    mode = format.get("mode", "single")
+
+    print(f"tailor_summary: raw_cv_data:\n" + raw_cv_data)
+    runtime_info_temp = {
+        "call_id":format["non_standard_calls"][0],
+        "payload_in":{
+            "model": payload_in["model"],
+            "system": systems[-2]
+        },
+        "format":{
+            "raw_cv_data": raw_cv_data,
+            "windows": windows,
+            "mode": mode,
+            "skil_section": skill_section,
+            "systems": systems[:-2]
+        },
+        "ollama_url":ollama_url
+    }
+    ollama_func_name = format["non_standard_calls"][0] 
+    step0 = ollama_call(runtime_info = runtime_info_temp, function= globals()[ollama_func_name])
+    runtime_info_temp = {
+        "call_id":format["standard_calls"][0],
+        "payload_in":{
+            "model": payload_in["model"],
+            "system": systems[-1]
+        },
+        "format":{
+            "prev_summary": step0,
+            "job_description": job_description
+        },
+        "ollama_url":ollama_url
+    }
+    step1 = ollama_call(runtime_info = runtime_info_temp, function= standard_ollama_call)
+    return step1.strip()
+
+@log_time
+def new_vs_old_resume(call_info=template_call_info):
+    call_id = call_info.get("call_id", "")
+    payload_in = call_info.get("payload_in", {})
+    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
+    format = call_info.get("format", {})
+    function_name = helpers.inspect_function()
+    prompt_in = call_info.get("prompt_in", "")
+    if call_id == "":
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id is empty string")
+        return f"[ERROR][OLLAMA]{function_name}: call_id is empty string"
+    if call_id != function_name:
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
+        return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}" 
+
+
+    old_resume_txt0 = return_text_with_skills(format["old_resume_txt"])
+    old_dct = parsers.parse_cv_out(helpers.filter_output(old_resume_txt0.strip()))
+    section_names= []
+    for key in old_dct:
+        section_names.append(key)
+    old_dcts = parsers.dict_spliter(old_dct)
+    new_dcts = parsers.dict_spliter(parsers.parse_cv_out(helpers.filter_output(format["new_resume_txt"].strip())))
+    old_txts = [parsers.inv_parse_cv_out(dct).strip() for dct in old_dcts]
+    new_txts = [parsers.inv_parse_cv_out(dct).strip() for dct in new_dcts]
+    analysis_txts = []
+    print("Length of old_txts:", len(old_txts))
+    print("Length of new_txts:", len(new_txts))
+    if len(old_txts) != len(new_txts):
+        raise ValueError("The number of sections in the old and new resumes do not match.")
+    for i in range(len(old_txts)):
+        runtime_info_temp = {
+            "call_id": format["standard_calls"][0], 
+            "payload_in": {
+                        "model": format["model"], #Set at runtime
+                        "system": format["system"] #Set at runtime
+                        },
+            "format": {#Set at runtime
+                        "old_resume_s_txt": old_txts[i],
+                        "new_resume_s_txt": new_txts[i],
+                        "section_name": section_names[i]
+                    },
+            "ollama_url": ollama_url, #Set at runtime
+        }
+        analysis_txt = ollama_call(runtime_info=runtime_info_temp, function=standard_ollama_call)
+        analysis_txts.append(analysis_txt)
+    return analysis_txts
+
 #ASYNC CALL SYSTEM
 async def standard_ollama_call_async(session, retries = config.CONFIG["MODELS"]["RETRIES"],call_info = {
                                 "call_id": "standard_async",
@@ -1638,13 +1887,13 @@ async def standard_ollama_call_async(session, retries = config.CONFIG["MODELS"][
                 continue
     return f"[ERROR][OLLAMA][ASYNC]{function_name}: All retries exhausted."
         
-    
+#raise ValueError    
 async def ollama_call_async(retries=config.CONFIG["MODELS"]["RETRIES"], runtime_infos = [], function = standard_ollama_call_async ):
     function_name = helpers.inspect_function()
     if retries < 1:
        raise ValueError(f"[ERROR][OLLAMA][ASYNC]{function_name}: retries is less than 1")
     if runtime_infos == []:
-        return f"[ERROR][OLLAMA][ASYNC]{function_name}: runtime_infos is empty list"
+        raise ValueError (f"[ERROR][OLLAMA][ASYNC]{function_name}: runtime_infos is empty list")
     async with aiohttp.ClientSession() as session:
         tasks = []
         for i in range(len(runtime_infos)):
@@ -1653,7 +1902,7 @@ async def ollama_call_async(retries=config.CONFIG["MODELS"]["RETRIES"], runtime_
                 raise ValueError(f"[ERROR]{function_name}: missing call_id")
             if runtime_info.get("call_id", "") == "":
                 raise ValueError(f"[ERROR]{function_name}: empty call_id")
-            call_info = payloads.PAYLOADS[runtime_info["call_id"]]
+            call_info = fetch_complete_call_info(call_id=runtime_info["call_id"], runtime_info=runtime_info)
             for key in runtime_info:
                 if key == "call_id":
                     continue
@@ -1669,80 +1918,6 @@ async def ollama_call_async(retries=config.CONFIG["MODELS"]["RETRIES"], runtime_
             if result.startswith("[ERROR]"):
                 raise ValueError(f"[ERROR]{function_name}: error in async processing of ollama calls")
     return results
-
-#MAYBE, USED IN MAIN
-@log_time
-def step0_tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, raw_cv_data = ""
-                         , system_s = "", system = "", system1 = "", system2 = "", system3 = "", system4 = "", system0 = "",
-                         windows = 2, skill_section = False, mode="single"):
-
-    if skill_section:
-        sections_dct = parsers.parse_cv_out(raw_cv_data)
-    else:
-        sections_dct = parsers.parse_cv(raw_cv_data)
-    sections_dct_list = parsers.dict_spliter(sections_dct)
-    slides = slide_summary(sections_dct_list,
-                            model=model,
-                            system_s=system_s, system=system, system1=system1, system2=system2, system3=system3, system4=system4,
-                            ollama_url=ollama_url, windows=windows, mode=mode, skill_section=skill_section)
-    #Join slides
-    slides_txt = "\n".join(slides).strip()
-    prompt = f"""Given the following resume sections summarized:
-{slides_txt}
-Create a wholistic summary of all of them, following these guidelines:
-- Include the candidate's contact information, as well as their title and name.
-- Include any certifications or qualifications.
-- Include all education.
-- Include all projects, work experience, and volunteering and leadership roles.
-- Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
-- Maintain the context and flow between the sections.
-- Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
-Return the summarized information as a single continuous string of text, following this format strictly:
-[0]Summary: Wholistic summary of all sections.
-"""
-    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
-    payload = {
-        "model": model,
-        "system": system0,
-        "prompt": prompt,
-        "stream": False,
-        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
-    }
-    for field in ["model", "system", "prompt", "stream", "temperature"]:
-        value = payload.get(field, None)
-        if value is not None:
-            logging.info(f"[OLLAMA]step0_tailor_summary: payload field {field} with value {value} found")
-        else:
-            logging.error(f"[ERROR][OLLAMA]step0_tailor_summary: payload field {field} is missing or is NoneType")
-    response = requests.post(f"{ollama_url}/api/generate", json=payload)
-    try:
-        result = response.json()
-        
-        if response.status_code == 400:
-            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
-        response_text = result.get("response", "")
-        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
-        print(f"[SUCCESS][OLLAMA]step0_tailor_summary: {result}")
-        return helpers.filter_output(response_text.strip())
-    except requests.exceptions.JSONDecodeError as e:
-        logging.error("[ERROR][OLLAMA]step0_tailor_summary: Ollama response was not valid JSON.", exc_info=True)
-        logging.error(f"Response text: {response.text}")
-        return "[ERROR][OLLAMA]step0_tailor_summary: Ollama response was not valid JSON."
-
-#MAYBE, USED IN MAIN
-@log_time
-def tailor_summary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL,
-                    raw_cv_data="", job_description="",
-                    system_s="", system00="", system1="", system2="", system3="", system4="", system0="", windows=2,
-                    system01="", mode="single"):
-    # - Summary (LAST; Based on Job Description AND Overall Resume)
-    print(f"tailor_summary: raw_cv_data:\n" + raw_cv_data)
-    step0 = step0_tailor_summary(model=model, ollama_url=ollama_url, raw_cv_data=raw_cv_data,
-                                  system_s=system_s, system=system00, system1=system1, system2=system2, system3=system3, system4=system4, system0=system0,
-                                  windows=windows, mode=mode)
-    step1 = step1_tailor_summary(model=model, ollama_url=ollama_url, prev_summary=step0, job_description=job_description,
-                                  system=system01)
-    return step1.strip()
 
 @log_time
 def return_text_with_skills(cv_text):
@@ -1834,113 +2009,81 @@ def return_text_with_skills(cv_text):
 
     return "\n".join([return_text,skill,prog,tech,soft])
 
-#MAYBE
-@log_time
-def new_vs_old_resume(old_resume_txt = "", new_resume_txt = "", model = DEFAULT_MODEL, system_s = "", ollama_url = DEFAULT_URL):
-    old_resume_txt0 = return_text_with_skills(old_resume_txt)
-    old_dcts = parsers.dict_spliter(parsers.parse_cv_out(helpers.filter_output(old_resume_txt0.strip())))
-    new_dcts = parsers.dict_spliter(parsers.parse_cv_out(helpers.filter_output(new_resume_txt.strip())))
-    old_txts = [parsers.inv_parse_cv_out(dct).strip() for dct in old_dcts]
-    new_txts = [parsers.inv_parse_cv_out(dct).strip() for dct in new_dcts]
-    analysis_txts = []
-    print("Length of old_txts:", len(old_txts))
-    print("Length of new_txts:", len(new_txts))
-    if len(old_txts) != len(new_txts):
-        raise ValueError("The number of sections in the old and new resumes do not match.")
-    for i in range(len(old_txts)):
-        analysis_txt = new_vs_old_section(old_txts[i], new_txts[i], model=model, system=system_s, ollama_url=ollama_url)
-        analysis_txts.append(analysis_txt)
-    return analysis_txts
-
 #MAYBE, USED IN MAIN
 @log_time
-def consistency_checker_vs_cv(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, system = "", system_s="", cv_data="", cv_data_orig ="", type="CV"):
-    if type == "CV":
-        print("Consistency Checker: Tailored Resume VS Original Resume:")
-        #Chain: old resume, new resume >>> new_vs_old_section >>> consistency_checker_vs_cv
-        text_analysis =new_vs_old_resume(old_resume_txt=cv_data_orig, new_resume_txt=cv_data, 
-                                         model=model, ollama_url=ollama_url, 
-                                         system_s=system_s)
-        #Join the analysis texts into a single string
-        all_analysis = "\n".join(text_analysis).strip()
-        prompt = f"""The following list contains a per-section analysis of the resumes, comparing the synthesized data in the new resume against the original:
-{all_analysis}
-Now, given this information, synthesize a report which extracts the following data from the list of analyses:
-- Whether the new resume is consistent with the original resume, meaning that all information in the new resume is present in the original resume, even if paraphrased.
-- Whether the new resume is consistent with itself, meaning that there should be no contradictions or inconsistencies in the information provided.
-The report should follow these guidelines:
-- Be mindful not to include any line breaks in  the content of any of the sections/subsections.
-- Be as objective as possible, and if you must make assumptions, make very conservative assumptions
-- Do not create nor imagine any data that is not present in the original data.
-The consistency check should be returned strictly in the following format (include the numbers "[0]", "[1]", do not modify the format):
-[0]Consistency Checker VS Original Resume:
-[1]Inconsistencies With Original Resume: [Yes/No]; [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-[1]Inconsistencies With Self: [Yes/No]; [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-[1]Suggestions for Improvement: [List of suggestions for improvement, if any; return 'None' if no suggestions; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-"""
+def consistency_checker_vs_cv_cv(call_info = template_call_info):
+    call_id = call_info.get("call_id", "")
+    payload_in = call_info.get("payload_in", {})
+    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
+    format = call_info.get("format", {})
+    function_name = helpers.inspect_function()
+    prompt_in = call_info.get("prompt_in", "")
+    if call_id == "":
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id is empty string")
+        return f"[ERROR][OLLAMA]{function_name}: call_id is empty string"
+    if call_id != function_name:
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
+        return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}" 
     
-    elif type == "CL":
-        print("Consistency Checker: Cover Letter VS Original Resume:")
-        #Chain: new resume, cover letter >>> summarize resume >>> consistency_checker_vs_cv
-        prompt = f"""Given the following cover letter:
-{cv_data}
-And the wholistic summary of the resume meant to accompany it on a job application:
-{cv_data_orig}
-Perform a consistency check on the tailored cover letter against the resume. This consistency check should include:
-- Whether the cover letter is consistent with the resume, meaning that all skills and experiences mentioned in the cover letter should be present in the resume.
-- Whether the cover letter is consistent with itself, meaning that there should be no contradictions or inconsistencies in the information provided.
-The report should follow these guidelines:
-- Be mindful not to include any line breaks in  the content of any of the sections/subsections.
-- Be as objective as possible, and if you must make assumptions, make very conservative assumptions
-- Do not create nor imagine any data that is not present in the original data.
-The consistency check should be returned strictly in the following format (include the numbers "[0]", "[1]", do not modify the format):
-[0]Consistency Checker Vs Resume:
-[1]Inconsistencies With Resume: [Yes/No]; [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-[1]Inconsistencies With Self:  [Yes/No]; [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-[1]Suggestions for Improvement: [List of suggestions for improvement, if any; return 'None' if no suggestions; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-"""
-    
-
-
-    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
-    payload = {
-        "model": model,
-        "system": system,
-        "prompt": prompt,
-        "stream": False,
-        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
+    #Chain: old resume, new resume >>> new_vs_old_section >>> consistency_checker_vs_cv
+    runtime_info_temp = {
+        "call_id": format["non_standard_calls"][0], 
+        "payload_in": {"model": prompt_in["model"], #model=DEFAULT_MODEL,
+                        "system": format["system_s"], # #system="",
+        },
+        "format": {
+            "old_resume_txt" : format["old_resume_txt"], #old_resume_txt = ""
+            "new_resume_txt": format["new_resume_txt"] # new_resume_txt = ""
+        }, 
+        "ollama_url": ollama_url, #ollama_url=DEFAULT_URL,
     }
+    ollama_func_name = format["non_standard_calls"][0] 
+    text_analysis = ollama_call(runtime_info = runtime_info_temp, function= globals()[ollama_func_name])
+    #Join the analysis texts into a single string
+    all_analysis = "\n".join(text_analysis).strip()
+    all_analysis_dct = {
+        "all_analysis": all_analysis
+    }
+    prompt = prompt_in.format(**all_analysis_dct)
+    payload = payload_in.copy()
+    payload["prompt"] = prompt
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(payload_in["model"], prompt)
     for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
-            logging.info(f"[OLLAMA]consistency_checker_vs_cv: payload field {field} with value {value} found")
+            if config.DEBUG["INFO_LOGGING"]: logging.info(f"[OLLAMA]{function_name}: payload field {field} with value {value} found")
         else:
-            logging.error(f"[ERROR][OLLAMA]consistency_checker_vs_cv: payload field {field} is missing or is NoneType")
+            if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: payload field {field} is missing or is NoneType")
+            return f"[ERROR][OLLAMA]{function_name}: payload field {field} is missing or is NoneType"
     response = requests.post(f"{ollama_url}/api/generate", json=payload)
-    
     try:
         result = response.json()
-        
         if response.status_code == 400:
-            logging.error(f"[ERROR][OLLAMA]Bad Request: Payload={payload}, Response={result}")
+            if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Bad Request: Payload={payload}, Response={result}")
+            return f"[ERROR][OLLAMA]{function_name}: Ollama status_code 400"
         response_text = result.get("response", "")
-        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(model, response_text, type="output", offset = input_tks)
-        print(f"[SUCCESS][OLLAMA]consistency_checker_vs_cv: {result}")
-        return response_text
+        if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(payload["model"], response_text, type="output", offset=input_tks)
+        if config.DEBUG["INFO_LOGGING"]: print(f"[SUCCESS][OLLAMA]{function_name}: {result}")
+        return response_text #Allegedly cleaned on ollama_call
     except requests.exceptions.JSONDecodeError as e:
-        logging.error("[ERROR][OLLAMA]consistency_checker_vs_cv: Ollama response was not valid JSON.", exc_info=True)
-        logging.error(f"Response text: {response.text}")
-        return "[ERROR][OLLAMA]consistency_checker_vs_cv: Ollama response was not valid JSON."
-
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
+        return f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON"
 #MAYBE, USED IN MAIN
 @log_time
-def compose_cover_letter_dictionary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL, cv_text_summary="", cv_text="", job_description=""):
+def compose_cover_letter_dictionary(call_info = template_call_info):
     """
     Given a resume containing education, experiences, projects and skills considered 
     to be relevant a job description: Return a cover letter tailored to the job description.
     """
+    call_id = call_info.get("call_id", "")
+    payload_in = call_info.get("payload_in", {})
+    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
+    format = call_info.get("format", {})
+    function_name = helpers.inspect_function()
+    prompt_in = call_info.get("prompt_in", "")
 
-    
+    cv_text = format["cv_text"]
 
     #Extract the following sections and their subsections from the cv_text input: [0]Name, [0]Contact Information, [0]Title, [0]Languages using dict_splitter
     cv_dict = parsers.parse_cv_out(cv_text)
@@ -1952,8 +2095,19 @@ def compose_cover_letter_dictionary(model=DEFAULT_MODEL, ollama_url=DEFAULT_URL,
     contact_info = split_dicts[1]
     #Make the cover letter text
     system = helpers.read_text_file(r"C:\CodeProjects\Sisyphus\Sisyphus\systems\system_cover_letter.txt")
-    cover_letter_text = make_cover_letter_text(model=model,system = system,
-                           ollama_url=ollama_url, cv_data=cv_text_summary, job_description=job_description)
+    runtime_info_temp = {
+        "call_id": format["standard_calls"][0],
+        "payload_in": {
+            "model": prompt_in["model"],
+            "system": system,
+        },
+        "format": {
+            "cv_data": format["cv_text_summary"],
+            "job_description": format["job_description"]
+        },
+        "ollama_url": ollama_url,
+    }
+    cover_letter_text = ollama_call(runtime_info=runtime_info_temp) #Standard, no need to state function
 
     clean_cover_letter_text = helpers.filter_output(cover_letter_text)
     

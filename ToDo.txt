@@ -22,6 +22,11 @@
         [WIP]Retry output if wrong - Maybe provide feedback to the model
             [DONE]Add "sample_starts" fields
             []Add "MAYBE" tailor functions
+            []Make a fetch function for payloads.py + clarify runtime/non-runtime bahaviour
+            []Delimit clear rules for error handling
+            []Remove funtion input to ollama_call and its async ver
+            []create simple call_info for simple standard calls
+            []Pass in payloads.PAYLOADS objects as default values
             []Fix tailor functions
             []Fix main functions
         [DONE]Feed the model only the absolute essential info; vut unnecessary info

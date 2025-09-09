@@ -1,8 +1,67 @@
 from config import CONFIG
 DEFAULT_MODEL = "llama3:8b"
 DEFAULT_URL = "http://localhost:11434"
+"""
+Call functions: Ollama and Ollama Sync
+    These merge the runtime_info passed by the user and the payloads.PAYLOADS templates
+Runtime Functions: All these
+         These take a merged call_info object (sample_starts used rarely so it is included)
+On ollama functions (not ollama_call or ollama_sync):
+FIRST 5 attributes will be used generally from call_id = {
+        "call_id": "tailor_summary", #ALWAYS PROVIDED
+        "payload_in": {"model": DEFAULT_MODEL, #PROVIDED
+                        "system": "", # #system="", #PROVIDED
+                        "stream": False, #MERGED
+                        "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, #MERGED
+        "format": {
+            "info_piece_1": "" or [] or {} #PROVIDED
+            "info_piece_2": "" or [] or {} #PROVIDED
+            ...
+            "standard_calls": [], #MERGED
+            "non_standard_calls": [],#MERGED
+        }, 
+        "prompt_in": "", #USUALLY MERGED, SOMETIMES COULD BE EMPTY/PROVIDED
+        "ollama_url": DEFAULT_URL, #PROVIDED
+        "sample_starts": [] #MERGED
+    },
+Provided means that these attrubutes must be provided to ollama_call or ollama_call_async as
+runtime_info objects. Merged fields will be fetched from payloads.PAYLOADS
+"""
+
 PAYLOADS= {
     # STANDARD CALLS
+    "consistency_checker_vs_cv_cl": {
+        "call_id": "consistency_checker_vs_cv_cl", 
+        "payload_in": {
+                       "model": DEFAULT_MODEL, #Set at runtime
+                       "system": "",  #Set at runtime
+                       "stream": False,
+                       "temperature": CONFIG["MODELS"]["TEMPERATURE"]
+                       },
+        "format": {#Set at runtime
+                   "cv_data": "",
+                   "cv_data_orig": ""  
+                   },
+        "prompt_in": """Given the following cover letter:
+                        {cv_data}
+                        And the wholistic summary of the resume meant to accompany it on a job application:
+                        {cv_data_orig}
+                        Perform a consistency check on the tailored cover letter against the resume. This consistency check should include:
+                        - Whether the cover letter is consistent with the resume, meaning that all skills and experiences mentioned in the cover letter should be present in the resume.
+                        - Whether the cover letter is consistent with itself, meaning that there should be no contradictions or inconsistencies in the information provided.
+                        The report should follow these guidelines:
+                        - Be mindful not to include any line breaks in  the content of any of the sections/subsections.
+                        - Be as objective as possible, and if you must make assumptions, make very conservative assumptions
+                        - Do not create nor imagine any data that is not present in the original data.
+                        The consistency check should be returned strictly in the following format (include the numbers "[0]", "[1]", do not modify the format):
+                        [0]Consistency Checker Vs Resume:
+                        [1]Inconsistencies With Resume: [Yes/No]; [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+                        [1]Inconsistencies With Self:  [Yes/No]; [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+                        [1]Suggestions for Improvement: [List of suggestions for improvement, if any; return 'None' if no suggestions; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+                    """,
+        "ollama_url": DEFAULT_URL, #Set at runtime
+        "sample_starts": ["strict", "digits", "[0]Consistency Checker Vs Resume:", "[1]Inconsistencies With Resume:","[1]Inconsistencies With Self:","[1]Suggestions for Improvement:"] #[type, sample starts]
+    },
     "summarize_job_description": {
         "call_id": "summarize_job_description", 
         "payload_in": {
@@ -608,24 +667,7 @@ PAYLOADS= {
         "sample_starts": ["flexible", "digits", "[0]", "[1]"]
     },
     ##similar end
-    "prune_experiences": {
-        "call_id": "prune_experiences", 
-        "payload_in": {"model": DEFAULT_MODEL,
-                       "system": "",
-                       "stream": False,
-                       "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
-        "format": {
-            "experiences": "",
-            "job_description_summary": "",
-            "section": "vl_w_p",
-            "reference_dct": {}, #provide system through payload_in
-            "systems": ["", ""],
-            "standard_calls": ["step0_prune_experiences"]
-            }, 
-        "prompt_in": "", #Empty
-        "ollama_url": DEFAULT_URL,
-        "sample_starts": ["flexible", "digits", "[0]", "[1]"]#Might lead to error, check later
-    },
+    ##similar start
     "sliding_window_two_sections": {
         "call_id": "sliding_window_two_sections", 
         "payload_in": {
@@ -722,6 +764,25 @@ PAYLOADS= {
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "cap_letters", "[S]"]#Might lead to error, check later
     },
+    ##similar end
+    "prune_experiences": {
+        "call_id": "prune_experiences", 
+        "payload_in": {"model": DEFAULT_MODEL,
+                       "system": "",
+                       "stream": False,
+                       "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+        "format": {
+            "experiences": "",
+            "job_description_summary": "",
+            "section": "vl_w_p",
+            "reference_dct": {}, #provide system through payload_in
+            "systems": ["", ""],
+            "standard_calls": ["step0_prune_experiences"]
+            }, 
+        "prompt_in": "", #Empty
+        "ollama_url": DEFAULT_URL,
+        "sample_starts": ["flexible", "digits", "[0]", "[1]"]#Might lead to error, check later
+    },
     "slide_summary": {
         "call_id": "slide_summary", 
         "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
@@ -742,6 +803,121 @@ PAYLOADS= {
         "prompt_in": "", #Empty
         "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
         "sample_starts": [] #Empty
+    },
+    "step0_tailor_summary": {
+        "call_id": "step0_tailor_summary", 
+        "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
+                        "system": "", # #system="",
+                        "stream": False,
+                        "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+        "format": {
+            "raw_cv_data" : "", #raw_cv_data = ""
+            "systems": [], #(min size: 4) , system0 = "", system1 = "", system2 = "", system3 = "", system4 = "",system_s = ""
+            "skill_section": False, #skill_section=False,
+            "windows":2, #windows=2,
+            "mode": "single", #mode="single"
+            "standard_calls": [],
+            "non_standard_calls": ["slide_summary"],
+        }, 
+        "prompt_in": """Given the following resume sections summarized:
+                        {slides_txt}
+                        Create a wholistic summary of all of them, following these guidelines:
+                        - Include the candidate's contact information, as well as their title and name.
+                        - Include any certifications or qualifications.
+                        - Include all education.
+                        - Include all projects, work experience, and volunteering and leadership roles.
+                        - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
+                        - Maintain the context and flow between the sections.
+                        - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
+                        Return the summarized information as a single continuous string of text, following this format strictly:
+                        [0]Summary: Wholistic summary of all sections.
+                    """,
+        "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
+        "sample_starts": ["strict", "digits", "[0]Summary:"]
+    },
+    "tailor_summary": {
+        "call_id": "tailor_summary", 
+        "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
+                        "system": "", # #system="",
+                        "stream": False,
+                        "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+        "format": {
+            "raw_cv_data" : "", #raw_cv_data = ""
+            "systems": [], # system0="",system1="", system2="", system3="", system4="", system_s="",
+                                        #system00="",system01="", (min 6)
+            "skill_section": False, #skill_section=False,
+            "windows":2, #windows=2,
+            "mode": "single", #mode="single"
+            "standard_calls": ["step1_tailor_summary"],
+            "non_standard_calls": ["step0_tailor_summary"],
+        }, 
+        "prompt_in": "",#Empty
+        "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
+        "sample_starts": ["strict", "digits", "[0]Summary:"]
+    },
+    "new_vs_old_resume":{
+        "call_id": "new_vs_old_resume", 
+        "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
+                        "system": "", # #system="",
+                        "stream": False,
+                        "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+        "format": {
+            "old_resume_txt" : "", #old_resume_txt = ""
+            "new_resume_txt": "", # new_resume_txt = ""
+            "standard_calls": ["new_vs_old_section"],
+            "non_standard_calls": [],
+        }, 
+        "prompt_in": "",#Empty
+        "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
+        "sample_starts": ["flexible", "digits", "[0]"]
+    },
+    "consistency_checker_vs_cv_cv":{
+        "call_id": "consistency_checker_vs_cv_cv", 
+        "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
+                        "system": "", # #system="",
+                        "stream": False,
+                        "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+        "format": {
+            "cv_data" : "", #old_resume_txt = ""
+            "cv_data_orig": "", # new_resume_txt = ""
+            "system_s": "",
+            "standard_calls": [],
+            "non_standard_calls": ["new_vs_old_resume"],
+        }, 
+        "prompt_in": """The following list contains a per-section analysis of the resumes, comparing the synthesized data in the new resume against the original:
+                        {all_analysis}
+                        Now, given this information, synthesize a report which extracts the following data from the list of analyses:
+                        - Whether the new resume is consistent with the original resume, meaning that all information in the new resume is present in the original resume, even if paraphrased.
+                        - Whether the new resume is consistent with itself, meaning that there should be no contradictions or inconsistencies in the information provided.
+                        The report should follow these guidelines:
+                        - Be mindful not to include any line breaks in  the content of any of the sections/subsections.
+                        - Be as objective as possible, and if you must make assumptions, make very conservative assumptions
+                        - Do not create nor imagine any data that is not present in the original data.
+                        The consistency check should be returned strictly in the following format (include the numbers "[0]", "[1]", do not modify the format):
+                        [0]Consistency Checker VS Original Resume:
+                        [1]Inconsistencies With Original Resume: [Yes/No]; [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+                        [1]Inconsistencies With Self: [Yes/No]; [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+                        [1]Suggestions for Improvement: [List of suggestions for improvement, if any; return 'None' if no suggestions; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+                    """,#Empty
+        "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
+        "sample_starts": ["strict", "digits", "[0]Consistency Checker VS Original Resume:","[1]Inconsistencies With Original Resume:","[1]Inconsistencies With Self:", "[1]Suggestions for Improvement:"]
+    },
+    "compose_cover_letter_dictionary":{
+        "call_id": "compose_cover_letter_dictionary", 
+        "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
+                        "system": "", # #Empty
+                        "stream": False,
+                        "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+        "format": {
+            "cv_text_summary":"",
+            "cv_text":"",
+            "job_description":"",
+            "standard_calls": ["make_cover_letter_text"],
+            "non_standard_calls": [],
+        }, 
+        "prompt_in": "",#Empty
+        "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
+        "sample_starts": ["flexible", "digits", "[0]","[1]"]
     },
     #ASYNC
     "standard_async": {
@@ -778,8 +954,8 @@ STANDARD= [
     "make_cover_letter_text",
     "consistency_checker_vs_job_desc_cv",
     "consistency_checker_vs_job_desc_cl",
-    "tailor_courses"
-
+    "tailor_courses",
+    "consistency_checker_vs_cv_cl"
 ]
 ASYNC = [
     "standard_async"
