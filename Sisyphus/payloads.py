@@ -683,7 +683,8 @@ PAYLOADS= {
             "candidate_title":"",
             "mode": "single", 
             "standard_calls": ["summarize_section"],
-            "non_standard_calls":["batch_summarize_sections"]
+            "non_standard_calls":["batch_summarize_sections"],
+            "async_calls": ["standard_ollama_call_async"]
             }, 
         "prompt_in": """Given the following resume section summaries:
                         {summary1}
@@ -714,7 +715,8 @@ PAYLOADS= {
             "candidate_title":"",
             "mode": "single", 
             "standard_calls": ["summarize_section"],
-            "non_standard_calls":["batch_summarize_sections"]
+            "non_standard_calls":["batch_summarize_sections"],
+            "async_calls": ["standard_ollama_call_async"]
             }, 
         "prompt_in": """Given the following resume section summaries:
                         {summary1}
@@ -746,7 +748,8 @@ PAYLOADS= {
             "candidate_title":"",
             "mode": "single", 
             "standard_calls": ["summarize_section"],
-            "non_standard_calls":["batch_summarize_sections"]
+            "non_standard_calls":["batch_summarize_sections"],
+            "async_calls": ["standard_ollama_call_async"]
             }, 
         "prompt_in": """Given the following resume section summaries:
                         {summary1}
@@ -920,8 +923,8 @@ PAYLOADS= {
         "sample_starts": ["flexible", "digits", "[0]","[1]"]
     },
     #ASYNC
-    "standard_async": {
-        "call_id": "standard_async", 
+    "standard_ollama_call_async": {
+        "call_id": "standard_ollama_call_async", 
         "payload_in": {
             "model": DEFAULT_MODEL,
             "system": "",
@@ -958,5 +961,5 @@ STANDARD= [
     "consistency_checker_vs_cv_cl"
 ]
 ASYNC = [
-    "standard_async"
+    "standard_ollama_call_async"
 ]
