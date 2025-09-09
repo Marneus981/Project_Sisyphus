@@ -28,6 +28,8 @@ template_call_info = {
     "sample_starts": [] #[type, sample starts]
 }
 
+print = logging.info
+#region MISC FUNCTIONS
 def fetch_complete_call_info(call_id = "", runtime_info = {}):
     function_name =helpers.inspect_function()
     if call_id not in payloads.PAYLOADS:
@@ -43,8 +45,95 @@ def fetch_complete_call_info(call_id = "", runtime_info = {}):
         fixed_call_info[key] = runtime_info_tmp[key]
     return fixed_call_info
 
-# Set up logging
-print = logging.info
+@log_time
+def return_text_with_skills(cv_text):
+    #Note: text: comma separated skills, dict: section to subsections to lists
+    return_list = []
+    programming_skills = []
+    technical_skills = []
+    soft_skills = []
+
+    lines = cv_text.splitlines()
+    for line in lines:
+        if line.startswith("[1]Skills:"):
+            templine = line.replace("[1]Skills:", "").strip()
+            if (templine != "") or templine:
+                parts = line.split(";")
+                parts = [part.strip() for part in parts]
+                    #Programming Languages: Programming Language N1, ..., Programming Language NN
+                    #Technical Skills: Technical Skill N1, ..., Technical Skill N2
+                    #Soft Skills: Soft Skill N1, ..., Soft Skill N2
+                for part in enumerate(parts):
+                    if "Programming Languages:" in part:
+                        skills = part.split(":")
+                        if len(skills) > 1:
+                            skills = [skill.strip() for skill in skills]
+                            skills_r = skills[1].split(",")
+                            skills_r = [skill.strip() for skill in skills_r]
+                            programming_skills += skills_r
+                        else:
+                            print("No Programming Languages found in Skills section")
+                    elif "Technical Skills:" in part:
+                        skills = part.split(":")
+                        if len(skills) > 1:
+                            skills = [skill.strip() for skill in skills]
+                            skills_r = skills[1].split(",")
+                            skills_r = [skill.strip() for skill in skills_r]
+                            technical_skills += skills_r
+                        else:
+                            print("No Technical Skills found in Skills section")
+                    elif "Soft Skills:" in part:
+                        skills = part.split(":")
+                        if len(skills) > 1:
+                            skills = [skill.strip() for skill in skills]
+                            skills_r = skills[1].split(",")
+                            skills_r = [skill.strip() for skill in skills_r]
+                            soft_skills += skills_r
+                        else:
+                            print("No Soft Skills found in Skills section")
+
+                # if "Programming Languages" in line:
+
+                #     part0 = parts[0].split(": ")
+                #     part0_prog = part0[2]
+                #     part0_prog_splt = part0_prog.split(", ")
+                #     programming_skills += part0_prog_splt
+                # else:
+                #     print("No Programming Languages found in Skills section")
+                # if "Technical Skills" in line:
+                #     part1 = parts[1].split(": ")
+                #     part1_tech = part1[1]
+                #     part1_tech_splt = part1_tech.split(", ")
+                #     technical_skills += part1_tech_splt
+                # else:
+                #     print("No Technical Skills found in Skills section")
+                # if "Soft Skills" in line:
+                #     part2 = parts[2].split(": ")
+                #     part2_soft = part2[1]
+                #     part2_soft_splt = part2_soft.split(", ")
+                #     soft_skills += part2_soft_splt
+                # else:
+                #     print("No Soft Skills found in Skills section")
+            else:
+                print("No Skills subsection found")
+        else:
+            return_list.append(line)
+
+    #Join return list into a line break separated string
+    return_text = "\n".join(return_list)
+    #Remove duplicate entries, sort alphabetically, make final lines
+    skill = "[0]Skills:"
+    prog_list = list(dict.fromkeys(programming_skills))
+    prog_list.sort()
+    prog = "[1]Programming Languages: " + ", ".join(prog_list)
+    tech_list = list(dict.fromkeys(technical_skills))
+    tech_list.sort()
+    tech = "[1]Technical Skills: " + ", ".join(tech_list)
+    soft_list = list(dict.fromkeys(soft_skills))
+    soft_list.sort()
+    soft = "[1]Soft Skills: " + ", ".join(soft_list)
+
+    return "\n".join([return_text,skill,prog,tech,soft])
 
 def compare_start_nb(output, sample_starts = []):
     # Compare the two outputs and return the differences
@@ -375,9 +464,9 @@ def prepare_input_text(input_text, type):
         for item in return_list:
             return_text += f"{item}\n"
         return return_text
+#endregion
 
-
-#OLLAMA CALL TYPES
+#region SYNC OLLAMA CALLS
 """
 Call Payload Format:
 {
@@ -400,48 +489,37 @@ Call Payload Format:
         "sample_starts": [strict/flexible, digits/cap_letters, start1, start2, ...] #[type, sample starts]
     }
 """
-#STANDARD CALLS
+
+#region STANDARD CALL
 @log_time
-def standard_ollama_call(call_info ={"call_id": "", 
-                                     "payload_in": {
-                                         "model": DEFAULT_MODEL,
-                                         "system": "",
-                                         "stream": False,
-                                         "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
-                                     "format": {
-                                         
-                                     }, 
-                                     "prompt_in": "", 
-                                     "ollama_url": DEFAULT_URL,
-                                     "sample_starts": [] 
-                                     }):
-    call_id = call_info.get("call_id", "")
-    payload_in = call_info.get("payload_in", {})
-    format = call_info.get("format", {})
-    prompt_in = call_info.get("prompt_in", "")
-    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
+def standard_ollama_call(call_info =template_call_info):
+    call_id = call_info["call_id"]
+    payload_in = call_info["payload_in"]
+    format = call_info["format"]
+    prompt_in = call_info["prompt_in"]
+    ollama_url = call_info["ollama_url"]
     function_name = helpers.inspect_function()
-    if call_id == "":
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id is empty string")
-        return f"[ERROR][OLLAMA]{function_name}: call_id is empty string"
+    #General Checks
     if call_id not in payloads.STANDARD:
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} not found in STANDARD payloads")
         return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} not found in STANDARD payloads"
+    if config.DEBUG["INFO_LOGGING"]: logging.info(f"[OLLAMA]{function_name}: call_id: {call_id}")
     if prompt_in == "":
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: prompt_in is empty string")
         return f"[ERROR][OLLAMA]{function_name}: prompt_in is empty string"
+    #Check for formatting in prompt_in
     pattern = r"\{[a-z0-9_]+\}"
     search_pattern = re.search(pattern, prompt_in)
-    if search_pattern and format == {}:
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: prompt_in contains unformatted placeholders")
-        return f"[ERROR][OLLAMA]{function_name}: prompt_in contains unformatted placeholders"
-    if config.DEBUG["INFO_LOGGING"]: logging.info(f"[OLLAMA]{function_name}: call_id: {call_id}")
+    if search_pattern:
+        if config.DEBUG["WARNING_LOGGING"]: logging.error(f"[WARNING][OLLAMA]{function_name}: prompt_in contains placeholders")
     if search_pattern and format != {}:
         prompt = prompt_in.format(**format)
     else:
         prompt = prompt_in
     payload = payload_in.copy()
     payload["prompt"] = prompt
+
+    #DEFAULT SYNC CALL CODE
     if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(payload["model"], payload["prompt"])
     for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
@@ -464,87 +542,33 @@ def standard_ollama_call(call_info ={"call_id": "",
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
         return f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON"
+#endregion
 
-#OTHER CALL-RELATED FUNCTIONS
+#region NON-STANDARD CALLS
 @log_time
-def ollama_call(retries=config.CONFIG["MODELS"]["RETRIES"], runtime_info = {}, function = standard_ollama_call):
-    """
-    For standard calls do output = ollama_call(runtime_info = payloads.PAYLOAD["call_id"], sample_starts = payloads.PAYLOAD["sample_starts"], function = standard_ollama_call)
-    [TO BE IMPLEMENTED]
-    Or: output = ollama_call(runtime_info = payloads.PAYLOAD["call_id"].set_runtime_fields(), sample_starts = payloads.PAYLOAD["sample_starts"], function = standard_ollama_call)
-    """
-    function_name = helpers.inspect_function()
-    response = ""
-    if retries < 1:
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: retries is less than 1")
-        return f"[ERROR][OLLAMA]{function_name}: retries is less than 1"
-    if runtime_info == {}:
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: runtime_info is empty dict")
-        return f"[ERROR][OLLAMA]{function_name}: runtime_info is empty dict"
-    if "call_id" not in runtime_info:
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id is missing")
-        return f"[ERROR][OLLAMA]{function_name}: call_id is missing"
-    if runtime_info.get("call_id", "") == "":
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id is empty")
-        return f"[ERROR][OLLAMA]{function_name}: call_id is empty"
-    call_info = fetch_complete_call_info(call_id=runtime_info["call_id"], runtime_info=runtime_info)
-    #For standard calls: "call_id": "", "model": DEFAULT_MODEL, "system": "", "format": {} , "ollama_url": DEFAULT_URL need to be set
-    for i in range(retries):
-        try:
-            #sample_starts key is unneeded, only useful for comparison and QA
-            response = function(call_info).strip()
-            if response.startswith("[ERROR]"):
-                if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama call returned error: {response}. Retrying {i+1}/{retries}...")
-                continue
-            if call_info["sample_starts"] != []:
-                response = helpers.filter_output(response, call_info["sample_starts"][1])
-                if compare_start(response, call_info["sample_starts"]) == False:
-                    if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Output does not match expected start lines or output length. Retrying {i+1}/{retries}...")
-                    continue
-            if config.DEBUG["INFO_LOGGING"]: logging.info(f"[SUCCESS][OLLAMA]{function_name}: Ollama call succeeded: {response}")
-            return response
-        except Exception as e:
-            if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: {e}")
-            if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Exception occurred during Ollama call. Retrying {i+1}/{retries}...")
-            continue
-    if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: All retries exhausted. Returning last response.")
-    return f"[ERROR][OLLAMA]{function_name}: All retries exhausted."
+def batch_summarize_sections(call_info = template_call_info):
+    call_id = call_info["call_id"]
+    payload_in = call_info["payload_in"]
 
-#NON-STANDARD CALLS
-@log_time
-def batch_summarize_sections(call_info = {"call_id": "batch_summarize_sections", 
-                                          "payload_in": {"model": DEFAULT_MODEL,
-                                                         "system": "",
-                                                         "stream": False,
-                                                         "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
-                                          "format": {
-                                              "sections": [],
-                                              "section_names": []
-                                          }, 
-                                          "prompt_in": "", 
-                                          "ollama_url": DEFAULT_URL,
-                                          "sample_starts": []
-                                          }):
     sections = call_info["format"].get("sections", [])
     section_names = call_info["format"].get("section_names", [])
-    call_id = call_info.get("call_id", "")
-    payload_in = call_info.get("payload_in", {})
-    prompt_in = call_info.get("prompt_in", "")
-    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
     sections_text = "\n".join(sections)
     format = {
         "sections_text": sections_text
     }
+
+    prompt_in = call_info["prompt_in"]
+    ollama_url = call_info["ollama_url"]
     function_name = helpers.inspect_function()
+
     if call_id != function_name:
-        logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
         return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}"
+    #Needs prompt_in
     if prompt_in == "":
-        logging.error(f"[ERROR][OLLAMA]{function_name}: prompt_in is empty string")
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: prompt_in is empty string")
         return f"[ERROR][OLLAMA]{function_name}: prompt_in is empty string"
-    #pattern = r"\{[a-z0-9_]+\}"
-    #if re.search(pattern, prompt_in) and format == {}:
-    #    logging.error(f"[ERROR][OLLAMA]{function_name}: prompt_in contains unformatted placeholders")
+    
     if config.DEBUG["INFO_LOGGING"]: logging.info(f"[OLLAMA]{function_name}: call_id: {call_id}")
     
     prompt = prompt_in.format(**format)
@@ -553,6 +577,8 @@ def batch_summarize_sections(call_info = {"call_id": "batch_summarize_sections",
     
     payload = payload_in.copy()
     payload["prompt"] = prompt
+
+    #DEFAULT SYNC CALL CODE
     if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(payload["model"], payload["prompt"])
     for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
@@ -577,24 +603,7 @@ def batch_summarize_sections(call_info = {"call_id": "batch_summarize_sections",
         return f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON"
 
 @log_time #USED IN MAIN
-def tailor_volunteering_and_leadership(call_info = {"call_id": "tailor_volunteering_and_leadership", 
-                                          "payload_in": {"model": DEFAULT_MODEL,
-                                                         "system": "",
-                                                         "stream": False,
-                                                         "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
-                                          "format": {
-                                              "raw_cv_data": "",
-                                              "job_description_summary": "",
-                                              "section": "volunteering_and_leadership",
-                                              "reference_dct": {},
-                                              "systems": ["", ""],
-                                              "standard_calls": ["step0_volunteering_and_leadership",
-                                                                 "step3_volunteering_and_leadership"]
-                                          }, 
-                                          "prompt_in": "", 
-                                          "ollama_url": DEFAULT_URL,
-                                          "sample_starts": []
-                                          }):
+def tailor_volunteering_and_leadership(call_info = template_call_info):
     
     call_id = call_info.get("call_id", "")
     payload_in = call_info.get("payload_in", {})
@@ -1830,187 +1839,7 @@ def new_vs_old_resume(call_info=template_call_info):
         analysis_txts.append(analysis_txt)
     return analysis_txts
 
-#ASYNC CALL SYSTEM
-async def standard_ollama_call_async(session, retries = config.CONFIG["MODELS"]["RETRIES"],call_info = {
-                                "call_id": "standard_async",
-                                "payload_in": {
-                                    "model": DEFAULT_MODEL,
-                                    "system": "",
-                                    "stream": False,
-                                    "temperature": CONFIG["MODELS"]["TEMPERATURE"]
-                                    }, 
-                                "format":{
-
-                                },
-                                "prompt_in": "",
-                                "ollama_url": DEFAULT_URL,
-                                "sample_starts": []
-                            }):
-    call_id = call_info.get("call_id", "")
-    payload_in = call_info.get("payload_in", {})
-    format = call_info.get("format", {})
-    prompt_in = call_info.get("prompt_in", "")
-    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
-    function_name = helpers.inspect_function()
-    if call_id == "":
-        return f"[ERROR][OLLAMA][ASYNC]{function_name}: call_id is empty string"
-    if call_id not in payloads.ASYNC:
-        return f"[ERROR][OLLAMA][ASYNC]{function_name}: call_id {call_id} not found in ASYNC payloads"
-    if prompt_in == "":
-        return f"[ERROR][OLLAMA][ASYNC]{function_name}: prompt_in is empty string"
-    if format != {}:
-        prompt = prompt_in.format(**format)
-    else:
-        prompt = prompt_in
-    payload = payload_in.copy()
-    payload["prompt"] = prompt
-    # Check payload fields
-    for field in ["model", "system", "prompt", "stream", "temperature"]:
-        value = payload.get(field, None)
-        if value is None:
-            return f"[ERROR][OLLAMA][ASYNC]{function_name}: payload field {field} is missing or is NoneType"
-    for i in range(retries):
-        async with session.post(f"{ollama_url}/api/generate", json=payload) as resp:
-            try:
-                data = await resp.json()
-                if resp.status == 400:
-                    return f"[ERROR][OLLAMA][ASYNC]{function_name}: Ollama status_code 400"    
-                response_text =  data.get("response", "")
-                if response.startswith("[ERROR]"):
-                    continue
-                if payload["sample_starts"] != []:
-                    response = helpers.filter_output(response, payload["sample_starts"][1])
-                    if compare_start_nb(response, payload["sample_starts"]) == False:
-                        continue         
-                return response_text
-            except aiohttp.ContentTypeError as e:
-                continue
-    return f"[ERROR][OLLAMA][ASYNC]{function_name}: All retries exhausted."
-        
-#raise ValueError    
-async def ollama_call_async(retries=config.CONFIG["MODELS"]["RETRIES"], runtime_infos = [], function = standard_ollama_call_async ):
-    function_name = helpers.inspect_function()
-    if retries < 1:
-       raise ValueError(f"[ERROR][OLLAMA][ASYNC]{function_name}: retries is less than 1")
-    if runtime_infos == []:
-        raise ValueError (f"[ERROR][OLLAMA][ASYNC]{function_name}: runtime_infos is empty list")
-    async with aiohttp.ClientSession() as session:
-        tasks = []
-        for i in range(len(runtime_infos)):
-            runtime_info = runtime_infos[i].copy()
-            if "call_id" not in runtime_info:
-                raise ValueError(f"[ERROR]{function_name}: missing call_id")
-            if runtime_info.get("call_id", "") == "":
-                raise ValueError(f"[ERROR]{function_name}: empty call_id")
-            call_info = fetch_complete_call_info(call_id=runtime_info["call_id"], runtime_info=runtime_info)
-            for key in runtime_info:
-                if key == "call_id":
-                    continue
-                elif key == "ollama_url" or key == "format" or key == "prompt_in":
-                    call_info[key] = runtime_info[key]
-                else:
-                    for key_pay in runtime_info["payload_in"]:
-                        call_info["payload_in"][key_pay] = runtime_info["payload_in"][key_pay]
-            # payload["prompt"] = f"Prompt {i+1}"  
-            tasks.append(function(session, retries,call_info))
-        results = await asyncio.gather(*tasks)
-        for result in results:
-            if result.startswith("[ERROR]"):
-                raise ValueError(f"[ERROR]{function_name}: error in async processing of ollama calls")
-    return results
-
-@log_time
-def return_text_with_skills(cv_text):
-    #Note: text: comma separated skills, dict: section to subsections to lists
-    return_list = []
-    programming_skills = []
-    technical_skills = []
-    soft_skills = []
-
-    lines = cv_text.splitlines()
-    for line in lines:
-        if line.startswith("[1]Skills:"):
-            templine = line.replace("[1]Skills:", "").strip()
-            if (templine != "") or templine:
-                parts = line.split(";")
-                parts = [part.strip() for part in parts]
-                    #Programming Languages: Programming Language N1, ..., Programming Language NN
-                    #Technical Skills: Technical Skill N1, ..., Technical Skill N2
-                    #Soft Skills: Soft Skill N1, ..., Soft Skill N2
-                for part in enumerate(parts):
-                    if "Programming Languages:" in part:
-                        skills = part.split(":")
-                        if len(skills) > 1:
-                            skills = [skill.strip() for skill in skills]
-                            skills_r = skills[1].split(",")
-                            skills_r = [skill.strip() for skill in skills_r]
-                            programming_skills += skills_r
-                        else:
-                            print("No Programming Languages found in Skills section")
-                    elif "Technical Skills:" in part:
-                        skills = part.split(":")
-                        if len(skills) > 1:
-                            skills = [skill.strip() for skill in skills]
-                            skills_r = skills[1].split(",")
-                            skills_r = [skill.strip() for skill in skills_r]
-                            technical_skills += skills_r
-                        else:
-                            print("No Technical Skills found in Skills section")
-                    elif "Soft Skills:" in part:
-                        skills = part.split(":")
-                        if len(skills) > 1:
-                            skills = [skill.strip() for skill in skills]
-                            skills_r = skills[1].split(",")
-                            skills_r = [skill.strip() for skill in skills_r]
-                            soft_skills += skills_r
-                        else:
-                            print("No Soft Skills found in Skills section")
-
-                # if "Programming Languages" in line:
-
-                #     part0 = parts[0].split(": ")
-                #     part0_prog = part0[2]
-                #     part0_prog_splt = part0_prog.split(", ")
-                #     programming_skills += part0_prog_splt
-                # else:
-                #     print("No Programming Languages found in Skills section")
-                # if "Technical Skills" in line:
-                #     part1 = parts[1].split(": ")
-                #     part1_tech = part1[1]
-                #     part1_tech_splt = part1_tech.split(", ")
-                #     technical_skills += part1_tech_splt
-                # else:
-                #     print("No Technical Skills found in Skills section")
-                # if "Soft Skills" in line:
-                #     part2 = parts[2].split(": ")
-                #     part2_soft = part2[1]
-                #     part2_soft_splt = part2_soft.split(", ")
-                #     soft_skills += part2_soft_splt
-                # else:
-                #     print("No Soft Skills found in Skills section")
-            else:
-                print("No Skills subsection found")
-        else:
-            return_list.append(line)
-
-    #Join return list into a line break separated string
-    return_text = "\n".join(return_list)
-    #Remove duplicate entries, sort alphabetically, make final lines
-    skill = "[0]Skills:"
-    prog_list = list(dict.fromkeys(programming_skills))
-    prog_list.sort()
-    prog = "[1]Programming Languages: " + ", ".join(prog_list)
-    tech_list = list(dict.fromkeys(technical_skills))
-    tech_list.sort()
-    tech = "[1]Technical Skills: " + ", ".join(tech_list)
-    soft_list = list(dict.fromkeys(soft_skills))
-    soft_list.sort()
-    soft = "[1]Soft Skills: " + ", ".join(soft_list)
-
-    return "\n".join([return_text,skill,prog,tech,soft])
-
-#MAYBE, USED IN MAIN
-@log_time
+@log_time #USED IN MAIN
 def consistency_checker_vs_cv_cv(call_info = template_call_info):
     call_id = call_info.get("call_id", "")
     payload_in = call_info.get("payload_in", {})
@@ -2069,8 +1898,8 @@ def consistency_checker_vs_cv_cv(call_info = template_call_info):
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
         return f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON"
-#MAYBE, USED IN MAIN
-@log_time
+    
+@log_time #USED IN MAIN
 def compose_cover_letter_dictionary(call_info = template_call_info):
     """
     Given a resume containing education, experiences, projects and skills considered 
@@ -2118,3 +1947,111 @@ def compose_cover_letter_dictionary(call_info = template_call_info):
     output_dict = parsers.dict_grafter(dict_list)
     #Return the output_dict
     return output_dict  
+#endregion
+
+#region ASYNC OLLAMA CALLS
+async def standard_ollama_call_async(session, retries = config.CONFIG["MODELS"]["RETRIES"],call_info = template_call_info):
+    call_id = call_info["call_id"]
+    payload_in = call_info["payload_in"]
+    format = call_info["format"]
+    prompt_in = call_info["prompt_in"]
+    ollama_url = call_info["ollama_url"]
+    sample_starts = call_info["sample_starts"]
+    function_name = helpers.inspect_function()
+    if call_id not in payloads.ASYNC:
+        return f"[ERROR][OLLAMA][ASYNC]{function_name}: call_id {call_id} not found in ASYNC payloads"
+    if format != {}:
+        prompt = prompt_in.format(**format)
+    else:
+        prompt = prompt_in
+    payload = payload_in.copy()
+    payload["prompt"] = prompt
+    # Check payload fields
+    for field in ["model", "system", "prompt", "stream", "temperature"]:
+        value = payload.get(field, None)
+        if value is None:
+            return f"[ERROR][OLLAMA][ASYNC]{function_name}: payload field {field} is missing or is NoneType"
+    for i in range(retries):
+        async with session.post(f"{ollama_url}/api/generate", json=payload) as resp:
+            try:
+                data = await resp.json()
+                if resp.status == 400:
+                    continue
+                    #return f"[ERROR][OLLAMA][ASYNC]{function_name}: Ollama status_code 400"    
+                response_text =  data.get("response", "")
+                if payload["sample_starts"] != []:
+                    response = helpers.filter_output(response, sample_starts[1])
+                    if compare_start_nb(response, sample_starts["sample_starts"]) == False:
+                        continue         
+                return response_text
+            except aiohttp.ContentTypeError as e:
+                continue
+    return f"[ERROR][OLLAMA][ASYNC]{function_name}: All retries exhausted."
+#endregion
+
+#region MAIN CALL HANDLERS
+@log_time
+def ollama_call(retries=config.CONFIG["MODELS"]["RETRIES"], runtime_info = {}, function = standard_ollama_call):
+
+    function_name = helpers.inspect_function()
+    response = ""
+    if retries < 1:
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: retries is less than 1")
+        return f"[ERROR][OLLAMA]{function_name}: retries is less than 1"
+    if runtime_info == {}:
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: runtime_info is empty dict")
+        return f"[ERROR][OLLAMA]{function_name}: runtime_info is empty dict"
+    if "call_id" not in runtime_info:
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id is missing")
+        return f"[ERROR][OLLAMA]{function_name}: call_id is missing"
+    if runtime_info.get("call_id", "") == "":
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id is empty")
+        return f"[ERROR][OLLAMA]{function_name}: call_id is empty"
+    call_info = fetch_complete_call_info(call_id=runtime_info["call_id"], runtime_info=runtime_info)
+    #For standard calls: "call_id": "", "model": DEFAULT_MODEL, "system": "", "format": {} , "ollama_url": DEFAULT_URL need to be set
+    for i in range(retries):
+        try:
+            #sample_starts key is unneeded, only useful for comparison and QA
+            response = function(call_info).strip()
+            if response.startswith("[ERROR]"):
+                if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama call returned error: {response}. Retrying {i+1}/{retries}...")
+                continue
+            if call_info["sample_starts"] != []:
+                response = helpers.filter_output(response, call_info["sample_starts"][1])
+                if compare_start(response, call_info["sample_starts"]) == False:
+                    if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Output does not match expected start lines or output length. Retrying {i+1}/{retries}...")
+                    continue
+            if config.DEBUG["INFO_LOGGING"]: logging.info(f"[SUCCESS][OLLAMA]{function_name}: Ollama call succeeded: {response}")
+            return response
+        except Exception as e:
+            if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: {e}")
+            if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Exception occurred during Ollama call. Retrying {i+1}/{retries}...")
+            continue
+    if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: All retries exhausted. Returning last response.")
+    return f"[ERROR][OLLAMA]{function_name}: All retries exhausted."
+   
+async def ollama_call_async(retries=config.CONFIG["MODELS"]["RETRIES"], runtime_infos = [], function = standard_ollama_call_async ):
+    function_name = helpers.inspect_function()
+    if retries < 1:
+       raise ValueError(f"[ERROR][OLLAMA][ASYNC]{function_name}: retries is less than 1")
+    if runtime_infos == []:
+        raise ValueError (f"[ERROR][OLLAMA][ASYNC]{function_name}: runtime_infos is empty list")
+    async with aiohttp.ClientSession() as session:
+        tasks = []
+        for i in range(len(runtime_infos)):
+            runtime_info = runtime_infos[i].copy()
+            if "call_id" not in runtime_info:
+                raise ValueError(f"[ERROR]{function_name}: missing call_id")
+            if runtime_info.get("call_id", "") == "":
+                raise ValueError(f"[ERROR]{function_name}: empty call_id")
+            call_info = fetch_complete_call_info(call_id=runtime_info["call_id"], runtime_info=runtime_info)
+            # payload["prompt"] = f"Prompt {i+1}"  
+            tasks.append(function(session, retries,call_info))
+        results = await asyncio.gather(*tasks)
+        for result in results:
+            if result.startswith("[ERROR]"):
+                raise ValueError(f"[ERROR]{function_name}: error in async processing of ollama calls")
+    return results
+#endregion
+
+#endregion
