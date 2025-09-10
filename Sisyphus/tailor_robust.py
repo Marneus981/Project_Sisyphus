@@ -1333,38 +1333,17 @@ def sliding_window_four_sections(call_info = template_call_info):
         return f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON"
 
 @log_time
-def slide_summary(call_info = {"call_id": "slide_summary", 
-                                "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
-                                                "system": "", # #system="",
-                                                "stream": False,
-                                                "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
-                                "format": {
-                                    "sections_dct_list" : [], #sections_dct_list=[]
-                                    "systems": [], #(min size: 3) system1="", system2="", system3="", system4="", system_s="",
-                                    "skill_section": False, #skill_section=False,
-                                    "windows":2, #windows=2,
-                                    "mode": "single", #mode="single"
-                                    "standard_calls": ["summarize_general_info", "summarize_skills"],
-                                    "non_standard_calls": ["sliding_window_two_sections",
-                                                           "sliding_window_three_sections",
-                                                           "sliding_window_four_sections"],
-                                }, 
-                                "prompt_in": "", #Empty
-                                "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
-                                "sample_starts": []
-                                }):
-    call_id = call_info.get("call_id", "")
-    payload_in = call_info.get("payload_in", {})
-    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
-    format = call_info.get("format", {})
+def slide_summary(call_info = template_call_info):
+    call_id = call_info["call_id"]
+    payload_in = call_info["payload_in"]
+    format = call_info["format"]
+    prompt_in = call_info["prompt_in"]
+    ollama_url = call_info["ollama_url"]
     function_name = helpers.inspect_function()
-    prompt_in = call_info.get("prompt_in", "")                       
-    if call_id == "":
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id is empty string")
-        return f"[ERROR][OLLAMA]{function_name}: call_id is empty string"
     if call_id != function_name:
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
-        return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}" 
+        return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}"
+    
     sys_len =   len(format["systems"])                     
     if  sys_len< 3:                       
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: sys_len {sys_len} is less than operational minimum (3)")
@@ -1440,7 +1419,8 @@ def slide_summary(call_info = {"call_id": "slide_summary",
                                     }, 
                                     "ollama_url": ollama_url,
             }
-            slide = ollama_call(runtime_info=runtime_info_temp, function=sliding_window_two_sections)
+            ollama_func_name = format["non_standard_calls"][0] 
+            slide = ollama_call(runtime_info=runtime_info_temp, function=globals()[ollama_func_name])
             slide_results.append(slide)
         elif windows == 3:
             runtime_info_temp = {
@@ -1459,7 +1439,8 @@ def slide_summary(call_info = {"call_id": "slide_summary",
                                     }, 
                                     "ollama_url": ollama_url,
             }
-            slide = ollama_call(runtime_info=runtime_info_temp, function=sliding_window_three_sections)
+            ollama_func_name = format["non_standard_calls"][1] 
+            slide = ollama_call(runtime_info=runtime_info_temp, function=globals()[ollama_func_name])
             slide_results.append(slide)
         elif windows == 4:
             runtime_info_temp = {
@@ -1478,7 +1459,8 @@ def slide_summary(call_info = {"call_id": "slide_summary",
                                     }, 
                                     "ollama_url": ollama_url,
             }
-            slide = ollama_call(runtime_info=runtime_info_temp, function=sliding_window_four_sections)
+            ollama_func_name = format["non_standard_calls"][2] 
+            slide = ollama_call(runtime_info=runtime_info_temp, function=globals()[ollama_func_name])
             slide_results.append(slide)
     general_info = "\n".join(general_txts).strip()
     runtime_info_temp = {
@@ -1510,35 +1492,14 @@ def slide_summary(call_info = {"call_id": "slide_summary",
     return slide_results
 
 @log_time #USED IN MAIN ; returns ERROR as text
-def step0_tailor_summary(call_info ={
-        "call_id": "step0_tailor_summary", 
-        "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
-                        "system": "", # #system="",
-                        "stream": False,
-                        "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
-        "format": {
-            "raw_cv_data" : "", #raw_cv_data = ""
-            "systems": [], #(min size: 4) , system0 = "", system1 = "", system2 = "", system3 = "", system4 = "",system_s = ""
-            "skill_section": False, #skill_section=False,
-            "windows":2, #windows=2,
-            "mode": "single", #mode="single"
-            "standard_calls": [],
-            "non_standard_calls": ["slide_summary"],
-        }, 
-        "prompt_in":"",
-        "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
-        "sample_starts": []
-    }):
-    call_id = call_info.get("call_id", "")
-    payload_in = call_info.get("payload_in", {})
-    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
-    format = call_info.get("format", {})
+def step0_tailor_summary(call_info = template_call_info):
+    call_id = call_info["call_id"]
+    payload_in = call_info["payload_in"]
+    format = call_info["format"]
+    prompt_in = call_info["prompt_in"]
+    ollama_url = call_info["ollama_url"]
     function_name = helpers.inspect_function()
-    prompt_in = call_info.get("prompt_in", "")
     non_standard_calls= format.get("non_standard_calls", [])
-    if call_id == "":
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id is empty string")
-        return f"[ERROR][OLLAMA]{function_name}: call_id is empty string"
     if call_id != function_name:
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
         return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}" 
@@ -1546,6 +1507,7 @@ def step0_tailor_summary(call_info ={
     if  sys_len< 4:                       
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: sys_len {sys_len} is less than operational minimum (3)")
         return f"[ERROR][OLLAMA]{function_name}: sys_len {sys_len} is less than operational minimum (4)"
+    
     systems=format.get("systems", ["","","",""])
     mode =format.get("mode", "single")
     raw_cv_data =format.get("raw_cv_data", "")
@@ -1573,7 +1535,8 @@ def step0_tailor_summary(call_info ={
                             "mode": mode, #mode="single"
                         }
                         }
-    slides = ollama_call(runtime_info=runtime_info_temp, function=slide_summary)
+    ollama_func_name = non_standard_calls[0]
+    slides = ollama_call(runtime_info=runtime_info_temp, function=globals()[ollama_func_name])
     #Join slides
     slides_txt = "\n".join(slides).strip()
     slides_txt_temp = {
@@ -1582,7 +1545,7 @@ def step0_tailor_summary(call_info ={
     prompt = prompt_in.format(**slides_txt_temp)
     payload = payload_in.copy()
     payload["prompt"] = prompt
-    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(payload_in["model"], prompt)
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(payload["model"], payload["prompt"])
     for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
@@ -1595,49 +1558,24 @@ def step0_tailor_summary(call_info ={
         result = response.json()
         if response.status_code == 400:
             if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Bad Request: Payload={payload}, Response={result}")
-            return f"[ERROR][OLLAMA]{function_name}: Ollama status_code 400"
+            return f"[ERROR][OLLAMA]{function_name}: Ollama status_code 400"    
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(payload["model"], response_text, type="output", offset=input_tks)
         if config.DEBUG["INFO_LOGGING"]: print(f"[SUCCESS][OLLAMA]{function_name}: {result}")
-        return response_text #Allegedly cleaned on ollama_call
+        return response_text
     except requests.exceptions.JSONDecodeError as e:
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
         return f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON"
 
 @log_time #USED IN MAIN
-def tailor_summary(call_info = {
-                    "call_id": "step0_tailor_summary", 
-                    "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
-                                    "system": "", #system
-                                    "stream": False,
-                                    "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
-                    "format": {
-                        "raw_cv_data" : "", #raw_cv_data=""
-                        "job_description" : "", #job_description=""
-                        "systems": [], # system0="",system1="", system2="", system3="", system4="", system_s="",
-                                        #system00="",system01="", (min 6)
-                        "skill_section": False, 
-                        "windows":2, #windows=2
-                        "mode": "single", #mode="single"
-                        "standard_calls": ["step1_tailor_summary"],
-                        "non_standard_calls": ["step0_tailor_summary"],
-                    }, 
-                    "prompt_in": "",#Empty
-                    "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
-                    "sample_starts": ["strict", "digits", "[0]Summary:"] 
-    }):
-    call_id = call_info.get("call_id", "")
-    payload_in = call_info.get("payload_in", {})
-    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
-    format = call_info.get("format", {})
-    prompt_in = call_info.get("prompt_in","") #Empty
-    
-    
+def tailor_summary(call_info = template_call_info):
+    call_id = call_info["call_id"]
+    payload_in = call_info["payload_in"]
+    format = call_info["format"]
+    prompt_in = call_info["prompt_in"]
+    ollama_url = call_info["ollama_url"]
     function_name = helpers.inspect_function()
-    if call_id == "":
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id is empty string")
-        return f"[ERROR][OLLAMA]{function_name}: call_id is empty string"
     if call_id != function_name:
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
         return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}" 
@@ -1687,20 +1625,17 @@ def tailor_summary(call_info = {
         },
         "ollama_url":ollama_url
     }
-    step1 = ollama_call(runtime_info = runtime_info_temp, function= standard_ollama_call)
+    step1 = ollama_call(runtime_info = runtime_info_temp)
     return step1.strip()
 
 @log_time
 def new_vs_old_resume(call_info=template_call_info):
-    call_id = call_info.get("call_id", "")
-    payload_in = call_info.get("payload_in", {})
-    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
-    format = call_info.get("format", {})
+    call_id = call_info["call_id"]
+    payload_in = call_info["payload_in"]
+    format = call_info["format"]
+    prompt_in = call_info["prompt_in"]
+    ollama_url = call_info["ollama_url"]
     function_name = helpers.inspect_function()
-    prompt_in = call_info.get("prompt_in", "")
-    if call_id == "":
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id is empty string")
-        return f"[ERROR][OLLAMA]{function_name}: call_id is empty string"
     if call_id != function_name:
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
         return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}" 
@@ -1734,21 +1669,18 @@ def new_vs_old_resume(call_info=template_call_info):
                     },
             "ollama_url": ollama_url, #Set at runtime
         }
-        analysis_txt = ollama_call(runtime_info=runtime_info_temp, function=standard_ollama_call)
+        analysis_txt = ollama_call(runtime_info=runtime_info_temp)
         analysis_txts.append(analysis_txt)
     return analysis_txts
 
 @log_time #USED IN MAIN
 def consistency_checker_vs_cv_cv(call_info = template_call_info):
-    call_id = call_info.get("call_id", "")
-    payload_in = call_info.get("payload_in", {})
-    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
-    format = call_info.get("format", {})
+    call_id = call_info["call_id"]
+    payload_in = call_info["payload_in"]
+    format = call_info["format"]
+    prompt_in = call_info["prompt_in"]
+    ollama_url = call_info["ollama_url"]
     function_name = helpers.inspect_function()
-    prompt_in = call_info.get("prompt_in", "")
-    if call_id == "":
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id is empty string")
-        return f"[ERROR][OLLAMA]{function_name}: call_id is empty string"
     if call_id != function_name:
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
         return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}" 
@@ -1775,7 +1707,7 @@ def consistency_checker_vs_cv_cv(call_info = template_call_info):
     prompt = prompt_in.format(**all_analysis_dct)
     payload = payload_in.copy()
     payload["prompt"] = prompt
-    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(payload_in["model"], prompt)
+    if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(payload["model"], payload["prompt"])
     for field in ["model", "system", "prompt", "stream", "temperature"]:
         value = payload.get(field, None)
         if value is not None:
@@ -1788,15 +1720,16 @@ def consistency_checker_vs_cv_cv(call_info = template_call_info):
         result = response.json()
         if response.status_code == 400:
             if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Bad Request: Payload={payload}, Response={result}")
-            return f"[ERROR][OLLAMA]{function_name}: Ollama status_code 400"
+            return f"[ERROR][OLLAMA]{function_name}: Ollama status_code 400"    
         response_text = result.get("response", "")
         if config.DEBUG["TOKEN_LOGGING"]: output_tks = helpers.token_math(payload["model"], response_text, type="output", offset=input_tks)
         if config.DEBUG["INFO_LOGGING"]: print(f"[SUCCESS][OLLAMA]{function_name}: {result}")
-        return response_text #Allegedly cleaned on ollama_call
+        return response_text
     except requests.exceptions.JSONDecodeError as e:
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
         return f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON"
+
     
 @log_time #USED IN MAIN
 def compose_cover_letter_dictionary(call_info = template_call_info):
@@ -1804,12 +1737,12 @@ def compose_cover_letter_dictionary(call_info = template_call_info):
     Given a resume containing education, experiences, projects and skills considered 
     to be relevant a job description: Return a cover letter tailored to the job description.
     """
-    call_id = call_info.get("call_id", "")
-    payload_in = call_info.get("payload_in", {})
-    ollama_url = call_info.get("ollama_url", DEFAULT_URL)
-    format = call_info.get("format", {})
+    call_id = call_info["call_id"]
+    payload_in = call_info["payload_in"]
+    format = call_info["format"]
+    prompt_in = call_info["prompt_in"]
+    ollama_url = call_info["ollama_url"]
     function_name = helpers.inspect_function()
-    prompt_in = call_info.get("prompt_in", "")
 
     cv_text = format["cv_text"]
 
