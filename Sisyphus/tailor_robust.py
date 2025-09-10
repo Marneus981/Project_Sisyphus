@@ -9,7 +9,7 @@ import aiohttp
 import asyncio
 import warnings
 from config import CONFIG
-import payloads
+from Sisyphus import payloads
 import re
 DEFAULT_MODEL = "llama3:8b"
 DEFAULT_URL = "http://localhost:11434"
@@ -32,17 +32,26 @@ print = logging.info
 #region MISC FUNCTIONS
 def fetch_complete_call_info(call_id = "", runtime_info = {}):
     function_name =helpers.inspect_function()
+    if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: fetching complete call info for call id {call_id}...")
     if call_id not in payloads.PAYLOADS:
+        if config.DEBUG["ERROR_LOGGING"]: print(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} not found in payloads.PAYLOADS")
         raise ValueError(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} not found in payloads.PAYLOADS")
     if call_id == "":
+        if config.DEBUG["ERROR_LOGGING"]: print(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} not provided")
         raise ValueError(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} not provided")
     runtime_info_tmp = runtime_info.copy()
-    fixed_call_info = payloads.PAYLOADS[call_id]
+    fixed_call_info = payloads.PAYLOADS[call_id].copy()
     for key in runtime_info_tmp:
         if key == "payload_in" or key == "format":
             for key_n in runtime_info_tmp[key]:
                 fixed_call_info[key][key_n] = runtime_info_tmp[key][key_n]
-        fixed_call_info[key] = runtime_info_tmp[key]
+        else:
+            fixed_call_info[key] = runtime_info_tmp[key]
+    if config.DEBUG["INFO_LOGGING"]: 
+        print(f"[INFO][OLLAMA]{function_name}: complete call info:")
+        for key in fixed_call_info:
+            print(f"[INFO][OLLAMA]{function_name}: found key {key} with value:")
+            print(f"{fixed_call_info[key]}")
     return fixed_call_info
 
 @log_time
@@ -511,7 +520,7 @@ def standard_ollama_call(call_info =template_call_info):
     pattern = r"\{[a-z0-9_]+\}"
     search_pattern = re.search(pattern, prompt_in)
     if search_pattern:
-        if config.DEBUG["WARNING_LOGGING"]: logging.error(f"[WARNING][OLLAMA]{function_name}: prompt_in contains placeholders")
+        if config.DEBUG["WARNING_LOGGING"]: logging.warning(f"[WARNING][OLLAMA]{function_name}: prompt_in contains placeholders")
     if search_pattern and format != {}:
         prompt = prompt_in.format(**format)
     else:
@@ -1106,7 +1115,7 @@ def sliding_window_three_sections(call_info = template_call_info):
                        # section1_name = "", section2_name = "", section3_name = "", 
                        # candidate_name = "", candidate_title = "", mode = "single"
     if CONFIG["SUMMARY_REQUESTS"] > 3:
-        warnings.warn("[WARNING]sliding_window_three_sections: number of requests exceeds sliding window size, using maximum possible request number (3)")
+        if config.DEBUG["WARNING_LOGGING"]: warnings.warn("[WARNING]sliding_window_three_sections: number of requests exceeds sliding window size, using maximum possible request number (3)")
     if CONFIG["SUMMARY_REQUESTS"] < 0:
         raise ValueError("[ERROR]sliding_window_three_sections: SUMMARY_REQUESTS must be a positive integer")
 
@@ -1232,7 +1241,7 @@ def sliding_window_four_sections(call_info = template_call_info):
                         #mode="single"
 
     if CONFIG["SUMMARY_REQUESTS"] > 4:
-        warnings.warn("[WARNING]sliding_window_four_sections: number of requests exceeds sliding window size, using maximum possible request number (4)")
+        if config.DEBUG["WARNING_LOGGING"]: warnings.warn("[WARNING]sliding_window_four_sections: number of requests exceeds sliding window size, using maximum possible request number (4)")
     if CONFIG["SUMMARY_REQUESTS"] < 0:
         raise ValueError("[ERROR]sliding_window_four_sections: SUMMARY_REQUESTS must be a positive integer")
 

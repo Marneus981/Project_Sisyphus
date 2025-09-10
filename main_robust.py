@@ -43,12 +43,38 @@ def check_summaries(update_job_desc = False, update_resume = False):
     job_desc = job_desc_textbox.get("1.0", tk.END).strip()
     global summarized_job_desc, summarized_resume, current_cv_text
     if summarized_job_desc == "" or update_job_desc:
-        summarized_job_desc = tailor.summarize_job_description(job_desc, model=selected_model, system=system_text)
+        ollama_func_name = "summarize_job_description"
+        runtime_info_temp = {
+            "call_id": ollama_func_name, 
+            "payload_in": {
+                        "model": selected_model, #Set at runtime
+                        "system": system_text,  #Set at runtime
+                        },
+            "format": {#Set at runtime
+                    "job_description": job_desc 
+                    }
+                    
+        }
+        
+        summarized_job_desc = tailor_robust.ollama_call(runtime_info=runtime_info_temp)#Standard
     if (summarized_resume == "" or update_resume) and current_cv_text:
         #current_cv_text is supposed to be the end product, but it gets assigned after step 4, so do keep that in mind when debugging
-        summarized_resume = tailor.step0_tailor_summary(model=selected_model, raw_cv_data=current_cv_text, system_s=system_text,
-                                                    system=system_text, system0=system_text, system1=system_text, system2=system_text, system3=system_text, system4=system_text,
-                                                     windows=CONFIG["WINDOWS"], skill_section=True, mode=CONFIG["SUMMARY_MODE"])
+        ollama_func_name = "step0_tailor_summary"
+        runtime_info_temp = {
+            "call_id": ollama_func_name, 
+            "payload_in": {"model": selected_model, #model=DEFAULT_MODEL,
+                            "system": system_text # #system="",
+            },
+            "format": {
+                "raw_cv_data" : current_cv_text, #raw_cv_data = ""
+                "systems": [system_text,system_text,system_text,system_text,system_text,system_text], #(min size: 4) , system0 = "", system1 = "", system2 = "", system3 = "", system4 = "",system_s = ""
+                "skill_section":    True, #skill_section=False,
+                "windows":CONFIG["WINDOWS"], #windows=2,
+                "mode": CONFIG["SUMMARY_MODE"], #mode="single"
+        }, 
+        }
+        func = getattr(tailor_robust, ollama_func_name)
+        summarized_resume = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function=func)#Non-Standard
 
 @log_time
 def title_type(cv_text):
@@ -275,15 +301,21 @@ def tailor_cv(root, show = True):
     if v_and_l_section:
         print("Tailoring volunteering and leadership section...")
         v_and_l_text = parsers.inv_parse_cv(v_and_l_section)
-        tailored_v_and_l = tailor.tailor_volunteering_and_leadership(
-            model=selected_model,
-            system1=system_text,
-            system2=system_text,
-            job_description_summary=job_desc,
-            raw_cv_data=v_and_l_text,
-            section="volunteering_and_leadership",
-            reference_dct=v_and_l_section
-        )
+        ollama_func_name = "tailor_volunteering_and_leadership"
+        runtime_info_temp = {
+            "call_id": ollama_func_name, 
+            "payload_in": {"model": selected_model
+            },
+            "format": {
+                "raw_cv_data": v_and_l_text,
+                "job_description_summary": job_desc,
+                "section": "volunteering_and_leadership",
+                "reference_dct": v_and_l_section,
+                "systems": [system_text, system_text],
+                }, 
+        }
+        func = getattr(tailor_robust, ollama_func_name)
+        tailored_v_and_l = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function = func)
         tailored_v_and_l = helpers.filter_output(tailored_v_and_l)
         if tailored_v_and_l:
             print("Tailored volunteering and leadership section")
@@ -292,15 +324,21 @@ def tailor_cv(root, show = True):
     if w_section:
         print("Tailoring work experience section...")
         w_text = parsers.inv_parse_cv(w_section)
-        tailored_w = tailor.tailor_work_experience(
-            model=selected_model,
-            system1=system_text,
-            system2=system_text,
-            raw_cv_data=w_text,
-            job_description_summary=job_desc,
-            section="work_experience",
-            reference_dct=w_section
-        )
+        ollama_func_name = "tailor_work_experience"
+        runtime_info_temp = {
+            "call_id": ollama_func_name, 
+            "payload_in": {"model": selected_model
+            },
+            "format": {
+                "raw_cv_data": w_text,
+                "job_description_summary": job_desc,
+                "section": "work_experience",
+                "reference_dct": w_section,
+                "systems": [system_text, system_text],
+                }, 
+        }
+        func = getattr(tailor_robust, ollama_func_name)
+        tailored_w = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function = func)
         tailored_w = helpers.filter_output(tailored_w)
         if tailored_w:
             print("Tailored work experience section")
@@ -309,15 +347,21 @@ def tailor_cv(root, show = True):
     if p_section:
         print("Tailoring projects section...")
         p_text = parsers.inv_parse_cv(p_section)
-        tailored_p = tailor.tailor_projects(
-            model=selected_model,
-            system1=system_text,
-            system2=system_text,
-            raw_cv_data=p_text,
-            job_description_summary=job_desc,
-            section="projects",
-            reference_dct=p_section
-        )
+        ollama_func_name = "tailor_projects"
+        runtime_info_temp = {
+            "call_id": ollama_func_name, 
+            "payload_in": {"model": selected_model
+            },
+            "format": {
+                "raw_cv_data": p_text,
+                "job_description_summary": job_desc,
+                "section": "projects",
+                "reference_dct": p_section,
+                "systems": [system_text, system_text],
+                }, 
+        }
+        func = getattr(tailor_robust, ollama_func_name)
+        tailored_p = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function = func)
         tailored_p = helpers.filter_output(tailored_p)
         if tailored_p:
             print("Tailored projects section")
@@ -328,7 +372,19 @@ def tailor_cv(root, show = True):
     for key, value in unchanged_dict.items():
         if key == "education":
             for i in range(len(value)):
-                unchanged_dict[key][i]["courses"] = tailor.tailor_courses(unchanged_dict[key][i]["courses"])
+                ollama_func_name = "tailor_courses"
+                runtime_info_temp = {
+                            "call_id": ollama_func_name,
+                            "payload_in": {
+                                "model": selected_model,
+                                "system": system_text,
+                            },
+                            "format": {
+                                "courses": unchanged_dict[key][i]["courses"],
+                                "job_description": job_desc
+                            },
+                }
+                unchanged_dict[key][i]["courses"] = tailor_robust.ollama_call(runtime_info=runtime_info_temp)#Standard
 
         tailored_dict[key] = value
 
@@ -353,14 +409,20 @@ def tailor_cv(root, show = True):
     experiences_text = parsers.inv_parse_cv(experiences)
     # print("Experiences text before pruning: \n" + helpers.indent_text(str(experiences_text)))
     #Prune Volunteering and Leadership, Work Experience and Projects sections based on job description
-    pruned_experiences = tailor.prune_experiences(
-        model=selected_model,
-        system1=system_text,
-        experiences=experiences_text,
-        job_description_summary=job_desc,
-        section="vl_w_p",
-        reference_dct=experiences
-    )
+    ollama_func_name = "prune_experiences"
+    runtime_info_temp = {
+        "call_id": ollama_func_name, 
+        "payload_in": {"model": selected_model,
+                       "system": system_text},
+        "format": {
+            "experiences": experiences_text,
+            "job_description_summary": job_desc,
+            "section": "vl_w_p",
+            "reference_dct": experiences #provide system through payload_in
+            }, 
+    }
+    func = getattr(tailor_robust, ollama_func_name)
+    pruned_experiences = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function=func)
     # print("Remaining experiences before filtering: \n" + helpers.indent_text(str(pruned_experiences)))
     pruned_experiences = helpers.filter_output(pruned_experiences)
     # print("Remaining experiences after filtering: \n" + helpers.indent_text(str(pruned_experiences)))
@@ -391,21 +453,25 @@ def tailor_cv(root, show = True):
     print("[STEP 3][START] Tailoring Summary section...")
     #region STEP 3
     print("Tailoring summary section...")
-    tailored_s = tailor.tailor_summary(
-        model=selected_model,
-        raw_cv_data=s_text,
-        job_description=job_desc,
-        system_s=system_text,
-        system00=system_text,
-        system1=system_text,
-        system2=system_text,
-        system3=system_text,
-        system4=system_text,
-        system0=system_text,
-        windows=CONFIG["WINDOWS"],
-        system01=system_text,
-        mode=CONFIG["SUMMARY_MODE"]
-    )
+    ollama_func_name = "tailor_summary"
+    runtime_info_temp = {
+        "call_id": ollama_func_name ,
+        "payload_in": {"model": selected_model, #model=DEFAULT_MODEL,
+        },
+        "format": {
+            "raw_cv_data" : s_text, #raw_cv_data = ""
+            "job_description": job_desc,
+            "systems": [system_text,system_text,system_text,system_text,
+                        system_text,system_text,system_text,system_text], 
+                        # system0="",system1="", system2="", system3="", system4="", system_s="",
+                                        #system00="",system01="", (min 6)
+            "skill_section": False, #skill_section=False,
+            "windows":CONFIG["WINDOWS"], #windows=2,
+            "mode": CONFIG["SUMMARY_MODE"] #mode="single"
+        }, 
+    }
+    func = getattr(tailor_robust, ollama_func_name)
+    tailored_s = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function=func)
     print("Tailored summary section:\n" + str(tailored_s))
     tailored_s = helpers.filter_output(tailored_s)
     print("Tailored summary section (filtered):\n" + str(tailored_s))
@@ -441,7 +507,7 @@ def tailor_cv(root, show = True):
     print("[STEP 3][OUTPUT]>>>[STEP 4][INPUT] Tailored resume text (with Summary; pruned): \n" + helpers.indent_text(str(final_cv_text)))
     print("[STEP 4][START] Making skills section separate and tailoring it...")
     #region STEP 4
-    final_final_cv_text = tailor.return_text_with_skills(final_cv_text)
+    final_final_cv_text = tailor_robust.return_text_with_skills(final_cv_text)
     # print("CV text after skills section: " +  helpers.indent_text(str(final_final_cv_text)))
     #Print final_final_cv_text
     # print('Checking tailor.return_text_with_skills output:')
@@ -458,12 +524,19 @@ def tailor_cv(root, show = True):
 
     
     print("Tailoring skills section...")
-    tailored_sk = tailor.tailor_skills(
-        model=selected_model,
-        system=system_text,
-        cv_data=sk_text,
-        job_description=job_desc
-    )
+    ollama_func_name = "tailor_skills"
+    runtime_info_temp = {
+        "call_id": ollama_func_name,
+        "payload_in": {
+            "model": selected_model,
+            "system": system_text
+        },
+        "format": {
+            "cv_data": sk_text,
+            "job_description": job_desc
+        }
+    }
+    tailored_sk = tailor_robust.ollama_call(runtime_info=runtime_info_temp)
     tailored_sk = helpers.filter_output(tailored_sk)
     if tailored_sk:
         print("Tailored skills section")
@@ -589,12 +662,19 @@ def tailor_cl(root, show = True):
     print("Tailoring cover letter with model: " + str(selected_model))
 
     # Compose cover letter dictionary
-    cover_letter_dict = tailor.compose_cover_letter_dictionary(
-        model=selected_model,
-        cv_text=current_cv_text,
-        cv_text_summary = summarized_resume,
-        job_description=summarized_job_desc,
-    )
+    ollama_func_name = "compose_cover_letter_dictionary"
+    runtime_info_temp = {
+        "call_id": ollama_func_name, 
+        "payload_in": {"model": selected_model #model=DEFAULT_MODEL,
+        }, 
+        "format": {
+            "cv_text_summary":summarized_resume,
+            "cv_text":current_cv_text,
+            "job_description":summarized_job_desc
+        }
+    }
+    func = getattr(tailor_robust, ollama_func_name)
+    cover_letter_dict = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function=func)
     cover_letter_text = parsers.inv_parse_cl(cover_letter_dict)
     current_cl_text = cover_letter_text
 
@@ -700,22 +780,36 @@ def format_check_current_cv_text(root):
     cv_text_og = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "cvs", cv_var.get()))
     selected_model = model_var.get()
     system_file = system_var.get()  
-    con_systemm_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", "system_consistency.txt"))
-    con_vs_job_desc = tailor.consistency_checker_vs_job_desc(
-        model=selected_model,
-        cv_data=summarized_resume,
-        job_description=summarized_job_desc,
-        system=con_systemm_text,
-    )
+    con_system_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", "system_consistency.txt"))
+    ollama_func_name = "consistency_checker_vs_job_desc_cv"
+    runtime_info_temp ={
+        "call_id": ollama_func_name,
+        "payload_in": {
+            "model": selected_model,
+            "system": con_system_text
+        },
+        "format": {
+            "cv_data": summarized_resume,
+            "job_description": summarized_job_desc
+        },
+    }
+    con_vs_job_desc = tailor_robust.ollama_call(runtime_info=runtime_info_temp)#Standard
     print(con_vs_job_desc)
     print(helpers.filter_output(con_vs_job_desc))
-    con_vs_cv = tailor.consistency_checker_vs_cv(
-        model=selected_model,
-        cv_data=current_cv_text,
-        cv_data_orig=cv_text_og,
-        system=con_systemm_text,
-        system_s=system_file,
-    )
+    ollama_func_name = "consistency_checker_vs_cv_cv"
+    runtime_info_temp = {
+        "call_id": ollama_func_name, 
+        "payload_in": {"model": selected_model, #model=DEFAULT_MODEL,
+                        "system": con_system_text # #system="",
+                        }, 
+        "format": {
+            "cv_data" : current_cv_text, #old_resume_txt = ""
+            "cv_data_orig": cv_text_og, # new_resume_txt = ""
+            "system_s": system_file
+        }, 
+    }
+    func = getattr(tailor_robust, ollama_func_name)
+    con_vs_cv = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function = func)
     print(con_vs_cv)
     print(helpers.filter_output(con_vs_cv))
 
@@ -767,23 +861,35 @@ def format_check_current_cl_text(root):
     selected_model = model_var.get()
     system_file = system_var.get()
     con_system_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", "system_consistency_cl.txt"))
-    con_vs_job_desc = tailor.consistency_checker_vs_job_desc(
-        model=selected_model,
-        cv_data=current_cl_text,
-        job_description=summarized_job_desc,
-        system=con_system_text,
-        type = "CL"
-    )
+    ollama_func_name = "consistency_checker_vs_job_desc_cl"
+    runtime_info_temp ={
+        "call_id": ollama_func_name,
+        "payload_in": {
+            "model": selected_model,
+            "system": con_system_text
+        },
+        "format": {
+            "cv_data": summarized_resume,
+            "job_description": summarized_job_desc
+        },
+    }
+    con_vs_job_desc = tailor_robust.ollama_call(runtime_info=runtime_info_temp)#Standard
     print(con_vs_job_desc)
     print(helpers.filter_output(con_vs_job_desc))
-    con_vs_cv = tailor.consistency_checker_vs_cv(
-        model=selected_model,
-        cv_data=current_cl_text,
-        cv_data_orig=summarized_resume,
-        system=con_system_text,
-        system_s=system_file, 
-        type = "CL"
-    )
+    ollama_func_name = "consistency_checker_vs_cv_cl"
+    runtime_info_temp = {
+        "call_id": ollama_func_name, 
+        "payload_in": {
+                       "model": selected_model, #Set at runtime
+                       "system": con_system_text
+                       },
+        "format": {#Set at runtime
+                   "cv_data": current_cl_text,
+                   "cv_data_orig": summarized_resume 
+                   },
+
+    }
+    con_vs_cv = tailor_robust.ollama_call(runtime_info=runtime_info_temp)#Standard
     print(con_vs_cv)
     print(helpers.filter_output(con_vs_cv))
     #Append consistency check results to analysis text

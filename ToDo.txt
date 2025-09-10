@@ -1,11 +1,6 @@
 [1.0 DEV RELEASE CHECKBOX]
     [][1.0 DEV PUBLIC RELEASE] Clean code and prompt engineer a bit; make a single UI window;deal with debug prints in "a way"
-        []Clean code
-        []Clean git files
-        []Prompt engineer to be more specific (provide specific information, etc).
-        []Make templates
-        []Maybe add start and end to sections?
-        []Maybe format job description?
+        []Make dynamic template system
     [ISSUES]
         tailor_volunteering_and_leadership dropped (1) @step3 =>gone
         tailor_work_experience renamed OISE to Software Eng @step3_work_experience: temp: dropped (1)
@@ -19,18 +14,15 @@
             []Include several high quality examples in the prompt to guide the model
             []Use stronger system rules 
             []Use end start markers for sections
-        [WIP]Retry output if wrong - Maybe provide feedback to the model
+        [DONE]Retry output if wrong - Maybe provide feedback to the model
             [DONE]Add "sample_starts" fields
-            []Add "MAYBE" tailor functions
-            []Make a fetch function for payloads.py + clarify runtime/non-runtime bahaviour
-            []Delimit clear rules for error handling
-            []Remove funtion input to ollama_call and its async ver
-            []create simple call_info for simple standard calls
-            []Pass in payloads.PAYLOADS objects as default values
-            []Fix tailor functions
-            []Fix main functions
+            [DONE]Add "MAYBE" tailor functions
+            [DONE]Make a fetch function for payloads.py + clarify runtime/non-runtime bahaviour
+            [DONE]Delimit clear rules for error handling
+            [DONE]Fix tailor functions
+            [DONE]Fix main functions
         [DONE]Feed the model only the absolute essential info; vut unnecessary info
-        [WIP]Lower model temperature
+        [WIP]Research model temperature modulation
 [Hubris tracker]
     []Things might break if fields are missing
 

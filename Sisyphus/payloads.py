@@ -779,7 +779,6 @@ PAYLOADS= {
             "job_description_summary": "",
             "section": "vl_w_p",
             "reference_dct": {}, #provide system through payload_in
-            "systems": ["", ""],
             "standard_calls": ["step0_prune_experiences"]
             }, 
         "prompt_in": "", #Empty
@@ -849,6 +848,7 @@ PAYLOADS= {
             "systems": [], # system0="",system1="", system2="", system3="", system4="", system_s="",
                                         #system00="",system01="", (min 6)
             "skill_section": False, #skill_section=False,
+            "job_description": "",
             "windows":2, #windows=2,
             "mode": "single", #mode="single"
             "standard_calls": ["step1_tailor_summary"],
