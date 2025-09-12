@@ -11,6 +11,7 @@ from plyer import notification
 import pygame
 from config import CONFIG
 import inspect
+import traceback
 # Set up logging
 print = logging.info
 
@@ -18,6 +19,13 @@ print = logging.info
 TOKENIZER_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\tokenizers"
 LLAMA_MAX_TOKENS = 4096
 NOTIFICATION_SOUND_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\sounds\notification_sound.mp3"
+
+def traceback_error(e):
+    """
+    Returns the full traceback stack as a formatted string for the given exception.
+    """
+    tb_list = traceback.format_exception(type(e), e, e.__traceback__)
+    return '\n'.join(tb_list)
 
 def inspect_function():
     return inspect.stack()[1].function

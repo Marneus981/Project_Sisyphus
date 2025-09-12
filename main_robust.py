@@ -39,7 +39,8 @@ print = logging.info
 @log_time
 def check_summaries(update_job_desc = False, update_resume = False):
     selected_model = model_var.get()
-    system_text = system_var.get().strip()
+    system_file = system_var.get().strip()
+    system_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", system_file))
     job_desc = job_desc_textbox.get("1.0", tk.END).strip()
     global summarized_job_desc, summarized_resume, current_cv_text
     if summarized_job_desc == "" or update_job_desc:
@@ -780,6 +781,7 @@ def format_check_current_cv_text(root):
     cv_text_og = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "cvs", cv_var.get()))
     selected_model = model_var.get()
     system_file = system_var.get()  
+    system_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", system_file))
     con_system_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", "system_consistency.txt"))
     ollama_func_name = "consistency_checker_vs_job_desc_cv"
     runtime_info_temp ={
@@ -805,7 +807,7 @@ def format_check_current_cv_text(root):
         "format": {
             "cv_data" : current_cv_text, #old_resume_txt = ""
             "cv_data_orig": cv_text_og, # new_resume_txt = ""
-            "system_s": system_file
+            "system_s": system_text
         }, 
     }
     func = getattr(tailor_robust, ollama_func_name)

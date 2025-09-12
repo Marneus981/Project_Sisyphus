@@ -11,6 +11,7 @@ import warnings
 from config import CONFIG
 from Sisyphus import payloads
 import re
+import traceback
 DEFAULT_MODEL = "llama3:8b"
 DEFAULT_URL = "http://localhost:11434"
 
@@ -72,7 +73,7 @@ def return_text_with_skills(cv_text):
                     #Programming Languages: Programming Language N1, ..., Programming Language NN
                     #Technical Skills: Technical Skill N1, ..., Technical Skill N2
                     #Soft Skills: Soft Skill N1, ..., Soft Skill N2
-                for part in enumerate(parts):
+                for part in parts:
                     if "Programming Languages:" in part:
                         skills = part.split(":")
                         if len(skills) > 1:
@@ -548,8 +549,12 @@ def standard_ollama_call(call_info =template_call_info):
         if config.DEBUG["INFO_LOGGING"]: print(f"[SUCCESS][OLLAMA]{function_name}: {result}")
         return response_text
     except requests.exceptions.JSONDecodeError as e:
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
+        error_trace =  helpers.traceback_error(e)
+        if config.DEBUG["ERROR_LOGGING"]: 
+            logging.error("[ERROR][OLLAMA]Traceback:")
+            logging.error(f"{error_trace}")
+            logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
+            logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
         return f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON"
 #endregion
 
@@ -607,8 +612,12 @@ def batch_summarize_sections(call_info = template_call_info):
         print(f"[SUCCESS][OLLAMA]{function_name}: {result}")
         return response_text
     except requests.exceptions.JSONDecodeError as e:
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
+        error_trace =  helpers.traceback_error(e)
+        if config.DEBUG["ERROR_LOGGING"]: 
+            logging.error("[ERROR][OLLAMA]Traceback:")
+            logging.error(f"{error_trace}")
+            logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
+            logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
         return f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON"
 
 @log_time #USED IN MAIN
@@ -1088,8 +1097,12 @@ def sliding_window_two_sections(call_info = template_call_info):
         if config.DEBUG["INFO_LOGGING"]: print(f"[SUCCESS][OLLAMA]{function_name}: {result}")
         return response_text
     except requests.exceptions.JSONDecodeError as e:
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
+        error_trace =  helpers.traceback_error(e)
+        if config.DEBUG["ERROR_LOGGING"]: 
+            logging.error("[ERROR][OLLAMA]Traceback:")
+            logging.error(f"{error_trace}")
+            logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
+            logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
         return f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON"
 
 @log_time
@@ -1208,8 +1221,12 @@ def sliding_window_three_sections(call_info = template_call_info):
         if config.DEBUG["INFO_LOGGING"]: print(f"[SUCCESS][OLLAMA]{function_name}: {result}")
         return response_text
     except requests.exceptions.JSONDecodeError as e:
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
+        error_trace =  helpers.traceback_error(e)
+        if config.DEBUG["ERROR_LOGGING"]: 
+            logging.error("[ERROR][OLLAMA]Traceback:")
+            logging.error(f"{error_trace}")
+            logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
+            logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
         return f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON"
 
 @log_time
@@ -1337,8 +1354,12 @@ def sliding_window_four_sections(call_info = template_call_info):
         if config.DEBUG["INFO_LOGGING"]: print(f"[SUCCESS][OLLAMA]{function_name}: {result}")
         return response_text
     except requests.exceptions.JSONDecodeError as e:
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
+        error_trace =  helpers.traceback_error(e)
+        if config.DEBUG["ERROR_LOGGING"]: 
+            logging.error("[ERROR][OLLAMA]Traceback:")
+            logging.error(f"{error_trace}")
+            logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
+            logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
         return f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON"
 
 @log_time
@@ -1396,7 +1417,7 @@ def slide_summary(call_info = template_call_info):
             else:
                 temp = helpers.filter_output(parsers.inv_parse_cv(item).strip())
             special_txts.append(temp)
-    if config.DEBUG["INFO_LOGING"]: 
+    if config.DEBUG["INFO_LOGGING"]: 
         print(f"[INFO][OLLAMA]{function_name}: candidate_name: {candidate_name}")
         print(f"[INFO][OLLAMA]{function_name}: candidate_title: {candidate_title}")
         print(f"[INFO][OLLAMA]{function_name}: general_txts: {len(general_txts)}")
@@ -1573,8 +1594,12 @@ def step0_tailor_summary(call_info = template_call_info):
         if config.DEBUG["INFO_LOGGING"]: print(f"[SUCCESS][OLLAMA]{function_name}: {result}")
         return response_text
     except requests.exceptions.JSONDecodeError as e:
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
+        error_trace =  helpers.traceback_error(e)
+        if config.DEBUG["ERROR_LOGGING"]: 
+            logging.error("[ERROR][OLLAMA]Traceback:")
+            logging.error(f"{error_trace}")
+            logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
+            logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
         return f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON"
 
 @log_time #USED IN MAIN
@@ -1697,7 +1722,7 @@ def consistency_checker_vs_cv_cv(call_info = template_call_info):
     #Chain: old resume, new resume >>> new_vs_old_section >>> consistency_checker_vs_cv
     runtime_info_temp = {
         "call_id": format["non_standard_calls"][0], 
-        "payload_in": {"model": prompt_in["model"], #model=DEFAULT_MODEL,
+        "payload_in": {"model": payload_in["model"], #model=DEFAULT_MODEL,
                         "system": format["system_s"], # #system="",
         },
         "format": {
@@ -1735,8 +1760,12 @@ def consistency_checker_vs_cv_cv(call_info = template_call_info):
         if config.DEBUG["INFO_LOGGING"]: print(f"[SUCCESS][OLLAMA]{function_name}: {result}")
         return response_text
     except requests.exceptions.JSONDecodeError as e:
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
-        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
+        error_trace =  helpers.traceback_error(e)
+        if config.DEBUG["ERROR_LOGGING"]: 
+            logging.error("[ERROR][OLLAMA]Traceback:")
+            logging.error(f"{error_trace}")
+            logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON", exc_info=True)
+            logging.error(f"[ERROR][OLLAMA]{function_name}: Response text: {response.text}")
         return f"[ERROR][OLLAMA]{function_name}: Ollama response was not valid JSON"
 
     
@@ -1768,7 +1797,7 @@ def compose_cover_letter_dictionary(call_info = template_call_info):
     runtime_info_temp = {
         "call_id": format["standard_calls"][0],
         "payload_in": {
-            "model": prompt_in["model"],
+            "model": payload_in["model"],
             "system": system,
         },
         "format": {
@@ -1838,38 +1867,57 @@ def ollama_call(retries=config.CONFIG["MODELS"]["RETRIES"], runtime_info = {}, f
     response = ""
     if retries < 1:
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: retries is less than 1")
-        return f"[ERROR][OLLAMA]{function_name}: retries is less than 1"
+        raise ValueError(f"[ERROR][OLLAMA]{function_name}: retries is less than 1")
     if runtime_info == {}:
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: runtime_info is empty dict")
-        return f"[ERROR][OLLAMA]{function_name}: runtime_info is empty dict"
+        raise ValueError(f"[ERROR][OLLAMA]{function_name}: runtime_info is empty dict")
     if "call_id" not in runtime_info:
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id is missing")
-        return f"[ERROR][OLLAMA]{function_name}: call_id is missing"
+        raise ValueError("[ERROR][OLLAMA]{function_name}: call_id is missing")
     if runtime_info.get("call_id", "") == "":
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id is empty")
-        return f"[ERROR][OLLAMA]{function_name}: call_id is empty"
+        raise ValueError(f"[ERROR][OLLAMA]{function_name}: call_id is empty")
     call_info = fetch_complete_call_info(call_id=runtime_info["call_id"], runtime_info=runtime_info)
     #For standard calls: "call_id": "", "model": DEFAULT_MODEL, "system": "", "format": {} , "ollama_url": DEFAULT_URL need to be set
     for i in range(retries):
         try:
             #sample_starts key is unneeded, only useful for comparison and QA
-            response = function(call_info).strip()
-            if response.startswith("[ERROR]"):
-                if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama call returned error: {response}. Retrying {i+1}/{retries}...")
-                continue
-            if call_info["sample_starts"] != []:
-                response = helpers.filter_output(response, call_info["sample_starts"][1])
-                if compare_start(response, call_info["sample_starts"]) == False:
-                    if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Output does not match expected start lines or output length. Retrying {i+1}/{retries}...")
+            response =function(call_info)
+            if isinstance(response,str):
+                if response.startswith("[ERROR]"):
+                    if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama call returned error: {response}. Retrying {i+1}/{retries}...")
                     continue
-            if config.DEBUG["INFO_LOGGING"]: logging.info(f"[SUCCESS][OLLAMA]{function_name}: Ollama call succeeded: {response}")
-            return response
+                if call_info["sample_starts"] != []:
+                    response = helpers.filter_output(response, call_info["sample_starts"][1])
+                    if compare_start(response, call_info["sample_starts"]) == False:
+                        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Output does not match expected start lines or output length. Retrying {i+1}/{retries}...")
+                        continue
+                if config.DEBUG["INFO_LOGGING"]: logging.info(f"[SUCCESS][OLLAMA]{function_name}: Ollama call succeeded: {response}")
+                return response
+            elif isinstance(response,list):
+                for element in response:
+                    #Assume is list of strings
+                    if element.startswith("[ERROR]"):
+                        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama call returned error: {element}. Retrying {i+1}/{retries}...")
+                        continue
+                    if call_info["sample_starts"] != []:
+                        element = helpers.filter_output(element, call_info["sample_starts"][1])
+                        if compare_start(element, call_info["sample_starts"]) == False:
+                            if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Output does not match expected start lines or output length. Retrying {i+1}/{retries}...")
+                            continue
+                    if config.DEBUG["INFO_LOGGING"]: logging.info(f"[SUCCESS][OLLAMA]{function_name}: Ollama call succeeded: {element}")
+                return response
+
         except Exception as e:
-            if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: {e}")
-            if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Exception occurred during Ollama call. Retrying {i+1}/{retries}...")
+            error_trace =  helpers.traceback_error(e)
+            if config.DEBUG["ERROR_LOGGING"]: 
+                logging.error("[ERROR][OLLAMA]Traceback:")
+                logging.error(f"{error_trace}")
+                logging.error(f"[ERROR][OLLAMA]{function_name}: {e}")
+                logging.error(f"[ERROR][OLLAMA]{function_name}: Exception occurred during Ollama call. Retrying {i+1}/{retries}...")
             continue
     if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: All retries exhausted. Returning last response.")
-    return f"[ERROR][OLLAMA]{function_name}: All retries exhausted."
+    raise ValueError(f"[ERROR][OLLAMA]{function_name}: All retries exhausted.")
    
 async def ollama_call_async(retries=config.CONFIG["MODELS"]["RETRIES"], runtime_infos = [], function = standard_ollama_call_async ):
     function_name = helpers.inspect_function()
