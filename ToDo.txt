@@ -1,28 +1,21 @@
 [1.0 DEV RELEASE CHECKBOX]
     [][1.0 DEV PUBLIC RELEASE] Clean code and prompt engineer a bit; make a single UI window;deal with debug prints in "a way"
-        []Make dynamic template system
-    [ISSUES]
-        tailor_volunteering_and_leadership dropped (1) @step3 =>gone
-        tailor_work_experience renamed OISE to Software Eng @step3_work_experience: temp: dropped (1)
-        tailor_projects dropped (1) project @step3 => gone
-        tailor_experiences: step0_prune_experiences renamed a bunch of experiences to "Software Engineer"
-        step1_tailor summary messed up format => ignored by program, thus missing
-    [POSSIBLE SOLUTIONS]
+        []Check if both checks work
+        []Check if CL tailoring works
         []Prompt Engineering:
             []Make prompts more instruction heavy
             []Provide clearer templates
             []Include several high quality examples in the prompt to guide the model
             []Use stronger system rules 
             []Use end start markers for sections
-        [DONE]Retry output if wrong - Maybe provide feedback to the model
-            [DONE]Add "sample_starts" fields
-            [DONE]Add "MAYBE" tailor functions
-            [DONE]Make a fetch function for payloads.py + clarify runtime/non-runtime bahaviour
-            [DONE]Delimit clear rules for error handling
-            [DONE]Fix tailor functions
-            [DONE]Fix main functions
-        [DONE]Feed the model only the absolute essential info; vut unnecessary info
+        []Make dynamic template system
         [WIP]Research model temperature modulation
+    [ISSUES]
+        tailor_volunteering_and_leadership dropped (1) @step3 =>gone
+        tailor_work_experience renamed OISE to Software Eng @step3_work_experience: temp: dropped (1)
+        tailor_projects dropped (1) project @step3 => gone
+        tailor_experiences: step0_prune_experiences renamed a bunch of experiences to "Software Engineer"
+        step1_tailor summary messed up format => ignored by program, thus missing
 [Hubris tracker]
     []Things might break if fields are missing
 

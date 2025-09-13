@@ -959,7 +959,7 @@ def prune_experiences(call_info = template_call_info):
     step1_clean = clean_first_step(step1).strip()
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step1_clean:\n" + step1_clean)
     step2_dct = augment_output(step1_clean, reference_dct, type=section)
-    if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step2_dct:\n" + step2_dct)
+    if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step2_dct:\n" + str(step2_dct))
     step2_text = helpers.filter_output(parsers.inv_parse_cv(step2_dct))
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step2_text:\n" + step2_text)
     return step2_text
@@ -1693,8 +1693,8 @@ def new_vs_old_resume(call_info=template_call_info):
         runtime_info_temp = {
             "call_id": format["standard_calls"][0], 
             "payload_in": {
-                        "model": format["model"], #Set at runtime
-                        "system": format["system"] #Set at runtime
+                        "model": payload_in["model"], #Set at runtime
+                        "system": payload_in["system"] #Set at runtime
                         },
             "format": {#Set at runtime
                         "old_resume_s_txt": old_txts[i],
@@ -1726,8 +1726,8 @@ def consistency_checker_vs_cv_cv(call_info = template_call_info):
                         "system": format["system_s"], # #system="",
         },
         "format": {
-            "old_resume_txt" : format["old_resume_txt"], #old_resume_txt = ""
-            "new_resume_txt": format["new_resume_txt"] # new_resume_txt = ""
+            "old_resume_txt" : format["cv_data_orig"], #old_resume_txt = ""
+            "new_resume_txt": format["cv_data"] # new_resume_txt = ""
         }, 
         "ollama_url": ollama_url, #ollama_url=DEFAULT_URL,
     }
@@ -1880,10 +1880,12 @@ def ollama_call(retries=config.CONFIG["MODELS"]["RETRIES"], runtime_info = {}, f
     call_info = fetch_complete_call_info(call_id=runtime_info["call_id"], runtime_info=runtime_info)
     #For standard calls: "call_id": "", "model": DEFAULT_MODEL, "system": "", "format": {} , "ollama_url": DEFAULT_URL need to be set
     for i in range(retries):
+        if config.DEBUG["INFO_LOGGING"]: logging.info(f"[INFO][OLLAMA]{function_name}: Try {i+1}/{retries}...")
         try:
             #sample_starts key is unneeded, only useful for comparison and QA
             response =function(call_info)
             if isinstance(response,str):
+                if config.DEBUG["INFO_LOGGING"]: logging.info(f"[INFO][OLLAMA]{function_name}: response is a str")
                 if response.startswith("[ERROR]"):
                     if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama call returned error: {response}. Retrying {i+1}/{retries}...")
                     continue
@@ -1895,6 +1897,7 @@ def ollama_call(retries=config.CONFIG["MODELS"]["RETRIES"], runtime_info = {}, f
                 if config.DEBUG["INFO_LOGGING"]: logging.info(f"[SUCCESS][OLLAMA]{function_name}: Ollama call succeeded: {response}")
                 return response
             elif isinstance(response,list):
+                if config.DEBUG["INFO_LOGGING"]: logging.info(f"[INFO][OLLAMA]{function_name}: response is a list")
                 for element in response:
                     #Assume is list of strings
                     if element.startswith("[ERROR]"):
