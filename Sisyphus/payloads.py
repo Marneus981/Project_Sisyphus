@@ -418,7 +418,7 @@ PAYLOADS= {
                         {cv_data}
                         And the following job description:
                         {job_description}
-                        Prune a '{section}' section to best match the job description , following the guidelines below:
+                        Prune the following 'Skills' section from a resume to best match the job description , following the guidelines below:
                         - Return 3 MAXIMUM entries under "Programming Languages" (MINIMUM 0 entries)
                         - Return 5 MAXIMUM entries under "Technical Skills" (MINIMUM 0 entries)
                         - Return 4 MAXIMUM entries under "Soft Skills" (MINIMUM 0 entries)
