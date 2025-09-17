@@ -157,3 +157,4 @@
         [DONE]Implement asynchronous calls for tailoring functions
     [DONE]Add sounds
     [DONE]Added batch system, model benchmarking and dynamic templating
+    [DONE]Reworked all systems to be more robust
