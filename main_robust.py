@@ -385,7 +385,8 @@ def tailor_cv(root, show = True):
                                 "job_description": job_desc
                             },
                 }
-                unchanged_dict[key][i]["courses"] = tailor_robust.ollama_call(runtime_info=runtime_info_temp)#Standard
+                tailored_courses = tailor_robust.ollama_call(runtime_info=runtime_info_temp)#Standard
+                unchanged_dict[key][i]["courses"] = tailored_courses.replace("[1]Courses:", "").strip()
 
         tailored_dict[key] = value
 

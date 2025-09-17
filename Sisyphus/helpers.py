@@ -622,62 +622,76 @@ def format_checker_out_cl(cl_text):
     }
 
 @log_time
-def filter_output(model_output, mode = "digits", call_id = None):
+def filter_output(model_output, mode = "digits"):
     """
     Filters model output, keeping only lines that start with [X], where X is a number (e.g., [0], [1], etc.).
     Returns the filtered output as a string.
     """
-    func_name  = inspect_function()
-    if call_id:
-        sample_starts = payloads.PAYLOADS.get(call_id, "")
-        if sample_starts == "":
-            raise ValueError(f"[ERROR] {func_name}: call_id not found")
-        directive = sample_starts[0]#strict or flexible
-        mode = sample_starts[1]
-        starts = sample_starts[2:]
-        filtered_lines = []
-        current_section = ""
-        for line in model_output.splitlines():
-            line = line.strip()
-            if mode == "digits":
-                #Need to check wether or not a current_section is ""
-                if line.startswith("[") and len(line) > 2 and line[2] == "]" and line[1].isdigit():
-                    if current_section != "":
-                        filtered_lines.append(current_section)
-                        current_section = line
-                    else:
-                        current_section = line
-                elif line != "":
-                    if line[-1] == ".":
-                        current_section = current_section +" "+line
-                    else:
-                        current_section = current_section +". "+line
-            elif mode == "cap_letters":
-                if line.startswith("[") and len(line) > 2 and line[2] == "]" and line[1].isupper():
-                    if current_section != "":
-                        filtered_lines.append(current_section)
-                        current_section = line
-                    else:
-                        current_section = line
-                elif line != "":
-                    if line[-1] == ".":
-                        current_section = current_section +" "+line
-                    else:
-                        current_section = current_section +". "+line
-        return "\n".join(filtered_lines)
+    #func_name  = inspect_function()
+    # if call_id:
+        #sample_starts = payloads.PAYLOADS.get(call_id, "")
+        #if sample_starts == "":
+            #raise ValueError(f"[ERROR] {func_name}: call_id not found")
+        #directive = sample_starts[0]#strict or flexible
+        #mode = sample_starts[1]
+        #starts = sample_starts[2:]
+    #     filtered_lines = []
+    #     current_section = ""
+    #     for line in model_output.splitlines():
+    #         line = line.strip()
+    #         if mode == "digits":
+    #             #Need to check wether or not a current_section is ""
+    #             if line.startswith("[") and len(line) > 2 and line[2] == "]" and line[1].isdigit():
+    #                 if current_section != "":
+    #                     filtered_lines.append(current_section)
+    #                     current_section = line
+    #                 else:
+    #                     current_section = line
+    #             elif line != "":
+    #                 if line[-1] == ".":
+    #                     current_section = current_section +" "+line
+    #                 else:
+    #                     current_section = current_section +". "+line
+    #         elif mode == "cap_letters":
+    #             if line.startswith("[") and len(line) > 2 and line[2] == "]" and line[1].isupper():
+    #                 if current_section != "":
+    #                     filtered_lines.append(current_section)
+    #                     current_section = line
+    #                 else:
+    #                     current_section = line
+    #             elif line != "":
+    #                 if line[-1] == ".":
+    #                     current_section = current_section +" "+line
+    #                 else:
+    #                     current_section = current_section +". "+line
+    #     return "\n".join(filtered_lines)
 
-    else:
-        filtered_lines = []
-        for line in model_output.splitlines():
-            line = line.strip()
-            if mode == "digits":
-                if line.startswith("[") and len(line) > 2 and line[2] == "]" and line[1].isdigit():
-                    filtered_lines.append(line)
-            elif mode == "cap_letters":
-                if line.startswith("[") and len(line) > 2 and line[2] == "]" and line[1].isupper():
-                    filtered_lines.append(line)
-
-        return "\n".join(filtered_lines)
+    # else:
+    filtered_lines = []
+    lines = model_output.splitlines()
+    filter_index = 0
+    for line in lines:
+        line = line.strip()
+        if mode == "digits":
+            #Need to check wether or not a current_section is ""
+            if line.startswith("[") and len(line) > 2 and line[2] == "]" and line[1].isdigit():
+                filtered_lines.append(line)
+                filter_index+=filter_index
+            elif line != "" and filter_index>0:
+                if line[-1] == ".":
+                    filtered_lines[filter_index] = filtered_lines[filter_index]  +" "+line
+                else:
+                    filtered_lines[filter_index] = filtered_lines[filter_index]  +". "+line
+        elif mode == "cap_letters":
+            if line.startswith("[") and len(line) > 2 and line[2] == "]" and line[1].isupper():
+                filtered_lines.append(line)
+                filter_index+=filter_index
+            elif line != "" and filter_index>0:
+                if line[-1] == ".":
+                    filtered_lines[filter_index] = filtered_lines[filter_index]  +" "+line
+                else:
+                    filtered_lines[filter_index] = filtered_lines[filter_index]  +". "+line
+    return "\n".join(filtered_lines)
         
 
 @log_time

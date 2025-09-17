@@ -668,13 +668,15 @@ def tailor_volunteering_and_leadership(call_info = template_call_info):
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step1_clean:\n" + step1_clean)
     step2_dct = augment_output(step1_clean, reference_dct, type=section)
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step2_dct:\n" + str(step2_dct))
-    step2_text = helpers.filter_output(parsers.inv_parse_cv(step2_dct))
+    #helpers.filter_output()#REDUNDANT?
+    step2_text = parsers.inv_parse_cv(step2_dct)
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step2_text:\n" + step2_text)
     step3_text = []
     #Delete line that starts with [0]Volunteering and Leadership
     step2_text = step2_text.replace("[0]Volunteering and Leadership:", "")
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step2_text (No [0]):\n" + step2_text)
-    step2_text = helpers.filter_output(step2_text.strip())
+    #helpers.filter_output()#REDUNDANT?
+    step2_text = step2_text.strip()
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step2_text after filtering:\n" + step2_text)
     #Split text into list of individual experiences (each experience starts with [1]Role)
     step3_text = step2_text.split("[1]Role: ")[1:]
@@ -683,7 +685,8 @@ def tailor_volunteering_and_leadership(call_info = template_call_info):
     for exp in step3_text:
         if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp:\n" + exp)
         #Transform to dict
-        exp_dict = parsers.parse_subfields(helpers.filter_output(exp).strip())
+        #helpers.filter_output()#REDUNDANT?
+        exp_dict = parsers.parse_subfields(exp.strip())
         #Separate dict in two: one containing description and skills, the other containing the rest
         first_part_dict = {k: v for k, v in exp_dict.items() if k in ["description", "skills"]}
         second_part_dict = {k: v for k, v in exp_dict.items() if k not in ["description", "skills"]}
@@ -708,7 +711,8 @@ def tailor_volunteering_and_leadership(call_info = template_call_info):
 
         #first_part_text_new = step3_volunteering_and_leadership(model=model, system2=system2, ollama_url=ollama_url, experience=first_part_text, job_description=job_description_summary)
         if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp: {format.get("standard_calls", "")[1]}: first_part_text_new:\n" + first_part_text_new)
-        first_part_text_new = helpers.filter_output(first_part_text_new.strip())
+        #helpers.filter_output()#REDUNDANT?
+        first_part_text_new = first_part_text_new.strip()
         if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp: {format.get("standard_calls", "")[1]}: first_part_text_new (filtered):\n" + first_part_text_new)
         #Join with second part
         temp = second_part_text + "\n" + first_part_text_new
@@ -718,7 +722,8 @@ def tailor_volunteering_and_leadership(call_info = template_call_info):
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text:\n" + step3_text)
     step4_text = "[0]Volunteering and Leadership:\n" + step3_text
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step4_text (before filtering):\n" + step4_text)
-    step4_text = helpers.filter_output(step4_text.strip())
+    #helpers.filter_output()#REDUNDANT?
+    step4_text = step4_text.strip()
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step4_text (after filtering):\n" + step4_text)
     return step4_text
 
@@ -767,12 +772,14 @@ def tailor_work_experience(call_info = template_call_info):
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step1_clean:\n" + step1_clean)
     step2_dct = augment_output(step1_clean, reference_dct, type=section)
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step2_dct:\n" + str(step2_dct))
-    step2_text = helpers.filter_output(parsers.inv_parse_cv(step2_dct))
+    #helpers.filter_output()#REDUNDANT?
+    step2_text = parsers.inv_parse_cv(step2_dct)
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step2_text:\n" + step2_text)
     step3_text = []
     step2_text = step2_text.replace("[0]Work Experience:", "")
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step2_text (No [0]):\n" + step2_text)
-    step2_text = helpers.filter_output(step2_text.strip())
+    #helpers.filter_output()#REDUNDANT?
+    step2_text = step2_text.strip()
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step2_text after filtering:\n" + step2_text)
     step3_text = step2_text.split("[1]Job Title: ")[1:]
     step3_text = ["[1]Job Title: " + exp for exp in step3_text]
@@ -780,7 +787,8 @@ def tailor_work_experience(call_info = template_call_info):
     for exp in step3_text:
         if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp:\n" + exp)
         #Transform to dict
-        exp_dict = parsers.parse_subfields(helpers.filter_output(exp).strip())
+        #helpers.filter_output()#REDUNDANT?
+        exp_dict = parsers.parse_subfields(exp.strip())
         #Separate dict in two: one containing description and skills, the other containing the rest
         first_part_dict = {k: v for k, v in exp_dict.items() if k in ["description", "skills"]}
         second_part_dict = {k: v for k, v in exp_dict.items() if k not in ["description", "skills"]}
@@ -805,7 +813,8 @@ def tailor_work_experience(call_info = template_call_info):
 
         #first_part_text_new = step3_work_experience(model=model, system2=system2, ollama_url=ollama_url, experience=first_part_text, job_description=job_description_summary)
         if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp: {format.get("standard_calls", "")[1]}: first_part_text_new:\n" + first_part_text_new)
-        first_part_text_new = helpers.filter_output(first_part_text_new.strip())
+        #helpers.filter_output()#REDUNDANT?
+        first_part_text_new = first_part_text_new.strip()
         if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp: {format.get("standard_calls", "")[1]}: first_part_text_new (filtered):\n" + first_part_text_new)
         #Join with second part
         temp = second_part_text + "\n" + first_part_text_new
@@ -815,7 +824,8 @@ def tailor_work_experience(call_info = template_call_info):
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text:\n" + step3_text)
     step4_text = "[0]Work Experience:\n" + step3_text
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step4_text before filtering:\n" + step4_text)
-    step4_text = helpers.filter_output(step4_text.strip())
+    #helpers.filter_output()#REDUNDANT?
+    step4_text = step4_text.strip()
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step4_text after filtering:\n" + step4_text)
     return step4_text
 
@@ -865,12 +875,14 @@ def tailor_projects(call_info = template_call_info):
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step1_clean:\n" + step1_clean)
     step2_dct = augment_output(step1_clean, reference_dct, type=section)
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step2_dct:\n" + str(step2_dct))
-    step2_text = helpers.filter_output(parsers.inv_parse_cv(step2_dct))
+    #helpers.filter_output()#REDUNDANT?
+    step2_text = parsers.inv_parse_cv(step2_dct)
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step2_text:\n" + step2_text)
     step3_text = []
     step2_text = step2_text.replace("[0]Projects:", "")
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step2_text (No [0]):\n" + step2_text)
-    step2_text = helpers.filter_output(step2_text.strip())
+    #helpers.filter_output()#REDUNDANT?
+    step2_text = step2_text.strip()
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step2_text after filtering:\n" + step2_text)
     step3_text = step2_text.split("[1]Project Title: ")[1:]
     step3_text = ["[1]Project Title: " + exp for exp in step3_text]
@@ -878,7 +890,8 @@ def tailor_projects(call_info = template_call_info):
     for exp in step3_text:
         if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp:\n" + exp)
         #Transform to dict
-        exp_dict = parsers.parse_subfields(helpers.filter_output(exp).strip())
+        #helpers.filter_output(exp).strip()#REDUNDANT?
+        exp_dict = parsers.parse_subfields(exp.strip())
         #Separate dict in two: one containing description and skills, the other containing the rest
         first_part_dict = {k: v for k, v in exp_dict.items() if k in ["description", "skills"]}
         second_part_dict = {k: v for k, v in exp_dict.items() if k not in ["description", "skills"]}
@@ -903,7 +916,8 @@ def tailor_projects(call_info = template_call_info):
 
         #first_part_text_new = step3_projects(model=model, system2=system2, ollama_url=ollama_url, experience=first_part_text, job_description=job_description_summary)
         if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp: {format.get("standard_calls", "")[1]}: first_part_text_new:\n" + first_part_text_new)
-        first_part_text_new = helpers.filter_output(first_part_text_new.strip())
+        #helpers.filter_output()#REDUNDANT?
+        first_part_text_new = first_part_text_new.strip()
         if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp: {format.get("standard_calls", "")[1]}: first_part_text_new (filtered):\n" + first_part_text_new)
         #Join with second part
         temp = second_part_text + "\n" + first_part_text_new
@@ -913,7 +927,8 @@ def tailor_projects(call_info = template_call_info):
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text:\n" + step3_text)
     step4_text = "[0]Projects:\n" + step3_text
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step4_text (before filtering):\n" + step4_text)
-    step4_text = helpers.filter_output(step4_text.strip())
+    #helpers.filter_output()#REDUNDANT?
+    step4_text = step4_text.strip()
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step4_text (after filtering):\n" + step4_text)
     return step4_text
 
@@ -960,7 +975,8 @@ def prune_experiences(call_info = template_call_info):
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step1_clean:\n" + step1_clean)
     step2_dct = augment_output(step1_clean, reference_dct, type=section)
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step2_dct:\n" + str(step2_dct))
-    step2_text = helpers.filter_output(parsers.inv_parse_cv(step2_dct))
+    #helpers.filter_output()#REDUNDANT?
+    step2_text = parsers.inv_parse_cv(step2_dct)
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step2_text:\n" + step2_text)
     return step2_text
 
@@ -1042,7 +1058,8 @@ def sliding_window_two_sections(call_info = template_call_info):
                     "ollama_url":ollama_url
                 }
                 summary = ollama_call(runtime_info=runtime_info_temp)
-                summaries.append(helpers.filter_output(summary.strip(), mode= "cap_letters"))
+                #helpers.filter_output(summary.strip(), mode= "cap_letters")#REDUNDANT?
+                summaries.append(summary.strip())
     elif mode == "batch":
         runtime_info_temp = {
                     "call_id": format["non_standard_calls"][0],
@@ -1058,12 +1075,16 @@ def sliding_window_two_sections(call_info = template_call_info):
                 }
         ollama_func_name = format["non_standard_calls"][0] 
         summaries_raw = ollama_call(runtime_info=runtime_info_temp, function=globals()[ollama_func_name])
-        summaries = helpers.filter_output(summaries_raw.strip(), mode= "cap_letters").split("\n")
+        #helpers.filter_output(summaries_raw.strip(), mode= "cap_letters")#REDUNDANT?
+        summaries = summaries_raw.strip().split("\n")
     elif mode == "parallel":
         runtime_info_temps = generate_call_infos_summarize_section(sections=sections, section_names=section_names, systems=systems, model=payload_in["model"], ollama_url=ollama_url)
         ollama_func_name = format["async_calls"][0]
         responses = asyncio.run(ollama_call_async(runtime_infos=runtime_info_temps, function=globals()[ollama_func_name]))
-        summaries = [helpers.filter_output(response.strip(), mode="cap_letters") for response in responses]
+        summaries=[]
+        for response in responses:
+            #helpers.filter_output(response.strip(), mode="cap_letters")#REDUNDANT?
+            summaries.append(response.strip())
     summary1 = summaries[0] if len(summaries) > 0 else ""
     summary2 = summaries[1] if len(summaries) > 1 else ""
     formatting = {
@@ -1152,7 +1173,8 @@ def sliding_window_three_sections(call_info = template_call_info):
                         "ollama_url":ollama_url
                     }
                     summary = ollama_call(runtime_info=runtime_info_temp)
-                    summaries.append(helpers.filter_output(summary.strip(), mode= "cap_letters"))
+                    #helpers.filter_output(summary.strip(), mode= "cap_letters")#REDUNDANT?
+                    summaries.append(summary.strip())
         if mode == "batch":
             upper_bound = i + CONFIG["SUMMARY_REQUESTS"]
             if upper_bound > 3:
@@ -1171,7 +1193,8 @@ def sliding_window_three_sections(call_info = template_call_info):
             }
             ollama_func_name = format["non_standard_calls"][0] 
             summary = ollama_call(runtime_info=runtime_info_temp, function=globals()[ollama_func_name])
-            summaries.append(helpers.filter_output(summary.strip(), mode= "cap_letters"))
+            #helpers.filter_output(summary.strip(), mode= "cap_letters")#REDUNDANT?
+            summaries.append(summary.strip())
             if upper_bound == 3:
                 break
         if mode == "parallel":
@@ -1182,7 +1205,8 @@ def sliding_window_three_sections(call_info = template_call_info):
             ollama_func_name = format["async_calls"][0]
             responses = asyncio.run(ollama_call_async(runtime_infos=runtime_info_temps, function=globals()[ollama_func_name]))
             for response in responses:
-                summaries.append(helpers.filter_output(response.strip(), mode= "cap_letters"))
+                #helpers.filter_output(response.strip(), mode= "cap_letters")#REDUNDANT?
+                summaries.append(response.strip())
             if upper_bound == 3:
                 break
 
@@ -1282,7 +1306,8 @@ def sliding_window_four_sections(call_info = template_call_info):
                         "ollama_url":ollama_url
                     }
                     summary = ollama_call(runtime_info=runtime_info_temp)
-                    summaries.append(helpers.filter_output(summary.strip(), mode= "cap_letters"))
+                    #helpers.filter_output(summary.strip(), mode= "cap_letters")#REDUNDANT?
+                    summaries.append(summary.strip())
         if mode == "batch":
             upper_bound = i + CONFIG["SUMMARY_REQUESTS"]
             if upper_bound > 4:
@@ -1301,7 +1326,8 @@ def sliding_window_four_sections(call_info = template_call_info):
             }
             ollama_func_name = format["non_standard_calls"][0] 
             summary = ollama_call(runtime_info=runtime_info_temp, function=globals()[ollama_func_name])
-            summaries.append(helpers.filter_output(summary.strip(), mode= "cap_letters"))
+            #helpers.filter_output(summary.strip(), mode= "cap_letters")#REDUNDANT?
+            summaries.append(summary.strip())
             if upper_bound == 4:
                 break
         if mode == "parallel":
@@ -1312,7 +1338,8 @@ def sliding_window_four_sections(call_info = template_call_info):
             ollama_func_name = format["async_calls"][0]
             responses = asyncio.run(ollama_call_async(runtime_infos=runtime_info_temps, function= globals()[ollama_func_name]))
             for response in responses:
-                summaries.append(helpers.filter_output(response.strip(), mode= "cap_letters"))
+                #helpers.filter_output(response.strip(), mode= "cap_letters")#REDUNDANT?
+                summaries.append(response.strip())
             if upper_bound == 4:
                 break
 
@@ -1406,16 +1433,20 @@ def slide_summary(call_info = template_call_info):
         elif key == "title":
             candidate_title = item[key]
         if key in general_keys:
-            temp = helpers.filter_output(parsers.inv_parse_cv(item).strip())
+            #helpers.filter_output()#REDUNDANT?
+            temp = parsers.inv_parse_cv(item).strip()
             general_txts.append(temp)
         elif key in skills_key:
-            temp = helpers.filter_output(parsers.inv_parse_cv_out(item).strip())
+            #helpers.filter_output()#REDUNDANT?
+            temp = parsers.inv_parse_cv_out(item).strip()
             skill_txt += temp + "\n"
         elif key in special_keys:
             if skill_section:
-                temp = helpers.filter_output(parsers.inv_parse_cv_out(item).strip())
+                #helpers.filter_output()#REDUNDANT?
+                temp = parsers.inv_parse_cv_out(item).strip()
             else:
-                temp = helpers.filter_output(parsers.inv_parse_cv(item).strip())
+                #helpers.filter_output()#REDUNDANT?
+                temp = parsers.inv_parse_cv(item).strip()
             special_txts.append(temp)
     if config.DEBUG["INFO_LOGGING"]: 
         print(f"[INFO][OLLAMA]{function_name}: candidate_name: {candidate_name}")
@@ -1676,12 +1707,14 @@ def new_vs_old_resume(call_info=template_call_info):
 
 
     old_resume_txt0 = return_text_with_skills(format["old_resume_txt"])
-    old_dct = parsers.parse_cv_out(helpers.filter_output(old_resume_txt0.strip()))
+    #helpers.filter_output()#REDUNDANT?
+    old_dct = parsers.parse_cv_out(old_resume_txt0.strip())
     section_names= []
     for key in old_dct:
         section_names.append(key)
     old_dcts = parsers.dict_spliter(old_dct)
-    new_dcts = parsers.dict_spliter(parsers.parse_cv_out(helpers.filter_output(format["new_resume_txt"].strip())))
+    #helpers.filter_output(format["new_resume_txt"].strip())#REDUNDANT?
+    new_dcts = parsers.dict_spliter(parsers.parse_cv_out(format["new_resume_txt"].strip()))
     old_txts = [parsers.inv_parse_cv_out(dct).strip() for dct in old_dcts]
     new_txts = [parsers.inv_parse_cv_out(dct).strip() for dct in new_dcts]
     analysis_txts = []
@@ -1808,9 +1841,9 @@ def compose_cover_letter_dictionary(call_info = template_call_info):
     }
     cover_letter_text = ollama_call(runtime_info=runtime_info_temp) #Standard, no need to state function
 
-    clean_cover_letter_text = helpers.filter_output(cover_letter_text)
+    #clean_cover_letter_text = helpers.filter_output(cover_letter_text)#REDUNDANT?
     
-    clean_cover_letter_dict = parsers.parse_cl(clean_cover_letter_text)
+    clean_cover_letter_dict = parsers.parse_cl(cover_letter_text)
     
     #Make a list of dicts with name, title, languages, contact_info and clean_cover_letter_dict
     dict_list = [name,title,languages,contact_info,clean_cover_letter_dict]
@@ -1891,6 +1924,7 @@ def ollama_call(retries=config.CONFIG["MODELS"]["RETRIES"], runtime_info = {}, f
                     continue
                 if call_info["sample_starts"] != []:
                     response = helpers.filter_output(response, call_info["sample_starts"][1])
+                    if config.DEBUG["INFO_LOGGING"]: logging.info(f"[INFO][OLLAMA]{function_name}: filtered response: {response}")
                     if compare_start(response, call_info["sample_starts"]) == False:
                         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Output does not match expected start lines or output length. Retrying {i+1}/{retries}...")
                         continue
@@ -1905,11 +1939,17 @@ def ollama_call(retries=config.CONFIG["MODELS"]["RETRIES"], runtime_info = {}, f
                         continue
                     if call_info["sample_starts"] != []:
                         element = helpers.filter_output(element, call_info["sample_starts"][1])
+                        if config.DEBUG["INFO_LOGGING"]: logging.info(f"[INFO][OLLAMA]{function_name}: filtered element: {element}")
                         if compare_start(element, call_info["sample_starts"]) == False:
                             if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Output does not match expected start lines or output length. Retrying {i+1}/{retries}...")
                             continue
                     if config.DEBUG["INFO_LOGGING"]: logging.info(f"[SUCCESS][OLLAMA]{function_name}: Ollama call succeeded: {element}")
                 return response
+            elif isinstance(response,dict):
+                if config.DEBUG["INFO_LOGGING"]: logging.info(f"[INFO][OLLAMA]{function_name}: response is a dict")
+                if config.DEBUG["INFO_LOGGING"]: logging.info(f"[INFO][OLLAMA]{function_name}: assuming correctness check happens in other instances of ollama_call")
+                return response
+
 
         except Exception as e:
             error_trace =  helpers.traceback_error(e)
