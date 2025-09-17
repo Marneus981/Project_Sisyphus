@@ -1,7 +1,5 @@
 [1.0 DEV RELEASE CHECKBOX]
     [][1.0 DEV PUBLIC RELEASE] Clean code and prompt engineer a bit; make a single UI window;deal with debug prints in "a way"
-        []Check if both checks work
-        []Check if CL tailoring works
         []Prompt Engineering:
             []Make prompts more instruction heavy
             []Provide clearer templates
