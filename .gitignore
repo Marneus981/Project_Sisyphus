@@ -6,5 +6,7 @@ tools/batch_tailor.py
 dist/main.exe
 command.txt
 dist/main.exe
-Sisyphus/saved_docs/mistral1.docx
-Sisyphus/saved_docs/commit_1_0_2.docx
+Sisyphus/saved_docs_cl/
+Sisyphus/saved_docs/
+Sisyphus/payloads.py
+Sisyphus/log/

@@ -1,0 +1,15 @@
+[0]Name: Marcos David Madrigal Albores
+[0]Title: Computer Engineer
+[0]Languages: English, Spanish, French
+[0]Contact Information:
+[1]Address: 308 Brunswick Ave, Toronto, ON, Canada
+[1]Phone: +1-437-981-2994
+[1]Email: marcosdma.compeng@outlook.com
+[1]Linkedin: linkedin.com/in/marcosdma/
+[1]Github: github.com/marneus981
+[1]Portfolio: marneus981.github.io | donkeyponius981.itch.io
+[0]Cover Letter:
+[1]New Paragraph0: I am thrilled to apply for the Software Engineer, New Grad role at Sentry, a company that embodies innovation and growth. As a recent graduate with a strong foundation in software development, I am excited about the opportunity to join your team and contribute to the development of Sentry's products.
+[1]New Paragraph1: With my proficiency in Python and JavaScript, I believe I would be an excellent fit for this role. My experience in programming languages such as [insert programming language(s) from resume], has equipped me with a solid understanding of algorithms, data structures, and object-oriented design principles. Additionally, my familiarity with version control systems like [version control system mentioned on the resume] and unit testing frameworks enables me to effectively participate in the software development lifecycle.
+[1]New Paragraph2: Throughout my academic journey, I have honed my communication and teamwork skills by working collaboratively with peers on various projects. These experiences have taught me the importance of clear communication and active listening. Furthermore, my exposure to [specific project or experience mentioned on the resume] has given me a strong understanding of the value of constructive feedback and continuous improvement.
+[1]New Paragraph3: Thank you for considering my application. I would be delighted to discuss this opportunity further and explore how my skills and experiences align with Sentry's needs. Please feel free to contact me at [insert email address]. I look forward to the possibility of contributing to the growth of Sentry's products as a software engineer.

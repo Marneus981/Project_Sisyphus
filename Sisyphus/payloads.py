@@ -427,8 +427,8 @@ Tailor a Summary section for a resume to best match the job description; follow 
 - Do not line break the summary section, it should be a continuous block of text.
 - When mentioning specific skills or experiences, these must be relevant to the job description; give preference to those that appear on both the resume and the job description, particularly those which demonstrate the candidate's technical expertise.
 - In the format below, do not include any text before "[0]" or after the requested information.
-Return only the revised section and strictly follow the format below, filling in the parts that have [fill-in:"text"]:
-[0]Summary: Despite limited work experience, I bring strong work ethic, adaptability and curiosity. Experienced in [fill-in:"specific skills thanks to certain experiences"]. Now seeking a position that offers growth and learning opportunities.
+Return only the revised section and strictly follow the format below, filling in the parts that have **fill-in:"text"**:
+[0]Summary: Despite limited work experience, I bring strong work ethic, adaptability and curiosity. Experienced in **fill-in:"specific skills thanks to certain experiences"**. Now seeking a position that offers growth and learning opportunities.
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Summary:"]
@@ -873,7 +873,7 @@ Create a wholistic summary of all of them, following these guidelines:
 - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
 - Maintain the context and flow between the sections.
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
-Return the summarized information as a single continuous string of text, following this format strictly:
+Return the summarized information as a single continuous string of text, following this format strictly (do not forget to include the "[0]Summary:" text before the summary):
 [0]Summary: Wholistic summary of all sections.
 """,
         "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,

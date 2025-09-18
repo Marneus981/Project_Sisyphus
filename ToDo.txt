@@ -6,6 +6,7 @@
             []Include several high quality examples in the prompt to guide the model
             []Use stronger system rules 
             []Use end start markers for sections
+            []Explicitly remind the model to not forget line prefixes
         []Make dynamic template system
         [WIP]Research model temperature modulation
     [ISSUES]
