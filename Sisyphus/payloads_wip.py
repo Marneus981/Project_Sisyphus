@@ -145,7 +145,7 @@ Given a "Volunteering and Leadership" resume section and a job description, sele
 - Prioritize roles that match relevant skills and experience present in the job description.
 - It is okay to not select any roles if none are relevant.
 - Display the Role Titles explicitly; do not write "Role Title:" before the Role Title
-- When filling out the output format,  you may not change the role title text, do not include any text before [R] or after the role title text
+- When filling out the output format,  you may not change the role title text, do not include any text before [R] or after the role title text.
 **REQUEST:END**
 **OUTPUT FORMAT:START**
 [R]Role Title 1
@@ -201,7 +201,7 @@ Given the "Description" and "Skills" attributes of a role belonging to the "Volu
 - Include the prefix [1] at the start of each line (as seen in the format below).
 **REQUEST:END**
 **OUTPUT FORMAT:START**
-[1]Description: Brief description for Role 1.
+[1]Description: Brief role description.
 [1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
 **OUTPUT FORMAT:END**
 **EXAMPLE:START**
@@ -246,7 +246,8 @@ INPUT "Description" and "Skills" attributes of a role belonging to the "Voluntee
         "ollama_url": DEFAULT_URL, #Set at runtime
         "sample_starts": ["strict", "digits", "[1]Description:", "[1]Skills:"]
     },
-    "step0_work_experience": {
+    "step0_work_experience": #DONE
+    {
         "call_id": "step0_work_experience",
         "payload_in": {
             "model": DEFAULT_MODEL,
@@ -259,28 +260,46 @@ INPUT "Description" and "Skills" attributes of a role belonging to the "Voluntee
             "job_description": ""
         },
         "prompt_in": 
-"""Given the following "Work Experience" resume section:
-{raw_cv_data}
-And the following job description:
-{job_description}
-Select up to 5 jobs based on the job description. When selecting:
+"""**REQUEST:START**
+Given a "Work Experience" resume section and a job description, select up to 5 jobs based on the job description. When selecting:
 - If the total number of jobs is less than or equal to 5, return all of them.
 - If the total number of jobs is greater than or equal to 5 before selection: Select the most relevant 5 jobs based on the job description.
 - Do not change the name of the jobs.
 - Prioritize jobs that match relevant skills and experience present in the job description.
 - It is okay to not select any jobs if none are relevant.
 - Display the Job Titles explicitly; do not write "Job Title:" before the Job Title
-Output the selected jobs strictly in the following format, without changing the job title text (do not include any text before [J] or after the job title text):
+- When filling out the output format,  you may not change the job title text, do not include any text before [J] or after the job title text.
+**REQUEST:END**
+**OUTPUT FORMAT:START**
 [J]Job Title 1
 [J]Job Title 2
 [J]Job Title 3
 [J]Job Title 4
 [J]Job Title 5
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE OUTPUT 1 (NUMBER OF INPUT ROLES < 5):
+[J]Software Engineer
+[J]Backend Engineer
+EXAMPLE OUTPUT 2 (NUMBER OF INPUT ROLES >= 5):
+[J]Senior Engineering Manager
+[J]Full-Stack Engineer
+[J]Computer Engineer II
+[J]Backend Engineer
+[J]QA Analyst
+**EXAMPLE:END**
+**INPUT:START**
+INPUT "Work Experience" resume section:
+{raw_cv_data}
+INPUT job description:
+{job_description}
+**INPUT:END**
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["flexible", "cap_letters", "[J]"]
     },
-    "step3_work_experience": {
+    "step3_work_experience": #DONE
+    {
         "call_id": "step3_work_experience",
         "payload_in": {
             "model": DEFAULT_MODEL,
@@ -293,11 +312,8 @@ Output the selected jobs strictly in the following format, without changing the 
             "job_description": ""
         },
         "prompt_in": 
-"""Given the "Description" and "Skills" subsections of a role belonging to the "Work Experience" section of a resume:
-{experience}
-And the following job description:
-{job_description}
-Rewrite the experience to best match the job description, following these guidelines:
+"""**REQUEST:START**
+Given the "Description" and "Skills" subsections of a role belonging to the "Work Experience" section of a resume and a job description, rewrite the experience to best match the job description, following these guidelines:
 - Do not include any information not present in the original experience.
 - In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
 - In the Skills subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
@@ -306,14 +322,55 @@ Rewrite the experience to best match the job description, following these guidel
 - If there are no skills in a given category, use " ", then follow up as the format below indicates 
     - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
 - Include the prefix [1] at the start of each line (as seen in the format below).
-Return only the revised section in the following format:
-[1]Description: Brief description for Role 1.
+**REQUEST:END**
+**OUTPUT FORMAT:START**
+[1]Description: Brief role description.
 [1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE INPUT 1:
+INPUT job description:
+Company Name: Sentry
+Job Title: Software Engineer, New Grad
+Key Responsibilities:
+- Develop and extend the Sentry product by writing software in Python or JavaScript (or both)
+- Complete full software development lifecycle - design, development, testing, and operating in production
+- Communicate effectively with team members, other teams, and stakeholders
+- Act on feedback, coaching, and mentorship from manager and teammates
+Key Skills:
+- Programming skills in one or more general-purpose languages (Python, JavaScript, Java, etc.)
+- Knowledge of algorithms, data structures, and object-oriented design principles
+- Experience working with version control and unit testing
+- Strong communication and collaboration skills
+Soft Skills:
+- Eagerness to actively use the product being built (Sentry)
+- Desire to start career at a high-growth startup
+- Excitement about contributing to an open-source project daily
+- Willingness to receive feedback, coaching, and mentorship from manager and teammates
+Education: 
+- B.S. or higher in Computer Science (or similar degree program)
+Experience: 
+- At least 1 previous internship or equivalent practical experience
+INPUT "Description" and "Skills" subsections of a role belonging to the "Work Experience" section of a resume:
+[1]Description: Led the design and implementation of scalable microservices architecture using Python, Go, and Docker, reducing system downtime by 40% and increasing transaction throughput by 25%. Managed a team of 5 engineers, mentored junior staff, and fostered a culture of continuous improvement. Spearheaded cloud migration, improving reliability and reducing operational costs by 30%. Collaborated with cross-functional teams to deliver high-performance financial applications, integrating Kubernetes for automated deployment and monitoring. Implemented advanced security protocols and compliance measures, ensuring data integrity and regulatory adherence. Provided technical guidance and training to team members, enhancing overall productivity and expertise. Consistently delivered projects on time and within budget, exceeding client expectations and contributing to company growth. Led post-mortem analyses and process improvements, resulting in a 20% reduction in incident response times. Recognized for outstanding leadership, analytical thinking, and technical excellence. Developed documentation and best practices for microservices development, contributing to knowledge sharing and team efficiency. Coordinated with stakeholders to prioritize feature development and address business needs, ensuring alignment with organizational goals
+[1]Skills: Programming Languages: Python, Go, Java, JavaScript, C++, SQL; Soft Skills: Leadership, Problem Solving, Communication, Teamwork, Adaptability, Analytical Thinking; Technical Skills: Microservices, Docker, Kubernetes, API Development, Database Design, Cloud Computing
+EXAMPLE OUTPUT 1:
+[1]Description: Spearheaded scalable microservices architecture, leveraging Python and Docker. Mentored junior staff and fostered continuous improvement, delivering high-performance applications.
+[1]Skills: Programming Languages: Python; Technical Skills: Microservices, Docker; Soft Skills: Leadership, Communication
+**EXAMPLE:END**
+**INPUT:START**
+INPUT job description:
+{job_description}
+
+INPUT "Description" and "Skills" subsections of a role belonging to the "Work Experience" section of a resume:
+{experience}
+**INPUT:END**
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits" ,"[1]Description:", "[1]Skills:"]
     },
-    "step0_projects": {
+    "step0_projects": #DONE
+    {
         "call_id": "step0_projects",
         "payload_in": {
             "model": DEFAULT_MODEL,
@@ -326,28 +383,46 @@ Return only the revised section in the following format:
             "job_description": ""
         },
         "prompt_in": 
-"""Given the following "Projects" resume section:
-{raw_cv_data}
-And the following job description:
-{job_description}
-Select up to 5 projects based on the job description. When selecting:
+"""**REQUEST:START**
+Given a "Projects" resume section and a job description, select up to 5 projects based on the job description. When selecting:
 - If the total number of projects is less than or equal to 5, return all of them.
 - If the total number of projects is greater than or equal to 5 before selection: Select the most relevant 5 projects based on the job description.
 - Do not change the name of the projects.
 - Prioritize projects that match relevant skills and experience present in the job description.
 - It is okay to not select any projects if none are relevant.
 - Display the Project Titles explicitly; do not write "Project Title:" before the Project Title
-Output the selected projects strictly in the following format, without changing the project title text (do not include any text before [P] or after the project title text):
+- When filling out the output format,  you may not change the project title text, do not include any text before [P] or after the project title text.
+**REQUEST:END**
+**OUTPUT FORMAT:START**
 [P]Project Title 1
 [P]Project Title 2
 [P]Project Title 3
 [P]Project Title 4
 [P]Project Title 5
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE OUTPUT 1 (NUMBER OF INPUT ROLES < 5):
+[P]ml_for_dummies Open Source Library
+[P]IoT Controller App
+EXAMPLE OUTPUT 2 (NUMBER OF INPUT ROLES >= 5):
+[P]RAG Powered Local Search Engine
+[P]Classic Game Solver with AI
+[P]IoT Controller App
+[P]Cyber Security Capstone Project
+[P]Custom DB Manager
+**EXAMPLE:END**
+**INPUT:START**
+INPUT "Projects" resume section:
+{raw_cv_data}
+INPUT job description:
+{job_description}
+**INPUT:END**
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["flexible", "cap_letters", "[P]"]
     },
-    "step3_projects": {
+    "step3_projects": #DONE
+    {
         "call_id": "step3_projects",
         "payload_in": {
             "model": DEFAULT_MODEL,
@@ -360,11 +435,8 @@ Output the selected projects strictly in the following format, without changing 
             "job_description": ""
         },
         "prompt_in": 
-"""Given the "Description" and "Skills" subsections of a project belonging to the "Projects" section of a resume:
-{experience}
-And the following job description:
-{job_description}
-Rewrite the experience to best match the job description, following these guidelines:
+"""**REQUEST:START**
+Given the "Description" and "Skills" subsections of a project belonging to the "Projects" section of a resume and a job description, rewrite the experience to best match the job description, following these guidelines:
 - Do not include any information not present in the original experience.
 - In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
 - In the Skills subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
@@ -373,9 +445,49 @@ Rewrite the experience to best match the job description, following these guidel
 - If there are no skills in a given category, use " ", then follow up as the format below indicates 
     - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
 - Include the prefix [1] at the start of each line (as seen in the format below).
-Return only the revised section in the following format:
-[1]Description: Brief description for Project 1.
-[1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
+**REQUEST:END**
+**OUTPUT FORMAT:START**
+[1]Description: Brief project description.
+[1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ....
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE INPUT 1:
+INPUT job description:
+Company Name: Sentry
+Job Title: Software Engineer, New Grad
+Key Responsibilities:
+- Develop and extend the Sentry product by writing software in Python or JavaScript (or both)
+- Complete full software development lifecycle - design, development, testing, and operating in production
+- Communicate effectively with team members, other teams, and stakeholders
+- Act on feedback, coaching, and mentorship from manager and teammates
+Key Skills:
+- Programming skills in one or more general-purpose languages (Python, JavaScript, Java, etc.)
+- Knowledge of algorithms, data structures, and object-oriented design principles
+- Experience working with version control and unit testing
+- Strong communication and collaboration skills
+Soft Skills:
+- Eagerness to actively use the product being built (Sentry)
+- Desire to start career at a high-growth startup
+- Excitement about contributing to an open-source project daily
+- Willingness to receive feedback, coaching, and mentorship from manager and teammates
+Education: 
+- B.S. or higher in Computer Science (or similar degree program)
+Experience: 
+- At least 1 previous internship or equivalent practical experience
+INPUT "Description" and "Skills" subsections of a project belonging to the "Projects" section of a resume:
+[1]Description: Developed a real-time analytics dashboard using Python and React, enabling clients to monitor KPIs and generate actionable reports. Integrated WebSockets for live data updates and advanced data visualization, increasing user engagement by 50%. Optimized backend performance, reducing query latency by 35%. Designed modular architecture to support future scalability and feature expansion. Collaborated with stakeholders to define requirements and deliver a user-friendly interface. Provided training and documentation for end users, ensuring successful adoption and utilization. Implemented role-based access controls and security features to protect sensitive data. Received positive feedback from clients and management for technical excellence and business impact. Led post-launch support and feature enhancements, maintaining high user satisfaction and system reliability. Developed automated reporting tools and export features to support business analysis and decision-making
+[1]Skills: Programming Languages: Python, JavaScript, Dart, Java, C++, SQL; Soft Skills: Presentation, Documentation, UX Design, Initiative, Creativity, Self-Motivation; Technical Skills: Data Visualization, WebSockets, Mobile Development, Cloud Integration, API Integration, NLP
+EXAMPLE OUTPUT 1:
+[1]Description: Built a real-time analytics dashboard using Python and React, with skills in data visualization and WebSockets. Collaborated with stakeholders to deliver user-friendly interfaces.
+[1]Skills: Programming Languages: Python, JavaScript; Technical Skills: Data Visualization, WebSockets, API Integration; Soft Skills: Communication
+**EXAMPLE:END**
+**INPUT:START**
+INPUT job description:
+{job_description}
+
+INPUT "Description" and "Skills" subsections of a project belonging to the "Projects" section of a resume:
+{experience}
+**INPUT:END**
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[1]Description:", "[1]Skills:"]
