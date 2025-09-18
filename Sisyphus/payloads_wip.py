@@ -48,7 +48,8 @@ Prompt Format:
 
 PAYLOADS= {
     # STANDARD CALLS
-    "consistency_checker_vs_cv_cl": {
+    "consistency_checker_vs_cv_cl": #DONE
+    {
         "call_id": "consistency_checker_vs_cv_cl", 
         "payload_in": {
                        "model": DEFAULT_MODEL, #Set at runtime
@@ -61,10 +62,8 @@ PAYLOADS= {
                    "cv_data_orig": ""  
                    },
         "prompt_in": 
-"""Given the following cover letter:
-{cv_data}
-And the wholistic summary of the resume meant to accompany it on a job application:
-{cv_data_orig}
+"""**REQUEST:START**
+Given a cover letter and a wholistic summary of a resume (both part of the same job application):
 Perform a consistency check on the tailored cover letter against the resume. This consistency check should include:
 - Whether the cover letter is consistent with the resume, meaning that all skills and experiences mentioned in the cover letter should be present in the resume.
 - Whether the cover letter is consistent with itself, meaning that there should be no contradictions or inconsistencies in the information provided.
@@ -72,11 +71,33 @@ The report should follow these guidelines:
 - Be mindful not to include any line breaks in  the content of any of the sections/subsections.
 - Be as objective as possible, and if you must make assumptions, make very conservative assumptions
 - Do not create nor imagine any data that is not present in the original data.
-The consistency check should be returned strictly in the following format (include the numbers "[0]", "[1]", do not modify the format):
+- When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
+**REQUEST:END**
+**OUTPUT FORMAT:START**
 [0]Consistency Checker Vs Resume:
-[1]Inconsistencies With Resume: [Yes/No]; [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-[1]Inconsistencies With Self:  [Yes/No]; [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-[1]Suggestions for Improvement: [List of suggestions for improvement, if any; return 'None' if no suggestions; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+[1]Inconsistencies With Resume: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+[1]Inconsistencies With Self: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+[1]Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE OUTPUT 1:
+[0]Consistency Checker Vs Resume:
+[1]Inconsistencies With Resume: None.
+[1]Inconsistencies With Self: None.
+[1]Suggestions for Improvement: None.
+EXAMPLE OUTPUT 2:
+[0]Consistency Checker Vs Resume:
+[1]Inconsistencies With Resume: 2 inconsistencies found with Resume. The cover letter talks about a non-existent position at WestCo manufacturing; There is a data mismatch on the Masters of Manufacturing completion date.  
+[1]Inconsistencies With Self: 1 inconsistency found. The cover letter mentions a degree in economics, but then mentions the lack of it.
+[1]Suggestions for Improvement: Correct the above inconsistencies; Do not refer to the candidate in the thrid person since you are meant to write the cover letter in their place.
+**EXAMPLE:END**
+**INPUT:START**
+INPUT cover letter:
+{cv_data}
+
+INPUT wholistic summary of the resume meant to accompany the above cover letter on a job application:
+{cv_data_orig}
+**INPUT:END**
 """,
         "ollama_url": DEFAULT_URL, #Set at runtime
         "sample_starts": ["strict", "digits", "[0]Consistency Checker Vs Resume:", "[1]Inconsistencies With Resume:","[1]Inconsistencies With Self:","[1]Suggestions for Improvement:"] #[type, sample starts]
@@ -101,7 +122,9 @@ Job Description:
         "ollama_url": DEFAULT_URL, #Set at runtime
         "sample_starts": [] #[type, sample starts]
     },
-    "step0_volunteering_and_leadership": {
+    ##similar start
+    "step0_volunteering_and_leadership": #DONE
+    {
         "call_id": "step0_volunteering_and_leadership", 
         "payload_in": {
                        "model": DEFAULT_MODEL, #Set at runtime
@@ -114,28 +137,46 @@ Job Description:
                    "job_description": ""
                    },
         "prompt_in": 
-"""Given the following "Volunteering and Leadership" resume section:
-{raw_cv_data}
-And the following job description:
-{job_description}
-Select up to 5 roles based on the job description. When selecting:
+"""**REQUEST:START**
+Given a "Volunteering and Leadership" resume section and a job description, select up to 5 roles based on the job description. When selecting:
 - If the total number of roles is less than or equal to 5, return all of them.
 - If the total number of roles is greater than or equal to 5 before selection: Select the most relevant 5 roles based on the job description.
 - Do not change the name of the roles.
 - Prioritize roles that match relevant skills and experience present in the job description.
 - It is okay to not select any roles if none are relevant.
 - Display the Role Titles explicitly; do not write "Role Title:" before the Role Title
-Output the selected roles strictly in the following format, without changing the role title text (do not include any text before [R] or after the role title text):
+- When filling out the output format,  you may not change the role title text, do not include any text before [R] or after the role title text
+**REQUEST:END**
+**OUTPUT FORMAT:START**
 [R]Role Title 1
 [R]Role Title 2
 [R]Role Title 3
 [R]Role Title 4
 [R]Role Title 5
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE OUTPUT 1 (NUMBER OF INPUT ROLES < 5):
+[R]Animal Shelter Volunteer
+[R]Engineering Convention Organizer
+EXAMPLE OUTPUT 2 (NUMBER OF INPUT ROLES >= 5):
+[R]MIT Hackaton Team Leader
+[R]Engineering Ambassador Program
+[R]Team Leader at Robotics Olympics
+[R]Engineering Convention Organizer
+[R]Homeless Shelter Volunteer
+**EXAMPLE:END**
+**INPUT:START**
+INPUT "Volunteering and Leadership" resume section:
+{raw_cv_data}
+INPUT job description:
+{job_description}
+**INPUT:END**
 """,
         "ollama_url": DEFAULT_URL, #Set at runtime
         "sample_starts": ["flexible", "cap_letters", "[R]"]
     },
-    "step3_volunteering_and_leadership": {
+    "step3_volunteering_and_leadership": #DONE
+    {
         "call_id": "step3_volunteering_and_leadership", 
         "payload_in": {
                        "model": DEFAULT_MODEL, #Set at runtime
@@ -148,11 +189,8 @@ Output the selected roles strictly in the following format, without changing the
                    "job_description": ""
                    },
         "prompt_in": 
-"""Given the "Description" and "Skills" subsections of a role belonging to the "Volunteering and Leadership" section of a resume:
-{experience}
-And the following job description:
-{job_description}
-Rewrite the experience to best match the job description, following these guidelines:
+"""**REQUEST:START**
+Given the "Description" and "Skills" attributes of a role belonging to the "Volunteering and Leadership" section of a resume and a job description, rewrite the experience to best match the job description, following these guidelines:
 - Do not include any information not present in the original experience.
 - In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
 - In the Skills subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
@@ -161,9 +199,49 @@ Rewrite the experience to best match the job description, following these guidel
 - If there are no skills in a given category, use " ", then follow up as the format below indicates 
     - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
 - Include the prefix [1] at the start of each line (as seen in the format below).
-Return only the revised section in the following format:
+**REQUEST:END**
+**OUTPUT FORMAT:START**
 [1]Description: Brief description for Role 1.
 [1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE INPUT 1:
+INPUT job description:
+Company Name: Sentry
+Job Title: Software Engineer, New Grad
+Key Responsibilities:
+- Develop and extend the Sentry product by writing software in Python or JavaScript (or both)
+- Complete full software development lifecycle - design, development, testing, and operating in production
+- Communicate effectively with team members, other teams, and stakeholders
+- Act on feedback, coaching, and mentorship from manager and teammates
+Key Skills:
+- Programming skills in one or more general-purpose languages (Python, JavaScript, Java, etc.)
+- Knowledge of algorithms, data structures, and object-oriented design principles
+- Experience working with version control and unit testing
+- Strong communication and collaboration skills
+Soft Skills:
+- Eagerness to actively use the product being built (Sentry)
+- Desire to start career at a high-growth startup
+- Excitement about contributing to an open-source project daily
+- Willingness to receive feedback, coaching, and mentorship from manager and teammates
+Education: 
+- B.S. or higher in Computer Science (or similar degree program)
+Experience: 
+- At least 1 previous internship or equivalent practical experience
+INPUT "Description" and "Skills" attributes of a role belonging to the "Volunteering and Leadership" section of a resume:
+[1]Description: Mentored over 100 aspiring developers in Python and web development, designing and delivering curriculum modules on REST APIs, Docker, and cloud integration. Achieved a 90% bootcamp completion rate and improved participant job placement by 35%. Fostered a collaborative learning environment, provided personalized feedback, and facilitated group projects and hackathons to encourage teamwork and innovation. Developed advanced workshops on microservices and cloud computing, resulting in measurable increases in participant technical proficiency. Provided ongoing career guidance and support, helping graduates secure positions at leading tech companies. Consistently received positive feedback from participants and program coordinators for dedication, expertise, and impact. Led outreach initiatives to local schools and organizations, expanding program reach and promoting diversity in tech. Recognized for exceptional mentoring, communication, and leadership skills. Coordinated alumni networking events and maintained relationships with graduates to track career progress and offer continued support. Implemented feedback systems to improve curriculum and teaching methods, ensuring the program remained relevant and effective. Collaborated with other mentors to share best practices and develop new instructional materials, contributing to the overall success and reputation of the bootcamp
+[1]Skills: Programming Languages: Python, JavaScript, Java, C++, SQL, Dart; Soft Skills: Mentoring, Communication, Leadership, Problem Solving, Teamwork, Adaptability; Technical Skills: Web Development, REST APIs, Docker, Kubernetes, Cloud Integration, Data Visualization 
+EXAMPLE OUTPUT 1:
+[1]Description: Mentored aspiring developers in Python, designing curriculum modules on REST APIs and cloud integration. Fostered a collaborative learning environment and developed advanced workshops.
+[1]Skills: Programming Languages: Python, JavaScript; Technical Skills: Web Development, REST APIs, Docker, Cloud Integration; Soft Skills: Mentoring, Communication
+**EXAMPLE:END**
+**INPUT:START**
+INPUT job description:
+{job_description}
+
+INPUT "Description" and "Skills" attributes of a role belonging to the "Volunteering and Leadership" section of a resume:
+{experience}
+**INPUT:END**
 """,
         "ollama_url": DEFAULT_URL, #Set at runtime
         "sample_starts": ["strict", "digits", "[1]Description:", "[1]Skills:"]
@@ -302,6 +380,7 @@ Return only the revised section in the following format:
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[1]Description:", "[1]Skills:"]
     },
+    ##similar end
     "step0_prune_experiences": {
         "call_id": "step0_prune_experiences",
         "payload_in": {
@@ -533,7 +612,8 @@ Strictly follow the format:
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Cover Letter:", "[1]New Paragraph0:", "[1]New Paragraph1:", "[1]New Paragraph2:", "[1]New Paragraph3:"]
     },
-    "consistency_checker_vs_job_desc_cv": {
+    "consistency_checker_vs_job_desc_cv": #DONE
+    {
         "call_id": "consistency_checker_vs_job_desc_cv",
         "payload_in": {
             "model": DEFAULT_MODEL,
@@ -546,24 +626,41 @@ Strictly follow the format:
             "job_description": ""
         },
         "prompt_in": 
-"""Given the following summary of a resume:
-{cv_data}
-And the job description the aforementioned resume has been tailored to:
-{job_description}
-Perform a consistency check on the tailored resume against the job description. This consistency check will check if the resume is consistent with the job description, meaning that all skills and experiences mentioned in the resume should be relevant to the job description.
+"""**REQUEST:START**
+Given the a summary of a resume and the job description the aforementioned resume has been tailored to, perform a consistency check on the tailored resume against the job description. This consistency check will check if the resume is consistent with the job description, meaning that all skills and experiences mentioned in the resume should be relevant to the job description.
 Follow these guidelines:
 - Be mindful not to include any line breaks in the content of any of the sections/subsections.
 - Be as objective as possible, and do not make any assumptions about the data.
 - Do not create nor imagine any data that is not present in the original data.
-The consistency check should be returned strictly in the following format (include the numbers "[0]", "[1]", do not modify the format):
+- When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
+**REQUEST:END**
+**OUTPUT FORMAT:START**
 [0]Consistency Checker Vs Job Description:
-[1]Inconsistencies With Job Description: [Yes/No]; [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-[1]Suggestions for Improvement: [List of suggestions for improvement, if any; return 'None' if no suggestions; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+[1]Inconsistencies With Job Description: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+[1]Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE OUTPUT 1:
+[0]Consistency Checker Vs Job Description:
+[1]Inconsistencies With Job Description: None.
+[1]Suggestions for Improvement: None.
+EXAMPLE OUTPUT 2:
+[0]Consistency Checker Vs Job Description:
+[1]Inconsistencies With Job Description: 1 inconsistency found. The position "Secretary at WayCom" is irrelevant to the job description with job title "Senior VXF Animator" because of the mismatch in skillsets required. 
+[1]Suggestions for Improvement: Correct the above inconsistencies; The skill "VFX Software" is missing from the resume summary, it would be wise to include it if the candiate has it.
+**EXAMPLE:END**
+**INPUT:START**
+INPUT summary of a resume tailored to a particular job description:
+{cv_data}
+INPUT job description the aforementioned resume has been tailored to:
+{job_description}
+**INPUT:END**
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Consistency Checker Vs Job Description:", "[1]Inconsistencies With Job Description:", "[1]Suggestions for Improvement:"]
     },
-    "consistency_checker_vs_job_desc_cl": {
+    "consistency_checker_vs_job_desc_cl": #DONE
+    {
         "call_id": "consistency_checker_vs_job_desc_cl",
         "payload_in": {
             "model": DEFAULT_MODEL,
@@ -576,19 +673,35 @@ The consistency check should be returned strictly in the following format (inclu
             "job_description": ""
         },
         "prompt_in": 
-"""Given the following cover letter:
-{cv_data}
-And the job description the aforementioned resume has been tailored to:
-{job_description}
-Perform a consistency check on the tailored cover letter against the job description. This consistency check will check if the cover letter is consistent with the job description, meaning that all skills and experiences mentioned in the cover letter should be relevant to the job description.
+"""**REQUEST:START**
+Given a cover letter and the job description the aforementioned cover letter has been tailored to, perform a consistency check on the tailored cover letter against the job description. This consistency check will check if the cover letter is consistent with the job description, meaning that all skills and experiences mentioned in the cover letter should be relevant to the job description.
 Follow these guidelines:
 - Be mindful not to include any line breaks in  the content of any of the sections/subsections.
 - Be as objective as possible, and do not make any assumptions about the data.
 - Do not create nor imagine any data that is not present in the original data.
-The consistency check should be returned strictly in the following format (include the numbers "[0]", "[1]", do not modify the format):
+- When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
+**REQUEST:END**
+**OUTPUT FORMAT:START**
 [0]Consistency Checker Vs Job Description:
-[1]Inconsistencies With Job Description: [Yes/No]; [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks] 
-[1]Suggestions for Improvement: [List of suggestions for improvement, if any; return 'None' if no suggestions; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+[1]Inconsistencies With Job Description: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+[1]Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE OUTPUT 1:
+[0]Consistency Checker Vs Job Description:
+[1]Inconsistencies With Job Description: None.
+[1]Suggestions for Improvement: None.
+EXAMPLE OUTPUT 2:
+[0]Consistency Checker Vs Job Description:
+[1]Inconsistencies With Job Description: 2 inconsistencies found. The position the cover letter is referring to is incorrect, it should be "Junior Engineer at GTY" not "Senior Software Engineer at GTY"; The email address has field has been left as a placeholder.
+[1]Suggestions for Improvement: Correct the above inconsistencies; Consider not mentioning irrelevant positions, such as "Ice Cream Machine Operator" or "Zoo Ticket Salesman"
+**EXAMPLE:END**
+**INPUT:START**
+INPUT cover letter tailored to a particular job description:
+{cv_data}
+INPUT job description the aforementioned resume has been tailored to:
+{job_description}
+**INPUT:END**
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Consistency Checker Vs Job Description:", "[1]Inconsistencies With Job Description:", "[1]Suggestions for Improvement:"]
@@ -650,7 +763,8 @@ Return the summarized information as a single continuous string of text, followi
         "sample_starts": ["flexible", "cap_letters", "[S]"]
     },
     ##similar start
-    "tailor_volunteering_and_leadership": {
+    "tailor_volunteering_and_leadership": #DONE
+    {
         "call_id": "tailor_volunteering_and_leadership", 
         "payload_in": {"model": DEFAULT_MODEL,
                        "system": "",
@@ -668,7 +782,8 @@ Return the summarized information as a single continuous string of text, followi
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["flexible", "digits", "[0]", "[1]"]
     },
-    "tailor_work_experience": {
+    "tailor_work_experience": #DONE
+    {
         "call_id": "tailor_work_experience", 
         "payload_in": {"model": DEFAULT_MODEL,
                        "system": "",
@@ -686,7 +801,8 @@ Return the summarized information as a single continuous string of text, followi
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["flexible", "digits", "[0]", "[1]"]
     },
-    "tailor_projects": {
+    "tailor_projects": #DONE
+    {
         "call_id": "tailor_projects", 
         "payload_in": {"model": DEFAULT_MODEL,
                        "system": "",
@@ -809,7 +925,8 @@ Return the summarized information as a single continuous string of text, followi
         "sample_starts": ["strict", "cap_letters", "[S]"]#Might lead to error, check later
     },
     ##similar end
-    "prune_experiences": {
+    "prune_experiences": #DONE
+    {
         "call_id": "prune_experiences", 
         "payload_in": {"model": DEFAULT_MODEL,
                        "system": "",
@@ -826,7 +943,8 @@ Return the summarized information as a single continuous string of text, followi
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["flexible", "digits", "[0]", "[1]"]#Might lead to error, check later
     },
-    "slide_summary": {
+    "slide_summary": #DONE
+    {
         "call_id": "slide_summary", 
         "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
                         "system": "", # #system="",
@@ -879,7 +997,8 @@ Return the summarized information as a single continuous string of text, followi
         "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Summary:"]
     },
-    "tailor_summary": {
+    "tailor_summary": #DONE
+    {
         "call_id": "tailor_summary", 
         "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
                         "system": "", # #system="",
@@ -900,7 +1019,8 @@ Return the summarized information as a single continuous string of text, followi
         "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Summary:"]
     },
-    "new_vs_old_resume":{
+    "new_vs_old_resume": #DONE
+    {
         "call_id": "new_vs_old_resume", 
         "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
                         "system": "", # #system="",
@@ -916,7 +1036,8 @@ Return the summarized information as a single continuous string of text, followi
         "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
         "sample_starts": ["flexible", "digits", "[0]"]
     },
-    "consistency_checker_vs_cv_cv":{
+    "consistency_checker_vs_cv_cv": #DONE
+    {
         "call_id": "consistency_checker_vs_cv_cv", 
         "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
                         "system": "", # #system="",
@@ -930,25 +1051,44 @@ Return the summarized information as a single continuous string of text, followi
             "non_standard_calls": ["new_vs_old_resume"],
         }, 
         "prompt_in": 
-"""The following list contains a per-section analysis of the resumes, comparing the synthesized data in the new resume against the original:
-{all_analysis}
-Now, given this information, synthesize a report which extracts the following data from the list of analyses:
+"""**REQUEST:START**
+Given a list containing a per-section analysis of a two resumes, comparing the synthesized data in the new resume (which has been tailored to a particular job description) against the original, synthesize a report which extracts the following data from the list of analyses:
 - Whether the new resume is consistent with the original resume, meaning that all information in the new resume is present in the original resume, even if paraphrased.
 - Whether the new resume is consistent with itself, meaning that there should be no contradictions or inconsistencies in the information provided.
 The report should follow these guidelines:
 - Be mindful not to include any line breaks in  the content of any of the sections/subsections.
 - Be as objective as possible, and if you must make assumptions, make very conservative assumptions
 - Do not create nor imagine any data that is not present in the original data.
-The consistency check should be returned strictly in the following format (include the numbers "[0]", "[1]", do not modify the format):
-[0]Consistency Checker VS Original Resume:
-[1]Inconsistencies With Original Resume: [Yes/No]; [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-[1]Inconsistencies With Self: [Yes/No]; [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-[1]Suggestions for Improvement: [List of suggestions for improvement, if any; return 'None' if no suggestions; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-""",#Empty
+- When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
+**REQUEST:END**
+**OUTPUT FORMAT:START**
+[0]Consistency Checker Vs Original Resume:
+[1]Inconsistencies With Original Resume: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+[1]Inconsistencies With Self: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+[1]Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE OUTPUT 1:
+[0]Consistency Checker Vs Original Resume:
+[1]Inconsistencies With Original Resume: None.
+[1]Inconsistencies With Self: None.
+[1]Suggestions for Improvement: None.
+EXAMPLE OUTPUT 2:
+[0]Consistency Checker Vs Original Resume:
+[1]Inconsistencies With Original Resume: 3 inconsistencies found with Original Resume. Position "Senior Engineer at AMD" found in tailored resume, missing in original; Wrong start date for position "Junior Engineer at NVidia", should be 10/2013 not 5/2024; URL for project "IoT at home" found in tailored resume, missing in original.
+[1]Inconsistencies With Self: 1 inconsistency found. "Summary" section mentions a position not present under "Work Experience" (or any other section for that matter). 
+[1]Suggestions for Improvement: Correct the above inconsistencies; Avoid the use of run-on sentences.
+**EXAMPLE:END**
+**INPUT:START**
+INPUT list containing a per-section analysis of the resumes, comparing the synthesized data in the new resume against the original:
+{all_analysis}
+**INPUT:END**
+""",
         "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Consistency Checker VS Original Resume:","[1]Inconsistencies With Original Resume:","[1]Inconsistencies With Self:", "[1]Suggestions for Improvement:"]
     },
-    "compose_cover_letter_dictionary":{
+    "compose_cover_letter_dictionary": #DONE
+    {
         "call_id": "compose_cover_letter_dictionary", 
         "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
                         "system": "", # #Empty
@@ -966,7 +1106,8 @@ The consistency check should be returned strictly in the following format (inclu
         "sample_starts": ["flexible", "digits", "[0]","[1]"]
     },
     #ASYNC
-    "standard_ollama_call_async": {
+    "standard_ollama_call_async": #DONE
+    {
         "call_id": "standard_ollama_call_async", 
         "payload_in": {
             "model": DEFAULT_MODEL,

@@ -1,0 +1,15 @@
+[0]Name: Jane Doe
+[0]Title: Senior Software Engineer
+[0]Languages: English, Spanish, French
+[0]Contact Information:
+[1]Address: 123 Main St, Springfield, USA
+[1]Phone: +1-555-123-4567
+[1]Email: jane.doe@email.com
+[1]Linkedin: linkedin.com/in/janedoe
+[1]Github: github.com/janedoe
+[1]Portfolio: janedoe.dev
+[0]Cover Letter:
+[1]New Paragraph0: As I came across the Software Engineer, New Grad role at Sentry, I couldn't help but feel a surge of excitement and enthusiasm. The opportunity to develop and extend the Sentry product by writing software in Python or JavaScript (or both) aligns perfectly with my skills and interests.
+[1]New Paragraph1: With a strong foundation in computer science and programming languages like Python and JavaScript, I am confident that I would be a great fit for this role. My previous internship experience has equipped me with the ability to complete the full software development lifecycle - design, development, testing, and operating in production. Additionally, my proficiency in version control and unit testing will allow me to effectively collaborate with teammates.
+[1]New Paragraph2: As highlighted on my resume, I possess a solid understanding of algorithms, data structures, and object-oriented design principles. My experience working with version control systems and unit testing frameworks has allowed me to deliver high-quality software solutions. Furthermore, I am eager to actively use the product being built (Sentry) and contribute to an open-source project daily.
+[1]New Paragraph3: Thank you for considering my application for the Software Engineer, New Grad role at Sentry. I would be delighted to discuss this opportunity further and explain in greater detail why I am the ideal candidate for this position. Please feel free to contact me at [Your Email Address].
