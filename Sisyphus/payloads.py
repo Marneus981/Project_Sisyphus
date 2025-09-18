@@ -565,19 +565,35 @@ Strictly follow the format:
             "job_description": ""
         },
         "prompt_in": 
-"""Given the following summary of a resume:
-{cv_data}
-And the job description the aforementioned resume has been tailored to:
-{job_description}
-Perform a consistency check on the tailored resume against the job description. This consistency check will check if the resume is consistent with the job description, meaning that all skills and experiences mentioned in the resume should be relevant to the job description.
+"""**REQUEST:START**
+Given the a summary of a resume and the job description the aforementioned resume has been tailored to, perform a consistency check on the tailored resume against the job description. This consistency check will check if the resume is consistent with the job description, meaning that all skills and experiences mentioned in the resume should be relevant to the job description.
 Follow these guidelines:
 - Be mindful not to include any line breaks in the content of any of the sections/subsections.
 - Be as objective as possible, and do not make any assumptions about the data.
 - Do not create nor imagine any data that is not present in the original data.
-The consistency check should be returned strictly in the following format (include the numbers "[0]", "[1]", do not modify the format):
+- When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
+**REQUEST:END**
+**OUTPUT FORMAT:START**
 [0]Consistency Checker Vs Job Description:
-[1]Inconsistencies With Job Description: [Yes/No]; [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-[1]Suggestions for Improvement: [List of suggestions for improvement, if any; return 'None' if no suggestions; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+[1]Inconsistencies With Job Description: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+[1]Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE OUTPUT 1:
+[0]Consistency Checker Vs Job Description:
+[1]Inconsistencies With Job Description: None.
+[1]Suggestions for Improvement: None.
+EXAMPLE OUTPUT 2:
+[0]Consistency Checker Vs Job Description:
+[1]Inconsistencies With Job Description: 1 inconsistency found. The position "Secretary at WayCom" is irrelevant to the job description with job title "Senior VXF Animator" because of the mismatch in skillsets required. 
+[1]Suggestions for Improvement: Correct the above inconsistencies; The skill "VFX Software" is missing from the resume summary, it would be wise to include it if the candiate has it.
+**EXAMPLE:END**
+**INPUT:START**
+INPUT summary of a resume tailored to a particular job description:
+{cv_data}
+INPUT job description the aforementioned resume has been tailored to:
+{job_description}
+**INPUT:END**
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Consistency Checker Vs Job Description:", "[1]Inconsistencies With Job Description:", "[1]Suggestions for Improvement:"]
@@ -595,19 +611,35 @@ The consistency check should be returned strictly in the following format (inclu
             "job_description": ""
         },
         "prompt_in": 
-"""Given the following cover letter:
-{cv_data}
-And the job description the aforementioned resume has been tailored to:
-{job_description}
-Perform a consistency check on the tailored cover letter against the job description. This consistency check will check if the cover letter is consistent with the job description, meaning that all skills and experiences mentioned in the cover letter should be relevant to the job description.
+"""**REQUEST:START**
+Given a cover letter and the job description the aforementioned cover letter has been tailored to, perform a consistency check on the tailored cover letter against the job description. This consistency check will check if the cover letter is consistent with the job description, meaning that all skills and experiences mentioned in the cover letter should be relevant to the job description.
 Follow these guidelines:
 - Be mindful not to include any line breaks in  the content of any of the sections/subsections.
 - Be as objective as possible, and do not make any assumptions about the data.
 - Do not create nor imagine any data that is not present in the original data.
-The consistency check should be returned strictly in the following format (include the numbers "[0]", "[1]", do not modify the format):
+- When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
+**REQUEST:END**
+**OUTPUT FORMAT:START**
 [0]Consistency Checker Vs Job Description:
-[1]Inconsistencies With Job Description: [Yes/No]; [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks] 
-[1]Suggestions for Improvement: [List of suggestions for improvement, if any; return 'None' if no suggestions; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+[1]Inconsistencies With Job Description: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+[1]Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE OUTPUT 1:
+[0]Consistency Checker Vs Job Description:
+[1]Inconsistencies With Job Description: None.
+[1]Suggestions for Improvement: None.
+EXAMPLE OUTPUT 2:
+[0]Consistency Checker Vs Job Description:
+[1]Inconsistencies With Job Description: 2 inconsistencies found. The position the cover letter is referring to is incorrect, it should be "Junior Engineer at GTY" not "Senior Software Engineer at GTY"; The email address has field has been left as a placeholder.
+[1]Suggestions for Improvement: Correct the above inconsistencies; Consider not mentioning irrelevant positions, such as "Ice Cream Machine Operator" or "Zoo Ticket Salesman"
+**EXAMPLE:END**
+**INPUT:START**
+INPUT cover letter tailored to a particular job description:
+{cv_data}
+INPUT job description the aforementioned resume has been tailored to:
+{job_description}
+**INPUT:END**
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Consistency Checker Vs Job Description:", "[1]Inconsistencies With Job Description:", "[1]Suggestions for Improvement:"]
