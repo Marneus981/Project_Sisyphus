@@ -20,7 +20,7 @@ Each prompt will have multiple sections with their own ":START**" and ":END**" d
     This section will contain the exact output format you must follow when responding to any requests. You must follow it exactly and without including unrequested information.
     **OUTPUT FORMAT:END**
     **EXAMPLE:START**
-    This section will contain of examples for both expected inputs and the output generated from said inputs.
+    This section will contain of examples for expected outputs (and sometime inputs) generated from said inputs.
     **EXAMPLE:END**
     **INPUT:START**
     This section will contain the actual input for the prompt.

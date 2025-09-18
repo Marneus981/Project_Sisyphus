@@ -61,10 +61,8 @@ PAYLOADS= {
                    "cv_data_orig": ""  
                    },
         "prompt_in": 
-"""Given the following cover letter:
-{cv_data}
-And the wholistic summary of the resume meant to accompany it on a job application:
-{cv_data_orig}
+"""**REQUEST:START**
+Given a cover letter and a wholistic summary of a resume (both part of the same job application):
 Perform a consistency check on the tailored cover letter against the resume. This consistency check should include:
 - Whether the cover letter is consistent with the resume, meaning that all skills and experiences mentioned in the cover letter should be present in the resume.
 - Whether the cover letter is consistent with itself, meaning that there should be no contradictions or inconsistencies in the information provided.
@@ -72,11 +70,32 @@ The report should follow these guidelines:
 - Be mindful not to include any line breaks in  the content of any of the sections/subsections.
 - Be as objective as possible, and if you must make assumptions, make very conservative assumptions
 - Do not create nor imagine any data that is not present in the original data.
-The consistency check should be returned strictly in the following format (include the numbers "[0]", "[1]", do not modify the format):
+- When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
+**REQUEST:END**
+**OUTPUT FORMAT:START**
 [0]Consistency Checker Vs Resume:
-[1]Inconsistencies With Resume: [Yes/No]; [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-[1]Inconsistencies With Self:  [Yes/No]; [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-[1]Suggestions for Improvement: [List of suggestions for improvement, if any; return 'None' if no suggestions; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
+[1]Inconsistencies With Resume: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+[1]Inconsistencies With Self: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+[1]Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE OUTPUT 1:
+[0]Consistency Checker Vs Resume:
+[1]Inconsistencies With Resume: None.
+[1]Inconsistencies With Self: None.
+[1]Suggestions for Improvement: None.
+EXAMPLE OUTPUT 2:
+[0]Consistency Checker Vs Resume:
+[1]Inconsistencies With Resume: 2 inconsistencies found with Resume. The cover letter talks about a non-existent position at WestCo manufacturing; There is a data mismatch on the Masters of Manufacturing completion date.  
+[1]Inconsistencies With Self: 1 inconsistency found. The cover letter mentions a degree in economics, but then mentions the lack of it.
+[1]Suggestions for Improvement: Correct the above inconsistencies; Do not refer to the candidate in the thrid person since you are meant to write the cover letter in their place.
+**EXAMPLE:END**
+**INPUT:START**
+INPUT cover letter:
+{cv_data}
+INPUT wholistic summary of the resume meant to accompany the above cover letter on a job application:
+{cv_data_orig}
+**INPUT:END**
 """,
         "ollama_url": DEFAULT_URL, #Set at runtime
         "sample_starts": ["strict", "digits", "[0]Consistency Checker Vs Resume:", "[1]Inconsistencies With Resume:","[1]Inconsistencies With Self:","[1]Suggestions for Improvement:"] #[type, sample starts]
@@ -930,21 +949,39 @@ Return the summarized information as a single continuous string of text, followi
             "non_standard_calls": ["new_vs_old_resume"],
         }, 
         "prompt_in": 
-"""The following list contains a per-section analysis of the resumes, comparing the synthesized data in the new resume against the original:
-{all_analysis}
-Now, given this information, synthesize a report which extracts the following data from the list of analyses:
+"""**REQUEST:START**
+Given a list containing a per-section analysis of a two resumes, comparing the synthesized data in the new resume (which has been tailored to a particular job description) against the original, synthesize a report which extracts the following data from the list of analyses:
 - Whether the new resume is consistent with the original resume, meaning that all information in the new resume is present in the original resume, even if paraphrased.
 - Whether the new resume is consistent with itself, meaning that there should be no contradictions or inconsistencies in the information provided.
 The report should follow these guidelines:
 - Be mindful not to include any line breaks in  the content of any of the sections/subsections.
 - Be as objective as possible, and if you must make assumptions, make very conservative assumptions
 - Do not create nor imagine any data that is not present in the original data.
-The consistency check should be returned strictly in the following format (include the numbers "[0]", "[1]", do not modify the format):
-[0]Consistency Checker VS Original Resume:
-[1]Inconsistencies With Original Resume: [Yes/No]; [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-[1]Inconsistencies With Self: [Yes/No]; [List of inconsistencies found, if any; return 'None' if no inconsistencies; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-[1]Suggestions for Improvement: [List of suggestions for improvement, if any; return 'None' if no suggestions; must be a continuous block of text, composed of sentences separated by ".", not line breaks]
-""",#Empty
+- When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
+**REQUEST:END**
+**OUTPUT FORMAT:START**
+[0]Consistency Checker Vs Original Resume:
+[1]Inconsistencies With Original Resume: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+[1]Inconsistencies With Self: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+[1]Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE OUTPUT 1:
+[0]Consistency Checker Vs Original Resume:
+[1]Inconsistencies With Original Resume: None.
+[1]Inconsistencies With Self: None.
+[1]Suggestions for Improvement: None.
+EXAMPLE OUTPUT 2:
+[0]Consistency Checker Vs Original Resume:
+[1]Inconsistencies With Original Resume: 3 inconsistencies found with Original Resume. Position "Senior Engineer at AMD" found in tailored resume, missing in original; Wrong start date for position "Junior Engineer at NVidia", should be 10/2013 not 5/2024; URL for project "IoT at home" found in tailored resume, missing in original.
+[1]Inconsistencies With Self: 1 inconsistency found. "Summary" section mentions a position not present under "Work Experience" (or any other section for that matter). 
+[1]Suggestions for Improvement: Correct the above inconsistencies; Avoid the use of run-on sentences.
+**EXAMPLE:END**
+**INPUT:START**
+INPUT list containing a per-section analysis of the resumes, comparing the synthesized data in the new resume against the original:
+{all_analysis}
+**INPUT:END**
+""",
         "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Consistency Checker VS Original Resume:","[1]Inconsistencies With Original Resume:","[1]Inconsistencies With Self:", "[1]Suggestions for Improvement:"]
     },
