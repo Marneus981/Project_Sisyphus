@@ -32,16 +32,16 @@ runtime_info objects. Merged fields will be fetched from payloads.PAYLOADS
 Prompt Format:
 
 **REQUEST:START**
-In this section, the request of the prompt will be explained, and any guidlines or instructions related to it will be described concisely.
+
 **REQUEST:END**
 **OUTPUT FORMAT:START**
-This section will contain the exact output format you must follow when responding to any requests. You must follow it exactly and without including unrequested information.
+
 **OUTPUT FORMAT:END**
 **EXAMPLE:START**
-This section will contain of examples for both expected inputs and the output generated from said inputs.
+
 **EXAMPLE:END**
 **INPUT:START**
-This section will contain the actual input for the prompt.
+
 **INPUT:END**
 
 """
@@ -60,7 +60,8 @@ PAYLOADS= {
                    "cv_data": "",
                    "cv_data_orig": ""  
                    },
-        "prompt_in": """Given the following cover letter:
+        "prompt_in": 
+"""Given the following cover letter:
 {cv_data}
 And the wholistic summary of the resume meant to accompany it on a job application:
 {cv_data_orig}
@@ -91,7 +92,8 @@ The consistency check should be returned strictly in the following format (inclu
         "format": {#Set at runtime
                    "job_description": "" 
                    },
-        "prompt_in": """Summarize the following job description by extracting key responsibilities, requirements, and highlighting needed skills, both technical and soft.
+        "prompt_in": 
+"""Summarize the following job description by extracting key responsibilities, requirements, and highlighting needed skills, both technical and soft.
 Don't forget to also include the Company Name and the Job Title.
 Job Description:
 {job_description}
@@ -111,7 +113,8 @@ Job Description:
                    "raw_cv_data": "",
                    "job_description": ""
                    },
-        "prompt_in": """Given the following "Volunteering and Leadership" resume section:
+        "prompt_in": 
+"""Given the following "Volunteering and Leadership" resume section:
 {raw_cv_data}
 And the following job description:
 {job_description}
@@ -144,7 +147,8 @@ Output the selected roles strictly in the following format, without changing the
                    "experience": "",
                    "job_description": ""
                    },
-        "prompt_in": """Given the "Description" and "Skills" subsections of a role belonging to the "Volunteering and Leadership" section of a resume:
+        "prompt_in": 
+"""Given the "Description" and "Skills" subsections of a role belonging to the "Volunteering and Leadership" section of a resume:
 {experience}
 And the following job description:
 {job_description}
@@ -176,7 +180,8 @@ Return only the revised section in the following format:
             "raw_cv_data": "",
             "job_description": ""
         },
-        "prompt_in": """Given the following "Work Experience" resume section:
+        "prompt_in": 
+"""Given the following "Work Experience" resume section:
 {raw_cv_data}
 And the following job description:
 {job_description}
@@ -209,7 +214,8 @@ Output the selected jobs strictly in the following format, without changing the 
             "experience": "",
             "job_description": ""
         },
-        "prompt_in": """Given the "Description" and "Skills" subsections of a role belonging to the "Work Experience" section of a resume:
+        "prompt_in": 
+"""Given the "Description" and "Skills" subsections of a role belonging to the "Work Experience" section of a resume:
 {experience}
 And the following job description:
 {job_description}
@@ -241,7 +247,8 @@ Return only the revised section in the following format:
             "raw_cv_data": "",
             "job_description": ""
         },
-        "prompt_in": """Given the following "Projects" resume section:
+        "prompt_in": 
+"""Given the following "Projects" resume section:
 {raw_cv_data}
 And the following job description:
 {job_description}
@@ -274,7 +281,8 @@ Output the selected projects strictly in the following format, without changing 
             "experience": "",
             "job_description": ""
         },
-        "prompt_in": """Given the "Description" and "Skills" subsections of a project belonging to the "Projects" section of a resume:
+        "prompt_in": 
+"""Given the "Description" and "Skills" subsections of a project belonging to the "Projects" section of a resume:
 {experience}
 And the following job description:
 {job_description}
@@ -306,7 +314,8 @@ Return only the revised section in the following format:
             "experiences": "",
             "job_description": ""
         },
-        "prompt_in": """Given the following experiences across 3 resume sections (Volunteering and Leadership, Work Experience, and Projects):
+        "prompt_in": 
+"""Given the following experiences across 3 resume sections (Volunteering and Leadership, Work Experience, and Projects):
 {experiences}
 And the following job description:
 {job_description}
@@ -340,7 +349,8 @@ Where [X] indicates the type of experience:
             "section": "",
             "section_name": ""
         },
-        "prompt_in": """Given the following section from a resume:
+        "prompt_in": 
+"""Given the following section from a resume:
 {section}
 Summarize the sections in a wholistic manner while following these guidelines:
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
@@ -362,7 +372,8 @@ Return the summarized information as a single continuous string of text, followi
         "format": {
             "general_info_text": ""
         },
-        "prompt_in": """Given the following general information from a resume:
+        "prompt_in": 
+"""Given the following general information from a resume:
 {general_info_text}
 Summarize the general information section of a resume in a wholistic manner; be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 Since this is a summary of a resume's general information, you need to include the candidate's Name, Contact Information, Title, and Languages Spoken.
@@ -383,7 +394,8 @@ Return the summarized general information as follows:
         "format": {
             "skill_section": ""
         },
-        "prompt_in": """Given the following skills information from a resume:
+        "prompt_in": 
+"""Given the following skills information from a resume:
 {skill_section}
 Summarize the skills section of a resume in a wholistic manner; be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 Return the summarized skills information as follows:
@@ -404,7 +416,8 @@ Return the summarized skills information as follows:
             "prev_summary": "",
             "job_description": ""
         },
-        "prompt_in": """Given the following wholistic summary of a resume:
+        "prompt_in": 
+"""Given the following wholistic summary of a resume:
 {prev_summary}
 And the following job description:
 {job_description}
@@ -432,7 +445,8 @@ Return only the revised section and strictly follow the format below, filling in
             "cv_data": "",
             "job_description": ""
         },
-        "prompt_in": """Given the following list of "Programming Languages", "Technical Skills" and "Soft Skills" considered to be relevant for the job description below them:
+        "prompt_in": 
+"""Given the following list of "Programming Languages", "Technical Skills" and "Soft Skills" considered to be relevant for the job description below them:
 {cv_data}
 And the following job description:
 {job_description}
@@ -467,7 +481,8 @@ Return the revised information strictly following the format:
             "new_resume_s_txt": "",
             "section_name": ""
         },
-        "prompt_in": """Given the following raw untailored resume section:
+        "prompt_in": 
+"""Given the following raw untailored resume section:
 {old_resume_s_txt}
 And the following tailored resume section:
 {new_resume_s_txt}
@@ -494,7 +509,8 @@ Output your analysis as a single continuous string of text, strictly following t
             "cv_data": "",
             "job_description": ""
         },
-        "prompt_in": """Given the following wholistic summary of a resume:
+        "prompt_in": 
+"""Given the following wholistic summary of a resume:
 {cv_data}
 And the following summary of the job description it has been tailored to:
 {job_description}
@@ -529,7 +545,8 @@ Strictly follow the format:
             "cv_data": "",
             "job_description": ""
         },
-        "prompt_in": """Given the following summary of a resume:
+        "prompt_in": 
+"""Given the following summary of a resume:
 {cv_data}
 And the job description the aforementioned resume has been tailored to:
 {job_description}
@@ -558,7 +575,8 @@ The consistency check should be returned strictly in the following format (inclu
             "cv_data": "",
             "job_description": ""
         },
-        "prompt_in": """Given the following cover letter:
+        "prompt_in": 
+"""Given the following cover letter:
 {cv_data}
 And the job description the aforementioned resume has been tailored to:
 {job_description}
@@ -587,7 +605,8 @@ The consistency check should be returned strictly in the following format (inclu
             "courses": "",
             "job_description": ""
         },
-        "prompt_in": """Given the following courses taken on a given program:
+        "prompt_in": 
+"""Given the following courses taken on a given program:
 {courses}
 And the following job description:
 {job_description}
@@ -618,7 +637,8 @@ Example output:
             "sections": [],
             "section_names": []
         },
-        "prompt_in": """Given the following sections from a resume:
+        "prompt_in": 
+"""Given the following sections from a resume:
 {sections_text}
 Summarize the sections in a wholistic manner while following these guidelines:
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
@@ -704,7 +724,8 @@ Return the summarized information as a single continuous string of text, followi
             "non_standard_calls":["batch_summarize_sections"],
             "async_calls": ["standard_ollama_call_async"]
             }, 
-        "prompt_in": """Given the following resume section summaries:
+        "prompt_in": 
+"""Given the following resume section summaries:
 {summary1}
 {summary2}
 Create a new summary that incorporates all two summaries, following these guidelines:
@@ -736,7 +757,8 @@ Return the summarized information as a single continuous string of text, followi
             "non_standard_calls":["batch_summarize_sections"],
             "async_calls": ["standard_ollama_call_async"]
             }, 
-        "prompt_in": """Given the following resume section summaries:
+        "prompt_in": 
+"""Given the following resume section summaries:
 {summary1}
 {summary2}
 {summary3}
@@ -769,7 +791,8 @@ Return the summarized information as a single continuous string of text, followi
             "non_standard_calls":["batch_summarize_sections"],
             "async_calls": ["standard_ollama_call_async"]
             }, 
-        "prompt_in": """Given the following resume section summaries:
+        "prompt_in": 
+"""Given the following resume section summaries:
 {summary1}
 {summary2}
 {summary3}
@@ -839,7 +862,8 @@ Return the summarized information as a single continuous string of text, followi
             "standard_calls": [],
             "non_standard_calls": ["slide_summary"],
         }, 
-        "prompt_in": """Given the following resume sections summarized:
+        "prompt_in": 
+"""Given the following resume sections summarized:
 {slides_txt}
 Create a wholistic summary of all of them, following these guidelines:
 - Include the candidate's contact information, as well as their title and name.
@@ -905,7 +929,8 @@ Return the summarized information as a single continuous string of text, followi
             "standard_calls": [],
             "non_standard_calls": ["new_vs_old_resume"],
         }, 
-        "prompt_in": """The following list contains a per-section analysis of the resumes, comparing the synthesized data in the new resume against the original:
+        "prompt_in": 
+"""The following list contains a per-section analysis of the resumes, comparing the synthesized data in the new resume against the original:
 {all_analysis}
 Now, given this information, synthesize a report which extracts the following data from the list of analyses:
 - Whether the new resume is consistent with the original resume, meaning that all information in the new resume is present in the original resume, even if paraphrased.
