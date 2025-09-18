@@ -993,7 +993,7 @@ def generate_call_infos_summarize_section(sections, section_names, systems, mode
                     Summarize the sections in a wholistic manner while following these guidelines:
                     - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
                     - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
-                    Return the summarized information as a single continuous string of text, following this format strictly:
+                    Return the summarized information as a single continuous string of text, following this format strictly (do not forget to include the "[S]{section_names[i]} Section Summary:" text at the start of the output):
                     [S]{section_names[i]} Section Summary: Wholistic summary of the section's information.
                     """
         if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)

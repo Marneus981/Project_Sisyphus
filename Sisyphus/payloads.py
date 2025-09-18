@@ -355,7 +355,7 @@ Where [X] indicates the type of experience:
 Summarize the sections in a wholistic manner while following these guidelines:
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
-Return the summarized information as a single continuous string of text, following this format strictly:
+Return the summarized information as a single continuous string of text, following this format strictly (do not forget to include the "[S]{section_name} Section Summary:" text at the start of the output):
 [S]{section_name} Section Summary: Wholistic summary of the section's information.
 """,
         "ollama_url": DEFAULT_URL,
@@ -377,7 +377,7 @@ Return the summarized information as a single continuous string of text, followi
 {general_info_text}
 Summarize the general information section of a resume in a wholistic manner; be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 Since this is a summary of a resume's general information, you need to include the candidate's Name, Contact Information, Title, and Languages Spoken.
-Return the summarized general information as follows:
+Return the summarized general information as follows (do not forget to include the "[S]General Information Summary:" text at the start of the output):
 [S]General Information Summary: Brief and concise summary of the resume's general information, presented as a single continuous string of text.
 """,
         "ollama_url": DEFAULT_URL,
@@ -398,7 +398,7 @@ Return the summarized general information as follows:
 """Given the following skills information from a resume:
 {skill_section}
 Summarize the skills section of a resume in a wholistic manner; be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
-Return the summarized skills information as follows:
+Return the summarized skills information as follows (do not forget to include the "[S]Skills Summary:" text at the start of the output):
 [S]Skills Summary: Brief and concise wholistic summary of the resume's skills, presented as a single continuous string of text.
 """,
         "ollama_url": DEFAULT_URL,
@@ -733,7 +733,7 @@ Create a new summary that incorporates all two summaries, following these guidel
 - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
 - Maintain the context and flow between the two sections.
 - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
-Return the summarized information as a single continuous string of text, following this format strictly:
+Return the summarized information as a single continuous string of text, following the format below strictly (do not forget to include the "[S] {section1_name} + {section2_name} Sections Summary:" text at the start of the output):
 [S]{section1_name} + {section2_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and key skills.
 """, #Set at runtime
         "ollama_url": DEFAULT_URL,
@@ -767,7 +767,7 @@ Create a new summary that incorporates all three summaries, following these guid
 - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
 - Maintain the context and flow between the three sections.
 - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
-Return the summarized information as a single continuous string of text, following this format strictly:
+Return the summarized information as a single continuous string of text, following the format below strictly (do not forget to include the "[S] {section1_name} + {section2_name} + {section3_name} Sections Summary:" text at the start of the output):
 [S]{section1_name} + {section2_name} + {section3_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and key skills.
 """, #Set at runtime
         "ollama_url": DEFAULT_URL,
@@ -802,7 +802,7 @@ Create a new summary that incorporates all four summaries, following these guide
 - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
 - Maintain the context and flow between the four sections.
 - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
-Return the summarized information as a single continuous string of text, following this format strictly:
+Return the summarized information as a single continuous string of text, following the format below strictly (do not forget to include the "[S] {section1_name} + {section2_name} + {section3_name} + {section4_name} Sections Summary:" text at the start of the output):
 [S]{section1_name} + {section2_name} + {section3_name} + {section4_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and key skills.
 """, #Set at runtime
         "ollama_url": DEFAULT_URL,

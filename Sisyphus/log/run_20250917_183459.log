@@ -1,0 +1,19 @@
+2025-09-17 18:34:59,359 INFO: Waiting for Ollama to be ready...
+2025-09-17 18:35:01,384 INFO: Ollama is running.
+2025-09-17 18:35:01,444 INFO: Refreshing options...
+2025-09-17 18:35:03,514 INFO: [TIME] list_text_files took 0.0004 seconds
+2025-09-17 18:35:03,514 INFO: [TIME] list_text_files took 0.0003 seconds
+2025-09-17 18:35:03,514 INFO: [TIME] list_docx_files took 0.0002 seconds
+2025-09-17 18:35:03,514 INFO: [TIME] list_text_files took 0.0002 seconds
+2025-09-17 18:35:03,514 INFO: [TIME] list_text_files took 0.0001 seconds
+2025-09-17 18:35:03,514 INFO: [TIME] list_docx_files took 0.0001 seconds
+2025-09-17 18:35:03,514 INFO: Options refreshed:
+2025-09-17 18:35:03,514 INFO: Models: ['qwen2:latest', 'mistral:latest', 'llama3:instruct', 'llama3.1:8b-instruct-q3_K_S', 'llama3.1:8b-instruct-q2_K', 'llama3:8b-instruct-q3_K_S', 'llama3:8b-instruct-q2_K', 'llama3.2:latest', 'llama3.1:latest', 'deepseek-r1:8b', 'llama3:8b']
+2025-09-17 18:35:03,514 INFO: Systems: ['system1.txt', 'system_consistency.txt', 'system_consistency_cl.txt', 'system_cover_letter.txt', 'z_system1 copy.txt', 'z_system_consistency copy.txt', 'z_system_consistency_cl copy.txt', 'z_system_cover_letter copy.txt']
+2025-09-17 18:35:03,514 INFO: CVs: ['a_mycv.txt', 'cv.txt', 'cv_url.txt']
+2025-09-17 18:35:03,514 INFO: CV Templates: ['cv_template_url.docx']
+2025-09-17 18:35:03,514 INFO: CL Templates: ['cl_template.docx']
+2025-09-17 18:35:03,514 INFO: Previously Saved CV Outputs: ['newest_3_0.txt', 'robust_trial_3_0.txt', 'trial_3_0_new.txt']
+2025-09-17 18:35:03,514 INFO: Previously Saved CL Outputs: []
+2025-09-17 18:35:03,514 INFO: [TIME] refresh_options took 2.0682 seconds
+2025-09-17 18:35:03,514 INFO: [TIME] refresh_options_callback took 2.0690 seconds
