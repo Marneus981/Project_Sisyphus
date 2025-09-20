@@ -155,10 +155,10 @@ Given a "Volunteering and Leadership" resume section and a job description, sele
 [R]Role Title 5
 **OUTPUT FORMAT:END**
 **EXAMPLE:START**
-EXAMPLE OUTPUT 1 (NUMBER OF INPUT ROLES < 5):
+EXAMPLE OUTPUT 1 (NUMBER OF INPUT ROLES = 2):
 [R]Animal Shelter Volunteer
 [R]Engineering Convention Organizer
-EXAMPLE OUTPUT 2 (NUMBER OF INPUT ROLES >= 5):
+EXAMPLE OUTPUT 2 (NUMBER OF INPUT ROLES = 8; CHOSE 5 BEST):
 [R]MIT Hackaton Team Leader
 [R]Engineering Ambassador Program
 [R]Team Leader at Robotics Olympics
@@ -278,10 +278,10 @@ Given a "Work Experience" resume section and a job description, select up to 5 j
 [J]Job Title 5
 **OUTPUT FORMAT:END**
 **EXAMPLE:START**
-EXAMPLE OUTPUT 1 (NUMBER OF INPUT ROLES < 5):
+EXAMPLE OUTPUT 1 (NUMBER OF INPUT ROLES = 2):
 [J]Software Engineer
 [J]Backend Engineer
-EXAMPLE OUTPUT 2 (NUMBER OF INPUT ROLES >= 5):
+EXAMPLE OUTPUT 2 (NUMBER OF INPUT ROLES = 6; CHOSE 5 BEST):
 [J]Senior Engineering Manager
 [J]Full-Stack Engineer
 [J]Computer Engineer II
@@ -291,6 +291,7 @@ EXAMPLE OUTPUT 2 (NUMBER OF INPUT ROLES >= 5):
 **INPUT:START**
 INPUT "Work Experience" resume section:
 {raw_cv_data}
+
 INPUT job description:
 {job_description}
 **INPUT:END**
@@ -401,10 +402,10 @@ Given a "Projects" resume section and a job description, select up to 5 projects
 [P]Project Title 5
 **OUTPUT FORMAT:END**
 **EXAMPLE:START**
-EXAMPLE OUTPUT 1 (NUMBER OF INPUT ROLES < 5):
+EXAMPLE OUTPUT 1 (NUMBER OF INPUT ROLES = 2):
 [P]ml_for_dummies Open Source Library
 [P]IoT Controller App
-EXAMPLE OUTPUT 2 (NUMBER OF INPUT ROLES >= 5):
+EXAMPLE OUTPUT 2 (NUMBER OF INPUT ROLES = 7; CHOSE 5 BEST):
 [P]RAG Powered Local Search Engine
 [P]Classic Game Solver with AI
 [P]IoT Controller App
@@ -414,6 +415,7 @@ EXAMPLE OUTPUT 2 (NUMBER OF INPUT ROLES >= 5):
 **INPUT:START**
 INPUT "Projects" resume section:
 {raw_cv_data}
+
 INPUT job description:
 {job_description}
 **INPUT:END**
@@ -493,7 +495,8 @@ INPUT "Description" and "Skills" subsections of a project belonging to the "Proj
         "sample_starts": ["strict", "digits", "[1]Description:", "[1]Skills:"]
     },
     ##similar end
-    "step0_prune_experiences": {
+    "step0_prune_experiences": #DONE
+    {
         "call_id": "step0_prune_experiences",
         "payload_in": {
             "model": DEFAULT_MODEL,
@@ -506,17 +509,16 @@ INPUT "Description" and "Skills" subsections of a project belonging to the "Proj
             "job_description": ""
         },
         "prompt_in": 
-"""Given the following experiences across 3 resume sections (Volunteering and Leadership, Work Experience, and Projects):
-{experiences}
-And the following job description:
-{job_description}
-Select up to 5 experiences based on the job description. When selecting:
+"""**REQUEST:START**
+Given the all experiences across 3 resume sections (Volunteering and Leadership, Work Experience, and Projects) and a job description, select up to 5 experiences based on the job description. When selecting:
 - If the total number of experiences/roles is less than or equal to 5, return all of them.
 - If the total number of experiences/roles is greater than or equal to 5 before selection: Select the most relevant 5 experiences/roles based on the job description.
 - Do not change the name of the experiences/roles.
 - Prioritize projects that match relevant skills and experience present in the job description.
 - It is okay to not select any experiences from a given section if none are relevant. Remember that [R], [J], and [P] indicate the section they belong to (R is Volunteering and Leadership, J is Work Experience, and P is Projects).
-Return your response strictly in the following format, without changing the role/job title/project title text (also do not include any text before [R], [J], or [P] or after the role/job title/project title text):
+- While filling out the output format, do not change the role/job title/project title text, and do not include any text before [R], [J], or [P] or after the role/job title/project title text.
+**REQUEST:END**
+**OUTPUT FORMAT:START**
 [X]Role/Job Title/Project Title 1
 ...
 [X]Role/Job Title/Project Title 5
@@ -524,6 +526,26 @@ Where [X] indicates the type of experience:
 - [R] Role belongs to Volunteering and Leadership
 - [J] Job Title belongs to Work Experience
 - [P] Project Title belongs to Projects
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE OUTPUT 1(NUMBER OF EXPERIENCES = 3):
+[R]Volunteer at Tech4Kids
+[J]Senior Software Engineer
+[R]University of Michigan Hackaton Leader
+EXAMPLE OUTPUT 2(NUMBER OF EXPERIENCES = 7; CHOSE 5 BEST):
+[R]Civil Engineering Ambassador at the University of Colorado 
+[J]Full-Stack Engineer
+[J]Java Engineer
+[P]TuneMax Song Streaming Search Engine
+[P]Beer Fetching Robot
+**EXAMPLE:END**
+**INPUT:START**
+INPUT job description:
+{job_description}
+
+INPUT 3 resume sections (Volunteering and Leadership, Work Experience, and Projects):
+{experiences}
+**INPUT:END**
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["flexible", "cap_letters", "[P]", "[J]", "[R]"]
@@ -1093,9 +1115,8 @@ Return the summarized information as a single continuous string of text, followi
             "non_standard_calls": ["slide_summary"],
         }, 
         "prompt_in": 
-"""Given the following resume sections summarized:
-{slides_txt}
-Create a wholistic summary of all of them, following these guidelines:
+"""**REQUEST:START**
+Given all summarized sections of a resume, create a wholistic summary of all of them, following these guidelines:
 - Include the candidate's contact information, as well as their title and name.
 - Include any certifications or qualifications.
 - Include all education.
@@ -1103,8 +1124,19 @@ Create a wholistic summary of all of them, following these guidelines:
 - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
 - Maintain the context and flow between the sections.
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
-Return the summarized information as a single continuous string of text, following this format strictly (do not forget to include the "[0]Summary:" text before the summary):
-[0]Summary: Wholistic summary of all sections.
+- When filling out the output format, do not forget to include the "[0]Summary:" text before the actual summary.
+**REQUEST:END**
+**OUTPUT FORMAT:START**
+[0]Summary: Wholistic summary of all sections, presented as a single continuous string of text.
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE OUTPUT 1:
+[0]Summary:
+**EXAMPLE:END**
+**INPUT:START**
+INPUT summarized sections of a resume:
+{slides_txt}
+**INPUT:END**
 """,
         "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Summary:"]
