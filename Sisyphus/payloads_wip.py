@@ -617,7 +617,8 @@ Return the summarized skills information as follows (do not forget to include th
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "cap_letters", "[S]Skills Summary:"]
     },
-    "step1_tailor_summary": {
+    "step1_tailor_summary": #DONE
+    {
         "call_id": "step1_tailor_summary",
         "payload_in": {
             "model": DEFAULT_MODEL,
@@ -630,18 +631,32 @@ Return the summarized skills information as follows (do not forget to include th
             "job_description": ""
         },
         "prompt_in": 
-"""Given the following wholistic summary of a resume:
-{prev_summary}
-And the following job description:
-{job_description}
-Tailor a Summary section for a resume to best match the job description; follow these guidelines:
+"""**REQUEST:START**
+Given a wholistic summary of a resume and a job description, tailor a Summary section for a resume to best match the job description; follow these guidelines:
 - Write the tailored summary section as the candidate, not as an external observer.
 - The summary mustn't exceed 100 words.
 - Do not line break the summary section, it should be a continuous block of text.
 - When mentioning specific skills or experiences, these must be relevant to the job description; give preference to those that appear on both the resume and the job description, particularly those which demonstrate the candidate's technical expertise.
 - In the format below, do not include any text before "[0]" or after the requested information.
-Return only the revised section and strictly follow the format below, filling in the parts that have **fill-in:"text"**:
+- Return only the revised summary and strictly follow the output format, filling in the parts that have **fill-in:"text"**
+**REQUEST:END**
+**OUTPUT FORMAT:START**
 [0]Summary: Despite limited work experience, I bring strong work ethic, adaptability and curiosity. Experienced in **fill-in:"specific skills thanks to certain experiences"**. Now seeking a position that offers growth and learning opportunities.
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE INPUT 1:
+[0]Summary:Jane Doe, Senior Software Engineer | +1-555-123-4567 | jane.doe@email.com | linkedin.com/in/janedoe | github.com/janedoe | janedoe.dev | Fluent in English, Spanish, and French.Certifications: AWS Certified Solutions Architect (2019), Scrum Master (2020).Education:Bachelor of Science in Computer Science from Springfield University (2012-2016) - courses in Algorithms, Data Structures, Operating Systems, and Databases.Master of Science in Software Engineering at Capital Tech (2016-2018) - focus on Cloud Computing, Distributed Systems, and Advanced Programming.Projects: Real-time analytics dashboard using Python, incorporating role-based access controls and security features to protect sensitive data, solidifying proficiency in Data Visualization, WebSockets, and communication.Work Experience:Senior Software Engineer at WebApps Inc. - RESTful API development, optimizing database queries, and microservices; delivered significant improvements in application performance by 30%.Volunteering & Leadership:Coding Bootcamp Mentor at CodeSpring (2020-2022) - mentoring and leadership skills.Hackathon Organizer at TechFest (2018-2019) - event planning, teamwork, and problem-solving.Skills: Proficient in Microsoft Office Suite, Google Workspace tools, Asana, Trello; strong problem-solving skills and ability to work effectively in a fast-paced environment.
+EXAMPLE OUTPUT 1:
+[0]Summary: Despite limited work experience, I bring strong work ethic, adaptability and curiosity. Experienced in Python development, data visualization, and communication through projects like the real-time analytics dashboard and mentoring at CodeSpring. Now seeking a position that offers growth and learning opportunities.
+**EXAMPLE:END**
+**INPUT:START**
+INPUT wholistic summary of a resume:
+{prev_summary}
+
+INPUTjob description:
+{job_description}
+
+**INPUT:END**
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Summary:"]
@@ -1099,7 +1114,8 @@ Return the summarized information as a single continuous string of text, followi
         "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
         "sample_starts": [] #Empty
     },
-    "step0_tailor_summary": {
+    "step0_tailor_summary": #DONE
+    {
         "call_id": "step0_tailor_summary", 
         "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
                         "system": "", # #system="",
@@ -1130,8 +1146,15 @@ Given all summarized sections of a resume, create a wholistic summary of all of 
 [0]Summary: Wholistic summary of all sections, presented as a single continuous string of text.
 **OUTPUT FORMAT:END**
 **EXAMPLE:START**
+EXAMPLE INPUT 1:
+INPUT summarized sections of a resume:
+[S]General Information Summary: Jane Doe is a Senior Software Engineer with contact details including an address at 123 Main St, Springfield, USA, phone number +1-555-123-4567, email jane.doe@email.com, LinkedIn linkedin.com/in/janedoe, Github github.com/janedoe, and Portfolio janedoe.dev. Jane speaks English, Spanish, and French fluently.
+[S]Education + Certifications + Awards_and_Scholarships + Volunteering_and_Leadership Sections Summary:As a highly skilled Senior Software Engineer, Jane Doe holds a Bachelor of Science in Computer Science from Springfield University (2012-2016), with courses in Algorithms, Data Structures, Operating Systems, and Databases. She then pursued a Master of Science in Software Engineering at Capital Tech (2016-2018), focusing on Cloud Computing, Distributed Systems, and Advanced Programming. Additionally, Jane Doe is certified as an AWS Certified Solutions Architect (2019) and holds the Scrum Master certification from the Scrum Alliance (2020). Her academic achievements include achieving Dean's List at Springfield University (2015/06) and receiving Tech Innovation Scholarship from Capital Tech (2017/09), demonstrating academic excellence and innovation skills. With strong leadership, mentoring, and organizational skills, Jane Doe has developed a reputation as a leader through roles such as Coding Bootcamp Mentor at CodeSpring (2020/01-2022/12) and Hackathon Organizer at TechFest (2018/03-2019/03), fostering innovation, collaboration, and creativity while utilizing problem-solving skills.
+[S]Certifications + Awards_and_Scholarships + Volunteering_and_Leadership + Work_Experience Sections Summary: As a seasoned Senior Software Engineer Jane Doe, distinguished by certifications in AWS Certified Solutions Architect (Amazon Web Services, 2019) and Scrum Master (Scrum Alliance, 2020), demonstrating expertise in cloud architecture and agile methodologies. Notably, academic excellence is showcased through Dean's List at Springfield University (2015) and Tech Innovation Scholarship from Capital Tech (2017). As a dedicated mentor and organizer, Jane excels in Python, REST APIs, cloud integration, event planning, and teamwork, driving high completion rates, improving job placement, and delivering high-quality events. Proficient in mentoring, communication, leadership, problem-solving, and innovation. With a strong background in Python, JavaScript, API development, microservices, Docker, and Kubernetes, Jane consistently improves application performance, collaborates with cross-functional teams, and contributes to technology adoption.
+[S]Awards_and_Scholarships + Volunteering_and_Leadership + Work_Experience + Projects Sections Summary: Senior Software Engineer Jane Doe is a highly accomplished professional with exceptional academic and professional achievements. With a strong foundation in innovation, demonstrated through Dean's List at Springfield University (2015) and Tech Innovation Scholarship at Capital Tech (2017), Jane has leveraged her expertise to excel in software engineering, leadership, and mentoring. As a seasoned engineer at WebApps Inc., she has honed skills in RESTful API development, optimizing database queries, and microservices, delivering significant improvements in application performance by 30%. Outside of work, Jane has demonstrated exceptional leadership as Coding Bootcamp Mentor at CodeSpring (2020-2022) and Hackathon Organizer at TechFest (2018-2019), showcasing expertise in programming languages, technical skills, and soft skills like mentoring, communication, teamwork, problem-solving. Notably, Jane successfully led the creation of a real-time analytics dashboard using Python, incorporating role-based access controls and security features to protect sensitive data, solidifying her proficiency in Data Visualization, WebSockets, and communication.
+[S]Skills Summary: Proficient in Microsoft Office Suite including Word, Excel, PowerPoint, and Outlook. Strong understanding of Google Workspace tools such as Gmail, Drive, Docs, Sheets, and Slides. Experience with project management using Asana and Trello. Possesses strong problem-solving skills and ability to work effectively in a fast-paced environment.
 EXAMPLE OUTPUT 1:
-[0]Summary:
+[0]Summary:Jane Doe, Senior Software Engineer | +1-555-123-4567 | jane.doe@email.com | linkedin.com/in/janedoe | github.com/janedoe | janedoe.dev | Fluent in English, Spanish, and French.Certifications: AWS Certified Solutions Architect (2019), Scrum Master (2020).Education:Bachelor of Science in Computer Science from Springfield University (2012-2016) - courses in Algorithms, Data Structures, Operating Systems, and Databases.Master of Science in Software Engineering at Capital Tech (2016-2018) - focus on Cloud Computing, Distributed Systems, and Advanced Programming.Projects: Real-time analytics dashboard using Python, incorporating role-based access controls and security features to protect sensitive data, solidifying proficiency in Data Visualization, WebSockets, and communication.Work Experience:Senior Software Engineer at WebApps Inc. - RESTful API development, optimizing database queries, and microservices; delivered significant improvements in application performance by 30%.Volunteering & Leadership:Coding Bootcamp Mentor at CodeSpring (2020-2022) - mentoring and leadership skills.Hackathon Organizer at TechFest (2018-2019) - event planning, teamwork, and problem-solving.Skills: Proficient in Microsoft Office Suite, Google Workspace tools, Asana, Trello; strong problem-solving skills and ability to work effectively in a fast-paced environment.
 **EXAMPLE:END**
 **INPUT:START**
 INPUT summarized sections of a resume:
