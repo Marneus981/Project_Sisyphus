@@ -44,6 +44,8 @@ Prompt Format:
 
 **INPUT:END**
 
+
+by strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES
 """
 
 PAYLOADS= {
@@ -72,6 +74,7 @@ The report should follow these guidelines:
 - Be as objective as possible, and if you must make assumptions, make very conservative assumptions
 - Do not create nor imagine any data that is not present in the original data.
 - When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
 **REQUEST:END**
 **OUTPUT FORMAT:START**
 [0]Consistency Checker Vs Resume:
@@ -102,7 +105,8 @@ INPUT wholistic summary of the resume meant to accompany the above cover letter 
         "ollama_url": DEFAULT_URL, #Set at runtime
         "sample_starts": ["strict", "digits", "[0]Consistency Checker Vs Resume:", "[1]Inconsistencies With Resume:","[1]Inconsistencies With Self:","[1]Suggestions for Improvement:"] #[type, sample starts]
     },
-    "summarize_job_description": {
+    "summarize_job_description": #DONE
+    {
         "call_id": "summarize_job_description", 
         "payload_in": {
                        "model": DEFAULT_MODEL, #Set at runtime
@@ -114,10 +118,45 @@ INPUT wholistic summary of the resume meant to accompany the above cover letter 
                    "job_description": "" 
                    },
         "prompt_in": 
-"""Summarize the following job description by extracting key responsibilities, requirements, and highlighting needed skills, both technical and soft.
-Don't forget to also include the Company Name and the Job Title.
-Job Description:
+"""**REQUEST:START**
+Summarize the input job description by extracting the following information in the format specified under the OUTPUT FORMAT section:
+-Company Name
+-Job Title
+-Key responsibilities
+-Requirements:
+    -Programming Languages
+    -Techincal Skills
+    -Soft Skills
+    -Other Skills
+When filling out the OUTPUT FORMAT, follow these guidelines:
+- Do not modify the format and always include the line prefixes ([0]) as well as the field name (e.g. [0]Company Title:).
+- Do not add any information not present in the provided job description, your goal is to extract information and summarize.
+- Use simple and concise language when possible, but do use specific keywords.
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+**REQUEST:END**
+**OUTPUT FORMAT:START**
+[0]Company Name: Company Name
+[0]Job Title: Position Name
+[0]Key responsibilities: List of key responsabilities as a single block of text separated by ";"
+[0]Requirements: List of basic requirements as a single block of text separated by ";"
+[0]Programming Languages: List of programming languages required, presented as a single block of text separated by ";"
+[0]Technical Skills: List of technical skills required, presented as a single block of text separated by ";"
+[0]Soft Skills:Soft List of soft skills required, presented as a single block of text separated by ";"
+[0]Other Skills:Other List of other skills required, presented as a single block of text separated by ";"
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+[0]Company Name: Sentry
+[0]Job Title: Software Engineer, New Grad
+[0]Key Responsibilities: Develop and extend software in Python or JavaScript (or both); Full software development lifecycle: design, develop, test, and operate in production; Communicate effectively with teams and stakeholders; Act on feedback, coaching, and mentorship from manager and teammates
+[0]Requirements: B.S. or higher in Computer Science (or similar degree program); At least 1 previous internship or equivalent practical experience
+[0]Programming Languages: Proficiency in one or more general-purpose programming languages (e.g. Python, JavaScript, Java)
+[0]Technical Skills: Knowledge of algorithms, data structures, and object-oriented design principles; Implementation skills with version control and unit testing
+[0]Soft Skills Needed: Effective communication with teams and stakeholders; Ability to act on feedback, coaching, and mentorship from manager and teammates
+**EXAMPLE:END**
+**INPUT:START**
+INPUT job description:
 {job_description}
+**INPUT:END**
 """,
         "ollama_url": DEFAULT_URL, #Set at runtime
         "sample_starts": [] #[type, sample starts]
@@ -146,6 +185,7 @@ Given a "Volunteering and Leadership" resume section and a job description, sele
 - It is okay to not select any roles if none are relevant.
 - Display the Role Titles explicitly; do not write "Role Title:" before the Role Title
 - When filling out the output format,  you may not change the role title text, do not include any text before [R] or after the role title text.
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
 **REQUEST:END**
 **OUTPUT FORMAT:START**
 [R]Role Title 1
@@ -199,6 +239,7 @@ Given the "Description" and "Skills" attributes of a role belonging to the "Volu
 - If there are no skills in a given category, use " ", then follow up as the format below indicates 
     - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
 - Include the prefix [1] at the start of each line (as seen in the format below).
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
 **REQUEST:END**
 **OUTPUT FORMAT:START**
 [1]Description: Brief role description.
@@ -269,6 +310,7 @@ Given a "Work Experience" resume section and a job description, select up to 5 j
 - It is okay to not select any jobs if none are relevant.
 - Display the Job Titles explicitly; do not write "Job Title:" before the Job Title
 - When filling out the output format,  you may not change the job title text, do not include any text before [J] or after the job title text.
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
 **REQUEST:END**
 **OUTPUT FORMAT:START**
 [J]Job Title 1
@@ -323,6 +365,7 @@ Given the "Description" and "Skills" subsections of a role belonging to the "Wor
 - If there are no skills in a given category, use " ", then follow up as the format below indicates 
     - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
 - Include the prefix [1] at the start of each line (as seen in the format below).
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
 **REQUEST:END**
 **OUTPUT FORMAT:START**
 [1]Description: Brief role description.
@@ -393,6 +436,7 @@ Given a "Projects" resume section and a job description, select up to 5 projects
 - It is okay to not select any projects if none are relevant.
 - Display the Project Titles explicitly; do not write "Project Title:" before the Project Title
 - When filling out the output format,  you may not change the project title text, do not include any text before [P] or after the project title text.
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
 **REQUEST:END**
 **OUTPUT FORMAT:START**
 [P]Project Title 1
@@ -447,6 +491,7 @@ Given the "Description" and "Skills" subsections of a project belonging to the "
 - If there are no skills in a given category, use " ", then follow up as the format below indicates 
     - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
 - Include the prefix [1] at the start of each line (as seen in the format below).
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
 **REQUEST:END**
 **OUTPUT FORMAT:START**
 [1]Description: Brief project description.
@@ -517,6 +562,7 @@ Given the all experiences across 3 resume sections (Volunteering and Leadership,
 - Prioritize projects that match relevant skills and experience present in the job description.
 - It is okay to not select any experiences from a given section if none are relevant. Remember that [R], [J], and [P] indicate the section they belong to (R is Volunteering and Leadership, J is Work Experience, and P is Projects).
 - While filling out the output format, do not change the role/job title/project title text, and do not include any text before [R], [J], or [P] or after the role/job title/project title text.
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
 **REQUEST:END**
 **OUTPUT FORMAT:START**
 [X]Role/Job Title/Project Title 1
@@ -550,7 +596,8 @@ INPUT 3 resume sections (Volunteering and Leadership, Work Experience, and Proje
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["flexible", "cap_letters", "[P]", "[J]", "[R]"]
     },
-    "summarize_section": {
+    "summarize_section": #DONE
+    {
         "call_id": "summarize_section",
         "payload_in": {
             "model": DEFAULT_MODEL,
@@ -563,18 +610,44 @@ INPUT 3 resume sections (Volunteering and Leadership, Work Experience, and Proje
             "section_name": ""
         },
         "prompt_in": 
-"""Given the following section from a resume:
-{section}
-Summarize the sections in a wholistic manner while following these guidelines:
+"""**REQUEST:START**
+Given a section from a resume, summarize the sections in a wholistic manner while following these guidelines:
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
-Return the summarized information as a single continuous string of text, following this format strictly (do not forget to include the "[S]{section_name} Section Summary:" text at the start of the output):
-[S]{section_name} Section Summary: Wholistic summary of the section's information.
+- Return the summarized information as a single continuous string of text, following the output format strictly. 
+- Do not forget to include the "[S]{section_name} Section Summary:" text at the start of the output.
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+**REQUEST:END**
+**OUTPUT FORMAT:START**
+[S]{section_name} Summary: Wholistic summary of the section's information.
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE INPUT 1:
+[0]Education:
+[1]Degree: B.Sc. Computer Science
+[1]University: Springfield University
+[1]Location: Springfield, USA
+[1]Duration: 2012/09 - 2016/06
+[1]Courses: Algorithms, Data Structures, Operating Systems, Databases
+[1]Degree: M.Sc. Software Engineering
+[1]University: Capital Tech
+[1]Location: Capital City, USA
+[1]Duration: 2016/09 - 2018/06
+[1]Courses: Cloud Computing, Distributed Systems, Advanced Programming
+EXAMPLE OUTPUT 1:
+[S]Education Section Summary: This candidate holds a Bachelor of Science in Computer Science from Springfield University (2012-2016), with courses in Algorithms, Data Structures, Operating Systems, and Databases. They then pursued a Master of Science in Software Engineering at Capital Tech (2016-2018), focusing on Cloud Computing, Distributed Systems, and Advanced Programming.
+**EXAMPLE:END**
+**INPUT:START**
+INPUT section from a resume:
+{section}
+
+**INPUT:END**
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "cap_letters", "[S]"]
     },
-    "summarize_general_info": {
+    "summarize_general_info": #DONE
+    {
         "call_id": "summarize_general_info",
         "payload_in": {
             "model": DEFAULT_MODEL,
@@ -586,12 +659,34 @@ Return the summarized information as a single continuous string of text, followi
             "general_info_text": ""
         },
         "prompt_in": 
-"""Given the following general information from a resume:
-{general_info_text}
-Summarize the general information section of a resume in a wholistic manner; be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
+"""**REQUEST:START**
+Given the general information from a resume, summarize it in a wholistic manner; be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 Since this is a summary of a resume's general information, you need to include the candidate's Name, Contact Information, Title, and Languages Spoken.
-Return the summarized general information as follows (do not forget to include the "[S]General Information Summary:" text at the start of the output):
+Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES (do not forget to include the "[S]General Information Summary:" text at the start of the output).
+**REQUEST:END**
+**OUTPUT FORMAT:START**
 [S]General Information Summary: Brief and concise summary of the resume's general information, presented as a single continuous string of text.
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE INPUT 1:
+[0]Name: Jane Doe
+[0]Contact Information:
+[1]Address: 123 Main St, Springfield, USA
+[1]Phone: +1-555-123-4567
+[1]Email: jane.doe@email.com
+[1]LinkedIn: linkedin.com/in/janedoe
+[1]Github: github.com/janedoe
+[1]Portfolio: janedoe.dev
+[0]Title: Senior Software Engineer
+[0]Languages: English, Spanish, French
+EXAMPLE OUTPUT 1:
+[S]General Information Summary: Jane Doe is a Senior Software Engineer with contact details including an address at 123 Main St, Springfield, USA, phone number +1-555-123-4567, email jane.doe@email.com, LinkedIn linkedin.com/in/janedoe, Github github.com/janedoe, and Portfolio janedoe.dev. Jane speaks English, Spanish, and French fluently.
+**EXAMPLE:END**
+**INPUT:START**
+INPUT general information from a resume:
+{general_info_text}
+
+**INPUT:END**
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "cap_letters", "[S]General Information Summary:"]
@@ -639,6 +734,7 @@ Given a wholistic summary of a resume and a job description, tailor a Summary se
 - When mentioning specific skills or experiences, these must be relevant to the job description; give preference to those that appear on both the resume and the job description, particularly those which demonstrate the candidate's technical expertise.
 - In the format below, do not include any text before "[0]" or after the requested information.
 - Return only the revised summary and strictly follow the output format, filling in the parts that have **fill-in:"text"**
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
 **REQUEST:END**
 **OUTPUT FORMAT:START**
 [0]Summary: Despite limited work experience, I bring strong work ethic, adaptability and curiosity. Experienced in **fill-in:"specific skills thanks to certain experiences"**. Now seeking a position that offers growth and learning opportunities.
@@ -782,6 +878,7 @@ Follow these guidelines:
 - Be as objective as possible, and do not make any assumptions about the data.
 - Do not create nor imagine any data that is not present in the original data.
 - When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
 **REQUEST:END**
 **OUTPUT FORMAT:START**
 [0]Consistency Checker Vs Job Description:
@@ -829,6 +926,7 @@ Follow these guidelines:
 - Be as objective as possible, and do not make any assumptions about the data.
 - Do not create nor imagine any data that is not present in the original data.
 - When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
 **REQUEST:END**
 **OUTPUT FORMAT:START**
 [0]Consistency Checker Vs Job Description:
@@ -1141,6 +1239,7 @@ Given all summarized sections of a resume, create a wholistic summary of all of 
 - Maintain the context and flow between the sections.
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 - When filling out the output format, do not forget to include the "[0]Summary:" text before the actual summary.
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
 **REQUEST:END**
 **OUTPUT FORMAT:START**
 [0]Summary: Wholistic summary of all sections, presented as a single continuous string of text.
@@ -1227,6 +1326,7 @@ The report should follow these guidelines:
 - Be as objective as possible, and if you must make assumptions, make very conservative assumptions
 - Do not create nor imagine any data that is not present in the original data.
 - When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
 **REQUEST:END**
 **OUTPUT FORMAT:START**
 [0]Consistency Checker Vs Original Resume:
