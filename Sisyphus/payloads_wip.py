@@ -45,7 +45,7 @@ Prompt Format:
 **INPUT:END**
 
 
-by strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
 """
 
 PAYLOADS= {
@@ -757,7 +757,8 @@ INPUTjob description:
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Summary:"]
     },
-    "tailor_skills": {
+    "tailor_skills": #DONE
+    {
         "call_id": "tailor_skills",
         "payload_in": {
             "model": DEFAULT_MODEL,
@@ -770,10 +771,8 @@ INPUTjob description:
             "job_description": ""
         },
         "prompt_in": 
-"""Given the following list of "Programming Languages", "Technical Skills" and "Soft Skills" considered to be relevant for the job description below them:
-{cv_data}
-And the following job description:
-{job_description}
+"""**REQUEST:START**
+Given a list of "Programming Languages", "Technical Skills" and "Soft Skills" considered to be relevant for a paticular job description, and said job description:
 Prune the following 'Skills' section from a resume to best match the job description , following the guidelines below:
 - Return 3 MAXIMUM entries under "Programming Languages" (MINIMUM 0 entries)
 - Return 5 MAXIMUM entries under "Technical Skills" (MINIMUM 0 entries)
@@ -783,16 +782,35 @@ Prune the following 'Skills' section from a resume to best match the job descrip
 - Do not line break any line containing the relevant skills, it should follow the format below strictly.
 - If either the "Programming Languages", "Technical Skills", or "Soft Skills" sections are empty, return them as an empty section.
 - Aside from the information requested, do not include any additional text or explanations.
-Return the revised information strictly following the format:
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+**REQUEST:END**
+**OUTPUT FORMAT:START**
 [0]Skills:
 [1]Programming Languages: Programming Language 1, Programming Language 2, Programming Language 3
 [1]Technical Skills: Technical Skill 1, Technical Skill 2, Technical Skill 3, Technical Skill 4, Technical Skill 5
 [1]Soft Skills: Soft Skill 1, Soft Skill 2, Soft Skill 3, Soft Skill 4
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+OUTPUT EXAMPLE 1:
+[0]Skills:
+[1]Programming Languages: Python, JavaScript
+[1]Technical Skills: REST APIs, Web Development, API Development, Cloud Setup
+[1]Soft Skills: Collaboration, Communication, Leadership, Teamwork
+**EXAMPLE:END**
+**INPUT:START**
+INPUT list of "Programming Languages", "Technical Skills" and "Soft Skills" considered to be relevant for a paticular job description:
+{cv_data}
+
+INPUT job description:
+{job_description}
+
+**INPUT:END**
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Skills:","[1]Programming Languages:","[1]Technical Skills:","[1]Soft Skills:"]
     },
-    "new_vs_old_section": {
+    "new_vs_old_section": #DONE
+    {
         "call_id": "new_vs_old_section",
         "payload_in": {
             "model": DEFAULT_MODEL,
@@ -806,17 +824,29 @@ Return the revised information strictly following the format:
             "section_name": ""
         },
         "prompt_in": 
-"""Given the following raw untailored resume section:
-{old_resume_s_txt}
-And the following tailored resume section:
-{new_resume_s_txt}
-Compare the two resume sections and:
+"""**REQUEST:START**
+Given a raw untailored resume section and and its counterpart from an already tailored resume, compare the two resume sections and:
 - Confirm that the tailored section does not contain any made-up information.
 - Verify that all information in the tailored section is present in the raw section, even if paraphrased.
 - Identify any contradictions between the two sections.
 - Identify any contradictions within the tailored section (with itself).
-Output your analysis as a single continuous string of text, strictly following the format below:
-[0]{section_name} Analysis: Analysis of the tailored resume section vs the raw section.
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+**REQUEST:END**
+**OUTPUT FORMAT:START**
+[0]{section_name} Analysis: Analysis of the tailored resume section vs the raw section, as a single line of text.
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE OUTPUT 1:
+[0] Volunteering_and_Leadershio Analysis: The tailored version of the section presents one inconsistency with the raw section, the role "Team Lead at the 2024 IBM Datathon" does not exit in the raw resume. Aside from that, everything else is consistent.
+**EXAMPLE:END**
+**INPUT:START**
+INPUT raw untailored resume section:
+{old_resume_s_txt}
+
+INPUT already tailored resumesection:
+{new_resume_s_txt}
+
+**INPUT:END**
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]"]
