@@ -1060,7 +1060,8 @@ INPUT job description:
         "sample_starts": ["strict", "digits", "[1]Courses:"]
     },
     # NON-STANDARD CALLS
-    "batch_summarize_sections": {
+    "batch_summarize_sections": #DONE
+    {
         "call_id": "batch_summarize_sections",
         "payload_in": {
             "model": DEFAULT_MODEL,
@@ -1070,16 +1071,45 @@ INPUT job description:
         },
         "format": {
             "sections": [],
-            "section_names": []
-        },
-        "prompt_in": 
-"""Given the following sections from a resume:
+            "section_names": [],
+            "second_half": """
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+INPUT EXAMPLE 1 (number of sections is 2; section names are "certifications" and "awards_and_scholarships"):
+[0]Certifications:
+[1]Certification Name: Scrum Master
+[1]Issuing Organization: Scrum Alliance
+[1]Issue Date: 2020/03
+[1]Certification Name: AWS Certified Solutions Architect
+[1]Issuing Organization: Amazon Web Services
+[1]Issue Date: 2019/05
+[0]Awards and Scholarships:
+[1]Award Name: Tech Innovation Scholarship
+[1]Issuing Organization: Capital Tech
+[1]Issue Date: 2017/09
+[1]Award Name: Dean’s List
+[1]Issuing Organization: Springfield University
+[1]Issue Date: 2015/06
+OUTPUT EXAMPLE 1 (number of sections is 2; section names are "certifications" and "awards_and_scholarships"):
+[S]certifications Section Summary: The candidate holds two certifications, Scrum Master from Scrum Alliance (2020/03) and AWS Certified Solutions Architect from Amazon Web Services (2019/05), demonstrating expertise in Agile methodology and cloud architecture.
+[S]awards_and_scholarships Section Summary: The candidate has received recognition for their academic achievements with the Tech Innovation Scholarship from Capital Tech (2017/09) and Dean's List award from Springfield University (2015/06), showcasing their commitment to learning and academic excellence.
+**EXAMPLE:END**
+**INPUT:START**
+INPUT sections from a resume:
 {sections_text}
-Summarize the sections in a wholistic manner while following these guidelines:
+
+**INPUT:END**
+"""
+        },
+        "prompt_in":
+"""**REQUEST:START**
+Given a number of sections from a resume, summarize the sections in a wholistic manner while following these guidelines:
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
 - Keep in mind that these summaries will be used in a "Sliding Window" approach to summarize the entire resume effectively, so include information that is relevant for the overall context of the resume.
-Return the summarized information as a single continuous string of text, following this format strictly:
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+**REQUEST:END**
+**OUTPUT FORMAT:START**
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["flexible", "cap_letters", "[S]"]

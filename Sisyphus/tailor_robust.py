@@ -585,10 +585,12 @@ def batch_summarize_sections(call_info = template_call_info):
     
     if config.DEBUG["INFO_LOGGING"]: logging.info(f"[OLLAMA]{function_name}: call_id: {call_id}")
     
-    prompt = prompt_in.format(**format)
+    prompt = prompt_in
     for name in section_names:
         prompt += f"[S]{name} Section Summary: Wholistic summary of the section's information.\n"
     
+    prompt +=  call_info["format"]["second_half"].format(**format)
+
     payload = payload_in.copy()
     payload["prompt"] = prompt
 
@@ -988,14 +990,39 @@ def generate_call_infos_summarize_section(sections, section_names, systems, mode
     call_infos = []
     requests = len(sections)
     for i in range(requests):
-        prompt = f"""Given the following section from a resume:
-                    {sections[i]}
-                    Summarize the sections in a wholistic manner while following these guidelines:
-                    - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
-                    - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
-                    Return the summarized information as a single continuous string of text, following this format strictly (do not forget to include the "[S]{section_names[i]} Section Summary:" text at the start of the output):
-                    [S]{section_names[i]} Section Summary: Wholistic summary of the section's information.
-                    """
+        prompt = f"""**REQUEST:START**
+Given a section from a resume, summarize the sections in a wholistic manner while following these guidelines:
+- Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
+- Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
+- Return the summarized information as a single continuous string of text, following the output format strictly. 
+- Do not forget to include the "[S]{section_names[i]} Section Summary:" text at the start of the output.
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+**REQUEST:END**
+**OUTPUT FORMAT:START**
+[S]{section_names[i]} Summary: Wholistic summary of the section's information.
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE INPUT 1:
+[0]Education:
+[1]Degree: B.Sc. Computer Science
+[1]University: Springfield University
+[1]Location: Springfield, USA
+[1]Duration: 2012/09 - 2016/06
+[1]Courses: Algorithms, Data Structures, Operating Systems, Databases
+[1]Degree: M.Sc. Software Engineering
+[1]University: Capital Tech
+[1]Location: Capital City, USA
+[1]Duration: 2016/09 - 2018/06
+[1]Courses: Cloud Computing, Distributed Systems, Advanced Programming
+EXAMPLE OUTPUT 1:
+[S]Education Section Summary: This candidate holds a Bachelor of Science in Computer Science from Springfield University (2012-2016), with courses in Algorithms, Data Structures, Operating Systems, and Databases. They then pursued a Master of Science in Software Engineering at Capital Tech (2016-2018), focusing on Cloud Computing, Distributed Systems, and Advanced Programming.
+**EXAMPLE:END**
+**INPUT:START**
+INPUT section from a resume:
+{sections[i]}
+
+**INPUT:END**
+"""
         if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
         call_info = {
             "call_id": "standard_async",
