@@ -627,13 +627,21 @@ def filter_output(model_output, mode = "digits"):
     Filters model output, keeping only lines that start with [X], where X is a number (e.g., [0], [1], etc.).
     Returns the filtered output as a string.
     """
+    function_name = inspect_function()
     output_whole_0 = model_output.replace("\n", "")
-    output_whole_1 = output_whole_0.split("[",1)
-    output_whole_2 = "[" + output_whole_1[1]
-    output_parts = output_whole_2.split("[")
-    for i in range(1, len(output_parts)):
-        output_parts[i] = "[" + output_parts[i]
-    return "\n".join(output_parts)
+    if "[" in output_whole_0:
+        output_whole_1 = output_whole_0.split("[",1) #Text + rest
+        if len(output_whole_1) == 1:
+            output_whole_2 = "[" + output_whole_1[0]
+        else:
+            output_whole_2 = "[" + output_whole_1[1]
+        output_parts = output_whole_2.split("[")
+        for i in range(1, len(output_parts)):
+            output_parts[i] = "[" + output_parts[i]
+        return "\n".join(output_parts)
+    else:
+        raise ValueError(f"[ERROR]{function_name}: No [ found in text")
+    
     # filtered_lines = []
     # lines = model_output.splitlines()
     # filter_index = 0

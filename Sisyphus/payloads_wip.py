@@ -1167,7 +1167,7 @@ Return the summarized information as a single continuous string of text, followi
 """**REQUEST:START**
 Given 2 resume section summaries, create a new summary that incorporates all two summaries, following these guidelines:
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
-- Include all information, competencies, achievements, and skills, for this is a wholistic summary of the candidate's qualifications (dates are not too relevant). Do not miss any skills.
+- Include ALL information, competencies, achievements, and skills, for this is a wholistic summary of the candidate's qualifications. Do not miss any skills.
 - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
 **REQUEST:END**
@@ -1175,30 +1175,11 @@ Given 2 resume section summaries, create a new summary that incorporates all two
 [S]{section1_name} + {section2_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and skills.
 **OUTPUT FORMAT:END**
 **EXAMPLE:START**
-EXAMPLE INPUT 1:
-[0]Awards and Scholarships:
-[1]Award Name: Dean’s List
-[1]Issuing Organization: Springfield University
-[1]Issue Date: 2015/06
-[1]Award Name: Tech Innovation Scholarship
-[1]Issuing Organization: Capital Tech
-[1]Issue Date: 2017/09
-[0]Volunteering and Leadership:
-[1]Role: Coding Bootcamp Mentor
-[1]Organization: CodeSpring
-[1]Location: Springfield, USA
-[1]Duration: 2020/01 - 2022/12
-[1]Description: Mentored aspiring developers, developing curriculum modules and workshops on Python, REST APIs, and cloud integration. Achieved high completion rates and improved job placement through personalized feedback and group projects
-[1]Skills: Programming Languages: Python; Technical Skills: Web Development, REST APIs, Cloud Integration; Soft Skills: Mentoring, Communication
-[1]Role: Hackathon Organizer
-[1]Organization: TechFest
-[1]Location: Capital City, USA
-[1]Duration: 2018/03 - 2019/03
-[1]Description: Developed strong leadership and organizational skills, successfully managing large-scale hackathons and delivering high-quality events. Fostered a culture of innovation and collaboration, utilizing problem-solving skills to drive creative solutions
-[1]Skills: Programming Languages: ; Technical Skills: Event Planning, Cloud Setup; Soft Skills: Leadership, Teamwork, Communication
-EXAMPLE OUTPUT 1:
+EXAMPLE INPUT 1 (candidate name is Jane Doe and her Title is Software Engineer):
 [S]awards_and_scholarships Section Summary: Achieved Dean's List at Springfield University (2015/06) and received Tech Innovation Scholarship from Capital Tech (2017/09), demonstrating academic excellence and innovation skills.
 [S]volunteering_and_leadership Section Summary: As a Coding Bootcamp Mentor at CodeSpring (2020/01-2022/12),  developed curriculum modules and workshops on Python, REST APIs, and cloud integration (Python, Javascript); As a Hackathon Organizer at TechFest (2018/03-2019/03), managed large-scale events (hackathon) and fostered a culture of innovation and collaboration for creative problem solving (Strong Leadership, Organizational and Communication skills).
+EXAMPLE OUTPUT 1:
+[S]awards_and_scholarships + volunteering_and_leadership Sections Summary: Jane Doe is a prolific Software Engineer, having achieved Dean's List at Springfield University (2015/06) and received Tech Innovation Scholarship from Capital Tech (2017/09), demonstrating academic excellence and innovation skills. As a Coding Bootcamp Mentor at CodeSpring (2020/01-2022/12),  she developed curriculum modules and workshops on Python, REST APIs, and cloud integration (Python, Javascript); As a Hackathon Organizer at TechFest (2018/03-2019/03), she managed large-scale events (hackathon) and fostered a culture of innovation and collaboration for creative problem solving (Strong Leadership, Organizational and Communication skills).
 **INPUT:START**
 INPUT {section1_name} section summary:
 {summary1}
@@ -1211,7 +1192,8 @@ INPUT {section2_name} section summary:
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "cap_letters", "[S]"]#Might lead to error, check later
     },
-    "sliding_window_three_sections": {
+    "sliding_window_three_sections": #DONE
+    {
         "call_id": "sliding_window_three_sections", 
         "payload_in": {
             "model": DEFAULT_MODEL,
@@ -1230,22 +1212,40 @@ INPUT {section2_name} section summary:
             "async_calls": ["standard_ollama_call_async"]
             }, 
         "prompt_in": 
-"""Given the following resume section summaries:
-{summary1}
-{summary2}
-{summary3}
-Create a new summary that incorporates all three summaries, following these guidelines:
+"""**REQUEST:START**
+Given 3 resume section summaries, create a new summary that incorporates all two summaries, following these guidelines:
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
-- Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
-- Maintain the context and flow between the three sections.
+- Include ALL information, competencies, achievements, and skills, for this is a wholistic summary of the candidate's qualifications. Do not miss any skills.
 - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
-Return the summarized information as a single continuous string of text, following the format below strictly (do not forget to include the "[S] {section1_name} + {section2_name} + {section3_name} Sections Summary:" text at the start of the output):
-[S]{section1_name} + {section2_name} + {section3_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and key skills.
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+**REQUEST:END**
+**OUTPUT FORMAT:START**
+[S]{section1_name} + {section2_name} + {section3_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and skills.
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE INPUT 1 (candidate name is Jane Doe and her Title is Software Engineer):
+[S]education Section Summary: This candidate holds a Bachelor of Science in Computer Science from Springfield University (2012-2016), with courses in Algorithms, Data Structures, Operating Systems, and Databases. They then pursued a Master of Science in Software Engineering at Capital Tech (2016-2018), focusing on Cloud Computing, Distributed Systems, and Advanced Programming.
+[S]certifications Section Summary: This candidate is certified as an AWS Certified Solutions Architect (2019) and holds the Scrum Master certification from the Scrum Alliance (2020).
+[S]awards_and_scholarships Section Summary: Achieved Dean's List at Springfield University (2015/06) and received Tech Innovation Scholarship from Capital Tech (2017/09), demonstrating academic excellence and innovation skills.
+EXAMPLE OUTPUT 1:
+[S]education + certifications + awards_and_scholarships Sections Summary:As a highly skilled Senior Software Engineer, Jane Doe holds a Bachelor of Science in Computer Science from Springfield University (2012-2016), with courses in Algorithms, Data Structures, Operating Systems, and Databases. She then pursued a Master of Science in Software Engineering at Capital Tech (2016-2018), focusing on Cloud Computing, Distributed Systems, and Advanced Programming. Additionally, Jane Doe is certified as an AWS Certified Solutions Architect (2019) and holds the Scrum Master certification from the Scrum Alliance (2020). Her academic achievements include achieving Dean's List at Springfield University (2015/06) and receiving Tech Innovation Scholarship from Capital Tech (2017/09), demonstrating academic excellence and innovation skills.
+**INPUT:START**
+INPUT {section1_name} section summary:
+{summary1}
+
+INPUT {section2_name} section summary:
+{summary2}
+
+INPUT {section3_name} section summary:
+{summary3}
+
+**INPUT:END**
 """, #Set at runtime
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "cap_letters", "[S]"]#Might lead to error, check later
     },
-    "sliding_window_four_sections": {
+    "sliding_window_four_sections": #DONE
+    {
         "call_id": "sliding_window_four_sections", 
         "payload_in": {
             "model": DEFAULT_MODEL,
@@ -1264,18 +1264,38 @@ Return the summarized information as a single continuous string of text, followi
             "async_calls": ["standard_ollama_call_async"]
             }, 
         "prompt_in": 
-"""Given the following resume section summaries:
-{summary1}
-{summary2}
-{summary3}
-{summary4}
-Create a new summary that incorporates all four summaries, following these guidelines:
+"""**REQUEST:START**
+Given 4 resume section summaries, create a new summary that incorporates all two summaries, following these guidelines:
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
-- Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
-- Maintain the context and flow between the four sections.
+- Include ALL information, competencies, achievements, and skills, for this is a wholistic summary of the candidate's qualifications. Do not miss any skills.
 - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
-Return the summarized information as a single continuous string of text, following the format below strictly (do not forget to include the "[S] {section1_name} + {section2_name} + {section3_name} + {section4_name} Sections Summary:" text at the start of the output):
-[S]{section1_name} + {section2_name} + {section3_name} + {section4_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and key skills.
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+**REQUEST:END**
+**OUTPUT FORMAT:START**
+[S]{section1_name} + {section2_name} + {section3_name} + {section4_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and skills.
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE INPUT 1 (candidate name is Jane Doe and her Title is Software Engineer):
+[S]education Section Summary: This candidate holds a Bachelor of Science in Computer Science from Springfield University (2012-2016), with courses in Algorithms, Data Structures, Operating Systems, and Databases. They then pursued a Master of Science in Software Engineering at Capital Tech (2016-2018), focusing on Cloud Computing, Distributed Systems, and Advanced Programming.
+[S]certifications Section Summary: This candidate is certified as an AWS Certified Solutions Architect (2019) and holds the Scrum Master certification from the Scrum Alliance (2020).
+[S]awards_and_scholarships Section Summary: Achieved Dean's List at Springfield University (2015/06) and received Tech Innovation Scholarship from Capital Tech (2017/09), demonstrating academic excellence and innovation skills.
+[S]volunteering_and_leadership Section Summary: Developed strong leadership, mentoring, and organizational skills through roles as Coding Bootcamp Mentor at CodeSpring (2020/01-2022/12) and Hackathon Organizer at TechFest (2018/03-2019/03), fostering innovation, collaboration, and creativity while utilizing problem-solving skills.
+EXAMPLE OUTPUT 1:
+[S]education + certifications + awards_and_scholarships + volunteering_and_leadership Sections Summary:As a highly skilled Senior Software Engineer, Jane Doe holds a Bachelor of Science in Computer Science from Springfield University (2012-2016), with courses in Algorithms, Data Structures, Operating Systems, and Databases. She then pursued a Master of Science in Software Engineering at Capital Tech (2016-2018), focusing on Cloud Computing, Distributed Systems, and Advanced Programming. Additionally, Jane Doe is certified as an AWS Certified Solutions Architect (2019) and holds the Scrum Master certification from the Scrum Alliance (2020). Her academic achievements include achieving Dean's List at Springfield University (2015/06) and receiving Tech Innovation Scholarship from Capital Tech (2017/09), demonstrating academic excellence and innovation skills. With strong leadership, mentoring, and organizational skills, Jane Doe has developed a reputation as a leader through roles such as Coding Bootcamp Mentor at CodeSpring (2020/01-2022/12) and Hackathon Organizer at TechFest (2018/03-2019/03), fostering innovation, collaboration, and creativity while utilizing problem-solving skills.
+**INPUT:START**
+INPUT {section1_name} section summary:
+{summary1}
+
+INPUT {section2_name} section summary:
+{summary2}
+
+INPUT {section3_name} section summary:
+{summary3}
+
+INPUT {section4_name} section summary:
+{summary4}
+
+**INPUT:END**
 """, #Set at runtime
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "cap_letters", "[S]"]#Might lead to error, check later
