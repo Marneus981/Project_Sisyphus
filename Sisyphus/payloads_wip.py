@@ -1017,7 +1017,8 @@ INPUT job description the aforementioned resume has been tailored to:
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Consistency Checker Vs Job Description:", "[1]Inconsistencies With Job Description:", "[1]Suggestions for Improvement:"]
     },
-    "tailor_courses": {
+    "tailor_courses": #DONE
+    {
         "call_id": "tailor_courses",
         "payload_in": {
             "model": DEFAULT_MODEL,
@@ -1030,20 +1031,30 @@ INPUT job description the aforementioned resume has been tailored to:
             "job_description": ""
         },
         "prompt_in": 
-"""Given the following courses taken on a given program:
-{courses}
-And the following job description:
-{job_description}
-Extract the 5 most relevant courses that match the skills and requirements outlined in the job description.
+"""**REQUEST:START**
+Given a list of courses taken on a given program and a job description, extract the 5 most relevant courses that match the skills and requirements outlined in the job description.
 Follow these guidelines when extracting courses and returning them:
 - Do not include any courses not present in the original courses list.
 - Do not use line breaks inside any subsection.
 - Courses must be comma-separated and follow the format below.
 - Include the prefix [1] at the start of each line (as seen in the format below).
-Return the list of courses in a single comma-separated line, strictly following the format below:
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Be mindful that courses may or may not have a course code (represented by "XXX001" in the OUTPUT FORMAT section)
+**REQUEST:END**
+**OUTPUT FORMAT:START**
 [1]Courses: XXX001 Course Name1, XXX002 Course Name2, XXX003 Course Name3...
-Example output:
-[1]Courses: CSC101 Computer Science I, ECE201 Introduction to Electronics, CIV301 Advanced Civil Engineering...
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+[1]Courses: CSC101 Computer Science I, ECE201 Introduction to Electronics, CIV301 Advanced Civil Engineering, MAT 323 Applied Advanced Calculus
+**EXAMPLE:END**
+**INPUT:START**
+INPUT list of courses taken on a given program:
+{courses}
+
+INPUT job description:
+{job_description}
+
+**INPUT:END**
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[1]Courses:"]
@@ -1133,7 +1144,8 @@ Return the summarized information as a single continuous string of text, followi
     },
     ##similar end
     ##similar start
-    "sliding_window_two_sections": {
+    "sliding_window_two_sections": #DONE
+    {
         "call_id": "sliding_window_two_sections", 
         "payload_in": {
             "model": DEFAULT_MODEL,
@@ -1152,16 +1164,49 @@ Return the summarized information as a single continuous string of text, followi
             "async_calls": ["standard_ollama_call_async"]
             }, 
         "prompt_in": 
-"""Given the following resume section summaries:
-{summary1}
-{summary2}
-Create a new summary that incorporates all two summaries, following these guidelines:
+"""**REQUEST:START**
+Given 2 resume section summaries, create a new summary that incorporates all two summaries, following these guidelines:
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
-- Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
-- Maintain the context and flow between the two sections.
+- Include all information, competencies, achievements, and skills, for this is a wholistic summary of the candidate's qualifications (dates are not too relevant). Do not miss any skills.
 - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
-Return the summarized information as a single continuous string of text, following the format below strictly (do not forget to include the "[S] {section1_name} + {section2_name} Sections Summary:" text at the start of the output):
-[S]{section1_name} + {section2_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and key skills.
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+**REQUEST:END**
+**OUTPUT FORMAT:START**
+[S]{section1_name} + {section2_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and skills.
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE INPUT 1:
+[0]Awards and Scholarships:
+[1]Award Name: Dean’s List
+[1]Issuing Organization: Springfield University
+[1]Issue Date: 2015/06
+[1]Award Name: Tech Innovation Scholarship
+[1]Issuing Organization: Capital Tech
+[1]Issue Date: 2017/09
+[0]Volunteering and Leadership:
+[1]Role: Coding Bootcamp Mentor
+[1]Organization: CodeSpring
+[1]Location: Springfield, USA
+[1]Duration: 2020/01 - 2022/12
+[1]Description: Mentored aspiring developers, developing curriculum modules and workshops on Python, REST APIs, and cloud integration. Achieved high completion rates and improved job placement through personalized feedback and group projects
+[1]Skills: Programming Languages: Python; Technical Skills: Web Development, REST APIs, Cloud Integration; Soft Skills: Mentoring, Communication
+[1]Role: Hackathon Organizer
+[1]Organization: TechFest
+[1]Location: Capital City, USA
+[1]Duration: 2018/03 - 2019/03
+[1]Description: Developed strong leadership and organizational skills, successfully managing large-scale hackathons and delivering high-quality events. Fostered a culture of innovation and collaboration, utilizing problem-solving skills to drive creative solutions
+[1]Skills: Programming Languages: ; Technical Skills: Event Planning, Cloud Setup; Soft Skills: Leadership, Teamwork, Communication
+EXAMPLE OUTPUT 1:
+[S]awards_and_scholarships Section Summary: Achieved Dean's List at Springfield University (2015/06) and received Tech Innovation Scholarship from Capital Tech (2017/09), demonstrating academic excellence and innovation skills.
+[S]volunteering_and_leadership Section Summary: As a Coding Bootcamp Mentor at CodeSpring (2020/01-2022/12),  developed curriculum modules and workshops on Python, REST APIs, and cloud integration (Python, Javascript); As a Hackathon Organizer at TechFest (2018/03-2019/03), managed large-scale events (hackathon) and fostered a culture of innovation and collaboration for creative problem solving (Strong Leadership, Organizational and Communication skills).
+**INPUT:START**
+INPUT {section1_name} section summary:
+{summary1}
+
+INPUT {section2_name} section summary:
+{summary2}
+
+**INPUT:END**
 """, #Set at runtime
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "cap_letters", "[S]"]#Might lead to error, check later
