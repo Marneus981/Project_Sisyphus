@@ -691,7 +691,8 @@ INPUT general information from a resume:
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "cap_letters", "[S]General Information Summary:"]
     },
-    "summarize_skills": {
+    "summarize_skills":#DONE
+    {
         "call_id": "summarize_skills",
         "payload_in": {
             "model": DEFAULT_MODEL,
@@ -703,11 +704,27 @@ INPUT general information from a resume:
             "skill_section": ""
         },
         "prompt_in": 
-"""Given the following skills information from a resume:
-{skill_section}
-Summarize the skills section of a resume in a wholistic manner; be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
-Return the summarized skills information as follows (do not forget to include the "[S]Skills Summary:" text at the start of the output):
+"""**REQUEST:START**
+Given a "Skills" section from a resume, summarize the skills section of a resume in a wholistic manner; be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
+Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES (do not forget to include the "[S]Skills Summary:" text at the start of the output).
+**REQUEST:END**
+**OUTPUT FORMAT:START**
 [S]Skills Summary: Brief and concise wholistic summary of the resume's skills, presented as a single continuous string of text.
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+INPUT EXAMPLE 1:
+[0]Skills:
+[1]Programming Languages: Programming Language 1, Python, JavaScript
+[1]Technical Skills: REST APIs, Web Development, API Development, Cloud Setup
+[1]Soft Skills: Collaboration, Communication, Leadership, Teamwork
+OUTPUT EXAMPLE 1:
+[S]Skills Summary: Proficient in Python, and JavaScript. Experienced with REST APIs, web development, and API development. Additionally, skilled in cloud setup and possess strong collaboration, communication, leadership, and teamwork abilities.
+**EXAMPLE:END**
+**INPUT:START**
+INPUT "Skills" section from a resume:
+{skill_section}
+
+**INPUT:END**
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "cap_letters", "[S]Skills Summary:"]
@@ -851,7 +868,8 @@ INPUT already tailored resumesection:
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]"]
     },
-    "make_cover_letter_text": {
+    "make_cover_letter_text": #DONE
+    {
         "call_id": "make_cover_letter_text",
         "payload_in": {
             "model": DEFAULT_MODEL,
@@ -864,11 +882,8 @@ INPUT already tailored resumesection:
             "job_description": ""
         },
         "prompt_in": 
-"""Given the following wholistic summary of a resume:
-{cv_data}
-And the following summary of the job description it has been tailored to:
-{job_description}
-Write a cover letter tailored to the job description, following the guidelines below:
+"""**REQUEST:START**
+Given a wholistic summary of a resume, and the summary of the job description it has been tailored to, write a cover letter tailored to the job description, following the guidelines below:
 - It should highlight the most relevant skills and experiences from the resume that match the job description.
 - It should be written in a professional tone.
 - Do not invent information or experiences, only include what is present in the resume.
@@ -877,12 +892,31 @@ Write a cover letter tailored to the job description, following the guidelines b
 - Only 4 paragraphs are allowed, each starting with "[1]New ParagraphX: " and then the text of the new paragraph; X starts at 0 and goes up to 3.
 - Total word count must not exceed 400 words. This is a hard limit, so be concise and to the point.
 - Write the cover letter as the candidate, not as an external observer.
-Strictly follow the format:
+- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+**REQUEST:END**
+**OUTPUT FORMAT:START**
 [0]Cover Letter: 
 [1]New Paragraph0: Cover Letter introduction, mentioning the job title and company, as well as the candidate's enthusiasm for the role.
 [1]New Paragraph1: Explain why the candidate is a good fit for the role, briefly mentioning the most relevant information from the resume that matches the job description.
 [1]New Paragraph2: Provide further information about the candidate's qualifications and how they align with the job requirements. Make use of specific examples and metrics to demonstrate impact (if applicable).
 [1]New Paragraph3: Closing statement, thanking the employer for their time and consideration. Invite them to contact the candidate for further discussion, providing email address.
+**OUTPUT FORMAT:END**
+**EXAMPLE:START**
+EXAMPLE OUTPUT 1:
+[0]Cover Letter:
+[1]New Paragraph0: I am excited to apply for the Software Engineer, New Grad role at Sentry, a position that aligns perfectly with my skills and passion for software development. As a seasoned Senior Software Engineer, I am confident in my ability to make a meaningful contribution to your team.
+[1]New Paragraph1: With my strong educational foundation in M.Sc. Software Engineering and B.Sc. Computer Science, I possess the technical skills required for this role. My proficiency in Python and JavaScript, as well as my experience developing microservices and collaborating with cross-functional teams, make me a strong fit for this position.
+[1]New Paragraph2: As a leader, I have demonstrated exceptional mentorship as a Coding Bootcamp Mentor at CodeSpring, resulting in high completion rates and job placement improvement. This experience has honed my ability to communicate effectively with teams and stakeholders, which is essential for this role. Additionally, my portfolio showcases the creation of a real-time analytics dashboard using Python, featuring role-based access controls and security features for sensitive data protection.
+[1]New Paragraph3: Thank you for considering my application. I am excited about the opportunity to discuss how my skills and experience align with the requirements of this role. Please feel free to contact me at jane.doe@email.com or via LinkedIn.
+**EXAMPLE:END**
+**INPUT:START**
+INPUT wholistic summary of a resume:
+{cv_data}
+
+INPUT summary of the job description it has been tailored to:
+{job_description}
+
+**INPUT:END**
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Cover Letter:", "[1]New Paragraph0:", "[1]New Paragraph1:", "[1]New Paragraph2:", "[1]New Paragraph3:"]
