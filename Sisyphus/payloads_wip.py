@@ -31,18 +31,18 @@ runtime_info objects. Merged fields will be fetched from payloads.PAYLOADS
 """
 Prompt Format:
 
-**REQUEST:START**
+[REQUEST]
 
-**REQUEST:END**
-**OUTPUT FORMAT:START**
 
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+[OUTPUT FORMAT]
 
-**EXAMPLE:END**
-**INPUT:START**
 
-**INPUT:END**
+[EXAMPLES]
+
+
+[INPUT]
+
+
 
 
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
@@ -64,7 +64,7 @@ PAYLOADS= {
                    "cv_data_orig": ""  
                    },
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Given a cover letter and a wholistic summary of a resume (both part of the same job application):
 Perform a consistency check on the tailored cover letter against the resume. This consistency check should include:
 - Whether the cover letter is consistent with the resume, meaning that all skills and experiences mentioned in the cover letter should be present in the resume.
@@ -75,14 +75,14 @@ The report should follow these guidelines:
 - Do not create nor imagine any data that is not present in the original data.
 - When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [0]Consistency Checker Vs Resume:
 [1]Inconsistencies With Resume: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 [1]Inconsistencies With Self: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 [1]Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
 EXAMPLE OUTPUT 1:
 [0]Consistency Checker Vs Resume:
 [1]Inconsistencies With Resume: None.
@@ -93,14 +93,14 @@ EXAMPLE OUTPUT 2:
 [1]Inconsistencies With Resume: 2 inconsistencies found with Resume. The cover letter talks about a non-existent position at WestCo manufacturing; There is a data mismatch on the Masters of Manufacturing completion date.  
 [1]Inconsistencies With Self: 1 inconsistency found. The cover letter mentions a degree in economics, but then mentions the lack of it.
 [1]Suggestions for Improvement: Correct the above inconsistencies; Do not refer to the candidate in the thrid person since you are meant to write the cover letter in their place.
-**EXAMPLE:END**
-**INPUT:START**
+
+[INPUT]
 INPUT cover letter:
 {cv_data}
 
 INPUT wholistic summary of the resume meant to accompany the above cover letter on a job application:
 {cv_data_orig}
-**INPUT:END**
+
 """,
         "ollama_url": DEFAULT_URL, #Set at runtime
         "sample_starts": ["strict", "digits", "[0]Consistency Checker Vs Resume:", "[1]Inconsistencies With Resume:","[1]Inconsistencies With Self:","[1]Suggestions for Improvement:"] #[type, sample starts]
@@ -118,7 +118,7 @@ INPUT wholistic summary of the resume meant to accompany the above cover letter 
                    "job_description": "" 
                    },
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Summarize the input job description by extracting the following information in the format specified under the OUTPUT FORMAT section:
 -Company Name
 -Job Title
@@ -133,8 +133,8 @@ When filling out the OUTPUT FORMAT, follow these guidelines:
 - Do not add any information not present in the provided job description, your goal is to extract information and summarize.
 - Use simple and concise language when possible, but do use specific keywords.
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [0]Company Name: Company Name
 [0]Job Title: Position Name
 [0]Key responsibilities: List of key responsabilities as a single block of text separated by ";"
@@ -143,8 +143,9 @@ When filling out the OUTPUT FORMAT, follow these guidelines:
 [0]Technical Skills: List of technical skills required, presented as a single block of text separated by ";"
 [0]Soft Skills:Soft List of soft skills required, presented as a single block of text separated by ";"
 [0]Other Skills:Other List of other skills required, presented as a single block of text separated by ";"
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
+EXAMPLE OUTPUT 1:
 [0]Company Name: Sentry
 [0]Job Title: Software Engineer, New Grad
 [0]Key Responsibilities: Develop and extend software in Python or JavaScript (or both); Full software development lifecycle: design, develop, test, and operate in production; Communicate effectively with teams and stakeholders; Act on feedback, coaching, and mentorship from manager and teammates
@@ -152,11 +153,11 @@ When filling out the OUTPUT FORMAT, follow these guidelines:
 [0]Programming Languages: Proficiency in one or more general-purpose programming languages (e.g. Python, JavaScript, Java)
 [0]Technical Skills: Knowledge of algorithms, data structures, and object-oriented design principles; Implementation skills with version control and unit testing
 [0]Soft Skills Needed: Effective communication with teams and stakeholders; Ability to act on feedback, coaching, and mentorship from manager and teammates
-**EXAMPLE:END**
-**INPUT:START**
+
+[INPUT]
 INPUT job description:
 {job_description}
-**INPUT:END**
+
 """,
         "ollama_url": DEFAULT_URL, #Set at runtime
         "sample_starts": [] #[type, sample starts]
@@ -176,7 +177,7 @@ INPUT job description:
                    "job_description": ""
                    },
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Given a "Volunteering and Leadership" resume section and a job description, select up to 5 roles based on the job description. When selecting:
 - If the total number of roles is less than or equal to 5, return all of them.
 - If the total number of roles is greater than or equal to 5 before selection: Select the most relevant 5 roles based on the job description.
@@ -186,15 +187,15 @@ Given a "Volunteering and Leadership" resume section and a job description, sele
 - Display the Role Titles explicitly; do not write "Role Title:" before the Role Title
 - When filling out the output format,  you may not change the role title text, do not include any text before [R] or after the role title text.
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [R]Role Title 1
 [R]Role Title 2
 [R]Role Title 3
 [R]Role Title 4
 [R]Role Title 5
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
 EXAMPLE OUTPUT 1 (NUMBER OF INPUT ROLES = 2):
 [R]Animal Shelter Volunteer
 [R]Engineering Convention Organizer
@@ -204,13 +205,13 @@ EXAMPLE OUTPUT 2 (NUMBER OF INPUT ROLES = 8; CHOSE 5 BEST):
 [R]Team Leader at Robotics Olympics
 [R]Engineering Convention Organizer
 [R]Homeless Shelter Volunteer
-**EXAMPLE:END**
-**INPUT:START**
+
+[INPUT]
 INPUT "Volunteering and Leadership" resume section:
 {raw_cv_data}
 INPUT job description:
 {job_description}
-**INPUT:END**
+
 """,
         "ollama_url": DEFAULT_URL, #Set at runtime
         "sample_starts": ["flexible", "cap_letters", "[R]"]
@@ -229,7 +230,7 @@ INPUT job description:
                    "job_description": ""
                    },
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Given the "Description" and "Skills" attributes of a role belonging to the "Volunteering and Leadership" section of a resume and a job description, rewrite the experience to best match the job description, following these guidelines:
 - Do not include any information not present in the original experience.
 - In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
@@ -240,12 +241,12 @@ Given the "Description" and "Skills" attributes of a role belonging to the "Volu
     - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
 - Include the prefix [1] at the start of each line (as seen in the format below).
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [1]Description: Brief role description.
 [1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
 EXAMPLE INPUT 1:
 INPUT job description:
 Company Name: Sentry
@@ -275,14 +276,14 @@ INPUT "Description" and "Skills" attributes of a role belonging to the "Voluntee
 EXAMPLE OUTPUT 1:
 [1]Description: Mentored aspiring developers in Python, designing curriculum modules on REST APIs and cloud integration. Fostered a collaborative learning environment and developed advanced workshops.
 [1]Skills: Programming Languages: Python, JavaScript; Technical Skills: Web Development, REST APIs, Docker, Cloud Integration; Soft Skills: Mentoring, Communication
-**EXAMPLE:END**
-**INPUT:START**
+
+[INPUT]
 INPUT job description:
 {job_description}
 
 INPUT "Description" and "Skills" attributes of a role belonging to the "Volunteering and Leadership" section of a resume:
 {experience}
-**INPUT:END**
+
 """,
         "ollama_url": DEFAULT_URL, #Set at runtime
         "sample_starts": ["strict", "digits", "[1]Description:", "[1]Skills:"]
@@ -301,7 +302,7 @@ INPUT "Description" and "Skills" attributes of a role belonging to the "Voluntee
             "job_description": ""
         },
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Given a "Work Experience" resume section and a job description, select up to 5 jobs based on the job description. When selecting:
 - If the total number of jobs is less than or equal to 5, return all of them.
 - If the total number of jobs is greater than or equal to 5 before selection: Select the most relevant 5 jobs based on the job description.
@@ -311,15 +312,15 @@ Given a "Work Experience" resume section and a job description, select up to 5 j
 - Display the Job Titles explicitly; do not write "Job Title:" before the Job Title
 - When filling out the output format,  you may not change the job title text, do not include any text before [J] or after the job title text.
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [J]Job Title 1
 [J]Job Title 2
 [J]Job Title 3
 [J]Job Title 4
 [J]Job Title 5
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
 EXAMPLE OUTPUT 1 (NUMBER OF INPUT ROLES = 2):
 [J]Software Engineer
 [J]Backend Engineer
@@ -329,14 +330,14 @@ EXAMPLE OUTPUT 2 (NUMBER OF INPUT ROLES = 6; CHOSE 5 BEST):
 [J]Computer Engineer II
 [J]Backend Engineer
 [J]QA Analyst
-**EXAMPLE:END**
-**INPUT:START**
+
+[INPUT]
 INPUT "Work Experience" resume section:
 {raw_cv_data}
 
 INPUT job description:
 {job_description}
-**INPUT:END**
+
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["flexible", "cap_letters", "[J]"]
@@ -355,7 +356,7 @@ INPUT job description:
             "job_description": ""
         },
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Given the "Description" and "Skills" subsections of a role belonging to the "Work Experience" section of a resume and a job description, rewrite the experience to best match the job description, following these guidelines:
 - Do not include any information not present in the original experience.
 - In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
@@ -366,12 +367,12 @@ Given the "Description" and "Skills" subsections of a role belonging to the "Wor
     - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
 - Include the prefix [1] at the start of each line (as seen in the format below).
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [1]Description: Brief role description.
 [1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
 EXAMPLE INPUT 1:
 INPUT job description:
 Company Name: Sentry
@@ -401,14 +402,14 @@ INPUT "Description" and "Skills" subsections of a role belonging to the "Work Ex
 EXAMPLE OUTPUT 1:
 [1]Description: Spearheaded scalable microservices architecture, leveraging Python and Docker. Mentored junior staff and fostered continuous improvement, delivering high-performance applications.
 [1]Skills: Programming Languages: Python; Technical Skills: Microservices, Docker; Soft Skills: Leadership, Communication
-**EXAMPLE:END**
-**INPUT:START**
+
+[INPUT]
 INPUT job description:
 {job_description}
 
 INPUT "Description" and "Skills" subsections of a role belonging to the "Work Experience" section of a resume:
 {experience}
-**INPUT:END**
+
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits" ,"[1]Description:", "[1]Skills:"]
@@ -427,7 +428,7 @@ INPUT "Description" and "Skills" subsections of a role belonging to the "Work Ex
             "job_description": ""
         },
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Given a "Projects" resume section and a job description, select up to 5 projects based on the job description. When selecting:
 - If the total number of projects is less than or equal to 5, return all of them.
 - If the total number of projects is greater than or equal to 5 before selection: Select the most relevant 5 projects based on the job description.
@@ -437,17 +438,17 @@ Given a "Projects" resume section and a job description, select up to 5 projects
 - Display the Project Titles explicitly; do not write "Project Title:" before the Project Title
 - When filling out the output format,  you may not change the project title text, do not include any text before [P] or after the project title text.
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [P]Project Title 1
 [P]Project Title 2
 [P]Project Title 3
 [P]Project Title 4
 [P]Project Title 5
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
 EXAMPLE OUTPUT 1 (NUMBER OF INPUT ROLES = 2):
-[P]ml_for_dummies Open Source Library
+[P]ML Open Source Library Contribution
 [P]IoT Controller App
 EXAMPLE OUTPUT 2 (NUMBER OF INPUT ROLES = 7; CHOSE 5 BEST):
 [P]RAG Powered Local Search Engine
@@ -455,14 +456,14 @@ EXAMPLE OUTPUT 2 (NUMBER OF INPUT ROLES = 7; CHOSE 5 BEST):
 [P]IoT Controller App
 [P]Cyber Security Capstone Project
 [P]Custom DB Manager
-**EXAMPLE:END**
-**INPUT:START**
+
+[INPUT]
 INPUT "Projects" resume section:
 {raw_cv_data}
 
 INPUT job description:
 {job_description}
-**INPUT:END**
+
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["flexible", "cap_letters", "[P]"]
@@ -481,7 +482,7 @@ INPUT job description:
             "job_description": ""
         },
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Given the "Description" and "Skills" subsections of a project belonging to the "Projects" section of a resume and a job description, rewrite the experience to best match the job description, following these guidelines:
 - Do not include any information not present in the original experience.
 - In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
@@ -492,12 +493,12 @@ Given the "Description" and "Skills" subsections of a project belonging to the "
     - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
 - Include the prefix [1] at the start of each line (as seen in the format below).
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [1]Description: Brief project description.
 [1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ....
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
 EXAMPLE INPUT 1:
 INPUT job description:
 Company Name: Sentry
@@ -527,14 +528,14 @@ INPUT "Description" and "Skills" subsections of a project belonging to the "Proj
 EXAMPLE OUTPUT 1:
 [1]Description: Built a real-time analytics dashboard using Python and React, with skills in data visualization and WebSockets. Collaborated with stakeholders to deliver user-friendly interfaces.
 [1]Skills: Programming Languages: Python, JavaScript; Technical Skills: Data Visualization, WebSockets, API Integration; Soft Skills: Communication
-**EXAMPLE:END**
-**INPUT:START**
+
+[INPUT]
 INPUT job description:
 {job_description}
 
 INPUT "Description" and "Skills" subsections of a project belonging to the "Projects" section of a resume:
 {experience}
-**INPUT:END**
+
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[1]Description:", "[1]Skills:"]
@@ -554,7 +555,7 @@ INPUT "Description" and "Skills" subsections of a project belonging to the "Proj
             "job_description": ""
         },
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Given the all experiences across 3 resume sections (Volunteering and Leadership, Work Experience, and Projects) and a job description, select up to 5 experiences based on the job description. When selecting:
 - If the total number of experiences/roles is less than or equal to 5, return all of them.
 - If the total number of experiences/roles is greater than or equal to 5 before selection: Select the most relevant 5 experiences/roles based on the job description.
@@ -563,17 +564,17 @@ Given the all experiences across 3 resume sections (Volunteering and Leadership,
 - It is okay to not select any experiences from a given section if none are relevant. Remember that [R], [J], and [P] indicate the section they belong to (R is Volunteering and Leadership, J is Work Experience, and P is Projects).
 - While filling out the output format, do not change the role/job title/project title text, and do not include any text before [R], [J], or [P] or after the role/job title/project title text.
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
-**REQUEST:END**
-**OUTPUT FORMAT:START**
-[X]Role/Job Title/Project Title 1
-...
-[X]Role/Job Title/Project Title 5
-Where [X] indicates the type of experience:
-- [R] Role belongs to Volunteering and Leadership
-- [J] Job Title belongs to Work Experience
-- [P] Project Title belongs to Projects
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[OUTPUT FORMAT]
+[R]Volunteering and Leadership Role 1
+[J]Work Experience Job Title 1
+[P]Projects Project Title 1
+Where the letter R/J/P inside "[]" indicates the type of experience:
+- [R]Role belongs to Volunteering and Leadership
+- [J]Job Title belongs to Work Experience
+- [P]Project Title belongs to Projects
+
+[EXAMPLES]
 EXAMPLE OUTPUT 1(NUMBER OF EXPERIENCES = 3):
 [R]Volunteer at Tech4Kids
 [J]Senior Software Engineer
@@ -584,14 +585,14 @@ EXAMPLE OUTPUT 2(NUMBER OF EXPERIENCES = 7; CHOSE 5 BEST):
 [J]Java Engineer
 [P]TuneMax Song Streaming Search Engine
 [P]Beer Fetching Robot
-**EXAMPLE:END**
-**INPUT:START**
+
+[INPUT]
 INPUT job description:
 {job_description}
 
 INPUT 3 resume sections (Volunteering and Leadership, Work Experience, and Projects):
 {experiences}
-**INPUT:END**
+
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["flexible", "cap_letters", "[P]", "[J]", "[R]"]
@@ -610,18 +611,18 @@ INPUT 3 resume sections (Volunteering and Leadership, Work Experience, and Proje
             "section_name": ""
         },
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Given a section from a resume, summarize the sections in a wholistic manner while following these guidelines:
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
 - Return the summarized information as a single continuous string of text, following the output format strictly. 
 - Do not forget to include the "[S]{section_name} Section Summary:" text at the start of the output.
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [S]{section_name} Summary: Wholistic summary of the section's information.
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
 EXAMPLE INPUT 1:
 [0]Education:
 [1]Degree: B.Sc. Computer Science
@@ -636,12 +637,12 @@ EXAMPLE INPUT 1:
 [1]Courses: Cloud Computing, Distributed Systems, Advanced Programming
 EXAMPLE OUTPUT 1:
 [S]Education Section Summary: This candidate holds a Bachelor of Science in Computer Science from Springfield University (2012-2016), with courses in Algorithms, Data Structures, Operating Systems, and Databases. They then pursued a Master of Science in Software Engineering at Capital Tech (2016-2018), focusing on Cloud Computing, Distributed Systems, and Advanced Programming.
-**EXAMPLE:END**
-**INPUT:START**
+
+[INPUT]
 INPUT section from a resume:
 {section}
 
-**INPUT:END**
+
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "cap_letters", "[S]"]
@@ -659,15 +660,15 @@ INPUT section from a resume:
             "general_info_text": ""
         },
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Given the general information from a resume, summarize it in a wholistic manner; be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 Since this is a summary of a resume's general information, you need to include the candidate's Name, Contact Information, Title, and Languages Spoken.
 Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES (do not forget to include the "[S]General Information Summary:" text at the start of the output).
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [S]General Information Summary: Brief and concise summary of the resume's general information, presented as a single continuous string of text.
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
 EXAMPLE INPUT 1:
 [0]Name: Jane Doe
 [0]Contact Information:
@@ -681,12 +682,12 @@ EXAMPLE INPUT 1:
 [0]Languages: English, Spanish, French
 EXAMPLE OUTPUT 1:
 [S]General Information Summary: Jane Doe is a Senior Software Engineer with contact details including an address at 123 Main St, Springfield, USA, phone number +1-555-123-4567, email jane.doe@email.com, LinkedIn linkedin.com/in/janedoe, Github github.com/janedoe, and Portfolio janedoe.dev. Jane speaks English, Spanish, and French fluently.
-**EXAMPLE:END**
-**INPUT:START**
+
+[INPUT]
 INPUT general information from a resume:
 {general_info_text}
 
-**INPUT:END**
+
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "cap_letters", "[S]General Information Summary:"]
@@ -704,14 +705,14 @@ INPUT general information from a resume:
             "skill_section": ""
         },
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Given a "Skills" section from a resume, summarize the skills section of a resume in a wholistic manner; be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES (do not forget to include the "[S]Skills Summary:" text at the start of the output).
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [S]Skills Summary: Brief and concise wholistic summary of the resume's skills, presented as a single continuous string of text.
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
 INPUT EXAMPLE 1:
 [0]Skills:
 [1]Programming Languages: Programming Language 1, Python, JavaScript
@@ -719,12 +720,12 @@ INPUT EXAMPLE 1:
 [1]Soft Skills: Collaboration, Communication, Leadership, Teamwork
 OUTPUT EXAMPLE 1:
 [S]Skills Summary: Proficient in Python, and JavaScript. Experienced with REST APIs, web development, and API development. Additionally, skilled in cloud setup and possess strong collaboration, communication, leadership, and teamwork abilities.
-**EXAMPLE:END**
-**INPUT:START**
+
+[INPUT]
 INPUT "Skills" section from a resume:
 {skill_section}
 
-**INPUT:END**
+
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "cap_letters", "[S]Skills Summary:"]
@@ -743,7 +744,7 @@ INPUT "Skills" section from a resume:
             "job_description": ""
         },
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Given a wholistic summary of a resume and a job description, tailor a Summary section for a resume to best match the job description; follow these guidelines:
 - Write the tailored summary section as the candidate, not as an external observer.
 - The summary mustn't exceed 100 words.
@@ -752,24 +753,24 @@ Given a wholistic summary of a resume and a job description, tailor a Summary se
 - In the format below, do not include any text before "[0]" or after the requested information.
 - Return only the revised summary and strictly follow the output format, filling in the parts that have **fill-in:"text"**
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [0]Summary: Despite limited work experience, I bring strong work ethic, adaptability and curiosity. Experienced in **fill-in:"specific skills thanks to certain experiences"**. Now seeking a position that offers growth and learning opportunities.
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
 EXAMPLE INPUT 1:
 [0]Summary:Jane Doe, Senior Software Engineer | +1-555-123-4567 | jane.doe@email.com | linkedin.com/in/janedoe | github.com/janedoe | janedoe.dev | Fluent in English, Spanish, and French.Certifications: AWS Certified Solutions Architect (2019), Scrum Master (2020).Education:Bachelor of Science in Computer Science from Springfield University (2012-2016) - courses in Algorithms, Data Structures, Operating Systems, and Databases.Master of Science in Software Engineering at Capital Tech (2016-2018) - focus on Cloud Computing, Distributed Systems, and Advanced Programming.Projects: Real-time analytics dashboard using Python, incorporating role-based access controls and security features to protect sensitive data, solidifying proficiency in Data Visualization, WebSockets, and communication.Work Experience:Senior Software Engineer at WebApps Inc. - RESTful API development, optimizing database queries, and microservices; delivered significant improvements in application performance by 30%.Volunteering & Leadership:Coding Bootcamp Mentor at CodeSpring (2020-2022) - mentoring and leadership skills.Hackathon Organizer at TechFest (2018-2019) - event planning, teamwork, and problem-solving.Skills: Proficient in Microsoft Office Suite, Google Workspace tools, Asana, Trello; strong problem-solving skills and ability to work effectively in a fast-paced environment.
 EXAMPLE OUTPUT 1:
 [0]Summary: Despite limited work experience, I bring strong work ethic, adaptability and curiosity. Experienced in Python development, data visualization, and communication through projects like the real-time analytics dashboard and mentoring at CodeSpring. Now seeking a position that offers growth and learning opportunities.
-**EXAMPLE:END**
-**INPUT:START**
+
+[INPUT]
 INPUT wholistic summary of a resume:
 {prev_summary}
 
 INPUTjob description:
 {job_description}
 
-**INPUT:END**
+
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Summary:"]
@@ -788,7 +789,7 @@ INPUTjob description:
             "job_description": ""
         },
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Given a list of "Programming Languages", "Technical Skills" and "Soft Skills" considered to be relevant for a paticular job description, and said job description:
 Prune the following 'Skills' section from a resume to best match the job description , following the guidelines below:
 - Return 3 MAXIMUM entries under "Programming Languages" (MINIMUM 0 entries)
@@ -800,28 +801,28 @@ Prune the following 'Skills' section from a resume to best match the job descrip
 - If either the "Programming Languages", "Technical Skills", or "Soft Skills" sections are empty, return them as an empty section.
 - Aside from the information requested, do not include any additional text or explanations.
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [0]Skills:
 [1]Programming Languages: Programming Language 1, Programming Language 2, Programming Language 3
 [1]Technical Skills: Technical Skill 1, Technical Skill 2, Technical Skill 3, Technical Skill 4, Technical Skill 5
 [1]Soft Skills: Soft Skill 1, Soft Skill 2, Soft Skill 3, Soft Skill 4
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
 OUTPUT EXAMPLE 1:
 [0]Skills:
 [1]Programming Languages: Python, JavaScript
 [1]Technical Skills: REST APIs, Web Development, API Development, Cloud Setup
 [1]Soft Skills: Collaboration, Communication, Leadership, Teamwork
-**EXAMPLE:END**
-**INPUT:START**
+
+[INPUT]
 INPUT list of "Programming Languages", "Technical Skills" and "Soft Skills" considered to be relevant for a paticular job description:
 {cv_data}
 
 INPUT job description:
 {job_description}
 
-**INPUT:END**
+
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Skills:","[1]Programming Languages:","[1]Technical Skills:","[1]Soft Skills:"]
@@ -841,29 +842,29 @@ INPUT job description:
             "section_name": ""
         },
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Given a raw untailored resume section and and its counterpart from an already tailored resume, compare the two resume sections and:
 - Confirm that the tailored section does not contain any made-up information.
 - Verify that all information in the tailored section is present in the raw section, even if paraphrased.
 - Identify any contradictions between the two sections.
 - Identify any contradictions within the tailored section (with itself).
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [0]{section_name} Analysis: Analysis of the tailored resume section vs the raw section, as a single line of text.
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
 EXAMPLE OUTPUT 1:
 [0] Volunteering_and_Leadershio Analysis: The tailored version of the section presents one inconsistency with the raw section, the role "Team Lead at the 2024 IBM Datathon" does not exit in the raw resume. Aside from that, everything else is consistent.
-**EXAMPLE:END**
-**INPUT:START**
+
+[INPUT]
 INPUT raw untailored resume section:
 {old_resume_s_txt}
 
 INPUT already tailored resumesection:
 {new_resume_s_txt}
 
-**INPUT:END**
+
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]"]
@@ -882,7 +883,7 @@ INPUT already tailored resumesection:
             "job_description": ""
         },
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Given a wholistic summary of a resume, and the summary of the job description it has been tailored to, write a cover letter tailored to the job description, following the guidelines below:
 - It should highlight the most relevant skills and experiences from the resume that match the job description.
 - It should be written in a professional tone.
@@ -893,30 +894,30 @@ Given a wholistic summary of a resume, and the summary of the job description it
 - Total word count must not exceed 400 words. This is a hard limit, so be concise and to the point.
 - Write the cover letter as the candidate, not as an external observer.
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [0]Cover Letter: 
 [1]New Paragraph0: Cover Letter introduction, mentioning the job title and company, as well as the candidate's enthusiasm for the role.
 [1]New Paragraph1: Explain why the candidate is a good fit for the role, briefly mentioning the most relevant information from the resume that matches the job description.
 [1]New Paragraph2: Provide further information about the candidate's qualifications and how they align with the job requirements. Make use of specific examples and metrics to demonstrate impact (if applicable).
 [1]New Paragraph3: Closing statement, thanking the employer for their time and consideration. Invite them to contact the candidate for further discussion, providing email address.
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
 EXAMPLE OUTPUT 1:
 [0]Cover Letter:
 [1]New Paragraph0: I am excited to apply for the Software Engineer, New Grad role at Sentry, a position that aligns perfectly with my skills and passion for software development. As a seasoned Senior Software Engineer, I am confident in my ability to make a meaningful contribution to your team.
 [1]New Paragraph1: With my strong educational foundation in M.Sc. Software Engineering and B.Sc. Computer Science, I possess the technical skills required for this role. My proficiency in Python and JavaScript, as well as my experience developing microservices and collaborating with cross-functional teams, make me a strong fit for this position.
 [1]New Paragraph2: As a leader, I have demonstrated exceptional mentorship as a Coding Bootcamp Mentor at CodeSpring, resulting in high completion rates and job placement improvement. This experience has honed my ability to communicate effectively with teams and stakeholders, which is essential for this role. Additionally, my portfolio showcases the creation of a real-time analytics dashboard using Python, featuring role-based access controls and security features for sensitive data protection.
 [1]New Paragraph3: Thank you for considering my application. I am excited about the opportunity to discuss how my skills and experience align with the requirements of this role. Please feel free to contact me at jane.doe@email.com or via LinkedIn.
-**EXAMPLE:END**
-**INPUT:START**
+
+[INPUT]
 INPUT wholistic summary of a resume:
 {cv_data}
 
 INPUT summary of the job description it has been tailored to:
 {job_description}
 
-**INPUT:END**
+
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Cover Letter:", "[1]New Paragraph0:", "[1]New Paragraph1:", "[1]New Paragraph2:", "[1]New Paragraph3:"]
@@ -935,7 +936,7 @@ INPUT summary of the job description it has been tailored to:
             "job_description": ""
         },
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Given the a summary of a resume and the job description the aforementioned resume has been tailored to, perform a consistency check on the tailored resume against the job description. This consistency check will check if the resume is consistent with the job description, meaning that all skills and experiences mentioned in the resume should be relevant to the job description.
 Follow these guidelines:
 - Be mindful not to include any line breaks in the content of any of the sections/subsections.
@@ -943,13 +944,13 @@ Follow these guidelines:
 - Do not create nor imagine any data that is not present in the original data.
 - When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [0]Consistency Checker Vs Job Description:
 [1]Inconsistencies With Job Description: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 [1]Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
 EXAMPLE OUTPUT 1:
 [0]Consistency Checker Vs Job Description:
 [1]Inconsistencies With Job Description: None.
@@ -958,13 +959,13 @@ EXAMPLE OUTPUT 2:
 [0]Consistency Checker Vs Job Description:
 [1]Inconsistencies With Job Description: 1 inconsistency found. The position "Secretary at WayCom" is irrelevant to the job description with job title "Senior VXF Animator" because of the mismatch in skillsets required. 
 [1]Suggestions for Improvement: Correct the above inconsistencies; The skill "VFX Software" is missing from the resume summary, it would be wise to include it if the candiate has it.
-**EXAMPLE:END**
-**INPUT:START**
+
+[INPUT]
 INPUT summary of a resume tailored to a particular job description:
 {cv_data}
 INPUT job description the aforementioned resume has been tailored to:
 {job_description}
-**INPUT:END**
+
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Consistency Checker Vs Job Description:", "[1]Inconsistencies With Job Description:", "[1]Suggestions for Improvement:"]
@@ -983,7 +984,7 @@ INPUT job description the aforementioned resume has been tailored to:
             "job_description": ""
         },
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Given a cover letter and the job description the aforementioned cover letter has been tailored to, perform a consistency check on the tailored cover letter against the job description. This consistency check will check if the cover letter is consistent with the job description, meaning that all skills and experiences mentioned in the cover letter should be relevant to the job description.
 Follow these guidelines:
 - Be mindful not to include any line breaks in  the content of any of the sections/subsections.
@@ -991,13 +992,13 @@ Follow these guidelines:
 - Do not create nor imagine any data that is not present in the original data.
 - When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [0]Consistency Checker Vs Job Description:
 [1]Inconsistencies With Job Description: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 [1]Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
 EXAMPLE OUTPUT 1:
 [0]Consistency Checker Vs Job Description:
 [1]Inconsistencies With Job Description: None.
@@ -1006,13 +1007,13 @@ EXAMPLE OUTPUT 2:
 [0]Consistency Checker Vs Job Description:
 [1]Inconsistencies With Job Description: 2 inconsistencies found. The position the cover letter is referring to is incorrect, it should be "Junior Engineer at GTY" not "Senior Software Engineer at GTY"; The email address has field has been left as a placeholder.
 [1]Suggestions for Improvement: Correct the above inconsistencies; Consider not mentioning irrelevant positions, such as "Ice Cream Machine Operator" or "Zoo Ticket Salesman"
-**EXAMPLE:END**
-**INPUT:START**
+
+[INPUT]
 INPUT cover letter tailored to a particular job description:
 {cv_data}
 INPUT job description the aforementioned resume has been tailored to:
 {job_description}
-**INPUT:END**
+
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Consistency Checker Vs Job Description:", "[1]Inconsistencies With Job Description:", "[1]Suggestions for Improvement:"]
@@ -1031,7 +1032,7 @@ INPUT job description the aforementioned resume has been tailored to:
             "job_description": ""
         },
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Given a list of courses taken on a given program and a job description, extract the 5 most relevant courses that match the skills and requirements outlined in the job description.
 Follow these guidelines when extracting courses and returning them:
 - Do not include any courses not present in the original courses list.
@@ -1040,21 +1041,21 @@ Follow these guidelines when extracting courses and returning them:
 - Include the prefix [1] at the start of each line (as seen in the format below).
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
 - Be mindful that courses may or may not have a course code (represented by "XXX001" in the OUTPUT FORMAT section)
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [1]Courses: XXX001 Course Name1, XXX002 Course Name2, XXX003 Course Name3...
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
 [1]Courses: CSC101 Computer Science I, ECE201 Introduction to Electronics, CIV301 Advanced Civil Engineering, MAT 323 Applied Advanced Calculus
-**EXAMPLE:END**
-**INPUT:START**
+
+[INPUT]
 INPUT list of courses taken on a given program:
 {courses}
 
 INPUT job description:
 {job_description}
 
-**INPUT:END**
+
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[1]Courses:"]
@@ -1073,8 +1074,8 @@ INPUT job description:
             "sections": [],
             "section_names": [],
             "second_half": """
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
 INPUT EXAMPLE 1 (number of sections is 2; section names are "certifications" and "awards_and_scholarships"):
 [0]Certifications:
 [1]Certification Name: Scrum Master
@@ -1093,23 +1094,23 @@ INPUT EXAMPLE 1 (number of sections is 2; section names are "certifications" and
 OUTPUT EXAMPLE 1 (number of sections is 2; section names are "certifications" and "awards_and_scholarships"):
 [S]certifications Section Summary: The candidate holds two certifications, Scrum Master from Scrum Alliance (2020/03) and AWS Certified Solutions Architect from Amazon Web Services (2019/05), demonstrating expertise in Agile methodology and cloud architecture.
 [S]awards_and_scholarships Section Summary: The candidate has received recognition for their academic achievements with the Tech Innovation Scholarship from Capital Tech (2017/09) and Dean's List award from Springfield University (2015/06), showcasing their commitment to learning and academic excellence.
-**EXAMPLE:END**
-**INPUT:START**
+
+[INPUT]
 INPUT sections from a resume:
 {sections_text}
 
-**INPUT:END**
+
 """
         },
         "prompt_in":
-"""**REQUEST:START**
+"""[REQUEST]
 Given a number of sections from a resume, summarize the sections in a wholistic manner while following these guidelines:
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
 - Keep in mind that these summaries will be used in a "Sliding Window" approach to summarize the entire resume effectively, so include information that is relevant for the overall context of the resume.
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["flexible", "cap_letters", "[S]"]
@@ -1194,30 +1195,30 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
             "async_calls": ["standard_ollama_call_async"]
             }, 
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Given 2 resume section summaries, create a new summary that incorporates all two summaries, following these guidelines:
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 - Include ALL information, competencies, achievements, and skills, for this is a wholistic summary of the candidate's qualifications. Do not miss any skills.
 - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [S]{section1_name} + {section2_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and skills.
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
 EXAMPLE INPUT 1 (candidate name is Jane Doe and her Title is Software Engineer):
 [S]awards_and_scholarships Section Summary: Achieved Dean's List at Springfield University (2015/06) and received Tech Innovation Scholarship from Capital Tech (2017/09), demonstrating academic excellence and innovation skills.
 [S]volunteering_and_leadership Section Summary: As a Coding Bootcamp Mentor at CodeSpring (2020/01-2022/12),  developed curriculum modules and workshops on Python, REST APIs, and cloud integration (Python, Javascript); As a Hackathon Organizer at TechFest (2018/03-2019/03), managed large-scale events (hackathon) and fostered a culture of innovation and collaboration for creative problem solving (Strong Leadership, Organizational and Communication skills).
 EXAMPLE OUTPUT 1:
 [S]awards_and_scholarships + volunteering_and_leadership Sections Summary: Jane Doe is a prolific Software Engineer, having achieved Dean's List at Springfield University (2015/06) and received Tech Innovation Scholarship from Capital Tech (2017/09), demonstrating academic excellence and innovation skills. As a Coding Bootcamp Mentor at CodeSpring (2020/01-2022/12),  she developed curriculum modules and workshops on Python, REST APIs, and cloud integration (Python, Javascript); As a Hackathon Organizer at TechFest (2018/03-2019/03), she managed large-scale events (hackathon) and fostered a culture of innovation and collaboration for creative problem solving (Strong Leadership, Organizational and Communication skills).
-**INPUT:START**
+[INPUT]
 INPUT {section1_name} section summary:
 {summary1}
 
 INPUT {section2_name} section summary:
 {summary2}
 
-**INPUT:END**
+
 """, #Set at runtime
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "cap_letters", "[S]"]#Might lead to error, check later
@@ -1242,24 +1243,24 @@ INPUT {section2_name} section summary:
             "async_calls": ["standard_ollama_call_async"]
             }, 
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Given 3 resume section summaries, create a new summary that incorporates all two summaries, following these guidelines:
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 - Include ALL information, competencies, achievements, and skills, for this is a wholistic summary of the candidate's qualifications. Do not miss any skills.
 - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [S]{section1_name} + {section2_name} + {section3_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and skills.
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
 EXAMPLE INPUT 1 (candidate name is Jane Doe and her Title is Software Engineer):
 [S]education Section Summary: This candidate holds a Bachelor of Science in Computer Science from Springfield University (2012-2016), with courses in Algorithms, Data Structures, Operating Systems, and Databases. They then pursued a Master of Science in Software Engineering at Capital Tech (2016-2018), focusing on Cloud Computing, Distributed Systems, and Advanced Programming.
 [S]certifications Section Summary: This candidate is certified as an AWS Certified Solutions Architect (2019) and holds the Scrum Master certification from the Scrum Alliance (2020).
 [S]awards_and_scholarships Section Summary: Achieved Dean's List at Springfield University (2015/06) and received Tech Innovation Scholarship from Capital Tech (2017/09), demonstrating academic excellence and innovation skills.
 EXAMPLE OUTPUT 1:
 [S]education + certifications + awards_and_scholarships Sections Summary:As a highly skilled Senior Software Engineer, Jane Doe holds a Bachelor of Science in Computer Science from Springfield University (2012-2016), with courses in Algorithms, Data Structures, Operating Systems, and Databases. She then pursued a Master of Science in Software Engineering at Capital Tech (2016-2018), focusing on Cloud Computing, Distributed Systems, and Advanced Programming. Additionally, Jane Doe is certified as an AWS Certified Solutions Architect (2019) and holds the Scrum Master certification from the Scrum Alliance (2020). Her academic achievements include achieving Dean's List at Springfield University (2015/06) and receiving Tech Innovation Scholarship from Capital Tech (2017/09), demonstrating academic excellence and innovation skills.
-**INPUT:START**
+[INPUT]
 INPUT {section1_name} section summary:
 {summary1}
 
@@ -1269,7 +1270,7 @@ INPUT {section2_name} section summary:
 INPUT {section3_name} section summary:
 {summary3}
 
-**INPUT:END**
+
 """, #Set at runtime
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "cap_letters", "[S]"]#Might lead to error, check later
@@ -1294,17 +1295,17 @@ INPUT {section3_name} section summary:
             "async_calls": ["standard_ollama_call_async"]
             }, 
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Given 4 resume section summaries, create a new summary that incorporates all two summaries, following these guidelines:
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 - Include ALL information, competencies, achievements, and skills, for this is a wholistic summary of the candidate's qualifications. Do not miss any skills.
 - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [S]{section1_name} + {section2_name} + {section3_name} + {section4_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and skills.
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
 EXAMPLE INPUT 1 (candidate name is Jane Doe and her Title is Software Engineer):
 [S]education Section Summary: This candidate holds a Bachelor of Science in Computer Science from Springfield University (2012-2016), with courses in Algorithms, Data Structures, Operating Systems, and Databases. They then pursued a Master of Science in Software Engineering at Capital Tech (2016-2018), focusing on Cloud Computing, Distributed Systems, and Advanced Programming.
 [S]certifications Section Summary: This candidate is certified as an AWS Certified Solutions Architect (2019) and holds the Scrum Master certification from the Scrum Alliance (2020).
@@ -1312,7 +1313,7 @@ EXAMPLE INPUT 1 (candidate name is Jane Doe and her Title is Software Engineer):
 [S]volunteering_and_leadership Section Summary: Developed strong leadership, mentoring, and organizational skills through roles as Coding Bootcamp Mentor at CodeSpring (2020/01-2022/12) and Hackathon Organizer at TechFest (2018/03-2019/03), fostering innovation, collaboration, and creativity while utilizing problem-solving skills.
 EXAMPLE OUTPUT 1:
 [S]education + certifications + awards_and_scholarships + volunteering_and_leadership Sections Summary:As a highly skilled Senior Software Engineer, Jane Doe holds a Bachelor of Science in Computer Science from Springfield University (2012-2016), with courses in Algorithms, Data Structures, Operating Systems, and Databases. She then pursued a Master of Science in Software Engineering at Capital Tech (2016-2018), focusing on Cloud Computing, Distributed Systems, and Advanced Programming. Additionally, Jane Doe is certified as an AWS Certified Solutions Architect (2019) and holds the Scrum Master certification from the Scrum Alliance (2020). Her academic achievements include achieving Dean's List at Springfield University (2015/06) and receiving Tech Innovation Scholarship from Capital Tech (2017/09), demonstrating academic excellence and innovation skills. With strong leadership, mentoring, and organizational skills, Jane Doe has developed a reputation as a leader through roles such as Coding Bootcamp Mentor at CodeSpring (2020/01-2022/12) and Hackathon Organizer at TechFest (2018/03-2019/03), fostering innovation, collaboration, and creativity while utilizing problem-solving skills.
-**INPUT:START**
+[INPUT]
 INPUT {section1_name} section summary:
 {summary1}
 
@@ -1325,7 +1326,7 @@ INPUT {section3_name} section summary:
 INPUT {section4_name} section summary:
 {summary4}
 
-**INPUT:END**
+
 """, #Set at runtime
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "cap_letters", "[S]"]#Might lead to error, check later
@@ -1388,7 +1389,7 @@ INPUT {section4_name} section summary:
             "non_standard_calls": ["slide_summary"],
         }, 
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Given all summarized sections of a resume, create a wholistic summary of all of them, following these guidelines:
 - Include the candidate's contact information, as well as their title and name.
 - Include any certifications or qualifications.
@@ -1399,11 +1400,11 @@ Given all summarized sections of a resume, create a wholistic summary of all of 
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 - When filling out the output format, do not forget to include the "[0]Summary:" text before the actual summary.
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [0]Summary: Wholistic summary of all sections, presented as a single continuous string of text.
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
 EXAMPLE INPUT 1:
 INPUT summarized sections of a resume:
 [S]General Information Summary: Jane Doe is a Senior Software Engineer with contact details including an address at 123 Main St, Springfield, USA, phone number +1-555-123-4567, email jane.doe@email.com, LinkedIn linkedin.com/in/janedoe, Github github.com/janedoe, and Portfolio janedoe.dev. Jane speaks English, Spanish, and French fluently.
@@ -1413,11 +1414,11 @@ INPUT summarized sections of a resume:
 [S]Skills Summary: Proficient in Microsoft Office Suite including Word, Excel, PowerPoint, and Outlook. Strong understanding of Google Workspace tools such as Gmail, Drive, Docs, Sheets, and Slides. Experience with project management using Asana and Trello. Possesses strong problem-solving skills and ability to work effectively in a fast-paced environment.
 EXAMPLE OUTPUT 1:
 [0]Summary:Jane Doe, Senior Software Engineer | +1-555-123-4567 | jane.doe@email.com | linkedin.com/in/janedoe | github.com/janedoe | janedoe.dev | Fluent in English, Spanish, and French.Certifications: AWS Certified Solutions Architect (2019), Scrum Master (2020).Education:Bachelor of Science in Computer Science from Springfield University (2012-2016) - courses in Algorithms, Data Structures, Operating Systems, and Databases.Master of Science in Software Engineering at Capital Tech (2016-2018) - focus on Cloud Computing, Distributed Systems, and Advanced Programming.Projects: Real-time analytics dashboard using Python, incorporating role-based access controls and security features to protect sensitive data, solidifying proficiency in Data Visualization, WebSockets, and communication.Work Experience:Senior Software Engineer at WebApps Inc. - RESTful API development, optimizing database queries, and microservices; delivered significant improvements in application performance by 30%.Volunteering & Leadership:Coding Bootcamp Mentor at CodeSpring (2020-2022) - mentoring and leadership skills.Hackathon Organizer at TechFest (2018-2019) - event planning, teamwork, and problem-solving.Skills: Proficient in Microsoft Office Suite, Google Workspace tools, Asana, Trello; strong problem-solving skills and ability to work effectively in a fast-paced environment.
-**EXAMPLE:END**
-**INPUT:START**
+
+[INPUT]
 INPUT summarized sections of a resume:
 {slides_txt}
-**INPUT:END**
+
 """,
         "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Summary:"]
@@ -1476,7 +1477,7 @@ INPUT summarized sections of a resume:
             "non_standard_calls": ["new_vs_old_resume"],
         }, 
         "prompt_in": 
-"""**REQUEST:START**
+"""[REQUEST]
 Given a list containing a per-section analysis of a two resumes, comparing the synthesized data in the new resume (which has been tailored to a particular job description) against the original, synthesize a report which extracts the following data from the list of analyses:
 - Whether the new resume is consistent with the original resume, meaning that all information in the new resume is present in the original resume, even if paraphrased.
 - Whether the new resume is consistent with itself, meaning that there should be no contradictions or inconsistencies in the information provided.
@@ -1486,14 +1487,14 @@ The report should follow these guidelines:
 - Do not create nor imagine any data that is not present in the original data.
 - When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [0]Consistency Checker Vs Original Resume:
 [1]Inconsistencies With Original Resume: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 [1]Inconsistencies With Self: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 [1]Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLES]
 EXAMPLE OUTPUT 1:
 [0]Consistency Checker Vs Original Resume:
 [1]Inconsistencies With Original Resume: None.
@@ -1504,11 +1505,11 @@ EXAMPLE OUTPUT 2:
 [1]Inconsistencies With Original Resume: 3 inconsistencies found with Original Resume. Position "Senior Engineer at AMD" found in tailored resume, missing in original; Wrong start date for position "Junior Engineer at NVidia", should be 10/2013 not 5/2024; URL for project "IoT at home" found in tailored resume, missing in original.
 [1]Inconsistencies With Self: 1 inconsistency found. "Summary" section mentions a position not present under "Work Experience" (or any other section for that matter). 
 [1]Suggestions for Improvement: Correct the above inconsistencies; Avoid the use of run-on sentences.
-**EXAMPLE:END**
-**INPUT:START**
+
+[INPUT]
 INPUT list containing a per-section analysis of the resumes, comparing the synthesized data in the new resume against the original:
 {all_analysis}
-**INPUT:END**
+
 """,
         "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Consistency Checker VS Original Resume:","[1]Inconsistencies With Original Resume:","[1]Inconsistencies With Self:", "[1]Suggestions for Improvement:"]

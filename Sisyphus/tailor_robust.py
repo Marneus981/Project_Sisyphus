@@ -9,7 +9,7 @@ import aiohttp
 import asyncio
 import warnings
 from config import CONFIG
-from Sisyphus import payloads
+from Sisyphus import payloads_wip as payloads
 import re
 import traceback
 DEFAULT_MODEL = "llama3:8b"
@@ -654,7 +654,7 @@ def tailor_volunteering_and_leadership(call_info = template_call_info):
     runtime_info_temp = {"call_id": format["standard_calls"][0],
                           "ollama_url": ollama_url,
                           "format": {
-                              "raw_cv_data": raw_cv_data,
+                              "raw_cv_data": step0,
                               "job_description": job_description_summary,
                           },
                           "payload_in":{
@@ -758,7 +758,7 @@ def tailor_work_experience(call_info = template_call_info):
     runtime_info_temp = {"call_id": format["standard_calls"][0],
                           "ollama_url": ollama_url,
                           "format": {
-                              "raw_cv_data": raw_cv_data,
+                              "raw_cv_data": step0,
                               "job_description": job_description_summary,
                           },
                           "payload_in":{
@@ -861,7 +861,7 @@ def tailor_projects(call_info = template_call_info):
     runtime_info_temp = {"call_id": format["standard_calls"][0],
                           "ollama_url": ollama_url,
                           "format": {
-                              "raw_cv_data": raw_cv_data,
+                              "raw_cv_data": step0,
                               "job_description": job_description_summary,
                           },
                           "payload_in":{
@@ -962,7 +962,7 @@ def prune_experiences(call_info = template_call_info):
     runtime_info_temp = {"call_id": format["standard_calls"][0],
                           "ollama_url": ollama_url,
                           "format": {
-                              "experiences": experiences,
+                              "experiences": step0,
                               "job_description": job_description_summary,
                           },
                           "payload_in":{
@@ -990,18 +990,18 @@ def generate_call_infos_summarize_section(sections, section_names, systems, mode
     call_infos = []
     requests = len(sections)
     for i in range(requests):
-        prompt = f"""**REQUEST:START**
+        prompt = f"""[REQUEST]
 Given a section from a resume, summarize the sections in a wholistic manner while following these guidelines:
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
 - Return the summarized information as a single continuous string of text, following the output format strictly. 
 - Do not forget to include the "[S]{section_names[i]} Section Summary:" text at the start of the output.
 - Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
-**REQUEST:END**
-**OUTPUT FORMAT:START**
+
+[OUTPUT FORMAT]
 [S]{section_names[i]} Summary: Wholistic summary of the section's information.
-**OUTPUT FORMAT:END**
-**EXAMPLE:START**
+
+[EXAMPLE]
 EXAMPLE INPUT 1:
 [0]Education:
 [1]Degree: B.Sc. Computer Science
@@ -1016,12 +1016,12 @@ EXAMPLE INPUT 1:
 [1]Courses: Cloud Computing, Distributed Systems, Advanced Programming
 EXAMPLE OUTPUT 1:
 [S]Education Section Summary: This candidate holds a Bachelor of Science in Computer Science from Springfield University (2012-2016), with courses in Algorithms, Data Structures, Operating Systems, and Databases. They then pursued a Master of Science in Software Engineering at Capital Tech (2016-2018), focusing on Cloud Computing, Distributed Systems, and Advanced Programming.
-**EXAMPLE:END**
-**INPUT:START**
+
+[INPUT]
 INPUT section from a resume:
 {sections[i]}
 
-**INPUT:END**
+
 """
         if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(model, prompt)
         call_info = {

@@ -16,6 +16,6 @@ CONFIG = {
     },
     "MODELS": {
         "TEMPERATURE": 0.8,
-        "RETRIES": 2
+        "RETRIES": 1
     }
 }

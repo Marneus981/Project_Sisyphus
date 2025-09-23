@@ -628,19 +628,31 @@ def filter_output(model_output, mode = "digits"):
     Returns the filtered output as a string.
     """
     function_name = inspect_function()
-    output_whole_0 = model_output.replace("\n", "")
-    if "[" in output_whole_0:
-        output_whole_1 = output_whole_0.split("[",1) #Text + rest
-        if len(output_whole_1) == 1:
-            output_whole_2 = "[" + output_whole_1[0]
+    if "[" in model_output:
+        no_pre_text = model_output.split("[",1) #Text + rest
+        if len(no_pre_text) == 1:
+                no_pre_text_0 = "[" + no_pre_text[0]
         else:
-            output_whole_2 = "[" + output_whole_1[1]
-        output_parts = output_whole_2.split("[")
-        for i in range(1, len(output_parts)):
-            output_parts[i] = "[" + output_parts[i]
-        return "\n".join(output_parts)
+                no_pre_text_0 = "[" + no_pre_text[1]
     else:
-        raise ValueError(f"[ERROR]{function_name}: No [ found in text")
+        raise ValueError(f"[ERROR]{function_name}: No standard pattern found in text")
+    #Patterns
+    filtered_lines = []
+    digits = r"\[[0-9]{1}\]"
+    cap_letters = r"\[[A-Z]{1}\]"
+    lines = no_pre_text_0.splitlines()
+    for line in lines:
+        line = line.strip()
+        if mode == "digits": 
+            if re.search(digits, line):
+                filtered_lines.append(line)
+        if mode == "cap_letters":
+            if re.search(cap_letters, line):
+                filtered_lines.append(line)
+    return "\n".join(filtered_lines)
+
+    #Possible way to make it more robust: make it so that all line broken lines in between sections get attached to the last section (it does not work with the last one)
+
     
     # filtered_lines = []
     # lines = model_output.splitlines()
