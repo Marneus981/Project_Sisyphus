@@ -225,17 +225,24 @@ def compare_start(output, sample_starts = []):
 @log_time
 def clean_first_step(text):
     # Remove lines that do not start with [X] where X is a capitalized letter
+    function_name = helpers.inspect_function()
     cleaned_lines = []
     for line in text.split('\n'):
         if line.startswith(("[R]", "[J]", "[P]")):
-            cleaned_lines.append(line)
+            line = line.strip()
+            prefix = line[0:3]
+            temp_lines = line[3:].split(':')
+            if len(temp_lines) == 1:
+                raise ValueError(f"[ERROR]{function_name}: No experience title found")
+            cleaned_lines.append(prefix.strip() + temp_lines[1].strip())
     return '\n'.join(cleaned_lines)  
 
 @log_time
 def augment_output(input_text, reference_dict, type):
+    function_name = helpers.inspect_function()
     allowed_types = ['volunteering_and_leadership','work_experience','projects', 'vl_w_p', ]
     if type not in allowed_types:
-        raise ValueError(f"augment_output: Invalid type: {type}. Allowed types are: {allowed_types}")
+        raise ValueError(f"[ERROR]{function_name}: Invalid type: {type}. Allowed types are: {allowed_types}")
     """
     Input is in format (if type is 'volunteering_and_leadership'):
     <Role Name 1>
@@ -587,8 +594,9 @@ def batch_summarize_sections(call_info = template_call_info):
     
     prompt = prompt_in
     for name in section_names:
-        prompt += f"[S]{name} Section Summary: Wholistic summary of the section's information.\n"
-    
+        prompt += f"Section Summary: {name} Summary; Wholistic summary of the section's information."
+
+    prompt += "Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.\n" 
     prompt +=  call_info["format"]["second_half"].format(**format)
 
     payload = payload_in.copy()
@@ -992,30 +1000,15 @@ def generate_call_infos_summarize_section(sections, section_names, systems, mode
     for i in range(requests):
         prompt = f"""[REQUEST]
 Given a section from a resume, summarize the sections in a wholistic manner while following these guidelines:
-- Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
+- Be very concise but detail-driven, which means that you must include as many relevant details as possible with minimal fluff.
 - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
 - Return the summarized information as a single continuous string of text, following the output format strictly. 
-- Do not forget to include the "[S]{section_names[i]} Section Summary:" text at the start of the output.
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[S]{section_names[i]} Summary: Wholistic summary of the section's information.
-
-[EXAMPLE]
-EXAMPLE INPUT 1:
-[0]Education:
-[1]Degree: B.Sc. Computer Science
-[1]University: Springfield University
-[1]Location: Springfield, USA
-[1]Duration: 2012/09 - 2016/06
-[1]Courses: Algorithms, Data Structures, Operating Systems, Databases
-[1]Degree: M.Sc. Software Engineering
-[1]University: Capital Tech
-[1]Location: Capital City, USA
-[1]Duration: 2016/09 - 2018/06
-[1]Courses: Cloud Computing, Distributed Systems, Advanced Programming
-EXAMPLE OUTPUT 1:
-[S]Education Section Summary: This candidate holds a Bachelor of Science in Computer Science from Springfield University (2012-2016), with courses in Algorithms, Data Structures, Operating Systems, and Databases. They then pursued a Master of Science in Software Engineering at Capital Tech (2016-2018), focusing on Cloud Computing, Distributed Systems, and Advanced Programming.
+Section Summary: {section_names[i]} Summary; Wholistic summary of the section's information.
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT section from a resume:

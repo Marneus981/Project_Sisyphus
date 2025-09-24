@@ -39,6 +39,7 @@ Prompt Format:
 
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 field mode (digits/cap_letters) will be vestigial in next commit.
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 """
 
@@ -74,15 +75,16 @@ The report should follow these guidelines:
 - Be mindful not to include any line breaks in  the content of any of the sections/subsections.
 - Be as objective as possible, and if you must make assumptions, make very conservative assumptions
 - Do not create nor imagine any data that is not present in the original data.
-- When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
+- Do not modify the output format.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
 Consistency Checker Vs Resume:
 Inconsistencies With Resume: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 Inconsistencies With Self: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT cover letter:
@@ -105,7 +107,18 @@ INPUT wholistic summary of the resume meant to accompany the above cover letter 
                        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
                        },
         "format": {#Set at runtime
-                   "job_description": "" 
+                   "job_description": "",
+                   "prefix_dict": {
+                       "Company Name:":"[0]",
+                       "Job Title:":"[0]",
+                       "Key responsibilities:":"[0]",
+                       "Requirements:":"[0]",
+                       "Programming Languages":"[0]",
+                       "Technical Skills:":"[0]",
+                       "Soft Skills:":"[0]",
+                       "Other Skills:":"[0]",
+                       "Dummy:":"[BIG DUMMY]"
+                   } 
                    },
         "prompt_in": 
 """[REQUEST]
@@ -119,20 +132,22 @@ Summarize the input job description by extracting the following information in t
     -Soft Skills
     -Other Skills
 When filling out the OUTPUT FORMAT, follow these guidelines:
-- Do not modify the format and always include the line prefixes ([0]) as well as the field name (e.g. [0]Company Title:).
+- Do not modify the format.
 - Do not add any information not present in the provided job description, your goal is to extract information and summarize.
 - Use simple and concise language when possible, but do use specific keywords.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[0]Company Name: Company Name
-[0]Job Title: Position Name
-[0]Key responsibilities: List of key responsabilities as a single block of text separated by ";"
-[0]Requirements: List of basic requirements as a single block of text separated by ";"
-[0]Programming Languages: List of programming languages required, presented as a single block of text separated by ";"
-[0]Technical Skills: List of technical skills required, presented as a single block of text separated by ";"
-[0]Soft Skills:Soft List of soft skills required, presented as a single block of text separated by ";"
-[0]Other Skills:Other List of other skills required, presented as a single block of text separated by ";"
+Company Name: Company Name
+Job Title: Position Name
+Key responsibilities: List of key responsabilities as a single block of text separated by ";"
+Requirements: List of basic requirements as a single block of text separated by ";"
+Programming Languages: List of programming languages required, presented as a single block of text separated by ";"
+Technical Skills: List of technical skills required, presented as a single block of text separated by ";"
+Soft Skills:Soft List of soft skills required, presented as a single block of text separated by ";"
+Other Skills:Other List of other skills required, presented as a single block of text separated by ";"
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT job description:
@@ -154,7 +169,11 @@ INPUT job description:
                        },
         "format": {#Set at runtime
                    "raw_cv_data": "",
-                   "job_description": ""
+                   "job_description": "",
+                    "prefix_dict": {
+                        "Role Title:" : "[R]",
+                        "Dummy:" : "[BIG DUMMY]"
+                    }
                    },
         "prompt_in": 
 """[REQUEST]
@@ -165,15 +184,17 @@ Given a "Volunteering and Leadership" resume section and a job description, sele
 - Prioritize roles that match relevant skills and experience present in the job description.
 - It is okay to not select any roles if none are relevant.
 - Display the Role Titles explicitly; do not write "Role Title:" before the Role Title
-- When filling out the output format,  you may not change the role title text, do not include any text before [R] or after the role title text.
+- When filling out the output format  you may not change the role title text, and do not include any text before or after the role title text.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[R]Role Title 1
-[R]Role Title 2
-[R]Role Title 3
-[R]Role Title 4
-[R]Role Title 5
+Role Title:Role Title 1
+Role Title:Role Title 2
+Role Title:Role Title 3
+Role Title:Role Title 4
+Role Title:Role Title 5
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT "Volunteering and Leadership" resume section:
@@ -196,7 +217,12 @@ INPUT job description:
                        },
         "format": {#Set at runtime
                    "experience": "",
-                   "job_description": ""
+                   "job_description": "",
+                   "prefix_dict": {
+                       "Description:":"[1]",
+                       "Skills":"[1]",
+                       "Dummy:":"[BIG DUMMY]"
+                   } 
                    },
         "prompt_in": 
 """[REQUEST]
@@ -208,12 +234,13 @@ Given the "Description" and "Skills" attributes of a role belonging to the "Volu
 - Skills must be comma-separated and follow the format below. 
 - If there are no skills in a given category, use " ", then follow up as the format below indicates 
     - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
-- Include the prefix [1] at the start of each line (as seen in the format below).
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[1]Description: Brief role description.
-[1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
+Description: Brief role description.
+Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT job description:
@@ -237,7 +264,11 @@ INPUT "Description" and "Skills" attributes of a role belonging to the "Voluntee
         },
         "format": {
             "raw_cv_data": "",
-            "job_description": ""
+            "job_description": "",
+            "prefix_dict": {
+                "Job Title:" : "[J]",
+                "Dummy:" : "[BIG DUMMY]"
+            }
         },
         "prompt_in": 
 """[REQUEST]
@@ -248,15 +279,17 @@ Given a "Work Experience" resume section and a job description, select up to 5 j
 - Prioritize jobs that match relevant skills and experience present in the job description.
 - It is okay to not select any jobs if none are relevant.
 - Display the Job Titles explicitly; do not write "Job Title:" before the Job Title
-- When filling out the output format,  you may not change the job title text, do not include any text before [J] or after the job title text.
+- When filling out the output format  you may not change the role title text, and do not include any text before or after the role title text.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[J]Job Title 1
-[J]Job Title 2
-[J]Job Title 3
-[J]Job Title 4
-[J]Job Title 5
+Job Title:Job Title 1
+Job Title:Job Title 2
+Job Title:Job Title 3
+Job Title:Job Title 4
+Job Title:Job Title 5
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT "Work Experience" resume section:
@@ -280,7 +313,12 @@ INPUT job description:
         },
         "format": {
             "experience": "",
-            "job_description": ""
+            "job_description": "",
+            "prefix_dict": {
+                       "Description:":"[1]",
+                       "Skills":"[1]",
+                       "Dummy:":"[BIG DUMMY]"
+                   } 
         },
         "prompt_in": 
 """[REQUEST]
@@ -292,12 +330,13 @@ Given the "Description" and "Skills" subsections of a role belonging to the "Wor
 - Skills must be comma-separated and follow the format below. 
 - If there are no skills in a given category, use " ", then follow up as the format below indicates 
     - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
-- Include the prefix [1] at the start of each line (as seen in the format below).
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[1]Description: Brief role description.
-[1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
+Description: Brief role description.
+Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT job description:
@@ -321,7 +360,11 @@ INPUT "Description" and "Skills" subsections of a role belonging to the "Work Ex
         },
         "format": {
             "raw_cv_data": "",
-            "job_description": ""
+            "job_description": "",
+            "prefix_dict": {
+                "Project Title:" : "[P]",
+                "Dummy:" : "[BIG DUMMY]"
+            }
         },
         "prompt_in": 
 """[REQUEST]
@@ -332,15 +375,17 @@ Given a "Projects" resume section and a job description, select up to 5 projects
 - Prioritize projects that match relevant skills and experience present in the job description.
 - It is okay to not select any projects if none are relevant.
 - Display the Project Titles explicitly; do not write "Project Title:" before the Project Title
-- When filling out the output format,  you may not change the project title text, do not include any text before [P] or after the project title text.
+- When filling out the output format  you may not change the role title text, and do not include any text before or after the role title text.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[P]Project Title 1
-[P]Project Title 2
-[P]Project Title 3
-[P]Project Title 4
-[P]Project Title 5
+Project Title:Project Title 1
+Project Title:Project Title 2
+Project Title:Project Title 3
+Project Title:Project Title 4
+Project Title:Project Title 5
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT "Projects" resume section:
@@ -364,7 +409,12 @@ INPUT job description:
         },
         "format": {
             "experience": "",
-            "job_description": ""
+            "job_description": "",
+            "prefix_dict": {
+                       "Description:":"[1]",
+                       "Skills":"[1]",
+                       "Dummy:":"[BIG DUMMY]"
+                   } 
         },
         "prompt_in": 
 """[REQUEST]
@@ -376,12 +426,13 @@ Given the "Description" and "Skills" subsections of a project belonging to the "
 - Skills must be comma-separated and follow the format below. 
 - If there are no skills in a given category, use " ", then follow up as the format below indicates 
     - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
-- Include the prefix [1] at the start of each line (as seen in the format below).
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[1]Description: Brief project description.
-[1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ....
+Description: Brief role description.
+Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT job description:
@@ -406,7 +457,13 @@ INPUT "Description" and "Skills" subsections of a project belonging to the "Proj
         },
         "format": {
             "experiences": "",
-            "job_description": ""
+            "job_description": "",
+            "prefix_dict": {
+                "Project Title:" : "[P]",
+                "Role Title:" : "[R]",
+                "Job Title:" : "[J]",
+                "Dummy:" : "[BIG DUMMY]"
+            }
         },
         "prompt_in": 
 """[REQUEST]
@@ -415,18 +472,18 @@ Given the all experiences across 3 resume sections (Volunteering and Leadership,
 - If the total number of experiences/roles is greater than or equal to 5 before selection: Select the most relevant 5 experiences/roles based on the job description.
 - Do not change the name of the experiences/roles.
 - Prioritize projects that match relevant skills and experience present in the job description.
-- It is okay to not select any experiences from a given section if none are relevant. Remember that [R], [J], and [P] indicate the section they belong to (R is Volunteering and Leadership, J is Work Experience, and P is Projects).
-- While filling out the output format, do not change the role/job title/project title text, and do not include any text before [R], [J], or [P] or after the role/job title/project title text.
+- It is okay to not select any experiences from a given section if none are relevant. Remember that the Title type indicate the section they belong to (Role is Volunteering and Leadership, Job is Work Experience, and Project is Projects).
+- While filling out the output format, do not change the role/job title/project title text, and do not include any text before or after the role/job title/project title text.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
+- The INPUT experiences will include one of three prefixes: [R], [J], [P]. The first one is short hand for Role Title, the second for Job Title and the last one for Project Title. Use this to chose the corrrect field to output every title under.
 
 [OUTPUT FORMAT]
-[R]Volunteering and Leadership Role 1
-[J]Work Experience Job Title 1
-[P]Projects Project Title 1
-Where the letter R/J/P inside "[]" indicates the type of experience:
-- [R]Role belongs to Volunteering and Leadership
-- [J]Job Title belongs to Work Experience
-- [P]Project Title belongs to Projects
+Role Title:Volunteering and Leadership Role
+Job Title:Work Experience Job Title
+Project Title:Projects Project Title
+...
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT job description:
@@ -450,7 +507,11 @@ INPUT 3 resume sections (Volunteering and Leadership, Work Experience, and Proje
         },
         "format": {
             "section": "",
-            "section_name": ""
+            "section_name": "",
+            "prefix_dict": {
+                "Section Summary:" : "[S]",
+                "Dummy:" : "[BIG DUMMY]"
+            }
         },
         "prompt_in": 
 """[REQUEST]
@@ -458,11 +519,12 @@ Given a section from a resume, summarize the sections in a wholistic manner whil
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
 - Return the summarized information as a single continuous string of text, following the output format strictly. 
-- Do not forget to include the "[S]{section_name} Section Summary:" text at the start of the output.
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[S]{section_name} Summary: Wholistic summary of the section's information.
+Section Summary: {section_name} Summary; Wholistic summary of the section's information.
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT section from a resume:
@@ -483,16 +545,22 @@ INPUT section from a resume:
             "temperature": CONFIG["MODELS"]["TEMPERATURE"]
         },
         "format": {
-            "general_info_text": ""
+            "general_info_text": "",
+            "prefix_dict": {
+                "General Information Summary:":"[S]",
+                "Dummy:" : "[BIG DUMMY]"
+            }
         },
         "prompt_in": 
 """[REQUEST]
 Given the general information from a resume, summarize it in a wholistic manner; be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 Since this is a summary of a resume's general information, you need to include the candidate's Name, Contact Information, Title, and Languages Spoken.
-Return the requested information, strictly filling out the OUTPUT FORMAT. (do not forget to include the "[S]General Information Summary:" text at the start of the output).
+Return the requested information, strictly filling out the OUTPUT FORMAT. (do not forget to include the "General Information Summary:" text at the start of the output).
+Also, do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[S]General Information Summary: Brief and concise summary of the resume's general information, presented as a single continuous string of text.
+General Information Summary: Brief and concise summary of the resume's general information, presented as a single continuous string of text.
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT general information from a resume:
@@ -513,15 +581,21 @@ INPUT general information from a resume:
             "temperature": CONFIG["MODELS"]["TEMPERATURE"]
         },
         "format": {
-            "skill_section": ""
+            "skill_section": "",
+            "prefix_dict": {
+                "Skills Summary:":"[S]",
+                "Dummy:" : "[BIG DUMMY]"
+            }
         },
         "prompt_in": 
 """[REQUEST]
 Given a "Skills" section from a resume, summarize the skills section of a resume in a wholistic manner; be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
-Return the requested information, strictly filling out the OUTPUT FORMAT. (do not forget to include the "[S]Skills Summary:" text at the start of the output).
+Return the requested information, strictly filling out the OUTPUT FORMAT. (do not forget to include the "Skills Summary:" text at the start of the output).
+Also, do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[S]Skills Summary: Brief and concise wholistic summary of the resume's skills, presented as a single continuous string of text.
+Skills Summary: Wholistic summary of the resume's skills, presented as a single continuous string of text.
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT "Skills" section from a resume:
@@ -543,7 +617,11 @@ INPUT "Skills" section from a resume:
         },
         "format": {
             "prev_summary": "",
-            "job_description": ""
+            "job_description": "",
+            "prefix_dict":{
+                "Summary:": "[0]",
+                "Dummy:" : "[BIG DUMMY]"
+            }
         },
         "prompt_in": 
 """[REQUEST]
@@ -552,12 +630,14 @@ Given a wholistic summary of a resume and a job description, tailor a Summary se
 - The summary mustn't exceed 100 words.
 - Do not line break the summary section, it should be a continuous block of text.
 - When mentioning specific skills or experiences, these must be relevant to the job description; give preference to those that appear on both the resume and the job description, particularly those which demonstrate the candidate's technical expertise.
-- In the format below, do not include any text before "[0]" or after the requested information.
+- In the format below, do not include any text before or after the filled-out OUTPUT FORMAT.
 - Return only the revised summary and strictly follow the output format, filling in the parts that have **fill-in:"text"**
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[0]Summary: Despite limited work experience, I bring strong work ethic, adaptability and curiosity. Experienced in **fill-in:"specific skills thanks to certain experiences"**. Now seeking a position that offers growth and learning opportunities.
+Summary: Despite limited work experience, I bring strong work ethic, adaptability and curiosity. Experienced in **fill-in:"specific skills thanks to certain experiences"**. Now seeking a position that offers growth and learning opportunities.
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT wholistic summary of a resume:
@@ -582,7 +662,15 @@ INPUTjob description:
         },
         "format": {
             "cv_data": "",
-            "job_description": ""
+            "job_description": "",
+            "prefix_dict": {
+                "Programming Languages:":"[1]",
+                "Technical Skills:":"[1]",
+                "Soft Skills:":"[1]",
+                "Skills:":"[0]",
+                "Dummy:" : "[BIG DUMMY]"
+
+            }
         },
         "prompt_in": 
 """[REQUEST]
@@ -597,12 +685,14 @@ Prune the following 'Skills' section from a resume to best match the job descrip
 - If either the "Programming Languages", "Technical Skills", or "Soft Skills" sections are empty, return them as an empty section.
 - Aside from the information requested, do not include any additional text or explanations.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[0]Skills:
-[1]Programming Languages: Programming Language 1, Programming Language 2, Programming Language 3
-[1]Technical Skills: Technical Skill 1, Technical Skill 2, Technical Skill 3, Technical Skill 4, Technical Skill 5
-[1]Soft Skills: Soft Skill 1, Soft Skill 2, Soft Skill 3, Soft Skill 4
+Skills:
+Programming Languages: Programming Language 1, Programming Language 2, Programming Language 3
+Technical Skills: Technical Skill 1, Technical Skill 2, Technical Skill 3, Technical Skill 4, Technical Skill 5
+Soft Skills: Soft Skill 1, Soft Skill 2, Soft Skill 3, Soft Skill 4
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT list of "Programming Languages", "Technical Skills" and "Soft Skills" considered to be relevant for a paticular job description:
@@ -628,7 +718,11 @@ INPUT job description:
         "format": {
             "old_resume_s_txt": "",
             "new_resume_s_txt": "",
-            "section_name": ""
+            "section_name": "",
+            "prefix_dict":{
+                "Comparative Analysis:": "[0]",
+                "Dummy" : "[BIG DUMMY]"
+            }
         },
         "prompt_in": 
 """[REQUEST]
@@ -637,10 +731,12 @@ Given a raw untailored resume section and and its counterpart from an already ta
 - Verify that all information in the tailored section is present in the raw section, even if paraphrased.
 - Identify any contradictions between the two sections.
 - Identify any contradictions within the tailored section (with itself).
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[0]{section_name} Analysis: Analysis of the tailored resume section vs the raw section, as a single line of text.
+Comparative Analysis: {section_name} Section; Analysis of the tailored resume section vs the raw section, as a single line of text.
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT raw untailored resume section:
@@ -665,7 +761,15 @@ INPUT already tailored resumesection:
         },
         "format": {
             "cv_data": "",
-            "job_description": ""
+            "job_description": "",
+            "prefix_dict":{
+                "Cover Letter:":"[0]",
+                "New Paragraph0:":"[1]",
+                "New Paragraph2:":"[1]",
+                "New Paragraph3:":"[1]",
+                "New Paragraph1:":"[1]",
+                "Dummy:" : "[BIG DUMMY]"
+            }
         },
         "prompt_in": 
 """[REQUEST]
@@ -675,17 +779,19 @@ Given a wholistic summary of a resume, and the summary of the job description it
 - Do not invent information or experiences, only include what is present in the resume.
 - Do not make use of run-on sentences.
 - The only line breaks allowed are those that separate paragraphs, as per the format below.
-- Only 4 paragraphs are allowed, each starting with "[1]New ParagraphX: " and then the text of the new paragraph; X starts at 0 and goes up to 3.
+- Only 4 paragraphs are allowed, each starting with "New ParagraphX: " and then the text of the new paragraph; X starts at 0 and goes up to 3.
 - Total word count must not exceed 400 words. This is a hard limit, so be concise and to the point.
 - Write the cover letter as the candidate, not as an external observer.
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[0]Cover Letter: 
-[1]New Paragraph0: Cover Letter introduction, mentioning the job title and company, as well as the candidate's enthusiasm for the role.
-[1]New Paragraph1: Explain why the candidate is a good fit for the role, briefly mentioning the most relevant information from the resume that matches the job description.
-[1]New Paragraph2: Provide further information about the candidate's qualifications and how they align with the job requirements. Make use of specific examples and metrics to demonstrate impact (if applicable).
-[1]New Paragraph3: Closing statement, thanking the employer for their time and consideration. Invite them to contact the candidate for further discussion, providing email address.
+Cover Letter: 
+New Paragraph0: Cover Letter introduction, mentioning the job title and company, as well as the candidate's enthusiasm for the role.
+New Paragraph1: Explain why the candidate is a good fit for the role, briefly mentioning the most relevant information from the resume that matches the job description.
+New Paragraph2: Provide further information about the candidate's qualifications and how they align with the job requirements. Make use of specific examples and metrics to demonstrate impact (if applicable).
+New Paragraph3: Closing statement, thanking the employer for their time and consideration. Invite them to contact the candidate for further discussion, providing email address.
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT wholistic summary of a resume:
@@ -710,7 +816,13 @@ INPUT summary of the job description it has been tailored to:
         },
         "format": {
             "cv_data": "",
-            "job_description": ""
+            "job_description": "",
+            "prefix_dict" : {
+                "Consistency Checker Vs Job Description:":"[0]",
+                "Inconsistencies With Job Description:":"[1]",
+                "Suggestions for Improvement:":"[1]",
+                "Dummy:" : "[BIG DUMMY]"
+            }
         },
         "prompt_in": 
 """[REQUEST]
@@ -719,13 +831,15 @@ Follow these guidelines:
 - Be mindful not to include any line breaks in the content of any of the sections/subsections.
 - Be as objective as possible, and do not make any assumptions about the data.
 - Do not create nor imagine any data that is not present in the original data.
-- When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
+- Do not modify the OUTPUT FORMAT.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[0]Consistency Checker Vs Job Description:
-[1]Inconsistencies With Job Description: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
-[1]Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+Consistency Checker Vs Job Description:
+Inconsistencies With Job Description: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT summary of a resume tailored to a particular job description:
@@ -748,7 +862,13 @@ INPUT job description the aforementioned resume has been tailored to:
         },
         "format": {
             "cv_data": "",
-            "job_description": ""
+            "job_description": "",
+            "prefix_dict" : {
+                "Consistency Checker Vs Job Description:":"[0]",
+                "Inconsistencies With Job Description:":"[1]",
+                "Suggestions for Improvement:":"[1]",
+                "Dummy:" : "[BIG DUMMY]"
+            }
         },
         "prompt_in": 
 """[REQUEST]
@@ -757,13 +877,15 @@ Follow these guidelines:
 - Be mindful not to include any line breaks in  the content of any of the sections/subsections.
 - Be as objective as possible, and do not make any assumptions about the data.
 - Do not create nor imagine any data that is not present in the original data.
-- When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
+- Do not modify the OUTPUT FORMAT.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[0]Consistency Checker Vs Job Description:
-[1]Inconsistencies With Job Description: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
-[1]Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+Consistency Checker Vs Job Description:
+Inconsistencies With Job Description: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT cover letter tailored to a particular job description:
@@ -786,7 +908,11 @@ INPUT job description the aforementioned resume has been tailored to:
         },
         "format": {
             "courses": "",
-            "job_description": ""
+            "job_description": "",
+            "prefix_dict" : {
+                "Courses:":"[1]",
+                "Dummy:" : "[BIG DUMMY]"
+            }
         },
         "prompt_in": 
 """[REQUEST]
@@ -795,12 +921,13 @@ Follow these guidelines when extracting courses and returning them:
 - Do not include any courses not present in the original courses list.
 - Do not use line breaks inside any subsection.
 - Courses must be comma-separated and follow the format below.
-- Include the prefix [1] at the start of each line (as seen in the format below).
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Be mindful that courses may or may not have a course code (represented by "XXX001" in the OUTPUT FORMAT section)
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[1]Courses: XXX001 Course Name1, XXX002 Course Name2, XXX003 Course Name3...
+Courses: XXX001 Course Name1, XXX002 Course Name2, XXX003 Course Name3...
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT list of courses taken on a given program:
@@ -834,7 +961,11 @@ INPUT sections from a resume:
 {sections_text}
 
 
-"""
+""",
+            "prefix_dict": {
+                "Section Summary:" : "[S]",
+                "Dummy:" : "[BIG DUMMY]"
+            }
         },
         "prompt_in":
 """[REQUEST]
@@ -843,6 +974,7 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
 - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
 - Keep in mind that these summaries will be used in a "Sliding Window" approach to summarize the entire resume effectively, so include information that is relevant for the overall context of the resume.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
 """,
@@ -850,7 +982,7 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
         "sample_starts": ["flexible", "cap_letters", "[S]"]
     },
     ##similar start
-    "tailor_volunteering_and_leadership": #DONE
+    "tailor_volunteering_and_leadership": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
     {
         "call_id": "tailor_volunteering_and_leadership", 
         "payload_in": {"model": DEFAULT_MODEL,
@@ -863,13 +995,14 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
             "section": "volunteering_and_leadership",
             "reference_dct": {},
             "systems": ["", ""],
-            "standard_calls": ["step0_volunteering_and_leadership","step3_volunteering_and_leadership"]
+            "standard_calls": ["step0_volunteering_and_leadership","step3_volunteering_and_leadership"],
+            "prefix_dict" : {}
             }, 
         "prompt_in": "", 
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["flexible", "digits", "[0]", "[1]"]
     },
-    "tailor_work_experience": #DONE
+    "tailor_work_experience": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
     {
         "call_id": "tailor_work_experience", 
         "payload_in": {"model": DEFAULT_MODEL,
@@ -882,13 +1015,14 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
             "section": "work_experience",
             "reference_dct": {},
             "systems": ["", ""],
-            "standard_calls": ["step0_work_experience","step3_work_experience"]
+            "standard_calls": ["step0_work_experience","step3_work_experience"],
+            "prefix_dict" : {}
             }, 
         "prompt_in": "", 
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["flexible", "digits", "[0]", "[1]"]
     },
-    "tailor_projects": #DONE
+    "tailor_projects": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
     {
         "call_id": "tailor_projects", 
         "payload_in": {"model": DEFAULT_MODEL,
@@ -901,7 +1035,8 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
             "section": "projects",
             "reference_dct": {},
             "systems": ["", ""],
-            "standard_calls": ["step0_projects","step3_projects"]
+            "standard_calls": ["step0_projects","step3_projects"],
+            "prefix_dict" : {}
             }, 
         "prompt_in": "", 
         "ollama_url": DEFAULT_URL,
@@ -926,7 +1061,11 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
             "mode": "single", 
             "standard_calls": ["summarize_section"],
             "non_standard_calls":["batch_summarize_sections"],
-            "async_calls": ["standard_ollama_call_async"]
+            "async_calls": ["standard_ollama_call_async"],
+            "prefix_dict": {
+                "Sections Summary:" : "[S]",
+                "Dummy:" : "[BIG DUMMY]"
+            }
             }, 
         "prompt_in": 
 """[REQUEST]
@@ -935,9 +1074,11 @@ Given 2 resume section summaries, create a new summary that incorporates all two
 - Include ALL information, competencies, achievements, and skills, for this is a wholistic summary of the candidate's qualifications. Do not miss any skills.
 - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[S]{section1_name} + {section2_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and skills.
+Sections Summary: {section1_name} + {section2_name} Summary; Wholistic summary of the sections' information, competencies, achievements, and skills.
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT {section1_name} section summary:
@@ -968,7 +1109,11 @@ INPUT {section2_name} section summary:
             "mode": "single", 
             "standard_calls": ["summarize_section"],
             "non_standard_calls":["batch_summarize_sections"],
-            "async_calls": ["standard_ollama_call_async"]
+            "async_calls": ["standard_ollama_call_async"],
+            "prefix_dict": {
+                "Sections Summary:" : "[S]",
+                "Dummy:" : "[BIG DUMMY]"
+            }
             }, 
         "prompt_in": 
 """[REQUEST]
@@ -977,9 +1122,11 @@ Given 3 resume section summaries, create a new summary that incorporates all two
 - Include ALL information, competencies, achievements, and skills, for this is a wholistic summary of the candidate's qualifications. Do not miss any skills.
 - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[S]{section1_name} + {section2_name} + {section3_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and skills.
+Sections Summary: {section1_name} + {section2_name} + {section3_name} Summary; Wholistic summary of the sections' information, competencies, achievements, and skills.
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT {section1_name} section summary:
@@ -1013,7 +1160,11 @@ INPUT {section3_name} section summary:
             "mode": "single", 
             "standard_calls": ["summarize_section"],
             "non_standard_calls":["batch_summarize_sections"],
-            "async_calls": ["standard_ollama_call_async"]
+            "async_calls": ["standard_ollama_call_async"],
+            "prefix_dict": {
+                "Sections Summary:" : "[S]",
+                "Dummy:" : "[BIG DUMMY]"
+            }
             }, 
         "prompt_in": 
 """[REQUEST]
@@ -1022,9 +1173,11 @@ Given 4 resume section summaries, create a new summary that incorporates all two
 - Include ALL information, competencies, achievements, and skills, for this is a wholistic summary of the candidate's qualifications. Do not miss any skills.
 - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[S]{section1_name} + {section2_name} + {section3_name} + {section4_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and skills.
+Sections Summary: {section1_name} + {section2_name} + {section3_name} + {section4_name} Summary; Wholistic summary of the sections' information, competencies, achievements, and skills.
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT {section1_name} section summary:
@@ -1045,7 +1198,7 @@ INPUT {section4_name} section summary:
         "sample_starts": ["strict", "cap_letters", "[S]"]#Might lead to error, check later
     },
     ##similar end
-    "prune_experiences": #DONE
+    "prune_experiences": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
     {
         "call_id": "prune_experiences", 
         "payload_in": {"model": DEFAULT_MODEL,
@@ -1057,13 +1210,14 @@ INPUT {section4_name} section summary:
             "job_description_summary": "",
             "section": "vl_w_p",
             "reference_dct": {}, #provide system through payload_in
-            "standard_calls": ["step0_prune_experiences"]
+            "standard_calls": ["step0_prune_experiences"],
+            "prefix_dict":{}
             }, 
         "prompt_in": "", #Empty
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["flexible", "digits", "[0]", "[1]"]#Might lead to error, check later
     },
-    "slide_summary": #DONE
+    "slide_summary": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
     {
         "call_id": "slide_summary", 
         "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
@@ -1080,6 +1234,7 @@ INPUT {section4_name} section summary:
             "non_standard_calls": ["sliding_window_two_sections",
                                     "sliding_window_three_sections",
                                     "sliding_window_four_sections"],
+            "prefix_dict":{}
         }, 
         "prompt_in": "", #Empty
         "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
@@ -1100,6 +1255,10 @@ INPUT {section4_name} section summary:
             "mode": "single", #mode="single"
             "standard_calls": [],
             "non_standard_calls": ["slide_summary"],
+            "prefix_dict" : {
+                "Summary:":"[0]",
+                "Dummy:" : "[BIG DUMMY]"
+            }
         }, 
         "prompt_in": 
 """[REQUEST]
@@ -1111,11 +1270,13 @@ Given all summarized sections of a resume, create a wholistic summary of all of 
 - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
 - Maintain the context and flow between the sections.
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
-- When filling out the output format, do not forget to include the "[0]Summary:" text before the actual summary.
+- When filling out the output format, do not forget to include the "Summary:" text before the actual summary.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[0]Summary: Wholistic summary of all sections, presented as a single continuous string of text.
+Summary: Wholistic summary of all sections, presented as a single continuous string of text.
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT summarized sections of a resume:
@@ -1125,7 +1286,7 @@ INPUT summarized sections of a resume:
         "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Summary:"]
     },
-    "tailor_summary": #DONE
+    "tailor_summary": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
     {
         "call_id": "tailor_summary", 
         "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
@@ -1142,12 +1303,13 @@ INPUT summarized sections of a resume:
             "mode": "single", #mode="single"
             "standard_calls": ["step1_tailor_summary"],
             "non_standard_calls": ["step0_tailor_summary"],
+            "prefix_dict":{}
         }, 
         "prompt_in": "",#Empty
         "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Summary:"]
     },
-    "new_vs_old_resume": #DONE
+    "new_vs_old_resume": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
     {
         "call_id": "new_vs_old_resume", 
         "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
@@ -1159,6 +1321,7 @@ INPUT summarized sections of a resume:
             "new_resume_txt": "", # new_resume_txt = ""
             "standard_calls": ["new_vs_old_section"],
             "non_standard_calls": [],
+            "prefix_dct":{}
         }, 
         "prompt_in": "",#Empty
         "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
@@ -1177,6 +1340,12 @@ INPUT summarized sections of a resume:
             "system_s": "",
             "standard_calls": [],
             "non_standard_calls": ["new_vs_old_resume"],
+            "prefix_dict" : {
+                "Consistency Checker Vs Original Resume:":"[0]",
+                "Inconsistencies With Original Resume:":"[1]",
+                "Suggestions for Improvement:":"[1]",
+                "Dummy:" : "[BIG DUMMY]"
+            }
         }, 
         "prompt_in": 
 """[REQUEST]
@@ -1187,14 +1356,16 @@ The report should follow these guidelines:
 - Be mindful not to include any line breaks in  the content of any of the sections/subsections.
 - Be as objective as possible, and if you must make assumptions, make very conservative assumptions
 - Do not create nor imagine any data that is not present in the original data.
-- When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
+- Do not modify the OUTPUT FORMAT.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
+- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[0]Consistency Checker Vs Original Resume:
-[1]Inconsistencies With Original Resume: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
-[1]Inconsistencies With Self: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
-[1]Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+Consistency Checker Vs Original Resume:
+Inconsistencies With Original Resume: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+Inconsistencies With Self: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
 
 [INPUT]
 INPUT list containing a per-section analysis of the resumes, comparing the synthesized data in the new resume against the original:
@@ -1204,7 +1375,7 @@ INPUT list containing a per-section analysis of the resumes, comparing the synth
         "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[0]Consistency Checker VS Original Resume:","[1]Inconsistencies With Original Resume:","[1]Inconsistencies With Self:", "[1]Suggestions for Improvement:"]
     },
-    "compose_cover_letter_dictionary": #DONE
+    "compose_cover_letter_dictionary": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
     {
         "call_id": "compose_cover_letter_dictionary", 
         "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
@@ -1217,13 +1388,14 @@ INPUT list containing a per-section analysis of the resumes, comparing the synth
             "job_description":"",
             "standard_calls": ["make_cover_letter_text"],
             "non_standard_calls": [],
+            "prefix_dict": {}
         }, 
         "prompt_in": "",#Empty
         "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
         "sample_starts": ["flexible", "digits", "[0]","[1]"]
     },
     #ASYNC
-    "standard_ollama_call_async": #DONE
+    "standard_ollama_call_async": #WIP
     {
         "call_id": "standard_ollama_call_async", 
         "payload_in": {
@@ -1232,11 +1404,14 @@ INPUT list containing a per-section analysis of the resumes, comparing the synth
             "stream": False,
             "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
         "format": {
-
+            "prefix_dict": {
+                "Section Summary:" : "[S]",
+                "Dummy:" : "[BIG DUMMY]"
+            }
             }, 
         "prompt_in": "", #Set at runtime
         "ollama_url": DEFAULT_URL,
-        "sample_starts": ["flexible", "cap_letters"]#Might lead to error, check later
+        "sample_starts": ["flexible", "cap_letters", "[S]"]#Might lead to error, check later
     }
 
 }

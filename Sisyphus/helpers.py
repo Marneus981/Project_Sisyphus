@@ -67,37 +67,40 @@ def filter_output(model_output, prefix_dict ={}):
     #Assume dummy field
     #Assume existence of prefix_dict
     #Join lines
+    ##Possible Error: What if filter Output is called on already okay output?
     function_name = inspect_function()
-    lines = model_output.split_lines()
-    filtered_lines = []
-    field_count = 0
-    current_field = ""
-    for line in lines:
-        line = line.strip()
-        #Assume its at start of line
-        matches = re.search(r"^[A-Za-z0-9]+\:",line)
-        if matches: #If regex match...
-            field = matches.group(0)
-            if  field in prefix_dict: #If the Matching field is in the dict...
-                if field == "Dummy":
-                    break
-                if field_count > 0: #Check if we need to append current working field
-                    filtered_lines.append(current_field) 
-                field_count =+ 1
-                current_field = prefix_dict[field] + line
+    if prefix_dict != {}:
+        lines = model_output.split_lines()
+        filtered_lines = []
+        field_count = 0
+        current_field = ""
+        for line in lines:
+            line = line.strip()
+            #Assume its at start of line
+            matches = re.search(r"^[A-Za-z0-9 ]+\:",line)
+            if matches: #If regex match...
+                field = matches.group(0)
+                if  field in prefix_dict: #If the Matching field is in the dict...
+                    if field == "Dummy":
+                        break
+                    if field_count > 0: #Check if we need to append current working field
+                        filtered_lines.append(current_field) 
+                    field_count =+ 1
+                    current_field = prefix_dict[field] + line
+                else:
+                    if field_count > 0:
+                        current_field =+ " " + line
+                    else:
+                        continue
             else:
                 if field_count > 0:
                     current_field =+ " " + line
                 else:
                     continue
-        else:
-            if field_count > 0:
-                current_field =+ " " + line
-            else:
-                continue
-    if filtered_lines == []:
-        raise ValueError(f"[ERROR]{function_name}: No valid answer found")
-    return "\n".join(filtered_lines)
+        if filtered_lines == []:
+            raise ValueError(f"[ERROR]{function_name}: No valid answer found")
+        return "\n".join(filtered_lines)
+    else: return model_output
 
 
 
