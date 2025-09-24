@@ -56,6 +56,123 @@ def performance_check(descending=True, mode="runtime"):
     # Clear function statistics
     FUNCTION_STATS.clear()
 
+@log_time
+def filter_output(model_output, prefix_dict ={}):
+    #, mode = "digits"
+    """
+    Filters model output, keeping only lines that start with [X], where X is a number (e.g., [0], [1], etc.).
+    Returns the filtered output as a string.
+    """
+    #Assume no prefix
+    #Assume dummy field
+    #Assume existence of prefix_dict
+    #Join lines
+    function_name = inspect_function()
+    lines = model_output.split_lines()
+    filtered_lines = []
+    field_count = 0
+    current_field = ""
+    for line in lines:
+        line = line.strip()
+        #Assume its at start of line
+        matches = re.search(r"^[A-Za-z0-9]+\:",line)
+        if matches: #If regex match...
+            field = matches.group(0)
+            if  field in prefix_dict: #If the Matching field is in the dict...
+                if field == "Dummy":
+                    break
+                if field_count > 0: #Check if we need to append current working field
+                    filtered_lines.append(current_field) 
+                field_count =+ 1
+                current_field = prefix_dict[field] + line
+            else:
+                if field_count > 0:
+                    current_field =+ " " + line
+                else:
+                    continue
+        else:
+            if field_count > 0:
+                current_field =+ " " + line
+            else:
+                continue
+    if filtered_lines == []:
+        raise ValueError(f"[ERROR]{function_name}: No valid answer found")
+    return "\n".join(filtered_lines)
+
+
+
+    #region attempts 
+            # if "[" in model_output:
+            #     no_pre_text = model_output.split("[",1) #Text + rest
+            #     if len(no_pre_text) == 1:
+            #             no_pre_text_0 = "[" + no_pre_text[0]
+            #     else:
+            #             no_pre_text_0 = "[" + no_pre_text[1]
+            # else:
+            #     raise ValueError(f"[ERROR]{function_name}: No standard pattern found in text")
+            # #Patterns
+            # filtered_lines = []
+            # digits = r"\[[0-9]{1}\]"
+            # cap_letters = r"\[[A-Z]{1}\]"
+            # lines = no_pre_text_0.splitlines()
+            # for line in lines:
+            #     line = line.strip()
+            #     if mode == "digits": 
+            #         if re.search(digits, line):
+            #             filtered_lines.append(line)
+            #     if mode == "cap_letters":
+            #         if re.search(cap_letters, line):
+            #             filtered_lines.append(line)
+            # return "\n".join(filtered_lines)
+
+            # if ":" not in model_output:
+            #     raise ValueError(f"[ERROR]{function_name}: No fields found in output")
+            # else:
+            #     return add_output_prefixes(model_output,prefix_dict)
+
+
+        # def add_output_prefixes(model_output = "", prefix_dict ={}):
+        #     """
+        #     model output is assumed to only by text with no prefixes
+        #     prefix_dictionary = {
+        #     "Name": ("[0]",True)
+        #     "Description": ("[1]",True),
+        #     "Contact Information": ("[1]",False),
+        #     ...
+        #     }
+        #     """
+        #     field_regex = r"[A-Za-z0-9]+\:"
+        #     function_name = inspect_function()
+        #     prefixed_lines = []
+        #     lines = model_output.split_lines()
+        #     for line in lines:
+        #         line = line.strip()
+        #         if ":" in line:
+        #             parts = line.split(":",1) #key : data
+        #             key = parts[0]
+        #             if len(parts) == 1:
+        #                 #Field with no immediate data
+        #                 if key in prefix_dict:
+        #                     if prefix_dict[key].second:
+        #                         raise ValueError(f"[ERROR]{function_name}: Field with key {key} is missing its data")
+        #                     else:
+        #                         prefixed_lines.append(prefix_dict[key].first + line)
+        #                 else:
+        #                      continue    
+        #             elif len(parts)>1:
+        #                 if key in prefix_dict:
+        #                     if not prefix_dict[key].second:
+        #                         raise ValueError(f"[ERROR]{function_name}: Field with key {key} is not supposed to have data")
+        #                     else:
+        #                         prefixed_lines.append(prefix_dict[key].first + line)
+        #                 else:
+        #                      continue        
+        #         else:
+        #             continue
+        #     if prefixed_lines == []:
+        #         raise ValueError(f"[ERROR]{function_name}: output is all wrong, no fields present")
+        #     return "\n".join(prefixed_lines)
+    #endregion    
 
 @log_time
 def optimize_summarize_sections_calls(no_sections = 0, chunk_sz = 4):
@@ -621,35 +738,7 @@ def format_checker_out_cl(cl_text):
         'empty_subsections': empty_subsections
     }
 
-@log_time
-def filter_output(model_output, mode = "digits"):
-    """
-    Filters model output, keeping only lines that start with [X], where X is a number (e.g., [0], [1], etc.).
-    Returns the filtered output as a string.
-    """
-    function_name = inspect_function()
-    if "[" in model_output:
-        no_pre_text = model_output.split("[",1) #Text + rest
-        if len(no_pre_text) == 1:
-                no_pre_text_0 = "[" + no_pre_text[0]
-        else:
-                no_pre_text_0 = "[" + no_pre_text[1]
-    else:
-        raise ValueError(f"[ERROR]{function_name}: No standard pattern found in text")
-    #Patterns
-    filtered_lines = []
-    digits = r"\[[0-9]{1}\]"
-    cap_letters = r"\[[A-Z]{1}\]"
-    lines = no_pre_text_0.splitlines()
-    for line in lines:
-        line = line.strip()
-        if mode == "digits": 
-            if re.search(digits, line):
-                filtered_lines.append(line)
-        if mode == "cap_letters":
-            if re.search(cap_letters, line):
-                filtered_lines.append(line)
-    return "\n".join(filtered_lines)
+
 
     #Possible way to make it more robust: make it so that all line broken lines in between sections get attached to the last section (it does not work with the last one)
 

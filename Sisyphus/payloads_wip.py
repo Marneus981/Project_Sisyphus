@@ -33,19 +33,13 @@ Prompt Format:
 
 [REQUEST]
 
-
 [OUTPUT FORMAT]
-
-
-[EXAMPLES]
-
 
 [INPUT]
 
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
+field mode (digits/cap_letters) will be vestigial in next commit.
 
-
-
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
 """
 
 PAYLOADS= {
@@ -61,7 +55,14 @@ PAYLOADS= {
                        },
         "format": {#Set at runtime
                    "cv_data": "",
-                   "cv_data_orig": ""  
+                   "cv_data_orig": "",
+                   "prefix_dict": {
+                       "Consistency Checker Vs Resume:":"[0]",
+                       "Inconsistencies With Resume:":"[1]",
+                       "Inconsistencies With Self:":"[1]",
+                       "Suggestions for Improvement:":"[1]",
+                       "Dummy:":"[BIG DUMMY]"
+                   }  
                    },
         "prompt_in": 
 """[REQUEST]
@@ -74,25 +75,14 @@ The report should follow these guidelines:
 - Be as objective as possible, and if you must make assumptions, make very conservative assumptions
 - Do not create nor imagine any data that is not present in the original data.
 - When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-[0]Consistency Checker Vs Resume:
-[1]Inconsistencies With Resume: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
-[1]Inconsistencies With Self: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
-[1]Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
-
-[EXAMPLES]
-EXAMPLE OUTPUT 1:
-[0]Consistency Checker Vs Resume:
-[1]Inconsistencies With Resume: None.
-[1]Inconsistencies With Self: None.
-[1]Suggestions for Improvement: None.
-EXAMPLE OUTPUT 2:
-[0]Consistency Checker Vs Resume:
-[1]Inconsistencies With Resume: 2 inconsistencies found with Resume. The cover letter talks about a non-existent position at WestCo manufacturing; There is a data mismatch on the Masters of Manufacturing completion date.  
-[1]Inconsistencies With Self: 1 inconsistency found. The cover letter mentions a degree in economics, but then mentions the lack of it.
-[1]Suggestions for Improvement: Correct the above inconsistencies; Do not refer to the candidate in the thrid person since you are meant to write the cover letter in their place.
+Consistency Checker Vs Resume:
+Inconsistencies With Resume: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+Inconsistencies With Self: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter
 
 [INPUT]
 INPUT cover letter:
@@ -132,7 +122,7 @@ When filling out the OUTPUT FORMAT, follow these guidelines:
 - Do not modify the format and always include the line prefixes ([0]) as well as the field name (e.g. [0]Company Title:).
 - Do not add any information not present in the provided job description, your goal is to extract information and summarize.
 - Use simple and concise language when possible, but do use specific keywords.
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
 [0]Company Name: Company Name
@@ -143,16 +133,6 @@ When filling out the OUTPUT FORMAT, follow these guidelines:
 [0]Technical Skills: List of technical skills required, presented as a single block of text separated by ";"
 [0]Soft Skills:Soft List of soft skills required, presented as a single block of text separated by ";"
 [0]Other Skills:Other List of other skills required, presented as a single block of text separated by ";"
-
-[EXAMPLES]
-EXAMPLE OUTPUT 1:
-[0]Company Name: Sentry
-[0]Job Title: Software Engineer, New Grad
-[0]Key Responsibilities: Develop and extend software in Python or JavaScript (or both); Full software development lifecycle: design, develop, test, and operate in production; Communicate effectively with teams and stakeholders; Act on feedback, coaching, and mentorship from manager and teammates
-[0]Requirements: B.S. or higher in Computer Science (or similar degree program); At least 1 previous internship or equivalent practical experience
-[0]Programming Languages: Proficiency in one or more general-purpose programming languages (e.g. Python, JavaScript, Java)
-[0]Technical Skills: Knowledge of algorithms, data structures, and object-oriented design principles; Implementation skills with version control and unit testing
-[0]Soft Skills Needed: Effective communication with teams and stakeholders; Ability to act on feedback, coaching, and mentorship from manager and teammates
 
 [INPUT]
 INPUT job description:
@@ -186,7 +166,7 @@ Given a "Volunteering and Leadership" resume section and a job description, sele
 - It is okay to not select any roles if none are relevant.
 - Display the Role Titles explicitly; do not write "Role Title:" before the Role Title
 - When filling out the output format,  you may not change the role title text, do not include any text before [R] or after the role title text.
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
 [R]Role Title 1
@@ -194,17 +174,6 @@ Given a "Volunteering and Leadership" resume section and a job description, sele
 [R]Role Title 3
 [R]Role Title 4
 [R]Role Title 5
-
-[EXAMPLES]
-EXAMPLE OUTPUT 1 (NUMBER OF INPUT ROLES = 2):
-[R]Animal Shelter Volunteer
-[R]Engineering Convention Organizer
-EXAMPLE OUTPUT 2 (NUMBER OF INPUT ROLES = 8; CHOSE 5 BEST):
-[R]MIT Hackaton Team Leader
-[R]Engineering Ambassador Program
-[R]Team Leader at Robotics Olympics
-[R]Engineering Convention Organizer
-[R]Homeless Shelter Volunteer
 
 [INPUT]
 INPUT "Volunteering and Leadership" resume section:
@@ -240,42 +209,11 @@ Given the "Description" and "Skills" attributes of a role belonging to the "Volu
 - If there are no skills in a given category, use " ", then follow up as the format below indicates 
     - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
 - Include the prefix [1] at the start of each line (as seen in the format below).
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
 [1]Description: Brief role description.
 [1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
-
-[EXAMPLES]
-EXAMPLE INPUT 1:
-INPUT job description:
-Company Name: Sentry
-Job Title: Software Engineer, New Grad
-Key Responsibilities:
-- Develop and extend the Sentry product by writing software in Python or JavaScript (or both)
-- Complete full software development lifecycle - design, development, testing, and operating in production
-- Communicate effectively with team members, other teams, and stakeholders
-- Act on feedback, coaching, and mentorship from manager and teammates
-Key Skills:
-- Programming skills in one or more general-purpose languages (Python, JavaScript, Java, etc.)
-- Knowledge of algorithms, data structures, and object-oriented design principles
-- Experience working with version control and unit testing
-- Strong communication and collaboration skills
-Soft Skills:
-- Eagerness to actively use the product being built (Sentry)
-- Desire to start career at a high-growth startup
-- Excitement about contributing to an open-source project daily
-- Willingness to receive feedback, coaching, and mentorship from manager and teammates
-Education: 
-- B.S. or higher in Computer Science (or similar degree program)
-Experience: 
-- At least 1 previous internship or equivalent practical experience
-INPUT "Description" and "Skills" attributes of a role belonging to the "Volunteering and Leadership" section of a resume:
-[1]Description: Mentored over 100 aspiring developers in Python and web development, designing and delivering curriculum modules on REST APIs, Docker, and cloud integration. Achieved a 90% bootcamp completion rate and improved participant job placement by 35%. Fostered a collaborative learning environment, provided personalized feedback, and facilitated group projects and hackathons to encourage teamwork and innovation. Developed advanced workshops on microservices and cloud computing, resulting in measurable increases in participant technical proficiency. Provided ongoing career guidance and support, helping graduates secure positions at leading tech companies. Consistently received positive feedback from participants and program coordinators for dedication, expertise, and impact. Led outreach initiatives to local schools and organizations, expanding program reach and promoting diversity in tech. Recognized for exceptional mentoring, communication, and leadership skills. Coordinated alumni networking events and maintained relationships with graduates to track career progress and offer continued support. Implemented feedback systems to improve curriculum and teaching methods, ensuring the program remained relevant and effective. Collaborated with other mentors to share best practices and develop new instructional materials, contributing to the overall success and reputation of the bootcamp
-[1]Skills: Programming Languages: Python, JavaScript, Java, C++, SQL, Dart; Soft Skills: Mentoring, Communication, Leadership, Problem Solving, Teamwork, Adaptability; Technical Skills: Web Development, REST APIs, Docker, Kubernetes, Cloud Integration, Data Visualization 
-EXAMPLE OUTPUT 1:
-[1]Description: Mentored aspiring developers in Python, designing curriculum modules on REST APIs and cloud integration. Fostered a collaborative learning environment and developed advanced workshops.
-[1]Skills: Programming Languages: Python, JavaScript; Technical Skills: Web Development, REST APIs, Docker, Cloud Integration; Soft Skills: Mentoring, Communication
 
 [INPUT]
 INPUT job description:
@@ -311,7 +249,7 @@ Given a "Work Experience" resume section and a job description, select up to 5 j
 - It is okay to not select any jobs if none are relevant.
 - Display the Job Titles explicitly; do not write "Job Title:" before the Job Title
 - When filling out the output format,  you may not change the job title text, do not include any text before [J] or after the job title text.
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
 [J]Job Title 1
@@ -319,17 +257,6 @@ Given a "Work Experience" resume section and a job description, select up to 5 j
 [J]Job Title 3
 [J]Job Title 4
 [J]Job Title 5
-
-[EXAMPLES]
-EXAMPLE OUTPUT 1 (NUMBER OF INPUT ROLES = 2):
-[J]Software Engineer
-[J]Backend Engineer
-EXAMPLE OUTPUT 2 (NUMBER OF INPUT ROLES = 6; CHOSE 5 BEST):
-[J]Senior Engineering Manager
-[J]Full-Stack Engineer
-[J]Computer Engineer II
-[J]Backend Engineer
-[J]QA Analyst
 
 [INPUT]
 INPUT "Work Experience" resume section:
@@ -366,42 +293,11 @@ Given the "Description" and "Skills" subsections of a role belonging to the "Wor
 - If there are no skills in a given category, use " ", then follow up as the format below indicates 
     - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
 - Include the prefix [1] at the start of each line (as seen in the format below).
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
 [1]Description: Brief role description.
 [1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
-
-[EXAMPLES]
-EXAMPLE INPUT 1:
-INPUT job description:
-Company Name: Sentry
-Job Title: Software Engineer, New Grad
-Key Responsibilities:
-- Develop and extend the Sentry product by writing software in Python or JavaScript (or both)
-- Complete full software development lifecycle - design, development, testing, and operating in production
-- Communicate effectively with team members, other teams, and stakeholders
-- Act on feedback, coaching, and mentorship from manager and teammates
-Key Skills:
-- Programming skills in one or more general-purpose languages (Python, JavaScript, Java, etc.)
-- Knowledge of algorithms, data structures, and object-oriented design principles
-- Experience working with version control and unit testing
-- Strong communication and collaboration skills
-Soft Skills:
-- Eagerness to actively use the product being built (Sentry)
-- Desire to start career at a high-growth startup
-- Excitement about contributing to an open-source project daily
-- Willingness to receive feedback, coaching, and mentorship from manager and teammates
-Education: 
-- B.S. or higher in Computer Science (or similar degree program)
-Experience: 
-- At least 1 previous internship or equivalent practical experience
-INPUT "Description" and "Skills" subsections of a role belonging to the "Work Experience" section of a resume:
-[1]Description: Led the design and implementation of scalable microservices architecture using Python, Go, and Docker, reducing system downtime by 40% and increasing transaction throughput by 25%. Managed a team of 5 engineers, mentored junior staff, and fostered a culture of continuous improvement. Spearheaded cloud migration, improving reliability and reducing operational costs by 30%. Collaborated with cross-functional teams to deliver high-performance financial applications, integrating Kubernetes for automated deployment and monitoring. Implemented advanced security protocols and compliance measures, ensuring data integrity and regulatory adherence. Provided technical guidance and training to team members, enhancing overall productivity and expertise. Consistently delivered projects on time and within budget, exceeding client expectations and contributing to company growth. Led post-mortem analyses and process improvements, resulting in a 20% reduction in incident response times. Recognized for outstanding leadership, analytical thinking, and technical excellence. Developed documentation and best practices for microservices development, contributing to knowledge sharing and team efficiency. Coordinated with stakeholders to prioritize feature development and address business needs, ensuring alignment with organizational goals
-[1]Skills: Programming Languages: Python, Go, Java, JavaScript, C++, SQL; Soft Skills: Leadership, Problem Solving, Communication, Teamwork, Adaptability, Analytical Thinking; Technical Skills: Microservices, Docker, Kubernetes, API Development, Database Design, Cloud Computing
-EXAMPLE OUTPUT 1:
-[1]Description: Spearheaded scalable microservices architecture, leveraging Python and Docker. Mentored junior staff and fostered continuous improvement, delivering high-performance applications.
-[1]Skills: Programming Languages: Python; Technical Skills: Microservices, Docker; Soft Skills: Leadership, Communication
 
 [INPUT]
 INPUT job description:
@@ -437,7 +333,7 @@ Given a "Projects" resume section and a job description, select up to 5 projects
 - It is okay to not select any projects if none are relevant.
 - Display the Project Titles explicitly; do not write "Project Title:" before the Project Title
 - When filling out the output format,  you may not change the project title text, do not include any text before [P] or after the project title text.
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
 [P]Project Title 1
@@ -445,17 +341,6 @@ Given a "Projects" resume section and a job description, select up to 5 projects
 [P]Project Title 3
 [P]Project Title 4
 [P]Project Title 5
-
-[EXAMPLES]
-EXAMPLE OUTPUT 1 (NUMBER OF INPUT ROLES = 2):
-[P]ML Open Source Library Contribution
-[P]IoT Controller App
-EXAMPLE OUTPUT 2 (NUMBER OF INPUT ROLES = 7; CHOSE 5 BEST):
-[P]RAG Powered Local Search Engine
-[P]Classic Game Solver with AI
-[P]IoT Controller App
-[P]Cyber Security Capstone Project
-[P]Custom DB Manager
 
 [INPUT]
 INPUT "Projects" resume section:
@@ -492,42 +377,11 @@ Given the "Description" and "Skills" subsections of a project belonging to the "
 - If there are no skills in a given category, use " ", then follow up as the format below indicates 
     - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
 - Include the prefix [1] at the start of each line (as seen in the format below).
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
 [1]Description: Brief project description.
 [1]Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ....
-
-[EXAMPLES]
-EXAMPLE INPUT 1:
-INPUT job description:
-Company Name: Sentry
-Job Title: Software Engineer, New Grad
-Key Responsibilities:
-- Develop and extend the Sentry product by writing software in Python or JavaScript (or both)
-- Complete full software development lifecycle - design, development, testing, and operating in production
-- Communicate effectively with team members, other teams, and stakeholders
-- Act on feedback, coaching, and mentorship from manager and teammates
-Key Skills:
-- Programming skills in one or more general-purpose languages (Python, JavaScript, Java, etc.)
-- Knowledge of algorithms, data structures, and object-oriented design principles
-- Experience working with version control and unit testing
-- Strong communication and collaboration skills
-Soft Skills:
-- Eagerness to actively use the product being built (Sentry)
-- Desire to start career at a high-growth startup
-- Excitement about contributing to an open-source project daily
-- Willingness to receive feedback, coaching, and mentorship from manager and teammates
-Education: 
-- B.S. or higher in Computer Science (or similar degree program)
-Experience: 
-- At least 1 previous internship or equivalent practical experience
-INPUT "Description" and "Skills" subsections of a project belonging to the "Projects" section of a resume:
-[1]Description: Developed a real-time analytics dashboard using Python and React, enabling clients to monitor KPIs and generate actionable reports. Integrated WebSockets for live data updates and advanced data visualization, increasing user engagement by 50%. Optimized backend performance, reducing query latency by 35%. Designed modular architecture to support future scalability and feature expansion. Collaborated with stakeholders to define requirements and deliver a user-friendly interface. Provided training and documentation for end users, ensuring successful adoption and utilization. Implemented role-based access controls and security features to protect sensitive data. Received positive feedback from clients and management for technical excellence and business impact. Led post-launch support and feature enhancements, maintaining high user satisfaction and system reliability. Developed automated reporting tools and export features to support business analysis and decision-making
-[1]Skills: Programming Languages: Python, JavaScript, Dart, Java, C++, SQL; Soft Skills: Presentation, Documentation, UX Design, Initiative, Creativity, Self-Motivation; Technical Skills: Data Visualization, WebSockets, Mobile Development, Cloud Integration, API Integration, NLP
-EXAMPLE OUTPUT 1:
-[1]Description: Built a real-time analytics dashboard using Python and React, with skills in data visualization and WebSockets. Collaborated with stakeholders to deliver user-friendly interfaces.
-[1]Skills: Programming Languages: Python, JavaScript; Technical Skills: Data Visualization, WebSockets, API Integration; Soft Skills: Communication
 
 [INPUT]
 INPUT job description:
@@ -563,7 +417,7 @@ Given the all experiences across 3 resume sections (Volunteering and Leadership,
 - Prioritize projects that match relevant skills and experience present in the job description.
 - It is okay to not select any experiences from a given section if none are relevant. Remember that [R], [J], and [P] indicate the section they belong to (R is Volunteering and Leadership, J is Work Experience, and P is Projects).
 - While filling out the output format, do not change the role/job title/project title text, and do not include any text before [R], [J], or [P] or after the role/job title/project title text.
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
 [R]Volunteering and Leadership Role 1
@@ -573,18 +427,6 @@ Where the letter R/J/P inside "[]" indicates the type of experience:
 - [R]Role belongs to Volunteering and Leadership
 - [J]Job Title belongs to Work Experience
 - [P]Project Title belongs to Projects
-
-[EXAMPLES]
-EXAMPLE OUTPUT 1(NUMBER OF EXPERIENCES = 3):
-[R]Volunteer at Tech4Kids
-[J]Senior Software Engineer
-[R]University of Michigan Hackaton Leader
-EXAMPLE OUTPUT 2(NUMBER OF EXPERIENCES = 7; CHOSE 5 BEST):
-[R]Civil Engineering Ambassador at the University of Colorado 
-[J]Full-Stack Engineer
-[J]Java Engineer
-[P]TuneMax Song Streaming Search Engine
-[P]Beer Fetching Robot
 
 [INPUT]
 INPUT job description:
@@ -617,26 +459,10 @@ Given a section from a resume, summarize the sections in a wholistic manner whil
 - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
 - Return the summarized information as a single continuous string of text, following the output format strictly. 
 - Do not forget to include the "[S]{section_name} Section Summary:" text at the start of the output.
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
 [S]{section_name} Summary: Wholistic summary of the section's information.
-
-[EXAMPLES]
-EXAMPLE INPUT 1:
-[0]Education:
-[1]Degree: B.Sc. Computer Science
-[1]University: Springfield University
-[1]Location: Springfield, USA
-[1]Duration: 2012/09 - 2016/06
-[1]Courses: Algorithms, Data Structures, Operating Systems, Databases
-[1]Degree: M.Sc. Software Engineering
-[1]University: Capital Tech
-[1]Location: Capital City, USA
-[1]Duration: 2016/09 - 2018/06
-[1]Courses: Cloud Computing, Distributed Systems, Advanced Programming
-EXAMPLE OUTPUT 1:
-[S]Education Section Summary: This candidate holds a Bachelor of Science in Computer Science from Springfield University (2012-2016), with courses in Algorithms, Data Structures, Operating Systems, and Databases. They then pursued a Master of Science in Software Engineering at Capital Tech (2016-2018), focusing on Cloud Computing, Distributed Systems, and Advanced Programming.
 
 [INPUT]
 INPUT section from a resume:
@@ -663,25 +489,10 @@ INPUT section from a resume:
 """[REQUEST]
 Given the general information from a resume, summarize it in a wholistic manner; be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 Since this is a summary of a resume's general information, you need to include the candidate's Name, Contact Information, Title, and Languages Spoken.
-Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES (do not forget to include the "[S]General Information Summary:" text at the start of the output).
+Return the requested information, strictly filling out the OUTPUT FORMAT. (do not forget to include the "[S]General Information Summary:" text at the start of the output).
 
 [OUTPUT FORMAT]
 [S]General Information Summary: Brief and concise summary of the resume's general information, presented as a single continuous string of text.
-
-[EXAMPLES]
-EXAMPLE INPUT 1:
-[0]Name: Jane Doe
-[0]Contact Information:
-[1]Address: 123 Main St, Springfield, USA
-[1]Phone: +1-555-123-4567
-[1]Email: jane.doe@email.com
-[1]LinkedIn: linkedin.com/in/janedoe
-[1]Github: github.com/janedoe
-[1]Portfolio: janedoe.dev
-[0]Title: Senior Software Engineer
-[0]Languages: English, Spanish, French
-EXAMPLE OUTPUT 1:
-[S]General Information Summary: Jane Doe is a Senior Software Engineer with contact details including an address at 123 Main St, Springfield, USA, phone number +1-555-123-4567, email jane.doe@email.com, LinkedIn linkedin.com/in/janedoe, Github github.com/janedoe, and Portfolio janedoe.dev. Jane speaks English, Spanish, and French fluently.
 
 [INPUT]
 INPUT general information from a resume:
@@ -707,19 +518,10 @@ INPUT general information from a resume:
         "prompt_in": 
 """[REQUEST]
 Given a "Skills" section from a resume, summarize the skills section of a resume in a wholistic manner; be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
-Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES (do not forget to include the "[S]Skills Summary:" text at the start of the output).
+Return the requested information, strictly filling out the OUTPUT FORMAT. (do not forget to include the "[S]Skills Summary:" text at the start of the output).
 
 [OUTPUT FORMAT]
 [S]Skills Summary: Brief and concise wholistic summary of the resume's skills, presented as a single continuous string of text.
-
-[EXAMPLES]
-INPUT EXAMPLE 1:
-[0]Skills:
-[1]Programming Languages: Programming Language 1, Python, JavaScript
-[1]Technical Skills: REST APIs, Web Development, API Development, Cloud Setup
-[1]Soft Skills: Collaboration, Communication, Leadership, Teamwork
-OUTPUT EXAMPLE 1:
-[S]Skills Summary: Proficient in Python, and JavaScript. Experienced with REST APIs, web development, and API development. Additionally, skilled in cloud setup and possess strong collaboration, communication, leadership, and teamwork abilities.
 
 [INPUT]
 INPUT "Skills" section from a resume:
@@ -752,16 +554,10 @@ Given a wholistic summary of a resume and a job description, tailor a Summary se
 - When mentioning specific skills or experiences, these must be relevant to the job description; give preference to those that appear on both the resume and the job description, particularly those which demonstrate the candidate's technical expertise.
 - In the format below, do not include any text before "[0]" or after the requested information.
 - Return only the revised summary and strictly follow the output format, filling in the parts that have **fill-in:"text"**
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
 [0]Summary: Despite limited work experience, I bring strong work ethic, adaptability and curiosity. Experienced in **fill-in:"specific skills thanks to certain experiences"**. Now seeking a position that offers growth and learning opportunities.
-
-[EXAMPLES]
-EXAMPLE INPUT 1:
-[0]Summary:Jane Doe, Senior Software Engineer | +1-555-123-4567 | jane.doe@email.com | linkedin.com/in/janedoe | github.com/janedoe | janedoe.dev | Fluent in English, Spanish, and French.Certifications: AWS Certified Solutions Architect (2019), Scrum Master (2020).Education:Bachelor of Science in Computer Science from Springfield University (2012-2016) - courses in Algorithms, Data Structures, Operating Systems, and Databases.Master of Science in Software Engineering at Capital Tech (2016-2018) - focus on Cloud Computing, Distributed Systems, and Advanced Programming.Projects: Real-time analytics dashboard using Python, incorporating role-based access controls and security features to protect sensitive data, solidifying proficiency in Data Visualization, WebSockets, and communication.Work Experience:Senior Software Engineer at WebApps Inc. - RESTful API development, optimizing database queries, and microservices; delivered significant improvements in application performance by 30%.Volunteering & Leadership:Coding Bootcamp Mentor at CodeSpring (2020-2022) - mentoring and leadership skills.Hackathon Organizer at TechFest (2018-2019) - event planning, teamwork, and problem-solving.Skills: Proficient in Microsoft Office Suite, Google Workspace tools, Asana, Trello; strong problem-solving skills and ability to work effectively in a fast-paced environment.
-EXAMPLE OUTPUT 1:
-[0]Summary: Despite limited work experience, I bring strong work ethic, adaptability and curiosity. Experienced in Python development, data visualization, and communication through projects like the real-time analytics dashboard and mentoring at CodeSpring. Now seeking a position that offers growth and learning opportunities.
 
 [INPUT]
 INPUT wholistic summary of a resume:
@@ -800,20 +596,13 @@ Prune the following 'Skills' section from a resume to best match the job descrip
 - Do not line break any line containing the relevant skills, it should follow the format below strictly.
 - If either the "Programming Languages", "Technical Skills", or "Soft Skills" sections are empty, return them as an empty section.
 - Aside from the information requested, do not include any additional text or explanations.
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
 [0]Skills:
 [1]Programming Languages: Programming Language 1, Programming Language 2, Programming Language 3
 [1]Technical Skills: Technical Skill 1, Technical Skill 2, Technical Skill 3, Technical Skill 4, Technical Skill 5
 [1]Soft Skills: Soft Skill 1, Soft Skill 2, Soft Skill 3, Soft Skill 4
-
-[EXAMPLES]
-OUTPUT EXAMPLE 1:
-[0]Skills:
-[1]Programming Languages: Python, JavaScript
-[1]Technical Skills: REST APIs, Web Development, API Development, Cloud Setup
-[1]Soft Skills: Collaboration, Communication, Leadership, Teamwork
 
 [INPUT]
 INPUT list of "Programming Languages", "Technical Skills" and "Soft Skills" considered to be relevant for a paticular job description:
@@ -848,14 +637,10 @@ Given a raw untailored resume section and and its counterpart from an already ta
 - Verify that all information in the tailored section is present in the raw section, even if paraphrased.
 - Identify any contradictions between the two sections.
 - Identify any contradictions within the tailored section (with itself).
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
 [0]{section_name} Analysis: Analysis of the tailored resume section vs the raw section, as a single line of text.
-
-[EXAMPLES]
-EXAMPLE OUTPUT 1:
-[0] Volunteering_and_Leadershio Analysis: The tailored version of the section presents one inconsistency with the raw section, the role "Team Lead at the 2024 IBM Datathon" does not exit in the raw resume. Aside from that, everything else is consistent.
 
 [INPUT]
 INPUT raw untailored resume section:
@@ -893,7 +678,7 @@ Given a wholistic summary of a resume, and the summary of the job description it
 - Only 4 paragraphs are allowed, each starting with "[1]New ParagraphX: " and then the text of the new paragraph; X starts at 0 and goes up to 3.
 - Total word count must not exceed 400 words. This is a hard limit, so be concise and to the point.
 - Write the cover letter as the candidate, not as an external observer.
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
 [0]Cover Letter: 
@@ -901,14 +686,6 @@ Given a wholistic summary of a resume, and the summary of the job description it
 [1]New Paragraph1: Explain why the candidate is a good fit for the role, briefly mentioning the most relevant information from the resume that matches the job description.
 [1]New Paragraph2: Provide further information about the candidate's qualifications and how they align with the job requirements. Make use of specific examples and metrics to demonstrate impact (if applicable).
 [1]New Paragraph3: Closing statement, thanking the employer for their time and consideration. Invite them to contact the candidate for further discussion, providing email address.
-
-[EXAMPLES]
-EXAMPLE OUTPUT 1:
-[0]Cover Letter:
-[1]New Paragraph0: I am excited to apply for the Software Engineer, New Grad role at Sentry, a position that aligns perfectly with my skills and passion for software development. As a seasoned Senior Software Engineer, I am confident in my ability to make a meaningful contribution to your team.
-[1]New Paragraph1: With my strong educational foundation in M.Sc. Software Engineering and B.Sc. Computer Science, I possess the technical skills required for this role. My proficiency in Python and JavaScript, as well as my experience developing microservices and collaborating with cross-functional teams, make me a strong fit for this position.
-[1]New Paragraph2: As a leader, I have demonstrated exceptional mentorship as a Coding Bootcamp Mentor at CodeSpring, resulting in high completion rates and job placement improvement. This experience has honed my ability to communicate effectively with teams and stakeholders, which is essential for this role. Additionally, my portfolio showcases the creation of a real-time analytics dashboard using Python, featuring role-based access controls and security features for sensitive data protection.
-[1]New Paragraph3: Thank you for considering my application. I am excited about the opportunity to discuss how my skills and experience align with the requirements of this role. Please feel free to contact me at jane.doe@email.com or via LinkedIn.
 
 [INPUT]
 INPUT wholistic summary of a resume:
@@ -943,22 +720,12 @@ Follow these guidelines:
 - Be as objective as possible, and do not make any assumptions about the data.
 - Do not create nor imagine any data that is not present in the original data.
 - When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
 [0]Consistency Checker Vs Job Description:
 [1]Inconsistencies With Job Description: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 [1]Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
-
-[EXAMPLES]
-EXAMPLE OUTPUT 1:
-[0]Consistency Checker Vs Job Description:
-[1]Inconsistencies With Job Description: None.
-[1]Suggestions for Improvement: None.
-EXAMPLE OUTPUT 2:
-[0]Consistency Checker Vs Job Description:
-[1]Inconsistencies With Job Description: 1 inconsistency found. The position "Secretary at WayCom" is irrelevant to the job description with job title "Senior VXF Animator" because of the mismatch in skillsets required. 
-[1]Suggestions for Improvement: Correct the above inconsistencies; The skill "VFX Software" is missing from the resume summary, it would be wise to include it if the candiate has it.
 
 [INPUT]
 INPUT summary of a resume tailored to a particular job description:
@@ -991,22 +758,12 @@ Follow these guidelines:
 - Be as objective as possible, and do not make any assumptions about the data.
 - Do not create nor imagine any data that is not present in the original data.
 - When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
 [0]Consistency Checker Vs Job Description:
 [1]Inconsistencies With Job Description: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 [1]Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
-
-[EXAMPLES]
-EXAMPLE OUTPUT 1:
-[0]Consistency Checker Vs Job Description:
-[1]Inconsistencies With Job Description: None.
-[1]Suggestions for Improvement: None.
-EXAMPLE OUTPUT 2:
-[0]Consistency Checker Vs Job Description:
-[1]Inconsistencies With Job Description: 2 inconsistencies found. The position the cover letter is referring to is incorrect, it should be "Junior Engineer at GTY" not "Senior Software Engineer at GTY"; The email address has field has been left as a placeholder.
-[1]Suggestions for Improvement: Correct the above inconsistencies; Consider not mentioning irrelevant positions, such as "Ice Cream Machine Operator" or "Zoo Ticket Salesman"
 
 [INPUT]
 INPUT cover letter tailored to a particular job description:
@@ -1039,14 +796,11 @@ Follow these guidelines when extracting courses and returning them:
 - Do not use line breaks inside any subsection.
 - Courses must be comma-separated and follow the format below.
 - Include the prefix [1] at the start of each line (as seen in the format below).
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Be mindful that courses may or may not have a course code (represented by "XXX001" in the OUTPUT FORMAT section)
 
 [OUTPUT FORMAT]
 [1]Courses: XXX001 Course Name1, XXX002 Course Name2, XXX003 Course Name3...
-
-[EXAMPLES]
-[1]Courses: CSC101 Computer Science I, ECE201 Introduction to Electronics, CIV301 Advanced Civil Engineering, MAT 323 Applied Advanced Calculus
 
 [INPUT]
 INPUT list of courses taken on a given program:
@@ -1075,26 +829,6 @@ INPUT job description:
             "section_names": [],
             "second_half": """
 
-[EXAMPLES]
-INPUT EXAMPLE 1 (number of sections is 2; section names are "certifications" and "awards_and_scholarships"):
-[0]Certifications:
-[1]Certification Name: Scrum Master
-[1]Issuing Organization: Scrum Alliance
-[1]Issue Date: 2020/03
-[1]Certification Name: AWS Certified Solutions Architect
-[1]Issuing Organization: Amazon Web Services
-[1]Issue Date: 2019/05
-[0]Awards and Scholarships:
-[1]Award Name: Tech Innovation Scholarship
-[1]Issuing Organization: Capital Tech
-[1]Issue Date: 2017/09
-[1]Award Name: Dean’s List
-[1]Issuing Organization: Springfield University
-[1]Issue Date: 2015/06
-OUTPUT EXAMPLE 1 (number of sections is 2; section names are "certifications" and "awards_and_scholarships"):
-[S]certifications Section Summary: The candidate holds two certifications, Scrum Master from Scrum Alliance (2020/03) and AWS Certified Solutions Architect from Amazon Web Services (2019/05), demonstrating expertise in Agile methodology and cloud architecture.
-[S]awards_and_scholarships Section Summary: The candidate has received recognition for their academic achievements with the Tech Innovation Scholarship from Capital Tech (2017/09) and Dean's List award from Springfield University (2015/06), showcasing their commitment to learning and academic excellence.
-
 [INPUT]
 INPUT sections from a resume:
 {sections_text}
@@ -1108,7 +842,7 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
 - Keep in mind that these summaries will be used in a "Sliding Window" approach to summarize the entire resume effectively, so include information that is relevant for the overall context of the resume.
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
 """,
@@ -1200,17 +934,11 @@ Given 2 resume section summaries, create a new summary that incorporates all two
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 - Include ALL information, competencies, achievements, and skills, for this is a wholistic summary of the candidate's qualifications. Do not miss any skills.
 - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
 [S]{section1_name} + {section2_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and skills.
 
-[EXAMPLES]
-EXAMPLE INPUT 1 (candidate name is Jane Doe and her Title is Software Engineer):
-[S]awards_and_scholarships Section Summary: Achieved Dean's List at Springfield University (2015/06) and received Tech Innovation Scholarship from Capital Tech (2017/09), demonstrating academic excellence and innovation skills.
-[S]volunteering_and_leadership Section Summary: As a Coding Bootcamp Mentor at CodeSpring (2020/01-2022/12),  developed curriculum modules and workshops on Python, REST APIs, and cloud integration (Python, Javascript); As a Hackathon Organizer at TechFest (2018/03-2019/03), managed large-scale events (hackathon) and fostered a culture of innovation and collaboration for creative problem solving (Strong Leadership, Organizational and Communication skills).
-EXAMPLE OUTPUT 1:
-[S]awards_and_scholarships + volunteering_and_leadership Sections Summary: Jane Doe is a prolific Software Engineer, having achieved Dean's List at Springfield University (2015/06) and received Tech Innovation Scholarship from Capital Tech (2017/09), demonstrating academic excellence and innovation skills. As a Coding Bootcamp Mentor at CodeSpring (2020/01-2022/12),  she developed curriculum modules and workshops on Python, REST APIs, and cloud integration (Python, Javascript); As a Hackathon Organizer at TechFest (2018/03-2019/03), she managed large-scale events (hackathon) and fostered a culture of innovation and collaboration for creative problem solving (Strong Leadership, Organizational and Communication skills).
 [INPUT]
 INPUT {section1_name} section summary:
 {summary1}
@@ -1248,18 +976,11 @@ Given 3 resume section summaries, create a new summary that incorporates all two
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 - Include ALL information, competencies, achievements, and skills, for this is a wholistic summary of the candidate's qualifications. Do not miss any skills.
 - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
 [S]{section1_name} + {section2_name} + {section3_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and skills.
 
-[EXAMPLES]
-EXAMPLE INPUT 1 (candidate name is Jane Doe and her Title is Software Engineer):
-[S]education Section Summary: This candidate holds a Bachelor of Science in Computer Science from Springfield University (2012-2016), with courses in Algorithms, Data Structures, Operating Systems, and Databases. They then pursued a Master of Science in Software Engineering at Capital Tech (2016-2018), focusing on Cloud Computing, Distributed Systems, and Advanced Programming.
-[S]certifications Section Summary: This candidate is certified as an AWS Certified Solutions Architect (2019) and holds the Scrum Master certification from the Scrum Alliance (2020).
-[S]awards_and_scholarships Section Summary: Achieved Dean's List at Springfield University (2015/06) and received Tech Innovation Scholarship from Capital Tech (2017/09), demonstrating academic excellence and innovation skills.
-EXAMPLE OUTPUT 1:
-[S]education + certifications + awards_and_scholarships Sections Summary:As a highly skilled Senior Software Engineer, Jane Doe holds a Bachelor of Science in Computer Science from Springfield University (2012-2016), with courses in Algorithms, Data Structures, Operating Systems, and Databases. She then pursued a Master of Science in Software Engineering at Capital Tech (2016-2018), focusing on Cloud Computing, Distributed Systems, and Advanced Programming. Additionally, Jane Doe is certified as an AWS Certified Solutions Architect (2019) and holds the Scrum Master certification from the Scrum Alliance (2020). Her academic achievements include achieving Dean's List at Springfield University (2015/06) and receiving Tech Innovation Scholarship from Capital Tech (2017/09), demonstrating academic excellence and innovation skills.
 [INPUT]
 INPUT {section1_name} section summary:
 {summary1}
@@ -1300,19 +1021,11 @@ Given 4 resume section summaries, create a new summary that incorporates all two
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 - Include ALL information, competencies, achievements, and skills, for this is a wholistic summary of the candidate's qualifications. Do not miss any skills.
 - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
 [S]{section1_name} + {section2_name} + {section3_name} + {section4_name} Sections Summary: Wholistic summary of the sections' information, competencies, achievements, and skills.
 
-[EXAMPLES]
-EXAMPLE INPUT 1 (candidate name is Jane Doe and her Title is Software Engineer):
-[S]education Section Summary: This candidate holds a Bachelor of Science in Computer Science from Springfield University (2012-2016), with courses in Algorithms, Data Structures, Operating Systems, and Databases. They then pursued a Master of Science in Software Engineering at Capital Tech (2016-2018), focusing on Cloud Computing, Distributed Systems, and Advanced Programming.
-[S]certifications Section Summary: This candidate is certified as an AWS Certified Solutions Architect (2019) and holds the Scrum Master certification from the Scrum Alliance (2020).
-[S]awards_and_scholarships Section Summary: Achieved Dean's List at Springfield University (2015/06) and received Tech Innovation Scholarship from Capital Tech (2017/09), demonstrating academic excellence and innovation skills.
-[S]volunteering_and_leadership Section Summary: Developed strong leadership, mentoring, and organizational skills through roles as Coding Bootcamp Mentor at CodeSpring (2020/01-2022/12) and Hackathon Organizer at TechFest (2018/03-2019/03), fostering innovation, collaboration, and creativity while utilizing problem-solving skills.
-EXAMPLE OUTPUT 1:
-[S]education + certifications + awards_and_scholarships + volunteering_and_leadership Sections Summary:As a highly skilled Senior Software Engineer, Jane Doe holds a Bachelor of Science in Computer Science from Springfield University (2012-2016), with courses in Algorithms, Data Structures, Operating Systems, and Databases. She then pursued a Master of Science in Software Engineering at Capital Tech (2016-2018), focusing on Cloud Computing, Distributed Systems, and Advanced Programming. Additionally, Jane Doe is certified as an AWS Certified Solutions Architect (2019) and holds the Scrum Master certification from the Scrum Alliance (2020). Her academic achievements include achieving Dean's List at Springfield University (2015/06) and receiving Tech Innovation Scholarship from Capital Tech (2017/09), demonstrating academic excellence and innovation skills. With strong leadership, mentoring, and organizational skills, Jane Doe has developed a reputation as a leader through roles such as Coding Bootcamp Mentor at CodeSpring (2020/01-2022/12) and Hackathon Organizer at TechFest (2018/03-2019/03), fostering innovation, collaboration, and creativity while utilizing problem-solving skills.
 [INPUT]
 INPUT {section1_name} section summary:
 {summary1}
@@ -1399,21 +1112,10 @@ Given all summarized sections of a resume, create a wholistic summary of all of 
 - Maintain the context and flow between the sections.
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 - When filling out the output format, do not forget to include the "[0]Summary:" text before the actual summary.
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
 [0]Summary: Wholistic summary of all sections, presented as a single continuous string of text.
-
-[EXAMPLES]
-EXAMPLE INPUT 1:
-INPUT summarized sections of a resume:
-[S]General Information Summary: Jane Doe is a Senior Software Engineer with contact details including an address at 123 Main St, Springfield, USA, phone number +1-555-123-4567, email jane.doe@email.com, LinkedIn linkedin.com/in/janedoe, Github github.com/janedoe, and Portfolio janedoe.dev. Jane speaks English, Spanish, and French fluently.
-[S]Education + Certifications + Awards_and_Scholarships + Volunteering_and_Leadership Sections Summary:As a highly skilled Senior Software Engineer, Jane Doe holds a Bachelor of Science in Computer Science from Springfield University (2012-2016), with courses in Algorithms, Data Structures, Operating Systems, and Databases. She then pursued a Master of Science in Software Engineering at Capital Tech (2016-2018), focusing on Cloud Computing, Distributed Systems, and Advanced Programming. Additionally, Jane Doe is certified as an AWS Certified Solutions Architect (2019) and holds the Scrum Master certification from the Scrum Alliance (2020). Her academic achievements include achieving Dean's List at Springfield University (2015/06) and receiving Tech Innovation Scholarship from Capital Tech (2017/09), demonstrating academic excellence and innovation skills. With strong leadership, mentoring, and organizational skills, Jane Doe has developed a reputation as a leader through roles such as Coding Bootcamp Mentor at CodeSpring (2020/01-2022/12) and Hackathon Organizer at TechFest (2018/03-2019/03), fostering innovation, collaboration, and creativity while utilizing problem-solving skills.
-[S]Certifications + Awards_and_Scholarships + Volunteering_and_Leadership + Work_Experience Sections Summary: As a seasoned Senior Software Engineer Jane Doe, distinguished by certifications in AWS Certified Solutions Architect (Amazon Web Services, 2019) and Scrum Master (Scrum Alliance, 2020), demonstrating expertise in cloud architecture and agile methodologies. Notably, academic excellence is showcased through Dean's List at Springfield University (2015) and Tech Innovation Scholarship from Capital Tech (2017). As a dedicated mentor and organizer, Jane excels in Python, REST APIs, cloud integration, event planning, and teamwork, driving high completion rates, improving job placement, and delivering high-quality events. Proficient in mentoring, communication, leadership, problem-solving, and innovation. With a strong background in Python, JavaScript, API development, microservices, Docker, and Kubernetes, Jane consistently improves application performance, collaborates with cross-functional teams, and contributes to technology adoption.
-[S]Awards_and_Scholarships + Volunteering_and_Leadership + Work_Experience + Projects Sections Summary: Senior Software Engineer Jane Doe is a highly accomplished professional with exceptional academic and professional achievements. With a strong foundation in innovation, demonstrated through Dean's List at Springfield University (2015) and Tech Innovation Scholarship at Capital Tech (2017), Jane has leveraged her expertise to excel in software engineering, leadership, and mentoring. As a seasoned engineer at WebApps Inc., she has honed skills in RESTful API development, optimizing database queries, and microservices, delivering significant improvements in application performance by 30%. Outside of work, Jane has demonstrated exceptional leadership as Coding Bootcamp Mentor at CodeSpring (2020-2022) and Hackathon Organizer at TechFest (2018-2019), showcasing expertise in programming languages, technical skills, and soft skills like mentoring, communication, teamwork, problem-solving. Notably, Jane successfully led the creation of a real-time analytics dashboard using Python, incorporating role-based access controls and security features to protect sensitive data, solidifying her proficiency in Data Visualization, WebSockets, and communication.
-[S]Skills Summary: Proficient in Microsoft Office Suite including Word, Excel, PowerPoint, and Outlook. Strong understanding of Google Workspace tools such as Gmail, Drive, Docs, Sheets, and Slides. Experience with project management using Asana and Trello. Possesses strong problem-solving skills and ability to work effectively in a fast-paced environment.
-EXAMPLE OUTPUT 1:
-[0]Summary:Jane Doe, Senior Software Engineer | +1-555-123-4567 | jane.doe@email.com | linkedin.com/in/janedoe | github.com/janedoe | janedoe.dev | Fluent in English, Spanish, and French.Certifications: AWS Certified Solutions Architect (2019), Scrum Master (2020).Education:Bachelor of Science in Computer Science from Springfield University (2012-2016) - courses in Algorithms, Data Structures, Operating Systems, and Databases.Master of Science in Software Engineering at Capital Tech (2016-2018) - focus on Cloud Computing, Distributed Systems, and Advanced Programming.Projects: Real-time analytics dashboard using Python, incorporating role-based access controls and security features to protect sensitive data, solidifying proficiency in Data Visualization, WebSockets, and communication.Work Experience:Senior Software Engineer at WebApps Inc. - RESTful API development, optimizing database queries, and microservices; delivered significant improvements in application performance by 30%.Volunteering & Leadership:Coding Bootcamp Mentor at CodeSpring (2020-2022) - mentoring and leadership skills.Hackathon Organizer at TechFest (2018-2019) - event planning, teamwork, and problem-solving.Skills: Proficient in Microsoft Office Suite, Google Workspace tools, Asana, Trello; strong problem-solving skills and ability to work effectively in a fast-paced environment.
 
 [INPUT]
 INPUT summarized sections of a resume:
@@ -1486,25 +1188,13 @@ The report should follow these guidelines:
 - Be as objective as possible, and if you must make assumptions, make very conservative assumptions
 - Do not create nor imagine any data that is not present in the original data.
 - When filling out the output format, include the numbers "[0]", "[1]", and do not modify the format.
-- Return the requested information, strictly filling out the OUTPUT FORMAT and following the included OUTPUT EXAMPLES.
+- Return the requested information, strictly filling out the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
 [0]Consistency Checker Vs Original Resume:
 [1]Inconsistencies With Original Resume: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 [1]Inconsistencies With Self: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 [1]Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
-
-[EXAMPLES]
-EXAMPLE OUTPUT 1:
-[0]Consistency Checker Vs Original Resume:
-[1]Inconsistencies With Original Resume: None.
-[1]Inconsistencies With Self: None.
-[1]Suggestions for Improvement: None.
-EXAMPLE OUTPUT 2:
-[0]Consistency Checker Vs Original Resume:
-[1]Inconsistencies With Original Resume: 3 inconsistencies found with Original Resume. Position "Senior Engineer at AMD" found in tailored resume, missing in original; Wrong start date for position "Junior Engineer at NVidia", should be 10/2013 not 5/2024; URL for project "IoT at home" found in tailored resume, missing in original.
-[1]Inconsistencies With Self: 1 inconsistency found. "Summary" section mentions a position not present under "Work Experience" (or any other section for that matter). 
-[1]Suggestions for Improvement: Correct the above inconsistencies; Avoid the use of run-on sentences.
 
 [INPUT]
 INPUT list containing a per-section analysis of the resumes, comparing the synthesized data in the new resume against the original:

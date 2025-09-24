@@ -4,10 +4,13 @@
             Prompt Engineering
             Dynamic template system
             Make a global variable to contain the first wholistic summary generated during tailor_cv for use in tailor_cl
-            Get rid of examples 
+            New filtering function
+                Modify all payloads + tailor_robust
+                Add prefix_dct to all helpers.filter_output calls
+                Modify system texts accordingly
+            Add a condition where a tailor function fails if a format field is missing or ""
         [TBWO]
             [WIP]Research model temperature modulation
-            []Create better wrong field info detection algorithm
             [][NEW TOOL]Log analyzer:
                 Detects Traceback % on functions (also lists them per function)
                 Shows instances where model output lines are dropped after filtering
