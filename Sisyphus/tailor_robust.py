@@ -228,7 +228,7 @@ def clean_first_step(text):
     function_name = helpers.inspect_function()
     cleaned_lines = []
     for line in text.split('\n'):
-        if line.startswith(("[R]", "[J]", "[P]")):
+        if line.startswith(("[R]", "[J]", "[P]", "[E]")):
             line = line.strip()
             prefix = line[0:3]
             temp_lines = line[3:].split(':')
@@ -384,40 +384,33 @@ def augment_output(input_text, reference_dict, type):
 
     elif type == 'vl_w_p':
         # Remove [R], [J], [P] markers at the start of each line
-        input_lines = [line[3:] if line.startswith(('[R]', '[J]', '[P]')) else line for line in input_lines]
+        input_lines = [line[3:] if line.startswith(('[E]')) else line for line in input_lines]
         return_list = [[],[],[]]
-        reference_list_vl = reference_dict['volunteering_and_leadership']
-        reference_list_w = reference_dict['work_experience']
-        reference_list_p = reference_dict['projects']
+        # reference_list_vl = reference_dict['volunteering_and_leadership']
+        # reference_list_w = reference_dict['work_experience']
+        # reference_list_p = reference_dict['projects']
+        super_list = reference_dict['volunteering_and_leadership'] + reference_dict['work_experience'] + reference_dict['projects']
         for line in input_lines:
-            found = False
-            for item in reference_list_vl:
+
+            for item in super_list:
                 #Check if role field exists in item
                 if 'role' in item:
                     if line.strip() == item['role']:
                         return_list[0].append(item)
-                        reference_list_vl.remove(item)
-                        found = True
+                        super_list.remove(item)
+
                         break
-            if found:
-                continue
-            for item in reference_list_w:
-                #Check if job_title field exists in item
                 if 'job_title' in item:
                     if line.strip() == item['job_title']:
                         return_list[1].append(item)
-                        reference_list_w.remove(item)
-                        found = True
+                        super_list.remove(item)
+
                         break
-            if found:
-                continue
-            for item in reference_list_p:
-                #Check if project_title field exists in item
                 if 'project_title' in item:
                     if line.strip() == item['project_title']:
                         return_list[2].append(item)
-                        reference_list_p.remove(item)
-                        found = True
+                        super_list.remove(item)
+
                         break
         tmp_dict['volunteering_and_leadership'] = return_list[0]
         tmp_dict['work_experience'] = return_list[1]
@@ -445,7 +438,7 @@ def prepare_input_text(input_text, type):
         """
         for line in input_lines:
             if not line.startswith(("[0]Volunteering and Leadership:", "[1]Organization:", "[1]Location:", "[1]Duration:")):
-                line = line.replace("[1]Role: ", "[R]").replace("[1]Description: ", "Description: ").replace("[1]Skills: ", "Skills: ").strip()
+                line = line.replace("[1]Role: ", "Experience:").replace("[1]Description: ", "Description: ").replace("[1]Skills: ", "Skills: ").strip()
                 if line:
                     return_list.append(line)
         for item in return_list:
@@ -455,7 +448,7 @@ def prepare_input_text(input_text, type):
     if type == 'work_experience':
         for line in input_lines:
             if not line.startswith(("[0]Work Experience:", "[1]Company:", "[1]Location:", "[1]Duration:")):
-                line = line.replace("[1]Job Title: ", "[J]").replace("[1]Description: ", "Description: ").replace("[1]Skills: ", "Skills: ").strip()
+                line = line.replace("[1]Job Title: ", "Experience:").replace("[1]Description: ", "Description: ").replace("[1]Skills: ", "Skills: ").strip()
                 if line:
                     return_list.append(line)
         for item in return_list:
@@ -464,7 +457,7 @@ def prepare_input_text(input_text, type):
     if type == 'projects':
         for line in input_lines:
             if not line.startswith(("[0]Projects:", "[1]URL:", "[1]Type:", "[1]Duration:")):
-                line = line.replace("[1]Project Title: ", "[P]").replace("[1]Description: ", "Description: ").replace("[1]Skills: ", "Skills: ").strip()
+                line = line.replace("[1]Project Title: ", "Experience:").replace("[1]Description: ", "Description: ").replace("[1]Skills: ", "Skills: ").strip()
                 if line:
                     return_list.append(line)
         for item in return_list:
@@ -475,7 +468,7 @@ def prepare_input_text(input_text, type):
             if not line.startswith(("[0]Volunteering and Leadership:", "[1]Organization:", "[1]Location:", "[1]Duration:",
                                     "[0]Work Experience:", "[1]Company:",
                                     "[0]Projects:", "[1]URL:", "[1]Type:")):
-                line = line.replace("[1]Role: ", "[R]").replace("[1]Description: ", "Description: ").replace("[1]Skills: ", "Skills: ").replace("[1]Job Title: ", "[J]").replace("[1]Project Title: ", "[P]").strip()
+                line = line.replace("[1]Role: ", "Experience:").replace("[1]Description: ", "Description: ").replace("[1]Skills: ", "Skills: ").replace("[1]Job Title: ", "Experience:").replace("[1]Project Title: ", "Experience:").strip()
                 if line:
                     return_list.append(line)
         for item in return_list:
@@ -596,7 +589,7 @@ def batch_summarize_sections(call_info = template_call_info):
     for name in section_names:
         prompt += f"Section Summary: {name} Summary; Wholistic summary of the section's information."
 
-    prompt += "Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.\n" 
+    prompt += "\n" 
     prompt +=  call_info["format"]["second_half"].format(**format)
 
     payload = payload_in.copy()
@@ -1008,7 +1001,7 @@ Given a section from a resume, summarize the sections in a wholistic manner whil
 
 [OUTPUT FORMAT]
 Section Summary: {section_names[i]} Summary; Wholistic summary of the section's information.
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+
 
 [INPUT]
 INPUT section from a resume:
@@ -1903,7 +1896,7 @@ async def standard_ollama_call_async(session, retries = config.CONFIG["MODELS"][
                     #return f"[ERROR][OLLAMA][ASYNC]{function_name}: Ollama status_code 400"    
                 response_text =  data.get("response", "")
                 if payload["sample_starts"] != []:
-                    response = helpers.filter_output(response, sample_starts[1])
+                    response = helpers.filter_output(response, format["prefix_dict"] )#sample_starts[1],
                     if compare_start_nb(response, sample_starts["sample_starts"]) == False:
                         continue         
                 return response_text
@@ -1943,7 +1936,7 @@ def ollama_call(retries=config.CONFIG["MODELS"]["RETRIES"], runtime_info = {}, f
                     if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama call returned error: {response}. Retrying {i+1}/{retries}...")
                     continue
                 if call_info["sample_starts"] != []:
-                    response = helpers.filter_output(response, call_info["sample_starts"][1])
+                    response = helpers.filter_output(response, call_info["format"]["prefix_dict"])#call_info["sample_starts"][1]
                     if config.DEBUG["INFO_LOGGING"]: logging.info(f"[INFO][OLLAMA]{function_name}: filtered response: {response}")
                     if compare_start(response, call_info["sample_starts"]) == False:
                         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Output does not match expected start lines or output length. Retrying {i+1}/{retries}...")
@@ -1958,7 +1951,7 @@ def ollama_call(retries=config.CONFIG["MODELS"]["RETRIES"], runtime_info = {}, f
                         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Ollama call returned error: {element}. Retrying {i+1}/{retries}...")
                         continue
                     if call_info["sample_starts"] != []:
-                        element = helpers.filter_output(element, call_info["sample_starts"][1])
+                        element = helpers.filter_output(element, call_info["format"]["prefix_dict"])#call_info["sample_starts"][1]
                         if config.DEBUG["INFO_LOGGING"]: logging.info(f"[INFO][OLLAMA]{function_name}: filtered element: {element}")
                         if compare_start(element, call_info["sample_starts"]) == False:
                             if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: Output does not match expected start lines or output length. Retrying {i+1}/{retries}...")

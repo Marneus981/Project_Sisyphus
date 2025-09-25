@@ -70,33 +70,44 @@ def filter_output(model_output, prefix_dict ={}):
     ##Possible Error: What if filter Output is called on already okay output?
     function_name = inspect_function()
     if prefix_dict != {}:
-        lines = model_output.split_lines()
+        lines = model_output.splitlines()
         filtered_lines = []
         field_count = 0
+        line_ctr = 0
         current_field = ""
         for line in lines:
+            line_ctr = line_ctr +  1
             line = line.strip()
-            #Assume its at start of line
-            matches = re.search(r"^[A-Za-z0-9 ]+\:",line)
-            if matches: #If regex match...
-                field = matches.group(0)
-                if  field in prefix_dict: #If the Matching field is in the dict...
-                    if field == "Dummy":
-                        break
-                    if field_count > 0: #Check if we need to append current working field
-                        filtered_lines.append(current_field) 
+            line = line.replace("[","")
+            line = line.replace("]","")
+            match = ""
+            for section in prefix_dict:
+                if line.startswith(section): 
+                    match = section
+                    break
+            if match != "": #Check if we need to append current working field
+                print(f"Match: {match} on line '{line}' ")
+                if field_count == 0:
                     field_count =+ 1
-                    current_field = prefix_dict[field] + line
+                    current_field = prefix_dict[match] + line
                 else:
-                    if field_count > 0:
-                        current_field =+ " " + line
-                    else:
-                        continue
+                    filtered_lines.append(current_field)
+                    field_count =+ 1
+                    current_field = prefix_dict[match] + line
+                if match == "Dummy:":
+                    break
+                print(f"line_ctr is {line_ctr} while len(lines) is {len(lines)}")
+                if line_ctr == len(lines):
+                    filtered_lines.append(current_field)
             else:
-                if field_count > 0:
-                    current_field =+ " " + line
-                else:
+                print(f"No Match on line '{line}' ")
+                if field_count == 0 :
                     continue
+                else:
+                    current_field = current_field+ " " + line
+                    print(f"line_ctr is {line_ctr} while len(lines) is {len(lines)}")
+                    if line_ctr == len(lines):
+                        filtered_lines.append(current_field)
         if filtered_lines == []:
             raise ValueError(f"[ERROR]{function_name}: No valid answer found")
         return "\n".join(filtered_lines)

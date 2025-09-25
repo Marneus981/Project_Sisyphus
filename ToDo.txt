@@ -4,12 +4,12 @@
             Prompt Engineering
             Dynamic template system
             Make a global variable to contain the first wholistic summary generated during tailor_cv for use in tailor_cl
-            New filtering function
-                Modify all payloads + tailor_robust
-                Add prefix_dct to all helpers.filter_output calls
-                Modify system texts accordingly
-                Write in systems to not modify dummy field
-                In systems, specify what delimits sections in a prompt
+            New filtering system
+                Make it so that QA knows:
+                    Which fields need to have content (and check for that content)
+                    How many fields (exactly) need to exist in the output
+                Remove prefixes from inputs
+
             Add a condition where a tailor function fails if a format field is missing or ""
         [TBWO]
             [WIP]Research model temperature modulation

@@ -39,7 +39,7 @@ Prompt Format:
 
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 field mode (digits/cap_letters) will be vestigial in next commit.
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+
 
 """
 
@@ -84,7 +84,7 @@ Consistency Checker Vs Resume:
 Inconsistencies With Resume: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 Inconsistencies With Self: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+
 
 [INPUT]
 INPUT cover letter:
@@ -147,7 +147,7 @@ Programming Languages: List of programming languages required, presented as a si
 Technical Skills: List of technical skills required, presented as a single block of text separated by ";"
 Soft Skills:Soft List of soft skills required, presented as a single block of text separated by ";"
 Other Skills:Other List of other skills required, presented as a single block of text separated by ";"
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+
 
 [INPUT]
 INPUT job description:
@@ -171,7 +171,7 @@ INPUT job description:
                    "raw_cv_data": "",
                    "job_description": "",
                     "prefix_dict": {
-                        "Role Title:" : "[R]",
+                        "Experience:" : "[R]",
                         "Dummy:" : "[BIG DUMMY]"
                     }
                    },
@@ -183,18 +183,18 @@ Given a "Volunteering and Leadership" resume section and a job description, sele
 - Do not change the name of the roles.
 - Prioritize roles that match relevant skills and experience present in the job description.
 - It is okay to not select any roles if none are relevant.
-- Display the Role Titles explicitly; do not write "Role Title:" before the Role Title
+- Display the Role Titles explicitly and without changing them.
 - When filling out the output format  you may not change the role title text, and do not include any text before or after the role title text.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-Role Title:Role Title 1
-Role Title:Role Title 2
-Role Title:Role Title 3
-Role Title:Role Title 4
-Role Title:Role Title 5
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+Experience:Role Title 1
+Experience:Role Title 2
+Experience:Role Title 3
+Experience:Role Title 4
+Experience:Role Title 5
+
 
 [INPUT]
 INPUT "Volunteering and Leadership" resume section:
@@ -220,7 +220,7 @@ INPUT job description:
                    "job_description": "",
                    "prefix_dict": {
                        "Description:":"[1]",
-                       "Skills":"[1]",
+                       "Skills:":"[1]",
                        "Dummy:":"[BIG DUMMY]"
                    } 
                    },
@@ -240,7 +240,7 @@ Given the "Description" and "Skills" attributes of a role belonging to the "Volu
 [OUTPUT FORMAT]
 Description: Brief role description.
 Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+
 
 [INPUT]
 INPUT job description:
@@ -266,7 +266,7 @@ INPUT "Description" and "Skills" attributes of a role belonging to the "Voluntee
             "raw_cv_data": "",
             "job_description": "",
             "prefix_dict": {
-                "Job Title:" : "[J]",
+                "Experience:" : "[J]",
                 "Dummy:" : "[BIG DUMMY]"
             }
         },
@@ -278,18 +278,18 @@ Given a "Work Experience" resume section and a job description, select up to 5 j
 - Do not change the name of the jobs.
 - Prioritize jobs that match relevant skills and experience present in the job description.
 - It is okay to not select any jobs if none are relevant.
-- Display the Job Titles explicitly; do not write "Job Title:" before the Job Title
-- When filling out the output format  you may not change the role title text, and do not include any text before or after the role title text.
+- Display the Job Titles explicitly and without changing them.
+- When filling out the output format  you may not change the job title text, and do not include any text before or after the job title text.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-Job Title:Job Title 1
-Job Title:Job Title 2
-Job Title:Job Title 3
-Job Title:Job Title 4
-Job Title:Job Title 5
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+Experience:Job Title 1
+Experience:Job Title 2
+Experience:Job Title 3
+Experience:Job Title 4
+Experience:Job Title 5
+
 
 [INPUT]
 INPUT "Work Experience" resume section:
@@ -316,7 +316,7 @@ INPUT job description:
             "job_description": "",
             "prefix_dict": {
                        "Description:":"[1]",
-                       "Skills":"[1]",
+                       "Skills:":"[1]",
                        "Dummy:":"[BIG DUMMY]"
                    } 
         },
@@ -336,7 +336,7 @@ Given the "Description" and "Skills" subsections of a role belonging to the "Wor
 [OUTPUT FORMAT]
 Description: Brief role description.
 Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+
 
 [INPUT]
 INPUT job description:
@@ -362,7 +362,7 @@ INPUT "Description" and "Skills" subsections of a role belonging to the "Work Ex
             "raw_cv_data": "",
             "job_description": "",
             "prefix_dict": {
-                "Project Title:" : "[P]",
+                "Experience:" : "[P]",
                 "Dummy:" : "[BIG DUMMY]"
             }
         },
@@ -374,18 +374,18 @@ Given a "Projects" resume section and a job description, select up to 5 projects
 - Do not change the name of the projects.
 - Prioritize projects that match relevant skills and experience present in the job description.
 - It is okay to not select any projects if none are relevant.
-- Display the Project Titles explicitly; do not write "Project Title:" before the Project Title
-- When filling out the output format  you may not change the role title text, and do not include any text before or after the role title text.
+- Display the Project Titles explicitly and without changing them.
+- When filling out the output format  you may not change the project title text, and do not include any text before or after the project title text.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
 [OUTPUT FORMAT]
-Project Title:Project Title 1
-Project Title:Project Title 2
-Project Title:Project Title 3
-Project Title:Project Title 4
-Project Title:Project Title 5
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+Experience:Project Title 1
+Experience:Project Title 2
+Experience:Project Title 3
+Experience:Project Title 4
+Experience:Project Title 5
+
 
 [INPUT]
 INPUT "Projects" resume section:
@@ -412,7 +412,7 @@ INPUT job description:
             "job_description": "",
             "prefix_dict": {
                        "Description:":"[1]",
-                       "Skills":"[1]",
+                       "Skills:":"[1]",
                        "Dummy:":"[BIG DUMMY]"
                    } 
         },
@@ -432,7 +432,7 @@ Given the "Description" and "Skills" subsections of a project belonging to the "
 [OUTPUT FORMAT]
 Description: Brief role description.
 Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+
 
 [INPUT]
 INPUT job description:
@@ -459,9 +459,7 @@ INPUT "Description" and "Skills" subsections of a project belonging to the "Proj
             "experiences": "",
             "job_description": "",
             "prefix_dict": {
-                "Project Title:" : "[P]",
-                "Role Title:" : "[R]",
-                "Job Title:" : "[J]",
+                "Experience:" : "[E]",
                 "Dummy:" : "[BIG DUMMY]"
             }
         },
@@ -472,29 +470,28 @@ Given the all experiences across 3 resume sections (Volunteering and Leadership,
 - If the total number of experiences/roles is greater than or equal to 5 before selection: Select the most relevant 5 experiences/roles based on the job description.
 - Do not change the name of the experiences/roles.
 - Prioritize projects that match relevant skills and experience present in the job description.
-- It is okay to not select any experiences from a given section if none are relevant. Remember that the Title type indicate the section they belong to (Role is Volunteering and Leadership, Job is Work Experience, and Project is Projects).
-- While filling out the output format, do not change the role/job title/project title text, and do not include any text before or after the role/job title/project title text.
+- While filling out the output format, do not change the experience text, and do not include any text before or after the experience title text.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
-- The INPUT experiences will include one of three prefixes: [R], [J], [P]. The first one is short hand for Role Title, the second for Job Title and the last one for Project Title. Use this to chose the corrrect field to output every title under.
-
+-
 [OUTPUT FORMAT]
-Role Title:Volunteering and Leadership Role
-Job Title:Work Experience Job Title
-Project Title:Projects Project Title
-...
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+Experience:Experience Title 1
+Experience:Experience Title 2
+Experience:Experience Title 3
+Experience:Experience Title 4
+Experience: Experience Title 5
+
 
 [INPUT]
 INPUT job description:
 {job_description}
 
-INPUT 3 resume sections (Volunteering and Leadership, Work Experience, and Projects):
+INPUT experiences from 3 resume sections (Volunteering and Leadership, Work Experience, and Projects):
 {experiences}
 
 """,
         "ollama_url": DEFAULT_URL,
-        "sample_starts": ["flexible", "cap_letters", "[P]", "[J]", "[R]"]
+        "sample_starts": ["flexible", "cap_letters", "[E]"]
     },
     "summarize_section": #DONE
     {
@@ -524,7 +521,7 @@ Given a section from a resume, summarize the sections in a wholistic manner whil
 
 [OUTPUT FORMAT]
 Section Summary: {section_name} Summary; Wholistic summary of the section's information.
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+
 
 [INPUT]
 INPUT section from a resume:
@@ -560,7 +557,7 @@ Also, do not forget to include the field names at the start of each line, as per
 
 [OUTPUT FORMAT]
 General Information Summary: Brief and concise summary of the resume's general information, presented as a single continuous string of text.
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+
 
 [INPUT]
 INPUT general information from a resume:
@@ -595,7 +592,7 @@ Also, do not forget to include the field names at the start of each line, as per
 
 [OUTPUT FORMAT]
 Skills Summary: Wholistic summary of the resume's skills, presented as a single continuous string of text.
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+
 
 [INPUT]
 INPUT "Skills" section from a resume:
@@ -637,7 +634,7 @@ Given a wholistic summary of a resume and a job description, tailor a Summary se
 
 [OUTPUT FORMAT]
 Summary: Despite limited work experience, I bring strong work ethic, adaptability and curiosity. Experienced in **fill-in:"specific skills thanks to certain experiences"**. Now seeking a position that offers growth and learning opportunities.
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+
 
 [INPUT]
 INPUT wholistic summary of a resume:
@@ -686,13 +683,14 @@ Prune the following 'Skills' section from a resume to best match the job descrip
 - Aside from the information requested, do not include any additional text or explanations.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
+- Do not break down any OUTPUT FORMAT lines into multiple instances(e.g. do not output 2 lines labeled "Technical Skills:", one is sufficient as per the format)
 
 [OUTPUT FORMAT]
 Skills:
 Programming Languages: Programming Language 1, Programming Language 2, Programming Language 3
 Technical Skills: Technical Skill 1, Technical Skill 2, Technical Skill 3, Technical Skill 4, Technical Skill 5
 Soft Skills: Soft Skill 1, Soft Skill 2, Soft Skill 3, Soft Skill 4
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+
 
 [INPUT]
 INPUT list of "Programming Languages", "Technical Skills" and "Soft Skills" considered to be relevant for a paticular job description:
@@ -736,7 +734,7 @@ Given a raw untailored resume section and and its counterpart from an already ta
 
 [OUTPUT FORMAT]
 Comparative Analysis: {section_name} Section; Analysis of the tailored resume section vs the raw section, as a single line of text.
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+
 
 [INPUT]
 INPUT raw untailored resume section:
@@ -791,7 +789,7 @@ New Paragraph0: Cover Letter introduction, mentioning the job title and company,
 New Paragraph1: Explain why the candidate is a good fit for the role, briefly mentioning the most relevant information from the resume that matches the job description.
 New Paragraph2: Provide further information about the candidate's qualifications and how they align with the job requirements. Make use of specific examples and metrics to demonstrate impact (if applicable).
 New Paragraph3: Closing statement, thanking the employer for their time and consideration. Invite them to contact the candidate for further discussion, providing email address.
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+
 
 [INPUT]
 INPUT wholistic summary of a resume:
@@ -839,7 +837,7 @@ Follow these guidelines:
 Consistency Checker Vs Job Description:
 Inconsistencies With Job Description: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+
 
 [INPUT]
 INPUT summary of a resume tailored to a particular job description:
@@ -885,7 +883,7 @@ Follow these guidelines:
 Consistency Checker Vs Job Description:
 Inconsistencies With Job Description: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+
 
 [INPUT]
 INPUT cover letter tailored to a particular job description:
@@ -927,7 +925,7 @@ Follow these guidelines when extracting courses and returning them:
 
 [OUTPUT FORMAT]
 Courses: XXX001 Course Name1, XXX002 Course Name2, XXX003 Course Name3...
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+
 
 [INPUT]
 INPUT list of courses taken on a given program:
@@ -1078,7 +1076,7 @@ Given 2 resume section summaries, create a new summary that incorporates all two
 
 [OUTPUT FORMAT]
 Sections Summary: {section1_name} + {section2_name} Summary; Wholistic summary of the sections' information, competencies, achievements, and skills.
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+
 
 [INPUT]
 INPUT {section1_name} section summary:
@@ -1126,7 +1124,7 @@ Given 3 resume section summaries, create a new summary that incorporates all two
 
 [OUTPUT FORMAT]
 Sections Summary: {section1_name} + {section2_name} + {section3_name} Summary; Wholistic summary of the sections' information, competencies, achievements, and skills.
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+
 
 [INPUT]
 INPUT {section1_name} section summary:
@@ -1177,7 +1175,7 @@ Given 4 resume section summaries, create a new summary that incorporates all two
 
 [OUTPUT FORMAT]
 Sections Summary: {section1_name} + {section2_name} + {section3_name} + {section4_name} Summary; Wholistic summary of the sections' information, competencies, achievements, and skills.
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+
 
 [INPUT]
 INPUT {section1_name} section summary:
@@ -1276,7 +1274,7 @@ Given all summarized sections of a resume, create a wholistic summary of all of 
 
 [OUTPUT FORMAT]
 Summary: Wholistic summary of all sections, presented as a single continuous string of text.
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+
 
 [INPUT]
 INPUT summarized sections of a resume:
@@ -1365,7 +1363,7 @@ Consistency Checker Vs Original Resume:
 Inconsistencies With Original Resume: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 Inconsistencies With Self: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
-Dummy: No output needed for this field. Its purpouse is to serve as an output delimiter.
+
 
 [INPUT]
 INPUT list containing a per-section analysis of the resumes, comparing the synthesized data in the new resume against the original:
