@@ -43,7 +43,7 @@ def check_summaries(update_job_desc = False, update_resume = False):
     system_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", system_file))
     job_desc = job_desc_textbox.get("1.0", tk.END).strip()
     global summarized_job_desc, summarized_resume, current_cv_text
-    if summarized_job_desc == "" or update_job_desc:
+    if update_job_desc:
         ollama_func_name = "summarize_job_description"
         runtime_info_temp = {
             "call_id": ollama_func_name, 
@@ -58,7 +58,7 @@ def check_summaries(update_job_desc = False, update_resume = False):
         }
         
         summarized_job_desc = tailor_robust.ollama_call(runtime_info=runtime_info_temp)#Standard
-    if (summarized_resume == "" or update_resume) and current_cv_text:
+    if update_resume and current_cv_text:
         #current_cv_text is supposed to be the end product, but it gets assigned after step 4, so do keep that in mind when debugging
         ollama_func_name = "step0_tailor_summary"
         runtime_info_temp = {
@@ -381,7 +381,7 @@ def tailor_cv(root, show = True):
                                 "system": system_text,
                             },
                             "format": {
-                                "courses": unchanged_dict[key][i]["courses"],
+                                "courses": ', '.join(unchanged_dict[key][i]["courses"]),
                                 "job_description": job_desc
                             },
                 }

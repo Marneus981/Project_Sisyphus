@@ -58,11 +58,11 @@ PAYLOADS= {
                    "cv_data": "",
                    "cv_data_orig": "",
                    "prefix_dict": {
-                       "Consistency Checker Vs Resume:":"[0]",
-                       "Inconsistencies With Resume:":"[1]",
-                       "Inconsistencies With Self:":"[1]",
-                       "Suggestions for Improvement:":"[1]",
-                       "Dummy:":"[BIG DUMMY]"
+                       "Consistency Checker Vs Resume:":["[0]",False],
+                       "Inconsistencies With Resume:":["[1]",True],
+                       "Inconsistencies With Self:":["[1]",True],
+                       "Suggestions for Improvement:":["[1]",True],
+                       "Dummy:":["[BIG DUMMY]"]
                    }  
                    },
         "prompt_in": 
@@ -81,9 +81,9 @@ The report should follow these guidelines:
 
 [OUTPUT FORMAT]
 Consistency Checker Vs Resume:
-Inconsistencies With Resume: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
-Inconsistencies With Self: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
-Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+Inconsistencies With Resume: Number of inconsistencies found (return 'None.' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+Inconsistencies With Self: Number of inconsistencies found (return 'None.' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
+Suggestions for Improvement: List of suggestions for improvement, if any (return 'None.' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 
 
 [INPUT]
@@ -109,15 +109,15 @@ INPUT wholistic summary of the resume meant to accompany the above cover letter 
         "format": {#Set at runtime
                    "job_description": "",
                    "prefix_dict": {
-                       "Company Name:":"[0]",
-                       "Job Title:":"[0]",
-                       "Key responsibilities:":"[0]",
-                       "Requirements:":"[0]",
-                       "Programming Languages":"[0]",
-                       "Technical Skills:":"[0]",
-                       "Soft Skills:":"[0]",
-                       "Other Skills:":"[0]",
-                       "Dummy:":"[BIG DUMMY]"
+                       "Company Name:":["[0]",True],
+                       "Job Title:":["[0]",True],
+                       "Key responsibilities:":["[0]",True],
+                       "Requirements:":["[0]",True],
+                       "Programming Languages":["[0]",True],
+                       "Technical Skills:":["[0]",True],
+                       "Soft Skills:":["[0]",True],
+                       "Other Skills:":["[0]",True],
+                       "Dummy:":["[BIG DUMMY]"]
                    } 
                    },
         "prompt_in": 
@@ -144,9 +144,9 @@ Job Title: Position Name
 Key responsibilities: List of key responsabilities as a single block of text separated by ";"
 Requirements: List of basic requirements as a single block of text separated by ";"
 Programming Languages: List of programming languages required, presented as a single block of text separated by ";"
-Technical Skills: List of technical skills required, presented as a single block of text separated by ";"
-Soft Skills:Soft List of soft skills required, presented as a single block of text separated by ";"
-Other Skills:Other List of other skills required, presented as a single block of text separated by ";"
+Technical Skills: List of technical skills required, presented as a single block of text separated by ";" (if no skills, output "None required.")
+Soft Skills:Soft List of soft skills required, presented as a single block of text separated by ";" (if no skills, output "None required.")
+Other Skills:Other List of other skills required, presented as a single block of text separated by ";" (if no skills, output "None required.")
 
 
 [INPUT]
@@ -171,8 +171,8 @@ INPUT job description:
                    "raw_cv_data": "",
                    "job_description": "",
                     "prefix_dict": {
-                        "Experience:" : "[R]",
-                        "Dummy:" : "[BIG DUMMY]"
+                        "Experience:" : ["[R]",True],
+                        "Dummy:" : ["[BIG DUMMY]"]
                     }
                    },
         "prompt_in": 
@@ -204,7 +204,7 @@ INPUT job description:
 
 """,
         "ollama_url": DEFAULT_URL, #Set at runtime
-        "sample_starts": ["flexible", "cap_letters", "[R]"]
+        "sample_starts": ["flexible", "cap_letters", "[R]Experience:"]
     },
     "step3_volunteering_and_leadership": #DONE
     {
@@ -219,9 +219,9 @@ INPUT job description:
                    "experience": "",
                    "job_description": "",
                    "prefix_dict": {
-                       "Description:":"[1]",
-                       "Skills:":"[1]",
-                       "Dummy:":"[BIG DUMMY]"
+                       "Description:":["[1]",True],
+                       "Skills:":["[1]",True],
+                       "Dummy:":["[BIG DUMMY]"]
                    } 
                    },
         "prompt_in": 
@@ -266,8 +266,8 @@ INPUT "Description" and "Skills" attributes of a role belonging to the "Voluntee
             "raw_cv_data": "",
             "job_description": "",
             "prefix_dict": {
-                "Experience:" : "[J]",
-                "Dummy:" : "[BIG DUMMY]"
+                "Experience:" : ["[J]",True],
+                "Dummy:" : ["[BIG DUMMY]"]
             }
         },
         "prompt_in": 
@@ -300,7 +300,7 @@ INPUT job description:
 
 """,
         "ollama_url": DEFAULT_URL,
-        "sample_starts": ["flexible", "cap_letters", "[J]"]
+        "sample_starts": ["flexible", "cap_letters", "[J]Experience:"]
     },
     "step3_work_experience": #DONE
     {
@@ -315,9 +315,9 @@ INPUT job description:
             "experience": "",
             "job_description": "",
             "prefix_dict": {
-                       "Description:":"[1]",
-                       "Skills:":"[1]",
-                       "Dummy:":"[BIG DUMMY]"
+                       "Description:":["[1]",True],
+                       "Skills:":["[1]",True],
+                       "Dummy:":["[BIG DUMMY]"]
                    } 
         },
         "prompt_in": 
@@ -362,8 +362,8 @@ INPUT "Description" and "Skills" subsections of a role belonging to the "Work Ex
             "raw_cv_data": "",
             "job_description": "",
             "prefix_dict": {
-                "Experience:" : "[P]",
-                "Dummy:" : "[BIG DUMMY]"
+                "Experience:" : ["[P]",True],
+                "Dummy:" : ["[BIG DUMMY]"]
             }
         },
         "prompt_in": 
@@ -396,7 +396,7 @@ INPUT job description:
 
 """,
         "ollama_url": DEFAULT_URL,
-        "sample_starts": ["flexible", "cap_letters", "[P]"]
+        "sample_starts": ["flexible", "cap_letters", "[P]Experience:"]
     },
     "step3_projects": #DONE
     {
@@ -411,9 +411,9 @@ INPUT job description:
             "experience": "",
             "job_description": "",
             "prefix_dict": {
-                       "Description:":"[1]",
-                       "Skills:":"[1]",
-                       "Dummy:":"[BIG DUMMY]"
+                       "Description:":["[1]",True],
+                       "Skills:":["[1]",True],
+                       "Dummy:":["[BIG DUMMY]"]
                    } 
         },
         "prompt_in": 
@@ -459,8 +459,8 @@ INPUT "Description" and "Skills" subsections of a project belonging to the "Proj
             "experiences": "",
             "job_description": "",
             "prefix_dict": {
-                "Experience:" : "[E]",
-                "Dummy:" : "[BIG DUMMY]"
+                "Experience:" : ["[E]",True],
+                "Dummy:" : ["[BIG DUMMY]"]
             }
         },
         "prompt_in": 
@@ -491,7 +491,7 @@ INPUT experiences from 3 resume sections (Volunteering and Leadership, Work Expe
 
 """,
         "ollama_url": DEFAULT_URL,
-        "sample_starts": ["flexible", "cap_letters", "[E]"]
+        "sample_starts": ["flexible", "cap_letters", "[E]Experience:"]
     },
     "summarize_section": #DONE
     {
@@ -506,8 +506,8 @@ INPUT experiences from 3 resume sections (Volunteering and Leadership, Work Expe
             "section": "",
             "section_name": "",
             "prefix_dict": {
-                "Section Summary:" : "[S]",
-                "Dummy:" : "[BIG DUMMY]"
+                "Section Summary:" : ["[S]",True],
+                "Dummy:" : ["[BIG DUMMY]"]
             }
         },
         "prompt_in": 
@@ -530,7 +530,7 @@ INPUT section from a resume:
 
 """,
         "ollama_url": DEFAULT_URL,
-        "sample_starts": ["strict", "cap_letters", "[S]"]
+        "sample_starts": ["strict", "cap_letters", "[S]Section Summary:"]
     },
     "summarize_general_info": #DONE
     {
@@ -544,8 +544,8 @@ INPUT section from a resume:
         "format": {
             "general_info_text": "",
             "prefix_dict": {
-                "General Information Summary:":"[S]",
-                "Dummy:" : "[BIG DUMMY]"
+                "General Information Summary:":["[S]",True],
+                "Dummy:" : ["[BIG DUMMY]"]
             }
         },
         "prompt_in": 
@@ -580,8 +580,8 @@ INPUT general information from a resume:
         "format": {
             "skill_section": "",
             "prefix_dict": {
-                "Skills Summary:":"[S]",
-                "Dummy:" : "[BIG DUMMY]"
+                "Skills Summary:":["[S]",True],
+                "Dummy:" : ["[BIG DUMMY]"]
             }
         },
         "prompt_in": 
@@ -616,8 +616,8 @@ INPUT "Skills" section from a resume:
             "prev_summary": "",
             "job_description": "",
             "prefix_dict":{
-                "Summary:": "[0]",
-                "Dummy:" : "[BIG DUMMY]"
+                "Summary:": ["[0]",True],
+                "Dummy:" : ["[BIG DUMMY]"]
             }
         },
         "prompt_in": 
@@ -661,11 +661,11 @@ INPUTjob description:
             "cv_data": "",
             "job_description": "",
             "prefix_dict": {
-                "Programming Languages:":"[1]",
-                "Technical Skills:":"[1]",
-                "Soft Skills:":"[1]",
-                "Skills:":"[0]",
-                "Dummy:" : "[BIG DUMMY]"
+                "Programming Languages:":["[1]", True],
+                "Technical Skills:":["[1]", True],
+                "Soft Skills:":["[1]", True],
+                "Skills:":["[0]", False],
+                "Dummy:" : ["[BIG DUMMY]"]
 
             }
         },
@@ -718,8 +718,8 @@ INPUT job description:
             "new_resume_s_txt": "",
             "section_name": "",
             "prefix_dict":{
-                "Comparative Analysis:": "[0]",
-                "Dummy" : "[BIG DUMMY]"
+                "Comparative Analysis:": ["[0]",True],
+                "Dummy" : ["[BIG DUMMY]"]
             }
         },
         "prompt_in": 
@@ -746,7 +746,7 @@ INPUT already tailored resumesection:
 
 """,
         "ollama_url": DEFAULT_URL,
-        "sample_starts": ["strict", "digits", "[0]"]
+        "sample_starts": ["strict", "digits", "[0]Comparative Analysis:"]
     },
     "make_cover_letter_text": #DONE
     {
@@ -761,12 +761,12 @@ INPUT already tailored resumesection:
             "cv_data": "",
             "job_description": "",
             "prefix_dict":{
-                "Cover Letter:":"[0]",
-                "New Paragraph0:":"[1]",
-                "New Paragraph2:":"[1]",
-                "New Paragraph3:":"[1]",
-                "New Paragraph1:":"[1]",
-                "Dummy:" : "[BIG DUMMY]"
+                "Cover Letter:":["[0]",False],
+                "New Paragraph0:":["[1]",True],
+                "New Paragraph2:":["[1]",True],
+                "New Paragraph3:":["[1]",True],
+                "New Paragraph1:":["[1]",True],
+                "Dummy:" : ["[BIG DUMMY]"]
             }
         },
         "prompt_in": 
@@ -816,10 +816,10 @@ INPUT summary of the job description it has been tailored to:
             "cv_data": "",
             "job_description": "",
             "prefix_dict" : {
-                "Consistency Checker Vs Job Description:":"[0]",
-                "Inconsistencies With Job Description:":"[1]",
-                "Suggestions for Improvement:":"[1]",
-                "Dummy:" : "[BIG DUMMY]"
+                "Consistency Checker Vs Job Description:":["[0]",False],
+                "Inconsistencies With Job Description:":["[1]",True],
+                "Suggestions for Improvement:":["[1]",True],
+                "Dummy:" : ["[BIG DUMMY]"]
             }
         },
         "prompt_in": 
@@ -862,10 +862,10 @@ INPUT job description the aforementioned resume has been tailored to:
             "cv_data": "",
             "job_description": "",
             "prefix_dict" : {
-                "Consistency Checker Vs Job Description:":"[0]",
-                "Inconsistencies With Job Description:":"[1]",
-                "Suggestions for Improvement:":"[1]",
-                "Dummy:" : "[BIG DUMMY]"
+                "Consistency Checker Vs Job Description:":["[0]",False],
+                "Inconsistencies With Job Description:":["[1]",True],
+                "Suggestions for Improvement:":["[1]",True],
+                "Dummy:" : ["[BIG DUMMY]"]
             }
         },
         "prompt_in": 
@@ -908,8 +908,8 @@ INPUT job description the aforementioned resume has been tailored to:
             "courses": "",
             "job_description": "",
             "prefix_dict" : {
-                "Courses:":"[1]",
-                "Dummy:" : "[BIG DUMMY]"
+                "Courses:":["[1]",True],
+                "Dummy:" : ["[BIG DUMMY]"]
             }
         },
         "prompt_in": 
@@ -961,8 +961,8 @@ INPUT sections from a resume:
 
 """,
             "prefix_dict": {
-                "Section Summary:" : "[S]",
-                "Dummy:" : "[BIG DUMMY]"
+                "Section Summary:" : ["[S]", True],
+                "Dummy:" : ["[BIG DUMMY]"]
             }
         },
         "prompt_in":
@@ -977,7 +977,7 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
 [OUTPUT FORMAT]
 """,
         "ollama_url": DEFAULT_URL,
-        "sample_starts": ["flexible", "cap_letters", "[S]"]
+        "sample_starts": ["flexible", "cap_letters", "[S]Section Summary:"]
     },
     ##similar start
     "tailor_volunteering_and_leadership": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
@@ -998,7 +998,8 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
             }, 
         "prompt_in": "", 
         "ollama_url": DEFAULT_URL,
-        "sample_starts": ["flexible", "digits", "[0]", "[1]"]
+        "sample_starts": ["flexible", "digits", "[0]Volunteering and Leadership:",
+                           "[1]Role:","[1]Organization:","[1]Location:","[1]Duration:","[1]Description:","[1]Skills:"]
     },
     "tailor_work_experience": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
     {
@@ -1018,7 +1019,7 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
             }, 
         "prompt_in": "", 
         "ollama_url": DEFAULT_URL,
-        "sample_starts": ["flexible", "digits", "[0]", "[1]"]
+        "sample_starts": ["flexible", "digits", "[0]Work Experience:", "[1]Job Title:","[1]Company:", "[1]Location:", "[1]Duration:", "[1]Description:","[1]Skills:"]
     },
     "tailor_projects": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
     {
@@ -1038,7 +1039,7 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
             }, 
         "prompt_in": "", 
         "ollama_url": DEFAULT_URL,
-        "sample_starts": ["flexible", "digits", "[0]", "[1]"]
+        "sample_starts": ["flexible", "digits", "[0]Projects:", "[1]Project Title:","[1]URL:", "[1]Type:", "[1]Duration:", "[1]Description:", "[1]Skills:"]
     },
     ##similar end
     ##similar start
@@ -1061,8 +1062,8 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
             "non_standard_calls":["batch_summarize_sections"],
             "async_calls": ["standard_ollama_call_async"],
             "prefix_dict": {
-                "Sections Summary:" : "[S]",
-                "Dummy:" : "[BIG DUMMY]"
+                "Sections Summary:" : ["[S]",True],
+                "Dummy:" : ["[BIG DUMMY]"]
             }
             }, 
         "prompt_in": 
@@ -1109,8 +1110,8 @@ INPUT {section2_name} section summary:
             "non_standard_calls":["batch_summarize_sections"],
             "async_calls": ["standard_ollama_call_async"],
             "prefix_dict": {
-                "Sections Summary:" : "[S]",
-                "Dummy:" : "[BIG DUMMY]"
+                "Sections Summary:" : ["[S]",True],
+                "Dummy:" : ["[BIG DUMMY]"]
             }
             }, 
         "prompt_in": 
@@ -1160,8 +1161,8 @@ INPUT {section3_name} section summary:
             "non_standard_calls":["batch_summarize_sections"],
             "async_calls": ["standard_ollama_call_async"],
             "prefix_dict": {
-                "Sections Summary:" : "[S]",
-                "Dummy:" : "[BIG DUMMY]"
+                "Sections Summary:" : ["[S]",True],
+                "Dummy:" : ["[BIG DUMMY]"]
             }
             }, 
         "prompt_in": 
@@ -1213,7 +1214,10 @@ INPUT {section4_name} section summary:
             }, 
         "prompt_in": "", #Empty
         "ollama_url": DEFAULT_URL,
-        "sample_starts": ["flexible", "digits", "[0]", "[1]"]#Might lead to error, check later
+        "sample_starts": ["flexible", "digits", 
+                          "[0]Volunteering and Leadership:","[1]Role:","[1]Organization:","[1]Location:","[1]Duration:","[1]Description:","[1]Skills:",
+                          "[0]Work Experience:", "[1]Job Title:","[1]Company:",
+                          "[0]Projects:", "[1]Project Title:","[1]URL:", "[1]Type:"]#Might lead to error, check later
     },
     "slide_summary": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
     {
@@ -1254,8 +1258,8 @@ INPUT {section4_name} section summary:
             "standard_calls": [],
             "non_standard_calls": ["slide_summary"],
             "prefix_dict" : {
-                "Summary:":"[0]",
-                "Dummy:" : "[BIG DUMMY]"
+                "Summary:":["[0]",True],
+                "Dummy:" : ["[BIG DUMMY]"]
             }
         }, 
         "prompt_in": 
@@ -1323,7 +1327,7 @@ INPUT summarized sections of a resume:
         }, 
         "prompt_in": "",#Empty
         "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
-        "sample_starts": ["flexible", "digits", "[0]"]
+        "sample_starts": ["flexible", "digits", "[0]Comparative Analysis:"]
     },
     "consistency_checker_vs_cv_cv": #DONE
     {
@@ -1339,10 +1343,10 @@ INPUT summarized sections of a resume:
             "standard_calls": [],
             "non_standard_calls": ["new_vs_old_resume"],
             "prefix_dict" : {
-                "Consistency Checker Vs Original Resume:":"[0]",
-                "Inconsistencies With Original Resume:":"[1]",
-                "Suggestions for Improvement:":"[1]",
-                "Dummy:" : "[BIG DUMMY]"
+                "Consistency Checker Vs Original Resume:":["[0]",False],
+                "Inconsistencies With Original Resume:":["[1]",True],
+                "Suggestions for Improvement:":["[1]",True],
+                "Dummy:" : ["[BIG DUMMY]"]
             }
         }, 
         "prompt_in": 
@@ -1390,7 +1394,9 @@ INPUT list containing a per-section analysis of the resumes, comparing the synth
         }, 
         "prompt_in": "",#Empty
         "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
-        "sample_starts": ["flexible", "digits", "[0]","[1]"]
+        "sample_starts": ["strict", "digits", "[0]Name:","[0]Languages:",
+                          "[0]Contact Information:","[1]Address:","[1]Phone:","[1]Email:","[1]LinkedIn:", "[1]Github:","[1]Portfolio:",
+                          "[0]Cover Letter:","[1]New Paragraph0:","[1]New Paragraph1:","[1]New Paragraph2:","[1]New Paragraph3:"]
     },
     #ASYNC
     "standard_ollama_call_async": #WIP
@@ -1403,13 +1409,13 @@ INPUT list containing a per-section analysis of the resumes, comparing the synth
             "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
         "format": {
             "prefix_dict": {
-                "Section Summary:" : "[S]",
-                "Dummy:" : "[BIG DUMMY]"
+                "Section Summary:" : ["[S]",True],
+                "Dummy:" : ["[BIG DUMMY]"]
             }
             }, 
         "prompt_in": "", #Set at runtime
         "ollama_url": DEFAULT_URL,
-        "sample_starts": ["flexible", "cap_letters", "[S]"]#Might lead to error, check later
+        "sample_starts": ["strict", "cap_letters", "[S]Section Summary:"]#Might lead to error, check later
     }
 
 }

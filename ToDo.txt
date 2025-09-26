@@ -3,11 +3,7 @@
         [WIP]
             Prompt Engineering
             Dynamic template system
-            Make a global variable to contain the first wholistic summary generated during tailor_cv for use in tailor_cl
-            New filtering system
-                Make it so that QA knows:
-                    Which fields need to have content (and check for that content)
-                    How many fields (exactly) need to exist in the output
+            New filtering system:
                 Remove prefixes from inputs
 
             Add a condition where a tailor function fails if a format field is missing or ""

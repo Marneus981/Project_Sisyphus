@@ -78,38 +78,50 @@ def filter_output(model_output, prefix_dict ={}):
         for line in lines:
             line_ctr = line_ctr +  1
             line = line.strip()
-            line = line.replace("[","")
-            line = line.replace("]","")
+            line = line.replace("[1]","").replace("[0]","").replace("[S]","").replace("[E]","").replace("[R]","").replace("[J]","").replace("[P]","").replace("[","").replace("]","")
             match = ""
             for section in prefix_dict:
                 if line.startswith(section): 
                     match = section
                     break
             if match != "": #Check if we need to append current working field
-                print(f"Match: {match} on line '{line}' ")
+                #print(f"Match: {match} on line '{line}' ")
                 if field_count == 0:
                     field_count =+ 1
-                    current_field = prefix_dict[match] + line
+                    current_field = prefix_dict[match][0] + line
                 else:
                     filtered_lines.append(current_field)
                     field_count =+ 1
-                    current_field = prefix_dict[match] + line
+                    current_field = prefix_dict[match][0] + line
                 if match == "Dummy:":
                     break
-                print(f"line_ctr is {line_ctr} while len(lines) is {len(lines)}")
+                #print(f"line_ctr is {line_ctr} while len(lines) is {len(lines)}")
                 if line_ctr == len(lines):
                     filtered_lines.append(current_field)
             else:
-                print(f"No Match on line '{line}' ")
+                #print(f"No Match on line '{line}' ")
                 if field_count == 0 :
                     continue
                 else:
                     current_field = current_field+ " " + line
-                    print(f"line_ctr is {line_ctr} while len(lines) is {len(lines)}")
+                    #print(f"line_ctr is {line_ctr} while len(lines) is {len(lines)}")
                     if line_ctr == len(lines):
                         filtered_lines.append(current_field)
         if filtered_lines == []:
             raise ValueError(f"[ERROR]{function_name}: No valid answer found")
+        return_lines = []
+        for line in filtered_lines:
+            line = line.strip()
+            for section in prefix_dict:
+                if line.startswith(prefix_dict[section][0] + section): 
+                    if prefix_dict[section][1]: 
+                        if line.replace(section,"").strip() == "":
+                            raise ValueError(f"[ERROR]{function_name}: Matching field {section} missing data")
+                        else: 
+                            return_lines.append(line)
+                    else:
+                        return_lines.append(prefix_dict[section][0] + section)
+                    break
         return "\n".join(filtered_lines)
     else: return model_output
 
@@ -187,6 +199,19 @@ def filter_output(model_output, prefix_dict ={}):
         #         raise ValueError(f"[ERROR]{function_name}: output is all wrong, no fields present")
         #     return "\n".join(prefixed_lines)
     #endregion    
+
+def missing_format_pieces(prompt,format):
+    function_name = inspect_function()
+    pattern = r"\{{1}\w+\}{1}"
+    matches = re.findall(pattern, prompt)
+    if matches:
+        for match in matches:
+            temp_match = match.replace("{","").replace("}","")
+            if temp_match in format:
+                print(f"[INFO]{function_name}: regex match '{temp_match}'")
+                print(f"[INFO]{function_name}: regex match format value '{format[temp_match]}'")
+                if format[temp_match].strip() == "":
+                    raise ValueError(f"[ERROR]{function_name}: regex match '{temp_match}' is empty")
 
 @log_time
 def optimize_summarize_sections_calls(no_sections = 0, chunk_sz = 4):

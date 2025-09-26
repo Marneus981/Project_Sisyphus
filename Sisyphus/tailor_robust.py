@@ -346,7 +346,7 @@ def augment_output(input_text, reference_dict, type):
             for item in reference_list:
                 #Check if role field exists in item
                 if 'role' in item:
-                    if line.strip() == item['role']:
+                    if line.strip().lower() == item['role'].lower():
                         return_list.append(item)
                         reference_list.remove(item)
                         break
@@ -361,7 +361,7 @@ def augment_output(input_text, reference_dict, type):
             for item in reference_list:
                 #Check if job_title field exists in item
                 if 'job_title' in item:
-                    if line.strip() == item['job_title']:
+                    if line.strip().lower() == item['job_title'].lower():
                         return_list.append(item)
                         reference_list.remove(item)
                         break
@@ -376,7 +376,7 @@ def augment_output(input_text, reference_dict, type):
             for item in reference_list:
                 #Check if project_title field exists in item
                 if 'project_title' in item:
-                    if line.strip() == item['project_title']:
+                    if line.strip().lower() == item['project_title'].lower():
                         return_list.append(item)
                         reference_list.remove(item)
                         break
@@ -395,19 +395,19 @@ def augment_output(input_text, reference_dict, type):
             for item in super_list:
                 #Check if role field exists in item
                 if 'role' in item:
-                    if line.strip() == item['role']:
+                    if line.strip().lower() == item['role'].lower():
                         return_list[0].append(item)
                         super_list.remove(item)
 
                         break
                 if 'job_title' in item:
-                    if line.strip() == item['job_title']:
+                    if line.strip().lower() == item['job_title'].lower():
                         return_list[1].append(item)
                         super_list.remove(item)
 
                         break
                 if 'project_title' in item:
-                    if line.strip() == item['project_title']:
+                    if line.strip().lower() == item['project_title'].lower():
                         return_list[2].append(item)
                         super_list.remove(item)
 
@@ -523,6 +523,7 @@ def standard_ollama_call(call_info =template_call_info):
     if search_pattern:
         if config.DEBUG["WARNING_LOGGING"]: logging.warning(f"[WARNING][OLLAMA]{function_name}: prompt_in contains placeholders")
     if search_pattern and format != {}:
+        helpers.missing_format_pieces(prompt_in,format)
         prompt = prompt_in.format(**format)
     else:
         prompt = prompt_in
@@ -587,9 +588,9 @@ def batch_summarize_sections(call_info = template_call_info):
     
     prompt = prompt_in
     for name in section_names:
-        prompt += f"Section Summary: {name} Summary; Wholistic summary of the section's information."
+        prompt =prompt + f"Section Summary: {name} Summary; Wholistic summary of the section's information.\n"
 
-    prompt += "\n" 
+    helpers.missing_format_pieces(call_info["format"]["second_half"],format)
     prompt +=  call_info["format"]["second_half"].format(**format)
 
     payload = payload_in.copy()
@@ -1108,6 +1109,7 @@ def sliding_window_two_sections(call_info = template_call_info):
         "section1_name":section_names[0],
         "section2_name":section_names[1]
     }
+    helpers.missing_format_pieces(prompt_in,formatting)
     prompt = prompt_in.format(**formatting)
     payload = payload_in.copy()
     payload["prompt"] = prompt
@@ -1205,9 +1207,12 @@ def sliding_window_three_sections(call_info = template_call_info):
                 "ollama_url":ollama_url
             }
             ollama_func_name = format["non_standard_calls"][0] 
-            summary = ollama_call(runtime_info=runtime_info_temp, function=globals()[ollama_func_name])
+            summaries_raw = ollama_call(runtime_info=runtime_info_temp, function=globals()[ollama_func_name])
             #helpers.filter_output(summary.strip(), mode= "cap_letters")#REDUNDANT?
-            summaries.append(summary.strip())
+            raw_summaries_list = summaries_raw.strip().split("\n")
+            for sum in raw_summaries_list:
+
+                summaries.append(sum.strip())
             if upper_bound == 3:
                 break
         if mode == "parallel":
@@ -1236,6 +1241,7 @@ def sliding_window_three_sections(call_info = template_call_info):
         "section2_name":section_names[1],
         "section3_name":section_names[2]
     }
+    helpers.missing_format_pieces(prompt_in,formatting)
     prompt = prompt_in.format(**formatting)
     payload = payload_in.copy()
     payload["prompt"] = prompt
@@ -1338,9 +1344,11 @@ def sliding_window_four_sections(call_info = template_call_info):
                 "ollama_url":ollama_url
             }
             ollama_func_name = format["non_standard_calls"][0] 
-            summary = ollama_call(runtime_info=runtime_info_temp, function=globals()[ollama_func_name])
+            summaries_raw = ollama_call(runtime_info=runtime_info_temp, function=globals()[ollama_func_name])
             #helpers.filter_output(summary.strip(), mode= "cap_letters")#REDUNDANT?
-            summaries.append(summary.strip())
+            raw_summaries_list = summaries_raw.strip().split("\n")
+            for sum in raw_summaries_list:
+                summaries.append(sum.strip())
             if upper_bound == 4:
                 break
         if mode == "parallel":
@@ -1372,6 +1380,7 @@ def sliding_window_four_sections(call_info = template_call_info):
         "section3_name":section_names[2],
         "section4_name":section_names[3]
     }
+    helpers.missing_format_pieces(prompt_in,formatting)
     prompt = prompt_in.format(**formatting)
     payload = payload_in.copy()
     payload["prompt"] = prompt
@@ -1452,7 +1461,7 @@ def slide_summary(call_info = template_call_info):
         elif key in skills_key:
             #helpers.filter_output()#REDUNDANT?
             temp = parsers.inv_parse_cv_out(item).strip()
-            skill_txt += temp + "\n"
+            skill_txt = skill_txt + temp + "\n"
         elif key in special_keys:
             if skill_section:
                 #helpers.filter_output()#REDUNDANT?
@@ -1549,20 +1558,21 @@ def slide_summary(call_info = template_call_info):
         "ollama_url": ollama_url
     }
     general_info_summary = ollama_call(runtime_info=runtime_info_temp) #standard call
-    runtime_info_temp = {
-        "call_id": format["standard_calls"][1],
-        "payload_in": {
-            "model": payload_in["model"],
-            "system": systems[-1],
-        },
-        "format": {
-            "skill_section": skill_txt
-        },
-        "ollama_url": ollama_url
-    }
-    skills_summary = ollama_call(runtime_info=runtime_info_temp) #standard call
     slide_results.insert(0, general_info_summary)
-    slide_results.append(skills_summary)
+    if skill_section:
+        runtime_info_temp = {
+            "call_id": format["standard_calls"][1],
+            "payload_in": {
+                "model": payload_in["model"],
+                "system": systems[-1],
+            },
+            "format": {
+                "skill_section": skill_txt
+            },
+            "ollama_url": ollama_url
+        }
+        skills_summary = ollama_call(runtime_info=runtime_info_temp) #standard call
+        slide_results.append(skills_summary)
     return slide_results
 
 @log_time #USED IN MAIN ; returns ERROR as text
@@ -1616,6 +1626,7 @@ def step0_tailor_summary(call_info = template_call_info):
     slides_txt_temp = {
         "slides_txt": slides_txt
     }
+    helpers.missing_format_pieces(prompt_in,slides_txt_temp)
     prompt = prompt_in.format(**slides_txt_temp)
     payload = payload_in.copy()
     payload["prompt"] = prompt
@@ -1784,6 +1795,7 @@ def consistency_checker_vs_cv_cv(call_info = template_call_info):
     all_analysis_dct = {
         "all_analysis": all_analysis
     }
+    helpers.missing_format_pieces(prompt_in,all_analysis_dct)
     prompt = prompt_in.format(**all_analysis_dct)
     payload = payload_in.copy()
     payload["prompt"] = prompt
@@ -1877,6 +1889,7 @@ async def standard_ollama_call_async(session, retries = config.CONFIG["MODELS"][
     if call_id not in payloads.ASYNC:
         return f"[ERROR][OLLAMA][ASYNC]{function_name}: call_id {call_id} not found in ASYNC payloads"
     if format != {}:
+        helpers.missing_format_pieces(prompt_in,format)
         prompt = prompt_in.format(**format)
     else:
         prompt = prompt_in
