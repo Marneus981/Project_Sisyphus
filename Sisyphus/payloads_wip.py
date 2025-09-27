@@ -226,16 +226,20 @@ INPUT job description:
                    },
         "prompt_in": 
 """REQUEST:
-Given the "Description" and "Skills" attributes of a role belonging to the "Volunteering and Leadership" section of a resume and a job description, rewrite the experience to best match the job description, following these guidelines:
-- Do not include any information not present in the original experience.
-- In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
-- In the Skills subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
-- Do not use line breaks inside any subsection. Do not use the ":" character in the Description.
-- Skills must be comma-separated and follow the format below. 
-- If there are no skills in a given category, use " ", then follow up as the format below indicates 
-    - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
-- Return the requested information, strictly filling out the OUTPUT FORMAT.
-- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
+Given the "Description" and "Skills" subsections of a role belonging to the "Volunteering and Leadership" section of a resume and a job description, rewrite the "Description" and "Skills" subsections following these guidelines:
+- In the "Description" subsection:
+    - Rewrite to highlight achievements and relevant skills, using up to 2 sentences (max 20 words each), as a single line of text.
+- In the "Skills" subsection:
+    - Select up to 6 skills relevant to the job description (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
+    - Skills must be comma-separated and follow the format below.
+    - If there are no skills in a given category, use " ", then follow up as the format below indicates 
+        - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
+- Prioritize using keywords found in both the job description and the "Description" and "Skills" sections (do not use keywords present solely in the job description since that would be a lie).
+- Do NOT use line breaks inside the text of any subsection. 
+- Do NOT forget to include the field names "Description:" and "Skills:" at the start of their respective lines, as per the OUTPUT FORMAT.
+- Do NOT include any information not present in the "Description" and "Skills" subsections. 
+- DO NOT include information that is present solely in the job description.
+- Return the requested information, strictly filling out the OUTPUT FORMAT below
 
 OUTPUT FORMAT:
 Description: Brief role description.
@@ -322,16 +326,20 @@ INPUT job description:
         },
         "prompt_in": 
 """REQUEST:
-Given the "Description" and "Skills" subsections of a role belonging to the "Work Experience" section of a resume and a job description, rewrite the experience to best match the job description, following these guidelines:
-- Do not include any information not present in the original experience.
-- In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
-- In the Skills subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
-- Do not use line breaks inside any subsection. Do not use the ":" character in the Description.
-- Skills must be comma-separated and follow the format below. 
-- If there are no skills in a given category, use " ", then follow up as the format below indicates 
-    - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
-- Return the requested information, strictly filling out the OUTPUT FORMAT.
-- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
+Given the "Description" and "Skills" subsections of a role belonging to the "Work Experience" section of a resume and a job description, rewrite the "Description" and "Skills" subsections following these guidelines:
+- In the "Description" subsection:
+    - Rewrite to highlight achievements and relevant skills, using up to 2 sentences (max 20 words each), as a single line of text.
+- In the "Skills" subsection:
+    - Select up to 6 skills relevant to the job description (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
+    - Skills must be comma-separated and follow the format below.
+    - If there are no skills in a given category, use " ", then follow up as the format below indicates 
+        - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
+- Prioritize using keywords found in both the job description and the "Description" and "Skills" sections (do not use keywords present solely in the job description since that would be a lie).
+- Do NOT use line breaks inside the text of any subsection. 
+- Do NOT forget to include the field names "Description:" and "Skills:" at the start of their respective lines, as per the OUTPUT FORMAT.
+- Do NOT include any information not present in the "Description" and "Skills" subsections. 
+- DO NOT include information that is present solely in the job description.
+- Return the requested information, strictly filling out the OUTPUT FORMAT below
 
 OUTPUT FORMAT:
 Description: Brief role description.
@@ -418,16 +426,20 @@ INPUT job description:
         },
         "prompt_in": 
 """REQUEST:
-Given the "Description" and "Skills" subsections of a project belonging to the "Projects" section of a resume and a job description, rewrite the experience to best match the job description, following these guidelines:
-- Do not include any information not present in the original experience.
-- In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
-- In the Skills subsection, include up to 6 relevant skills (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
-- Do not use line breaks inside any subsection. Do not use the ":" character in the Description.
-- Skills must be comma-separated and follow the format below. 
-- If there are no skills in a given category, use " ", then follow up as the format below indicates 
-    - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
-- Return the requested information, strictly filling out the OUTPUT FORMAT.
-- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
+Given the "Description" and "Skills" subsections of a role belonging to the "Projects" section of a resume and a job description, rewrite the "Description" and "Skills" subsections following these guidelines:
+- In the "Description" subsection:
+    - Rewrite to highlight achievements and relevant skills, using up to 2 sentences (max 20 words each), as a single line of text.
+- In the "Skills" subsection:
+    - Select up to 6 skills relevant to the job description (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.
+    - Skills must be comma-separated and follow the format below.
+    - If there are no skills in a given category, use " ", then follow up as the format below indicates 
+        - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork
+- Prioritize using keywords found in both the job description and the "Description" and "Skills" sections (do not use keywords present solely in the job description since that would be a lie).
+- Do NOT use line breaks inside the text of any subsection. 
+- Do NOT forget to include the field names "Description:" and "Skills:" at the start of their respective lines, as per the OUTPUT FORMAT.
+- Do NOT include any information not present in the "Description" and "Skills" subsections. 
+- DO NOT include information that is present solely in the job description.
+- Return the requested information, strictly filling out the OUTPUT FORMAT below
 
 OUTPUT FORMAT:
 Description: Brief role description.
@@ -467,13 +479,14 @@ INPUT "Description" and "Skills" subsections of a project belonging to the "Proj
 """REQUEST:
 Given the all experiences across 3 resume sections (Volunteering and Leadership, Work Experience, and Projects) and a job description, select up to 5 experiences based on the job description. When selecting:
 - If the total number of experiences/roles is less than or equal to 5, return all of them.
-- If the total number of experiences/roles is greater than or equal to 5 before selection: Select the most relevant 5 experiences/roles based on the job description.
+- If the total number of experiences/roles is greater than or equal to 5 before selection: 
+    - Select the most relevant 5 experiences/roles based on the job description (you still must return exactly 5).
 - Do not change the name of the experiences/roles.
-- Prioritize projects that match relevant skills and experience present in the job description.
+- Prioritize Projects that match relevant skills and experience present in the job description.
 - While filling out the output format, do not change the experience text, and do not include any text before or after the experience title text.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
--
+
 OUTPUT FORMAT:
 Experience:Experience Title 1
 Experience:Experience Title 2
@@ -626,14 +639,14 @@ Given a wholistic summary of a resume and a job description, tailor a Summary se
 - Write the tailored summary section as the candidate, not as an external observer.
 - The summary mustn't exceed 100 words.
 - Do not line break the summary section, it should be a continuous block of text.
-- When mentioning specific skills or experiences, these must be relevant to the job description; give preference to those that appear on both the resume and the job description, particularly those which demonstrate the candidate's technical expertise.
-- In the format below, do not include any text before or after the filled-out OUTPUT FORMAT.
+- When mentioning specific qualifications, these must be relevant to the job description:
+    -  Preferably mention qualifications and keywords that appear on both the resume and the job description, particularly those which demonstrate the candidate's technical expertise.
 - Return only the revised summary and strictly follow the output format, filling in the parts that have **fill-in:"text"**
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
-- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
+- Do not forget to include the field name "Summary:", as per the OUTPUT FORMAT.
 
 OUTPUT FORMAT:
-Summary: Despite limited work experience, I bring strong work ethic, adaptability and curiosity. Experienced in **fill-in:"specific skills thanks to certain experiences"**. Now seeking a position that offers growth and learning opportunities.
+Summary: Despite limited work experience, I bring strong work ethic, adaptability and curiosity. Experienced in **fill-in specific relevant technical skills"**. Now seeking a position that offers growth and learning opportunities.
 
 
 INPUT:
@@ -1074,9 +1087,10 @@ Given 2 resume section summaries, create a new summary that incorporates all two
 - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
+- You must include "Sections Summary: This is a summary of the {section1_name} and {section2_name} sections:" as per the OUTPUT FORMAT BELOW
 
 OUTPUT FORMAT:
-Sections Summary: {section1_name} + {section2_name} Summary; Wholistic summary of the sections' information, competencies, achievements, and skills.
+Sections Summary: This is a summary of the {section1_name} and {section2_name} sections: Wholistic summary of the sections' information, competencies, achievements, and skills.
 
 
 INPUT:
@@ -1122,10 +1136,10 @@ Given 3 resume section summaries, create a new summary that incorporates all two
 - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
+- You must include "Sections Summary: This is a summary of the {section1_name}, {section2_name} and {section2_name} sections:" as per the OUTPUT FORMAT BELOW
 
 OUTPUT FORMAT:
-Sections Summary: {section1_name} + {section2_name} + {section3_name} Summary; Wholistic summary of the sections' information, competencies, achievements, and skills.
-
+Sections Summary: This is a summary of the {section1_name}, {section2_name} and {section3_name}sections: Wholistic summary of the sections' information, competencies, achievements, and skills.
 
 INPUT:
 INPUT {section1_name} section summary:
@@ -1173,9 +1187,10 @@ Given 4 resume section summaries, create a new summary that incorporates all two
 - When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
+- You must include "Sections Summary: This is a summary of the {section1_name}, {section2_name}, {section3_name} and {section4_name} sections:" as per the OUTPUT FORMAT BELOW
 
 OUTPUT FORMAT:
-Sections Summary: {section1_name} + {section2_name} + {section3_name} + {section4_name} Summary; Wholistic summary of the sections' information, competencies, achievements, and skills.
+Sections Summary: This is a summary of the {section1_name}, {section2_name}, {section3_name} and {section4_name}sections: Wholistic summary of the sections' information, competencies, achievements, and skills.
 
 
 INPUT:

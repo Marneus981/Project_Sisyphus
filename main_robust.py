@@ -201,11 +201,11 @@ def batch_application_packages(root, benchmark = False, cv = True, cl = True):
                 # Call tailor_cv and tailor_cl
                 if cv:
                     tailor_cv(root, show=False)
-                    cv_name = f"{candidate}Resume{str(start_n)}"
+                    cv_name = f"{str(start_n)}{candidate}Resume"
                     save_cv_text(cv_name)
                     save_output_cv(template_var, cv_name)
                 if cl:
-                    cl_name = f"{candidate}CoverLetter{str(start_n)}"
+                    cl_name = f"{str(start_n)}{candidate}CoverLetter{str(start_n)}"
                     tailor_cl(root, show=False)
                     save_cl_text(cl_name)
                     save_output_cl(cl_template_var, cl_name)
@@ -241,11 +241,11 @@ def batch_application_packages(root, benchmark = False, cv = True, cl = True):
                 # Call tailor_cv and tailor_cl
                 if cv:
                     tailor_cv(root, show=False)
-                    cv_name = f"{process_model_name(model)}_{temperature_str}Resume{str(start_n)}"
+                    cv_name = f"{str(start_n)}{process_model_name(model)}_{temperature_str}Resume"
                     save_cv_text(cv_name)
                     save_output_cv(template_var, cv_name)
                 if cl:
-                    cl_name = f"{process_model_name(model)}_{temperature_str}CoverLetter{str(start_n)}"
+                    cl_name = f"{str(start_n)}{process_model_name(model)}_{temperature_str}CoverLetter{str(start_n)}"
                     tailor_cl(root, show=False)
                     save_cl_text(cl_name)
                     save_output_cl(cl_template_var, cl_name)

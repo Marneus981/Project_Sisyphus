@@ -78,7 +78,7 @@ def filter_output(model_output, prefix_dict ={}):
         for line in lines:
             line_ctr = line_ctr +  1
             line = line.strip()
-            line = line.replace("[1]","").replace("[0]","").replace("[S]","").replace("[E]","").replace("[R]","").replace("[J]","").replace("[P]","").replace("[","").replace("]","")
+            line = line.replace("[1]","").replace("[0]","").replace("[S]","").replace("[E]","").replace("[R]","").replace("[J]","").replace("[P]","").replace("[","").replace("]","").replace("*","")
             match = ""
             for section in prefix_dict:
                 if line.startswith(section): 

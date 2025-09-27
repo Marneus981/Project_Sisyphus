@@ -12,3 +12,4 @@ Sisyphus/payloads.py
 Sisyphus/log/
 Sisyphus/saved_outputs
 Sisyphus/saved_outputs_cl
+tools/log_reader_output
