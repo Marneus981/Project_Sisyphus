@@ -1,4 +1,4 @@
-from Sisyphus import runLocalModel, parsers, tailor_robust, helpers
+from Sisyphus import runLocalModel, parsers, tailor_robust, helpers, payloads_wip
 import os
 import tkinter as tk
 from tkinter import ttk
@@ -12,6 +12,7 @@ from config import CONFIG
 from tkinter import filedialog
 import csv
 import re
+import config
 
 
 SISYPHUS_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus"
@@ -99,6 +100,7 @@ def title_type(cv_text):
 def extract_jobs(file_path, benchmark = False):
     job_list = []
     model_list = []
+    temperature_list = []
     if not file_path or not os.path.exists(file_path):
         print(f"CSV file not found: {file_path}")
         return None
@@ -113,16 +115,28 @@ def extract_jobs(file_path, benchmark = False):
                 job_list.append((job_title, job_desc))
             if len(row) >= 3 and benchmark:
                 model_list.append(row[2].strip())
+            if len(row) >= 4 and benchmark:
+                temperature_list.append(row[3].strip())
+
     
     print(f"Extracted {len(job_list)} job entries from CSV (columns: Job Title, Job Description).")
     if benchmark:
         print(f"Extracted {len(model_list)} model entries from CSV (column: Model).")
-    return [job_list, model_list]
+        print(f"Extracted {len(temperature_list)} temperature entries from CSV (column: Temperatures).")
+    return [job_list, model_list, temperature_list]
 
 def process_model_name(model_name):
     #Remove all whitespace and special characters that are not allowed in file names
     model_name = re.sub(r'[<>:"/\\|?*]', '', model_name)
+    model_name = model_name.replace(".", "_")
     return model_name
+
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
 
 @log_time
 def batch_application_packages(root, benchmark = False, cv = True, cl = True):
@@ -130,10 +144,13 @@ def batch_application_packages(root, benchmark = False, cv = True, cl = True):
     global csv_path
     global job_desc_textbox
     global desired_job_title_checkbox_var, desired_job_title_textbox
+    global start_num_textbox,candidate_name_textbox
     if benchmark:
         print(f"Benchmark mode initialized")
     start_number = start_num_textbox.get("1.0", tk.END).strip()
+    print(f"Base start_number:{start_number}")
     name = candidate_name_textbox.get("1.0", tk.END).strip()
+    print(f"Base name:{name}")
     if int(start_number) < 0 or not start_number.isdigit():
         print("Invalid start number. Please enter a non-negative integer.")
         return
@@ -141,22 +158,33 @@ def batch_application_packages(root, benchmark = False, cv = True, cl = True):
     if not csv_file or not os.path.exists(csv_file):
         print(f"CSV file not found: {csv_file}")
         return
-    job_list, model_list = extract_jobs(csv_file, benchmark=benchmark)
+    job_list, model_list,temperature_list = extract_jobs(csv_file, benchmark=benchmark)
     if job_list == []:
         print("Failed to extract job entries.")
         return
     if model_list == [] and benchmark:
         print("Failed to extract model entries.")
         return
+    if temperature_list == [] and benchmark:
+        print("Failed to model temperature entries.")
+        return
     if name == "" and not benchmark:
         print("No candidate name provided.")
         return
     #Check if all models are available
-    for model in model_list:
-        if model not in models:
-            print(f"Model not available: {model}")
+    if benchmark:
+        if len(model_list) != len(temperature_list):
+            print(f"Error: model_list and temperature_list must be equal in size")
             return
-        print(f"Model found: {model}")
+        for model in model_list:
+            if model not in models:
+                print(f"Model not available: {model}")
+                return
+            print(f"Model found: {model}")
+        for temperature in temperature_list:
+            if not is_number(temperature):
+                print(f"Temperature must be floating point, current value {temperature}")
+                return
     candidate = name.replace(" ", "")
     
     if not benchmark:
@@ -169,48 +197,69 @@ def batch_application_packages(root, benchmark = False, cv = True, cl = True):
             desired_job_title_checkbox_var.set(True)
             desired_job_title_textbox.delete("1.0", tk.END)
             desired_job_title_textbox.insert("1.0", job_title)
-
-            # Call tailor_cv and tailor_cl
-            if cv:
-                tailor_cv(root, show=False)
-                cv_name = f"{candidate}Resume{str(start_n)}"
-                save_cv_text(cv_name)
-                save_output_cv(template_var, cv_name)
-            if cl:
-                cl_name = f"{candidate}CoverLetter{str(start_n)}"
-                tailor_cl(root, show=False)
-                save_cl_text(cl_name)
-                save_output_cl(cl_template_var, cl_name)
+            try:
+                # Call tailor_cv and tailor_cl
+                if cv:
+                    tailor_cv(root, show=False)
+                    cv_name = f"{candidate}Resume{str(start_n)}"
+                    save_cv_text(cv_name)
+                    save_output_cv(template_var, cv_name)
+                if cl:
+                    cl_name = f"{candidate}CoverLetter{str(start_n)}"
+                    tailor_cl(root, show=False)
+                    save_cl_text(cl_name)
+                    save_output_cl(cl_template_var, cl_name)
+            except Exception as e:
+                continue
             start_n += 1
     
     
     else:
-        for model in model_list:
+        current_default_temp = CONFIG["MODELS"]["TEMPERATURE"]
+        start_n = int(start_number)
+        for i in range(0,len(model_list)):
+            
+            model = model_list[i]
+            temperature = temperature_list[i]
+            temperature_str = temperature.replace(".","_")
             #Set model to be used
             model_var.set(model)
-            start_n = int(start_number)
-            for job in job_list:
-                job_title, job_desc = job
-                # Set the required variables
-                job_desc_textbox.delete("1.0", tk.END)
-                job_desc_textbox.insert("1.0", job_desc)
-                desired_job_title_checkbox_var.set(True)
-                desired_job_title_textbox.delete("1.0", tk.END)
-                desired_job_title_textbox.insert("1.0", job_title)
-
+            # config.CONFIG["MODELS"]["TEMPERATURE"] = temperature
+            for payload in payloads_wip.PAYLOADS:
+                payloads_wip.PAYLOADS[payload]["payload_in"]["temperature"] = float(temperature)
+            
+            # for job in job_list:
+            job_title, job_desc = job_list[i]
+            # Set the required variables
+            job_desc_textbox.delete("1.0", tk.END)
+            job_desc_textbox.insert("1.0", job_desc)
+            desired_job_title_checkbox_var.set(True)
+            desired_job_title_textbox.delete("1.0", tk.END)
+            desired_job_title_textbox.insert("1.0", job_title)
+            print(f"[BATCH][START]Parameters: start_n: {start_n};model: {model}; temperature: {temperature}; job_title: {job_title}")
+            try:
                 # Call tailor_cv and tailor_cl
                 if cv:
                     tailor_cv(root, show=False)
-                    cv_name = f"{process_model_name(model)}Resume{str(start_n)}"
+                    cv_name = f"{process_model_name(model)}_{temperature_str}Resume{str(start_n)}"
                     save_cv_text(cv_name)
                     save_output_cv(template_var, cv_name)
                 if cl:
-                    cl_name = f"{process_model_name(model)}CoverLetter{str(start_n)}"
+                    cl_name = f"{process_model_name(model)}_{temperature_str}CoverLetter{str(start_n)}"
                     tailor_cl(root, show=False)
                     save_cl_text(cl_name)
                     save_output_cl(cl_template_var, cl_name)
+                print(f"[BATCH][SUCCESS]Parameters: start_n: {start_n};model: {model}; temperature: {temperature}; job_title: {job_title}")
                 start_n += 1
-        
+            except Exception as e:
+                print(f"[BATCH][FAIL]Parameters: start_n: {start_n};model: {model}; temperature: {temperature}; job_title: {job_title}")
+                start_n += 1
+                continue
+        for payload in payloads_wip.PAYLOADS:
+            payloads_wip.PAYLOADS[payload]["payload_in"]["temperature"] = current_default_temp
+        # config.CONFIG["MODELS"]["TEMPERATURE"] = current_default_temp
+        # if current_default_temp != CONFIG["MODELS"]["TEMPERATURE"]:
+        #     print(f"Warning: Failed to reset model temperature to default") 
     print(f"Batch application packages created for {len(job_list)} jobs.")
 
 @log_time

@@ -31,11 +31,11 @@ runtime_info objects. Merged fields will be fetched from payloads.PAYLOADS
 """
 Prompt Format:
 
-[REQUEST]
+REQUEST:
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 
-[INPUT]
+INPUT:
 
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 field mode (digits/cap_letters) will be vestigial in next commit.
@@ -66,7 +66,7 @@ PAYLOADS= {
                    }  
                    },
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Given a cover letter and a wholistic summary of a resume (both part of the same job application):
 Perform a consistency check on the tailored cover letter against the resume. This consistency check should include:
 - Whether the cover letter is consistent with the resume, meaning that all skills and experiences mentioned in the cover letter should be present in the resume.
@@ -79,14 +79,14 @@ The report should follow these guidelines:
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 Consistency Checker Vs Resume:
 Inconsistencies With Resume: Number of inconsistencies found (return 'None.' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 Inconsistencies With Self: Number of inconsistencies found (return 'None.' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 Suggestions for Improvement: List of suggestions for improvement, if any (return 'None.' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 
 
-[INPUT]
+INPUT:
 INPUT cover letter:
 {cv_data}
 
@@ -121,7 +121,7 @@ INPUT wholistic summary of the resume meant to accompany the above cover letter 
                    } 
                    },
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Summarize the input job description by extracting the following information in the format specified under the OUTPUT FORMAT section:
 -Company Name
 -Job Title
@@ -138,7 +138,7 @@ When filling out the OUTPUT FORMAT, follow these guidelines:
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 Company Name: Company Name
 Job Title: Position Name
 Key responsibilities: List of key responsabilities as a single block of text separated by ";"
@@ -149,7 +149,7 @@ Soft Skills:Soft List of soft skills required, presented as a single block of te
 Other Skills:Other List of other skills required, presented as a single block of text separated by ";" (if no skills, output "None required.")
 
 
-[INPUT]
+INPUT:
 INPUT job description:
 {job_description}
 
@@ -176,7 +176,7 @@ INPUT job description:
                     }
                    },
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Given a "Volunteering and Leadership" resume section and a job description, select up to 5 roles based on the job description. When selecting:
 - If the total number of roles is less than or equal to 5, return all of them.
 - If the total number of roles is greater than or equal to 5 before selection: Select the most relevant 5 roles based on the job description.
@@ -188,7 +188,7 @@ Given a "Volunteering and Leadership" resume section and a job description, sele
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 Experience:Role Title 1
 Experience:Role Title 2
 Experience:Role Title 3
@@ -196,7 +196,7 @@ Experience:Role Title 4
 Experience:Role Title 5
 
 
-[INPUT]
+INPUT:
 INPUT "Volunteering and Leadership" resume section:
 {raw_cv_data}
 INPUT job description:
@@ -225,7 +225,7 @@ INPUT job description:
                    } 
                    },
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Given the "Description" and "Skills" attributes of a role belonging to the "Volunteering and Leadership" section of a resume and a job description, rewrite the experience to best match the job description, following these guidelines:
 - Do not include any information not present in the original experience.
 - In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
@@ -237,12 +237,12 @@ Given the "Description" and "Skills" attributes of a role belonging to the "Volu
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 Description: Brief role description.
 Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
 
 
-[INPUT]
+INPUT:
 INPUT job description:
 {job_description}
 
@@ -271,7 +271,7 @@ INPUT "Description" and "Skills" attributes of a role belonging to the "Voluntee
             }
         },
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Given a "Work Experience" resume section and a job description, select up to 5 jobs based on the job description. When selecting:
 - If the total number of jobs is less than or equal to 5, return all of them.
 - If the total number of jobs is greater than or equal to 5 before selection: Select the most relevant 5 jobs based on the job description.
@@ -283,7 +283,7 @@ Given a "Work Experience" resume section and a job description, select up to 5 j
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 Experience:Job Title 1
 Experience:Job Title 2
 Experience:Job Title 3
@@ -291,7 +291,7 @@ Experience:Job Title 4
 Experience:Job Title 5
 
 
-[INPUT]
+INPUT:
 INPUT "Work Experience" resume section:
 {raw_cv_data}
 
@@ -321,7 +321,7 @@ INPUT job description:
                    } 
         },
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Given the "Description" and "Skills" subsections of a role belonging to the "Work Experience" section of a resume and a job description, rewrite the experience to best match the job description, following these guidelines:
 - Do not include any information not present in the original experience.
 - In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
@@ -333,12 +333,12 @@ Given the "Description" and "Skills" subsections of a role belonging to the "Wor
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 Description: Brief role description.
 Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
 
 
-[INPUT]
+INPUT:
 INPUT job description:
 {job_description}
 
@@ -367,7 +367,7 @@ INPUT "Description" and "Skills" subsections of a role belonging to the "Work Ex
             }
         },
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Given a "Projects" resume section and a job description, select up to 5 projects based on the job description. When selecting:
 - If the total number of projects is less than or equal to 5, return all of them.
 - If the total number of projects is greater than or equal to 5 before selection: Select the most relevant 5 projects based on the job description.
@@ -379,7 +379,7 @@ Given a "Projects" resume section and a job description, select up to 5 projects
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 Experience:Project Title 1
 Experience:Project Title 2
 Experience:Project Title 3
@@ -387,7 +387,7 @@ Experience:Project Title 4
 Experience:Project Title 5
 
 
-[INPUT]
+INPUT:
 INPUT "Projects" resume section:
 {raw_cv_data}
 
@@ -417,7 +417,7 @@ INPUT job description:
                    } 
         },
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Given the "Description" and "Skills" subsections of a project belonging to the "Projects" section of a resume and a job description, rewrite the experience to best match the job description, following these guidelines:
 - Do not include any information not present in the original experience.
 - In the Description subsection, rewrite to highlight achievements and relevant skills for the job, using up to 2 sentences (max 20 words each), as a single block of text.
@@ -429,12 +429,12 @@ Given the "Description" and "Skills" subsections of a project belonging to the "
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 Description: Brief role description.
 Skills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...
 
 
-[INPUT]
+INPUT:
 INPUT job description:
 {job_description}
 
@@ -464,7 +464,7 @@ INPUT "Description" and "Skills" subsections of a project belonging to the "Proj
             }
         },
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Given the all experiences across 3 resume sections (Volunteering and Leadership, Work Experience, and Projects) and a job description, select up to 5 experiences based on the job description. When selecting:
 - If the total number of experiences/roles is less than or equal to 5, return all of them.
 - If the total number of experiences/roles is greater than or equal to 5 before selection: Select the most relevant 5 experiences/roles based on the job description.
@@ -474,7 +474,7 @@ Given the all experiences across 3 resume sections (Volunteering and Leadership,
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 -
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 Experience:Experience Title 1
 Experience:Experience Title 2
 Experience:Experience Title 3
@@ -482,7 +482,7 @@ Experience:Experience Title 4
 Experience: Experience Title 5
 
 
-[INPUT]
+INPUT:
 INPUT job description:
 {job_description}
 
@@ -511,7 +511,7 @@ INPUT experiences from 3 resume sections (Volunteering and Leadership, Work Expe
             }
         },
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Given a section from a resume, summarize the sections in a wholistic manner while following these guidelines:
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
@@ -519,11 +519,11 @@ Given a section from a resume, summarize the sections in a wholistic manner whil
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 Section Summary: {section_name} Summary; Wholistic summary of the section's information.
 
 
-[INPUT]
+INPUT:
 INPUT section from a resume:
 {section}
 
@@ -549,17 +549,17 @@ INPUT section from a resume:
             }
         },
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Given the general information from a resume, summarize it in a wholistic manner; be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 Since this is a summary of a resume's general information, you need to include the candidate's Name, Contact Information, Title, and Languages Spoken.
 Return the requested information, strictly filling out the OUTPUT FORMAT. (do not forget to include the "General Information Summary:" text at the start of the output).
 Also, do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 General Information Summary: Brief and concise summary of the resume's general information, presented as a single continuous string of text.
 
 
-[INPUT]
+INPUT:
 INPUT general information from a resume:
 {general_info_text}
 
@@ -585,16 +585,16 @@ INPUT general information from a resume:
             }
         },
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Given a "Skills" section from a resume, summarize the skills section of a resume in a wholistic manner; be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 Return the requested information, strictly filling out the OUTPUT FORMAT. (do not forget to include the "Skills Summary:" text at the start of the output).
 Also, do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 Skills Summary: Wholistic summary of the resume's skills, presented as a single continuous string of text.
 
 
-[INPUT]
+INPUT:
 INPUT "Skills" section from a resume:
 {skill_section}
 
@@ -621,7 +621,7 @@ INPUT "Skills" section from a resume:
             }
         },
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Given a wholistic summary of a resume and a job description, tailor a Summary section for a resume to best match the job description; follow these guidelines:
 - Write the tailored summary section as the candidate, not as an external observer.
 - The summary mustn't exceed 100 words.
@@ -632,11 +632,11 @@ Given a wholistic summary of a resume and a job description, tailor a Summary se
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 Summary: Despite limited work experience, I bring strong work ethic, adaptability and curiosity. Experienced in **fill-in:"specific skills thanks to certain experiences"**. Now seeking a position that offers growth and learning opportunities.
 
 
-[INPUT]
+INPUT:
 INPUT wholistic summary of a resume:
 {prev_summary}
 
@@ -670,7 +670,7 @@ INPUTjob description:
             }
         },
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Given a list of "Programming Languages", "Technical Skills" and "Soft Skills" considered to be relevant for a paticular job description, and said job description:
 Prune the following 'Skills' section from a resume to best match the job description , following the guidelines below:
 - Return 3 MAXIMUM entries under "Programming Languages" (MINIMUM 0 entries)
@@ -685,14 +685,14 @@ Prune the following 'Skills' section from a resume to best match the job descrip
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 - Do not break down any OUTPUT FORMAT lines into multiple instances(e.g. do not output 2 lines labeled "Technical Skills:", one is sufficient as per the format)
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 Skills:
 Programming Languages: Programming Language 1, Programming Language 2, Programming Language 3
 Technical Skills: Technical Skill 1, Technical Skill 2, Technical Skill 3, Technical Skill 4, Technical Skill 5
 Soft Skills: Soft Skill 1, Soft Skill 2, Soft Skill 3, Soft Skill 4
 
 
-[INPUT]
+INPUT:
 INPUT list of "Programming Languages", "Technical Skills" and "Soft Skills" considered to be relevant for a paticular job description:
 {cv_data}
 
@@ -723,7 +723,7 @@ INPUT job description:
             }
         },
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Given a raw untailored resume section and and its counterpart from an already tailored resume, compare the two resume sections and:
 - Confirm that the tailored section does not contain any made-up information.
 - Verify that all information in the tailored section is present in the raw section, even if paraphrased.
@@ -732,11 +732,11 @@ Given a raw untailored resume section and and its counterpart from an already ta
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 Comparative Analysis: {section_name} Section; Analysis of the tailored resume section vs the raw section, as a single line of text.
 
 
-[INPUT]
+INPUT:
 INPUT raw untailored resume section:
 {old_resume_s_txt}
 
@@ -770,7 +770,7 @@ INPUT already tailored resumesection:
             }
         },
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Given a wholistic summary of a resume, and the summary of the job description it has been tailored to, write a cover letter tailored to the job description, following the guidelines below:
 - It should highlight the most relevant skills and experiences from the resume that match the job description.
 - It should be written in a professional tone.
@@ -783,7 +783,7 @@ Given a wholistic summary of a resume, and the summary of the job description it
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 Cover Letter: 
 New Paragraph0: Cover Letter introduction, mentioning the job title and company, as well as the candidate's enthusiasm for the role.
 New Paragraph1: Explain why the candidate is a good fit for the role, briefly mentioning the most relevant information from the resume that matches the job description.
@@ -791,7 +791,7 @@ New Paragraph2: Provide further information about the candidate's qualifications
 New Paragraph3: Closing statement, thanking the employer for their time and consideration. Invite them to contact the candidate for further discussion, providing email address.
 
 
-[INPUT]
+INPUT:
 INPUT wholistic summary of a resume:
 {cv_data}
 
@@ -823,7 +823,7 @@ INPUT summary of the job description it has been tailored to:
             }
         },
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Given the a summary of a resume and the job description the aforementioned resume has been tailored to, perform a consistency check on the tailored resume against the job description. This consistency check will check if the resume is consistent with the job description, meaning that all skills and experiences mentioned in the resume should be relevant to the job description.
 Follow these guidelines:
 - Be mindful not to include any line breaks in the content of any of the sections/subsections.
@@ -833,13 +833,13 @@ Follow these guidelines:
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 Consistency Checker Vs Job Description:
 Inconsistencies With Job Description: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 
 
-[INPUT]
+INPUT:
 INPUT summary of a resume tailored to a particular job description:
 {cv_data}
 INPUT job description the aforementioned resume has been tailored to:
@@ -869,7 +869,7 @@ INPUT job description the aforementioned resume has been tailored to:
             }
         },
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Given a cover letter and the job description the aforementioned cover letter has been tailored to, perform a consistency check on the tailored cover letter against the job description. This consistency check will check if the cover letter is consistent with the job description, meaning that all skills and experiences mentioned in the cover letter should be relevant to the job description.
 Follow these guidelines:
 - Be mindful not to include any line breaks in  the content of any of the sections/subsections.
@@ -879,13 +879,13 @@ Follow these guidelines:
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 Consistency Checker Vs Job Description:
 Inconsistencies With Job Description: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 
 
-[INPUT]
+INPUT:
 INPUT cover letter tailored to a particular job description:
 {cv_data}
 INPUT job description the aforementioned resume has been tailored to:
@@ -913,7 +913,7 @@ INPUT job description the aforementioned resume has been tailored to:
             }
         },
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Given a list of courses taken on a given program and a job description, extract the 5 most relevant courses that match the skills and requirements outlined in the job description.
 Follow these guidelines when extracting courses and returning them:
 - Do not include any courses not present in the original courses list.
@@ -923,11 +923,11 @@ Follow these guidelines when extracting courses and returning them:
 - Be mindful that courses may or may not have a course code (represented by "XXX001" in the OUTPUT FORMAT section)
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 Courses: XXX001 Course Name1, XXX002 Course Name2, XXX003 Course Name3...
 
 
-[INPUT]
+INPUT:
 INPUT list of courses taken on a given program:
 {courses}
 
@@ -954,7 +954,7 @@ INPUT job description:
             "section_names": [],
             "second_half": """
 
-[INPUT]
+INPUT:
 INPUT sections from a resume:
 {sections_text}
 
@@ -966,7 +966,7 @@ INPUT sections from a resume:
             }
         },
         "prompt_in":
-"""[REQUEST]
+"""REQUEST:
 Given a number of sections from a resume, summarize the sections in a wholistic manner while following these guidelines:
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 - Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
@@ -974,7 +974,7 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["flexible", "cap_letters", "[S]Section Summary:"]
@@ -1067,7 +1067,7 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
             }
             }, 
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Given 2 resume section summaries, create a new summary that incorporates all two summaries, following these guidelines:
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 - Include ALL information, competencies, achievements, and skills, for this is a wholistic summary of the candidate's qualifications. Do not miss any skills.
@@ -1075,11 +1075,11 @@ Given 2 resume section summaries, create a new summary that incorporates all two
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 Sections Summary: {section1_name} + {section2_name} Summary; Wholistic summary of the sections' information, competencies, achievements, and skills.
 
 
-[INPUT]
+INPUT:
 INPUT {section1_name} section summary:
 {summary1}
 
@@ -1115,7 +1115,7 @@ INPUT {section2_name} section summary:
             }
             }, 
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Given 3 resume section summaries, create a new summary that incorporates all two summaries, following these guidelines:
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 - Include ALL information, competencies, achievements, and skills, for this is a wholistic summary of the candidate's qualifications. Do not miss any skills.
@@ -1123,11 +1123,11 @@ Given 3 resume section summaries, create a new summary that incorporates all two
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 Sections Summary: {section1_name} + {section2_name} + {section3_name} Summary; Wholistic summary of the sections' information, competencies, achievements, and skills.
 
 
-[INPUT]
+INPUT:
 INPUT {section1_name} section summary:
 {summary1}
 
@@ -1166,7 +1166,7 @@ INPUT {section3_name} section summary:
             }
             }, 
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Given 4 resume section summaries, create a new summary that incorporates all two summaries, following these guidelines:
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 - Include ALL information, competencies, achievements, and skills, for this is a wholistic summary of the candidate's qualifications. Do not miss any skills.
@@ -1174,11 +1174,11 @@ Given 4 resume section summaries, create a new summary that incorporates all two
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 Sections Summary: {section1_name} + {section2_name} + {section3_name} + {section4_name} Summary; Wholistic summary of the sections' information, competencies, achievements, and skills.
 
 
-[INPUT]
+INPUT:
 INPUT {section1_name} section summary:
 {summary1}
 
@@ -1263,7 +1263,7 @@ INPUT {section4_name} section summary:
             }
         }, 
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Given all summarized sections of a resume, create a wholistic summary of all of them, following these guidelines:
 - Include the candidate's contact information, as well as their title and name.
 - Include any certifications or qualifications.
@@ -1276,11 +1276,11 @@ Given all summarized sections of a resume, create a wholistic summary of all of 
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 Summary: Wholistic summary of all sections, presented as a single continuous string of text.
 
 
-[INPUT]
+INPUT:
 INPUT summarized sections of a resume:
 {slides_txt}
 
@@ -1350,7 +1350,7 @@ INPUT summarized sections of a resume:
             }
         }, 
         "prompt_in": 
-"""[REQUEST]
+"""REQUEST:
 Given a list containing a per-section analysis of a two resumes, comparing the synthesized data in the new resume (which has been tailored to a particular job description) against the original, synthesize a report which extracts the following data from the list of analyses:
 - Whether the new resume is consistent with the original resume, meaning that all information in the new resume is present in the original resume, even if paraphrased.
 - Whether the new resume is consistent with itself, meaning that there should be no contradictions or inconsistencies in the information provided.
@@ -1362,14 +1362,14 @@ The report should follow these guidelines:
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 
-[OUTPUT FORMAT]
+OUTPUT FORMAT:
 Consistency Checker Vs Original Resume:
 Inconsistencies With Original Resume: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 Inconsistencies With Self: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 Suggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by ";", not line breaks.
 
 
-[INPUT]
+INPUT:
 INPUT list containing a per-section analysis of the resumes, comparing the synthesized data in the new resume against the original:
 {all_analysis}
 

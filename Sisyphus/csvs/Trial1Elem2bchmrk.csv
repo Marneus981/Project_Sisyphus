@@ -70,7 +70,7 @@ Nice to Have
     Working knowledge of frontend technologies such as JavaScript, HTML/CSS, and React
     Working knowledge of relational databases
     Relevant software engineering internship and/or project experience
-    Relevant extracurricular or volunteer experience (student groups, committees, hackathons, etc.)",llama3:8b,0.7
+    Relevant extracurricular or volunteer experience (student groups, committees, hackathons, etc.)",llama3:instruct,0.8
 Associate Software Engineer,"The Role
 
 Are you an upcoming or recent grad inspired by purpose-driven work and hoping to grow long-term with a company? If so, Veeva's Engineering Development Program (EDP) is a perfect place to begin your career and make an impact in the Life Sciences industry!
@@ -106,4 +106,4 @@ Nice to Have
     Working knowledge of frontend technologies such as JavaScript, HTML/CSS, and React
     Working knowledge of relational databases
     Relevant software engineering internship and/or project experience
-    Relevant extracurricular or volunteer experience (student groups, committees, hackathons, etc.)",llama3:8b,0.6
+    Relevant extracurricular or volunteer experience (student groups, committees, hackathons, etc.)",llama3.2:latest,0.8

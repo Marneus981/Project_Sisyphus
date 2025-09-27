@@ -525,8 +525,10 @@ def standard_ollama_call(call_info =template_call_info):
     if search_pattern and format != {}:
         helpers.missing_format_pieces(prompt_in,format)
         prompt = prompt_in.format(**format)
+        prompt = helpers.process_input(prompt)
     else:
         prompt = prompt_in
+        prompt = helpers.process_input(prompt)
     payload = payload_in.copy()
     payload["prompt"] = prompt
 
@@ -592,7 +594,7 @@ def batch_summarize_sections(call_info = template_call_info):
 
     helpers.missing_format_pieces(call_info["format"]["second_half"],format)
     prompt +=  call_info["format"]["second_half"].format(**format)
-
+    prompt = helpers.process_input(prompt)
     payload = payload_in.copy()
     payload["prompt"] = prompt
 
@@ -1111,6 +1113,7 @@ def sliding_window_two_sections(call_info = template_call_info):
     }
     helpers.missing_format_pieces(prompt_in,formatting)
     prompt = prompt_in.format(**formatting)
+    prompt = helpers.process_input(prompt)
     payload = payload_in.copy()
     payload["prompt"] = prompt
     
@@ -1243,6 +1246,7 @@ def sliding_window_three_sections(call_info = template_call_info):
     }
     helpers.missing_format_pieces(prompt_in,formatting)
     prompt = prompt_in.format(**formatting)
+    prompt = helpers.process_input(prompt)
     payload = payload_in.copy()
     payload["prompt"] = prompt
     if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(payload["model"], payload["prompt"])
@@ -1382,6 +1386,7 @@ def sliding_window_four_sections(call_info = template_call_info):
     }
     helpers.missing_format_pieces(prompt_in,formatting)
     prompt = prompt_in.format(**formatting)
+    prompt = helpers.process_input(prompt)
     payload = payload_in.copy()
     payload["prompt"] = prompt
     if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(payload["model"], payload["prompt"])
@@ -1445,7 +1450,7 @@ def slide_summary(call_info = template_call_info):
     skills_key = ['skills']
     general_txts = []
     special_txts = []
-    skill_txt = ""
+    skill_txts = []
     candidate_name = ""
     candidate_title = ""
     for item in sections_dct_list:
@@ -1461,7 +1466,8 @@ def slide_summary(call_info = template_call_info):
         elif key in skills_key:
             #helpers.filter_output()#REDUNDANT?
             temp = parsers.inv_parse_cv_out(item).strip()
-            skill_txt = skill_txt + temp + "\n"
+            skill_txts.append(temp)
+            # skill_txt = skill_txt + temp + "\n"
         elif key in special_keys:
             if skill_section:
                 #helpers.filter_output()#REDUNDANT?
@@ -1560,6 +1566,7 @@ def slide_summary(call_info = template_call_info):
     general_info_summary = ollama_call(runtime_info=runtime_info_temp) #standard call
     slide_results.insert(0, general_info_summary)
     if skill_section:
+        skills_info = "\n".join(skill_txts).strip()
         runtime_info_temp = {
             "call_id": format["standard_calls"][1],
             "payload_in": {
@@ -1567,7 +1574,7 @@ def slide_summary(call_info = template_call_info):
                 "system": systems[-1],
             },
             "format": {
-                "skill_section": skill_txt
+                "skill_section": skills_info
             },
             "ollama_url": ollama_url
         }
@@ -1628,6 +1635,7 @@ def step0_tailor_summary(call_info = template_call_info):
     }
     helpers.missing_format_pieces(prompt_in,slides_txt_temp)
     prompt = prompt_in.format(**slides_txt_temp)
+    prompt = helpers.process_input(prompt)
     payload = payload_in.copy()
     payload["prompt"] = prompt
     if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(payload["model"], payload["prompt"])
@@ -1695,7 +1703,7 @@ def tailor_summary(call_info = template_call_info):
             "raw_cv_data": raw_cv_data,
             "windows": windows,
             "mode": mode,
-            "skil_section": skill_section,
+            "skill_section": skill_section,
             "systems": systems[:-2]
         },
         "ollama_url":ollama_url
@@ -1797,6 +1805,7 @@ def consistency_checker_vs_cv_cv(call_info = template_call_info):
     }
     helpers.missing_format_pieces(prompt_in,all_analysis_dct)
     prompt = prompt_in.format(**all_analysis_dct)
+    prompt = helpers.process_input(prompt)
     payload = payload_in.copy()
     payload["prompt"] = prompt
     if config.DEBUG["TOKEN_LOGGING"]: input_tks = helpers.token_math(payload["model"], payload["prompt"])
@@ -1891,8 +1900,10 @@ async def standard_ollama_call_async(session, retries = config.CONFIG["MODELS"][
     if format != {}:
         helpers.missing_format_pieces(prompt_in,format)
         prompt = prompt_in.format(**format)
+        prompt = helpers.process_input(prompt)
     else:
         prompt = prompt_in
+        prompt = helpers.process_input(prompt)
     payload = payload_in.copy()
     payload["prompt"] = prompt
     # Check payload fields

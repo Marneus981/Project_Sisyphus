@@ -5,6 +5,8 @@
             Dynamic template system
             New filtering system:
                 Remove prefixes from inputs
+                Add empty protocol on summaries
+                Verify multiple temp system on small dataset
 
             Add a condition where a tailor function fails if a format field is missing or ""
         [TBWO]

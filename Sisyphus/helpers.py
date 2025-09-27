@@ -212,6 +212,15 @@ def missing_format_pieces(prompt,format):
                 print(f"[INFO]{function_name}: regex match format value '{format[temp_match]}'")
                 if format[temp_match].strip() == "":
                     raise ValueError(f"[ERROR]{function_name}: regex match '{temp_match}' is empty")
+                
+def process_input(filled_prompt):
+    lines = filled_prompt.splitlines()
+    return_lines = []
+    for line in lines:
+        line = line.strip()
+        line = line.replace("[1]"," ").replace("[0]","").replace("[S]","").replace("[E]","").replace("[R]","").replace("[J]","").replace("[P]","").replace("[","").replace("]","")
+        return_lines.append(line)
+    return "\n".join(return_lines)
 
 @log_time
 def optimize_summarize_sections_calls(no_sections = 0, chunk_sz = 4):
