@@ -111,12 +111,9 @@ INPUT wholistic summary of the resume meant to accompany the above cover letter 
                    "prefix_dict": {
                        "Company Name:":["[0]",True],
                        "Job Title:":["[0]",True],
-                       "Key responsibilities:":["[0]",True],
+                       "Responsibilities:":["[0]",True],
                        "Requirements:":["[0]",True],
-                       "Programming Languages":["[0]",True],
-                       "Technical Skills:":["[0]",True],
-                       "Soft Skills:":["[0]",True],
-                       "Other Skills:":["[0]",True],
+                       "Keywords":["[0]",True],
                        "Dummy:":["[BIG DUMMY]"]
                    } 
                    },
@@ -141,13 +138,9 @@ When filling out the OUTPUT FORMAT, follow these guidelines:
 OUTPUT FORMAT:
 Company Name: Company Name
 Job Title: Position Name
-Key responsibilities: List of key responsabilities as a single block of text separated by ";"
+Responsibilities: List of key responsabilities as a single block of text separated by ";"
 Requirements: List of basic requirements as a single block of text separated by ";"
-Programming Languages: List of programming languages required, presented as a single block of text separated by ";"
-Technical Skills: List of technical skills required, presented as a single block of text separated by ";" (if no skills, output "None required.")
-Soft Skills:Soft List of soft skills required, presented as a single block of text separated by ";" (if no skills, output "None required.")
-Other Skills:Other List of other skills required, presented as a single block of text separated by ";" (if no skills, output "None required.")
-
+Keywords: List of keywords present in the job description, presented as a single block of text separated by ",". These keywords can be single words or small phrases (less than 3 words long) such as "good communication skills". 
 
 INPUT:
 INPUT job description:
@@ -986,8 +979,9 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
 - Keep in mind that these summaries will be used in a "Sliding Window" approach to summarize the entire resume effectively, so include information that is relevant for the overall context of the resume.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
-
-OUTPUT FORMAT:
+- The only field name allowed is "Section Summary:", do NOT include a separate "Summary:" section as this will result in an error.
+- There must be 1 "Section Summary:" per section given, in this case the sections given are {no_sections}:
+    - {section_names}
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["flexible", "cap_letters", "[S]Section Summary:"]
@@ -1289,7 +1283,7 @@ Given all summarized sections of a resume, create a wholistic summary of all of 
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
 - When filling out the output format, do not forget to include the "Summary:" text before the actual summary.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
-- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
+- Output must be only 1 line long and it must start with "Summary:", as per the OUTPUT FORMAT.
 
 OUTPUT FORMAT:
 Summary: Wholistic summary of all sections, presented as a single continuous string of text.

@@ -13,6 +13,9 @@ from tkinter import filedialog
 import csv
 import re
 import config
+from rapidfuzz import process, fuzz, utils
+import rapidfuzz
+from operator import itemgetter
 
 
 SISYPHUS_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus"
@@ -137,6 +140,201 @@ def is_number(s):
         return True
     except ValueError:
         return False
+def process_job_desc(job_desc):
+    function_name = helpers.inspect_function()
+    job_lines = job_desc.splitlines()
+    keywords_list = []
+    for line in job_lines:
+        line = line.lower()
+        if "keywords:" in line:
+            split_line = line.split(":",1)
+            if len(split_line)>1:
+                keywords = split_line[1].split(",")
+                for keyword in keywords:
+                    keyword = keyword.strip().lower()
+                    keywords_list.append(keyword)
+    if keywords_list == []:
+        raise ValueError(f"[ERROR]{function_name}: 'Keywords:' field not found")
+    if config.DEBUG["INFO_LOGGING"]:
+        print(f"[INFO]{function_name}: keywords extracted: {str(keywords_list)}")
+        # for keyw in keywords_list:
+        #     print(f"keyw: {str(keyw)}")
+    return keywords_list
+
+def process_exps(exp_text):
+    function_name = helpers.inspect_function()
+    text = exp_text
+    experiences = text.split("[E]")
+    list_exp_dcts = []
+    for experience in experiences:
+        experience_lines = experience.strip().splitlines()
+        #Asume 3 lines
+        skills = experience_lines[2].replace("Skills:","").strip()
+        skill_types = skills.split(";")
+        prog_tmp = skill_types[0].replace("Programming Languages:","").strip().split(",")
+        prog= []
+        for i in len(prog_tmp):
+            prog_tmp[i] = prog_tmp[i].strip()
+            prog.append((prog_tmp[i],[]))
+        tech_tmp = skill_types[1].replace("Technical Skills:","").strip().split(",")
+        tech = []
+        for i in len(tech_tmp):
+            tech_tmp[i] = tech_tmp[i].strip()
+            tech.append((tech_tmp[i],[]))
+        soft_tmp = skill_types[2].replace("Soft Skills:","").strip().split(",")
+        soft = []
+        for i in len(soft_tmp):
+            soft_tmp[i] = soft_tmp[i].strip()
+            soft.append((soft_tmp[i],[]))
+        temp_dct = {
+            "experience":(experience_lines[0].replace("Experience:","").strip(),[]),
+            "description":(experience_lines[1].replace("Description:","").strip(),[]),
+            "skills": {
+                "programmming_languages":prog,
+                "technical_skills":tech,
+                "soft_skills": soft
+            }
+        }
+        if config.DEBUG["INFO_LOGGING"]:
+            print(f"[INFO]{function_name}: experience: {temp_dct["experience"]}")
+            print(f"[INFO]{function_name}: description: {temp_dct["description"]}")
+            print(f"[INFO]{function_name}: skills:")
+            print(f"[INFO]{function_name}: programmming_languages: {str(temp_dct["programmming_languages"])}")
+            print(f"[INFO]{function_name}: technical_skills: {str(temp_dct["technical_skills"])}")
+            print(f"[INFO]{function_name}: soft_skills: {str(temp_dct["soft_skills"])}")
+        list_exp_dcts.append(temp_dct)
+    return list_exp_dcts
+
+def score_experiences(exps, keywords):
+    function_desc = getattr(rapidfuzz.fuzz, CONFIG["PRUNING"]["DISTANCE_ALGO_DESC"])
+    function_key = getattr(rapidfuzz.fuzz, CONFIG["PRUNING"]["DISTANCE_ALGO_KEY"])
+    exps_cpy =exps.copy()
+    for exp in exps_cpy:
+        for keyword in keywords:
+            exp["experience"][1].append(function_desc(keyword, exp["experience"][0], processor=utils.default_process))
+            exp["description"][1].append(function_desc(keyword, exp["description"][0], processor=utils.default_process))
+            for prog in exp["skills"]["programmming_languages"]:
+                prog[1].append(function_key(keyword, prog[0], processor=utils.default_process))                     
+            for tech in exp["skills"]["technical_skills"]:
+                tech[1].append(function_key(keyword, tech[0], processor=utils.default_process))    
+            for soft in exp["skills"]["soft_skills"]:
+                soft[1].append(function_key(keyword, soft[0], processor=utils.default_process))
+    return exps_cpy
+
+def pruning_heuristics(exps_scored):
+    #For experience do a sum
+    #For description do a sum
+    #Across each skill cathegory do a sum
+        #Highest for each skill
+    weights = CONFIG["PRUNING"]["EXP_H_WEIGHTS"]
+    exps_scored_cpy = exps_scored.copy()
+    for exp in exps_scored_cpy:
+        prog_sum = 0
+        tech_sum = 0
+        soft_sum = 0
+        for prog in exp["skills"]["programmming_languages"]:
+            prog_sum = prog_sum +  max(prog[1])           
+        for tech in exp["skills"]["technical_skills"]:
+            tech_sum = tech_sum +  max(tech[1])
+        for soft in exp["skills"]["soft_skills"]:
+            soft_sum = soft_sum +  max(soft[1])
+        no_keywords = len(exp["experience"][1])
+        scores = {
+            "experience": sum(exp["experience"][1]) * weights["EXP"],
+            "description": sum(exp["description"][1]) * weights["DESC"],
+            "prog": prog_sum *(no_keywords/len(exp["skills"]["programmming_languages"])) * weights["PROG"],
+            "tech": tech_sum *(no_keywords/len(exp["skills"]["technical_skills"])) * weights["TECH"],
+            "soft": soft_sum *(no_keywords/len(exp["skills"]["soft_skills"])) * weights["SOFT"]
+        }
+        exp["scores"] = scores
+        exp["total_score"] = scores["experience"] + scores["description"] + scores["prog"] + scores["tech"] + scores["soft"]
+    return exps_scored_cpy
+
+@log_time
+def experience_pruning_algorithm(job_desc,text,v_list,w_list,p_list):
+#For experiences:
+    #Input: job desc and a text to prune
+    #Assuming: keyword matched job description
+    """
+    [E]Experience:
+    Description:
+    Skills:
+    ...
+    """    
+    #Extract keyword list
+    keywords = process_job_desc(job_desc) 
+    #Extract list
+    exps = process_exps(text)
+    #Score each experience based on % matching
+    exps_scored = score_experiences(exps,keywords)
+    #Heuristics(for final scoring)
+    exps_heuristics = pruning_heuristics(exps_scored)
+    #Rank em
+    sorted_exps = sorted(exps_heuristics, key=itemgetter('total_score'), reverse=True)
+    simple_sorted_exps = []
+    for exp in sorted_exps:
+        simple_sorted_exps.append(exp["experience"][0])
+    sorted_v_list =[]
+    sorted_w_list = []
+    sorted_p_list = []
+    for exp in simple_sorted_exps:
+        if exp in v_list:
+            sorted_v_list.append(exp)
+        if exp in w_list:
+            sorted_w_list.append(exp)
+        if exp in p_list:
+            sorted_p_list.append(exp)
+    #Fetch any currently preferred jobs; as well as job allocaion settings (total number of jobs, jobs per section)
+
+    pref_list_v = CONFIG["PRUNING"]["PREFS"]["V"]
+    pref_list_w = CONFIG["PRUNING"]["PREFS"]["W"] 
+    pref_list_p = CONFIG["PRUNING"]["PREFS"]["P"]
+    all_prefs = pref_list_v + pref_list_w +pref_list_p
+    #Append matched jobs
+    max_allowed = CONFIG["PRUNING"]["BASE_PRUNE"]
+    section_min = CONFIG["PRUNING"]["SECTION_MIN"]
+    for item in reversed(all_prefs):
+        if item in simple_sorted_exps:
+            simple_sorted_exps.remove(item)
+            simple_sorted_exps.insert(0, item)
+    return_list = []
+    needed_v = section_min
+    needed_w = section_min
+    needed_p = section_min
+    #Assume max>=3*min
+    for item in simple_sorted_exps:
+        if item in v_list and needed_v>0:
+            return_list.append(item)
+            needed_v = needed_v -1
+        elif item in v_list and needed_w>0:
+            return_list.append(item)
+            needed_w = needed_w -1
+        elif item in v_list and needed_p>0:
+            return_list.append(item)
+            needed_p = needed_p -1
+        if needed_p <= 0 and needed_v <= 0 and needed_w <= 0:
+            break
+    for item in return_list:
+        simple_sorted_exps.remove(item)
+    if max_allowed > len(return_list):
+        return_list_real = return_list + simple_sorted_exps[:max_allowed-len(return_list)]
+    elif max_allowed < len(return_list):
+        return_list_real = return_list[:max_allowed]
+    else:
+        return_list_real = return_list
+    for i in range(0, len(return_list_real)):
+        return_list_real[i] = "Experience: " + return_list_real[i]
+    return return_list_real
+
+
+
+
+
+
+def course_pruning_algorithm():
+    pass
+def skill_pruning_algorithm():
+    pass
 
 @log_time
 def batch_application_packages(root, benchmark = False, cv = True, cl = True):
@@ -435,6 +633,8 @@ def tailor_cv(root, show = True):
                             },
                 }
                 tailored_courses = tailor_robust.ollama_call(runtime_info=runtime_info_temp)#Standard
+                #Line to remove courses not present in the original courses list   
+                tailored_courses = helpers.revise_list_section(new_list_section_text = tailored_courses, og_list = unchanged_dict[key][i]["courses"], type = "courses")             
                 unchanged_dict[key][i]["courses"] = tailored_courses.replace("[1]Courses:", "").strip()
 
         tailored_dict[key] = value
@@ -456,6 +656,12 @@ def tailor_cv(root, show = True):
         "work_experience": work_experience,
         "projects": projects
     }
+    all_experiences = {
+        "volunteering_and_leadership": v_and_l_section["volunteering_and_leadership"],
+        "work_experience": w_section["work_experience"],
+        "projects": p_section["projects"]
+    }
+    all_experiences_text = parsers.inv_parse_cv(all_experiences)
     #Convert to text
     experiences_text = parsers.inv_parse_cv(experiences)
     # print("Experiences text before pruning: \n" + helpers.indent_text(str(experiences_text)))

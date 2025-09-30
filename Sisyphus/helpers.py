@@ -199,6 +199,22 @@ def filter_output(model_output, prefix_dict ={}):
         #         raise ValueError(f"[ERROR]{function_name}: output is all wrong, no fields present")
         #     return "\n".join(prefixed_lines)
     #endregion    
+def revise_list_section(new_list_section_text = "", og_list = [], type = "courses"):
+    function_name = inspect_function()
+    return_text = ""
+    return_list = []
+    if new_list_section_text == "":
+        raise ValueError(f"[ERROR]{function_name}: list text empty")
+    if og_list == []:
+        return new_list_section_text
+    if type == "courses":
+        return_text = "[1]Courses: "
+    for item in og_list:
+        if item in new_list_section_text:
+            return_list.append(item)
+    return_text = return_text + ", ".join(return_list)
+    return return_text
+
 
 def missing_format_pieces(prompt,format):
     function_name = inspect_function()

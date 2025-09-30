@@ -571,7 +571,9 @@ def batch_summarize_sections(call_info = template_call_info):
     section_names = call_info["format"].get("section_names", [])
     sections_text = "\n".join(sections)
     format = {
-        "sections_text": sections_text
+        "sections_text": sections_text,
+        "section_names": ', '.join(section_names),
+        "no_sections": len(section_names)
     }
 
     prompt_in = call_info["prompt_in"]
@@ -588,9 +590,11 @@ def batch_summarize_sections(call_info = template_call_info):
     
     if config.DEBUG["INFO_LOGGING"]: logging.info(f"[OLLAMA]{function_name}: call_id: {call_id}")
     
-    prompt = prompt_in
+    prompt = prompt_in.format(**format)
+    prompt = helpers.process_input(prompt)
+    prompt = prompt + "OUTPUT FORMAT:\n"
     for name in section_names:
-        prompt =prompt + f"Section Summary: {name} Summary; Wholistic summary of the section's information.\n"
+        prompt =prompt + f"Section Summary: This is a summary of the {name} section: Wholistic summary of the section's information.\n"
 
     helpers.missing_format_pieces(call_info["format"]["second_half"],format)
     prompt +=  call_info["format"]["second_half"].format(**format)

@@ -2,6 +2,31 @@
     [][1.0 DEV PUBLIC RELEASE] Clean code and prompt engineer a bit; make a single UI window;deal with debug prints in "a way"
         [WIP]
             Prompt Engineering:
+                [NOTES]
+                    [TACKLED?]
+                        Check explicit declaration of Javscript usage.
+                        [tailor_courses]
+                            1x Note: The courses were selected based on the job description's requirements for strong computer science fundamentals, including data structures, algorithms, and object-oriented design.
+                                Emphasize importance of not including additional text to that which has been requested, or add an additional step that clears this list (better)
+                    [lama3:8b,0.8]
+                        Revamp selection process (matching + predetermined; need to add keyword section to job description tailoring)
+                        New course selection way (generated + predetermined)
+                        Add filter to skills (not all just tech and programming) AND OR Chneg skill selection process to (keyword matching + predetermined)
+                        [step3_tailor_functions]
+                            1 Hallucination on 1 Work Experience, used the job description x 4
+                                Do not use jod description when paraphrasing description/skills? or be more concise
+                                Maybe do not tailor skills in this phase (do it by keyword matching after pruning instead)
+                            "Highlighted achievements and relevant skills" on V and L text
+                            Relevant skills include data structures, object-oriented design on work exp x1
+                                Rephrase instructions to be more general and less vague
+                        [prune_experiences, step0_tailor_functions]
+                            Chose 4 experiences x 1
+                            Not chose those experiences with direct keywords (Java, Javascript,etc) (always, theres only 1 in javascript)
+                                Review prompt, emphasize the importance of 5 experiences, make criteria for choosing expereinces more clear
+                        [step1_tailor_summary]
+                            No "Despite"... on summaryx 3
+                            patient-centred approach on summary x 1
+                                Emphasize the importance of the format, maybe use some  keyword matching or more specific instructions
                 [STATS]
                     0.8 Tracebacks: 6 [llama3:8b: 2 (1+1);llama3:instruct: 1 (1);llama3.2:latest: 3 (1+1+1);]
                     0.7 Tracebacks: 9 [llama3:8b: 3 (1+1+2);llama3:instruct: 2 (1+1);llama3.2:latest: 4 (1+1+2+1);]
@@ -24,128 +49,131 @@
                     step0_tailor_summary: 3 (1 llama3:instruct, 2 llama3)
                     sliding_window_four_sections: 9 (9 llama3.2)
                 [ALL ERRORS]
-                    [7][SUCCESS]Traceback 0 (llama3:8b; temperature: 0.8):
-                        on step0_tailor_summary:
-                        output (filtered):"
-                        [0]Summary:
-                        [0]Summary: Marcos David Madrigal Albores is an Associate Software Engineer with a multilingual background, speaking English, Spanish, and French. He holds a Bachelor's degree in Computer Engineering from the University of Toronto (2018-2023) with courses in mathematics and electrical engineering, as well as a Minor in Artificial Intelligence (issued 2023). Notable awards include the United Nations Datathon 2023 Participation award and the University of Toronto Engineering Scholar award. As an Engineering Science Program Ambassador, he demonstrated leadership skills through outreach and summits, showcasing strong written and communication skills, as well technical skills in documentation and Microsoft Suite. Marcos David Madrigal Albores has expertise in AI fundamentals, adaptability, leadership skills, communication abilities, creative problem-solving, scripting proficiency (Python, Java), and experience in script programming and video project editing. His work experience includes utilizing computer science fundamentals to develop video description generation algorithms, improving stakeholder satisfaction, and troubleshooting Oculus Quest VR equipment, resulting in a 20% efficiency improvement. Additionally, he has developed innovative projects such as Virtual Piano in Verilog/Assembly and Project Sisyphus, an open-source personal project utilizing local LLM-powered tool for job application package generation from Curriculum Vitae and Job Descriptions, optimizing document generation algorithms on edge devices by 150%.
-                        "
-                    [8][SUCCESS]Traceback 1(llama3:8b; temperature: 0.8):
-                        on batch_summarize_sections:
-                            missing "Section Summary: volunteering_and_leadership Summary; Wholistic summary of the section's information."
-                        output(unfiltered):"
-                        Section Summary: awards_and_scholarships \nSummary: A highly accomplished individual with notable recognition from the United Nations Datathon 2023 Participation and University of Toronto Engineering Scholar.'
-                        "
-                    [51][SUCCESS]Traceback 12(llama3:instruct; temperature: 0.6):
-                        on step0_tailor_summary:
-                        output (filtered):"
-                        [0]Summary: Wholistic summary of all sections, presented as a single continuous string of text.
-                        [0]Summary: Marcos David Madrigal Albores, Associate Software Engineer, contactable at 308 Brunswick Ave, Toronto, ON, Canada via phone (+1-437-981-2994) or email (marcosdma.compeng@outlook.com), can be found on LinkedIn (linkedin.com/in/marcosdma/) and GitHub (github.com/marneus981), and has a portfolio available at marneus981.github.io | donkeyponius981.itch.io; proficient in English, Spanish, and French.  Certifications: Pursued a Minor in Artificial Intelligence from the University of Toronto, issued June 2023.  Education: Bachelor of Applied Science in Computer Engineering from the University of Toronto. Minor in Artificial Intelligence, obtained on 2023/06.  Awards_and_Scholarships: Received two prestigious awards: United Nations Datathon 2023 Participation and University of Toronto Engineering Scholar, demonstrating exceptional skills and achievements in data science and engineering fields.  Volunteering_and_Leadership: Adept leader with experience representing the Engineering Science Department at ENGSOC, fostering connections and showcasing departmental achievements. Demonstrated effective collaboration as part of the Scholarship Committee, making impactful decisions to benefit students faculty-wide. Utilized skills in leadership, outreach, customer service, creative problem solving, adaptability, time management, analytical problem solving, good written and communication skills.  Work_Experience: Technical assistant with expertise in troubleshooting hardware issues and developing patient-centered solutions. Proficient in programming languages such as Java, scripting, and Python ML, with experience generating video descriptions using Python ML. Skilled collaborator with ability to enhance stakeholder satisfaction, achieve project deliverables within tight timelines, and align goals with key stakeholders.  Projects: Simulated neural signal transmission and propagation utilizing MATLAB, applying research skills to coalesce findings into a comprehensive simulation.  Overall Summary: With exceptional academic excellence in computer engineering principles, demonstrated leadership skills through various roles, and notable achievements in data science and engineering fields, Marcos David Madrigal Albores showcases expertise as an Associate Software Engineer, proficient in English, Spanish, and French.
-                        " 
-                    [60][SUCCESS]Traceback 16(llama3.2:latest; temperature: 0.8): 
-                        on batch_summarize_sections:
-                            [ERROR]filter_output: No valid answer found
-                        output (unfiltered):"
-                        'Certifications Summary; A holder of a Minor in Artificial Intelligence certification from the University of Toronto, issued in June 2023.\nAwards_and_Scholarships Summary; Recipient of two prestigious awards, including the United Nations Datathon 2023 Participation and the University of Toronto Engineering Scholar award.'
-                        "
-                        expected OUTPUT FORMAT:"
-                        Section Summary: certifications Summary; Wholistic summary of the section's information.
-                        Section Summary: awards_and_scholarships Summary; Wholistic summary of the section's information.
-                        "
-                    [62][SUCCESS]Traceback 17(llama3.2:latest; temperature: 0.8):
-                        on sliding_window_four_sections:
-                            [ERROR]filter_output: No valid answer found
-                        output (unfiltered):"
-                        "Section Summary: awards_and_scholarships Wholistic summary of the candidate's academic achievements. \nThe Associate Software Engineer has received two prestigious awards, including the United Nations Datathon 2023 Participation, recognized by the United Nations in 2023, and the University of Toronto Engineering Scholar award from the University of Toronto Faculty of Applied Science and Engineering in 2018.\n\nSection Summary: volunteering_and_leadership Wholistic summary of the candidate's leadership and volunteer work.\nAlthough no specific information is provided for this section, it indicates that the candidate has shown potential for leadership or volunteer work.\n\nSection Summary: work_experience Wholistic summary of the candidate's work experience. \nThe Associate Software Engineer has 2 job titles with 2 companies in Mexico and Canada, respectively. They worked as PEY VR Technical Assistant for Medica Providencia Clinic from Dec 2022 to Mar 2023, achieving reduced downtime through systematic diagnostics and repairs. They also worked as Script Programmer and Video Project Editor for Ontario Institute for Studies in Education from Mar 2022 to May 2022, utilizing Python ML for video description generation algorithms.\n\nSection Summary: projects Wholistic summary of the candidate's projects.\nThe Associate Software Engineer has 3 project titles with the following characteristics: TTRPG Tools (Open Source Personal Project, https://github.com/Marneus981/TTRPGTools) from Jun 2023 to present, featuring automated debugging and scripting for software components using C++/Python for AI integration in TTRPG games. UNIX-based Operative System Development (University Project, URL: absent) from Jan 2021 to Jun 2021, involving the design and implementation of new features for Veeva's cloud software utilizing Java skills. Neural Signal Modelling (University Project, https://github.com/Marneus981/NeuralBioelectricityProject) from Sep 2020 to Dec 2020, featuring the utilization of strong computer science fundamentals and proficiency in Java to design and implement new features for Veea's cloud software."
-                        "
-                        expected OUTPUT FORMAT:
-                        Sections Summary: This is a summary of the awards_and_scholarships, volunteering_and_leadership, work_experience and projectssections: Wholistic summary of the sections' information, competencies, achievements, and skills.
-                    [66][SUCCESS]Traceback 18(llama3.2:latest; temperature: 0.8): 
-                        on sliding_window_four_sections:
-                            [ERROR]filter_output: No valid answer found
-                        output (unfiltered):"
-                        'Section Summary: This is a summary of the awards_and_scholarships, volunteering_and_leadership, work_experience and projectssections: \nAward Name: United Nations Datathon 2023 Participation; Issued by United Nations in 2023, recognizing participation in a global data science challenge. Award Name: University of Toronto Engineering Scholar; Received from University of Toronto Faculty of Applied Science and Engineering in 2018 for academic excellence.\nCompetencies: Academic Excellence, Data Science, Leadership\nAchievements: United Nations Datathon 2023 Participation, University of Toronto Engineering Scholar\nSkills: Cloud Software Development, Unity Game Engine Development, C++/Python Programming\n\nSection Summary: This is a summary of the awards_and_scholarships, volunteering_and_leadership, work_experience and projectssections: \nVolunteering and leadership experience are not provided.\nCompetencies: Leadership, Teamwork, Communication\nAchievements: N/A\nSkills: N/A\n\nSection Summary: This is a summary of the awards_and_scholarships, volunteering_and_leadership, work_experience and projectssections: \nPEY VR Technical Assistant at Medica Providencia Clinic (Tuxtla Gtz, CS, Mexico) Duration: 2022/12 - 2023/03; Designed and implemented new features for cloud software with high-quality code delivery through monthly releases.\nCompetencies: Cloud Software Development, Agile Methodologies\nAchievements: Successfully designed and implemented new features with high-quality code delivery\nSkills: Java Proficiency, Cloud Software Development\n\nSection Summary: This is a summary of the awards_and_scholarships, volunteering_and_leadership, work_experience and projectssections: \nMagia Chef Personal Game Project; Unity game engine development and 3D asset creation expertise, delivering high-quality code in a fast-paced environment (2023/06 - Present). TTRPG Tools Open Source Personal Project; Utilized C++/Python to develop AI-integrated software tools for playing and creating TTRPG Games with automated debugging and scripting (2023/06 - Present).\nCompetencies: Unity Game Engine Development, 3D Asset Creation\nAchievements: Delivered high-quality code in fast-paced environments\nSkills: Unity Game Engine Development, C++/Python Programming\n\nSection Summary: This is a summary of the awards_and_scholarships, volunteering_and_leadership, work_experience and projectssections: \nHorizontal Federated Learning Research Research | Capstone Project; Developed algorithm doubling network efficiency while maintaining model performance, co-authored technical papers on novel aggregation algorithms (github.com/alexjsenn/FedScale, 2021/09 - 2022/06).\nCompetencies: Algorithm Development, Network Efficiency\nAchievements: Co-authored technical papers on novel aggregation algorithms\nSkills: Algorithm Development, C++ Programming\n\nSection Summary: This is a summary of the awards_and_scholarships, volunteering_and_leadership, work_experience and projectssections: \nUNIX-based Operative System Development University Project; Utilized strong computer science fundamentals and Java proficiency to deliver innovative solutions in cloud software development, collaborating with product management and QA teams (2021/01 - 2021/06).\nCompetencies: Cloud Software Development, Java Proficiency\nAchievements: Delivered innovative solutions in cloud software development\nSkills: Java Proficiency, Cloud Software Development'
-                        "
-                        expected OUTPUT FORMAT:
-                        Sections Summary: This is a summary of the awards_and_scholarships, volunteering_and_leadership, work_experience and projectssections: Wholistic summary of the sections' information, competencies, achievements, and skills.
-                [SAMES]
-                    [13][SUCCESS]Traceback 2(llama3:8b; temperature: 0.7):
-                        on batch_summarize_sections:
-                            same as Traceback 1
-                    [15][SUCCESS]Traceback 3(llama3:8b; temperature: 0.7):
-                        on batch_summarize_sections:
-                            same as Traceback 1
-                    [16][SUCCESS]Traceback 4(llama3:8b; temperature: 0.7):
-                        on step0_tailor_summary:
-                            same as Traceback 0
-                        on batch_summarize_sections:
-                            same as Traceback 1 except its missing certifications
-                    [20][SUCCESS]Traceback 5(llama3:8b; temperature: 0.6):
-                        on batch_summarize_sections:
-                            same as Traceback 1 except its missing work_experience
-                    [21][SUCCESS]Traceback 6(llama3:8b; temperature: 0.6):
-                        on batch_summarize_sections:
-                            same as Traceback 1 except its certifications
-                    [22][SUCCESS]Traceback 7(llama3:8b; temperature: 0.6):
-                        on batch_summarize_sections:
-                            same as Traceback 1 except its missing projects
-                    [25][SUCCESS]Traceback 8(llama3:8b; temperature: 0.6):
-                        on batch_summarize_sections:
-                            same as Traceback 1 except its missing certifications
-                        on batch_summarize_sections:
-                            same as Traceback 1 except its missing certifications
-                    [30][SUCCESS]Traceback 9(llama3:instruct; temperature: 0.8):
-                        on batch_summarize_sections:
-                            same as Traceback 1 except its missing certifications
-                    [46][SUCCESS]Traceback 10(llama3:instruct; temperature: 0.7):
-                        on batch_summarize_sections:
-                            same as Traceback 1 except its missing certifications
-                    [49][SUCCESS]Traceback 11(llama3:instruct; temperature: 0.7):
-                        on batch_summarize_sections:
-                            same as Traceback 1 except its missing projects
-                    [51][SUCCESS]Traceback 12(llama3:instruct; temperature: 0.6):
-                        on batch_summarize_sections:
-                            same as Traceback 1
-                        on batch_summarize_sections:
-                            same as Traceback 1 except its missing projects  
-                    [52][SUCCESS]Traceback 13(llama3:instruct; temperature: 0.6):
-                        on batch_summarize_sections:
-                            same as Traceback 1 except its missing certifications
-                        on batch_summarize_sections:
-                            same as Traceback 1 except its missing certifications 
-                    [55][SUCCESS]Traceback 14(llama3:instruct; temperature: 0.6):
-                        on batch_summarize_sections:
-                            same as Traceback 1 except its missing awards_and_scholarships 
-                    [57][SUCCESS]Traceback 15(llama3:instruct; temperature: 0.6):
-                        on batch_summarize_sections:
-                            same as Traceback 1  
-                    [71][SUCCESS]Traceback 19(llama3.2:latest; temperature: 0.7):
-                        on batch_summarize_sections:
-                            same as Traceback 1 except its missing work_experience  
-                    [72][SUCCESS]Traceback 20(llama3.2:latest; temperature: 0.7):
-                        on batch_summarize_sections:
-                            same as Traceback 16 
-                    [74][SUCCESS]Traceback 21(llama3.2:latest; temperature: 0.7):
-                        on sliding_window_four_sections:
-                            same as Traceback 18 
-                        on sliding_window_four_sections:
-                            same as Traceback 17 
-                    [78][SUCCESS]Traceback 22(llama3.2:latest; temperature: 0.7):
-                        on sliding_window_four_sections:
-                            same as Traceback 17          
-                    [84][SUCCESS]Traceback 23(llama3.2:latest; temperature: 0.6):
-                        on sliding_window_four_sections:
-                            same as Traceback 18 
-                        on sliding_window_four_sections:
-                            same as Traceback 18 
-                    [85][SUCCESS]Traceback 24(llama3.2:latest; temperature: 0.6):
-                        on sliding_window_four_sections:
-                            same as Traceback 17
-                        on sliding_window_four_sections:
-                            same as Traceback 18    
-                    [86][SUCCESS]Traceback 25(llama3.2:latest; temperature: 0.6):
-                        on batch_summarize_sections:
-                            same as Traceback 16
+                    [batch_summarize_sections]
+                        [8][SUCCESS]Traceback 1(llama3:8b; temperature: 0.8):
+                            on batch_summarize_sections:
+                                missing "Section Summary: volunteering_and_leadership Summary; Wholistic summary of the section's information."
+                            output(unfiltered):"
+                            Section Summary: awards_and_scholarships \nSummary: A highly accomplished individual with notable recognition from the United Nations Datathon 2023 Participation and University of Toronto Engineering Scholar.'
+                            "
+                        [60][SUCCESS]Traceback 16(llama3.2:latest; temperature: 0.8): 
+                            on batch_summarize_sections:
+                                [ERROR]filter_output: No valid answer found
+                            output (unfiltered):"
+                            'Certifications Summary; A holder of a Minor in Artificial Intelligence certification from the University of Toronto, issued in June 2023.\nAwards_and_Scholarships Summary; Recipient of two prestigious awards, including the United Nations Datathon 2023 Participation and the University of Toronto Engineering Scholar award.'
+                            "
+                            expected OUTPUT FORMAT:"
+                            Section Summary: certifications Summary; Wholistic summary of the section's information.
+                            Section Summary: awards_and_scholarships Summary; Wholistic summary of the section's information.
+                            "
+                    [step0_tailor_summary]
+                        [7][SUCCESS]Traceback 0 (llama3:8b; temperature: 0.8):
+                            on step0_tailor_summary:
+                            output (filtered):"
+                            [0]Summary:
+                            [0]Summary: Marcos David Madrigal Albores is an Associate Software Engineer with a multilingual background, speaking English, Spanish, and French. He holds a Bachelor's degree in Computer Engineering from the University of Toronto (2018-2023) with courses in mathematics and electrical engineering, as well as a Minor in Artificial Intelligence (issued 2023). Notable awards include the United Nations Datathon 2023 Participation award and the University of Toronto Engineering Scholar award. As an Engineering Science Program Ambassador, he demonstrated leadership skills through outreach and summits, showcasing strong written and communication skills, as well technical skills in documentation and Microsoft Suite. Marcos David Madrigal Albores has expertise in AI fundamentals, adaptability, leadership skills, communication abilities, creative problem-solving, scripting proficiency (Python, Java), and experience in script programming and video project editing. His work experience includes utilizing computer science fundamentals to develop video description generation algorithms, improving stakeholder satisfaction, and troubleshooting Oculus Quest VR equipment, resulting in a 20% efficiency improvement. Additionally, he has developed innovative projects such as Virtual Piano in Verilog/Assembly and Project Sisyphus, an open-source personal project utilizing local LLM-powered tool for job application package generation from Curriculum Vitae and Job Descriptions, optimizing document generation algorithms on edge devices by 150%.
+                            "
+                        [51][SUCCESS]Traceback 12(llama3:instruct; temperature: 0.6):
+                            on step0_tailor_summary:
+                            output (filtered):"
+                            [0]Summary: Wholistic summary of all sections, presented as a single continuous string of text.
+                            [0]Summary: Marcos David Madrigal Albores, Associate Software Engineer, contactable at 308 Brunswick Ave, Toronto, ON, Canada via phone (+1-437-981-2994) or email (marcosdma.compeng@outlook.com), can be found on LinkedIn (linkedin.com/in/marcosdma/) and GitHub (github.com/marneus981), and has a portfolio available at marneus981.github.io | donkeyponius981.itch.io; proficient in English, Spanish, and French.  Certifications: Pursued a Minor in Artificial Intelligence from the University of Toronto, issued June 2023.  Education: Bachelor of Applied Science in Computer Engineering from the University of Toronto. Minor in Artificial Intelligence, obtained on 2023/06.  Awards_and_Scholarships: Received two prestigious awards: United Nations Datathon 2023 Participation and University of Toronto Engineering Scholar, demonstrating exceptional skills and achievements in data science and engineering fields.  Volunteering_and_Leadership: Adept leader with experience representing the Engineering Science Department at ENGSOC, fostering connections and showcasing departmental achievements. Demonstrated effective collaboration as part of the Scholarship Committee, making impactful decisions to benefit students faculty-wide. Utilized skills in leadership, outreach, customer service, creative problem solving, adaptability, time management, analytical problem solving, good written and communication skills.  Work_Experience: Technical assistant with expertise in troubleshooting hardware issues and developing patient-centered solutions. Proficient in programming languages such as Java, scripting, and Python ML, with experience generating video descriptions using Python ML. Skilled collaborator with ability to enhance stakeholder satisfaction, achieve project deliverables within tight timelines, and align goals with key stakeholders.  Projects: Simulated neural signal transmission and propagation utilizing MATLAB, applying research skills to coalesce findings into a comprehensive simulation.  Overall Summary: With exceptional academic excellence in computer engineering principles, demonstrated leadership skills through various roles, and notable achievements in data science and engineering fields, Marcos David Madrigal Albores showcases expertise as an Associate Software Engineer, proficient in English, Spanish, and French.
+                            " 
+                    [sliding_window_four_sections]
+                        [62][SUCCESS]Traceback 17(llama3.2:latest; temperature: 0.8):
+                            on sliding_window_four_sections:
+                                [ERROR]filter_output: No valid answer found
+                            output (unfiltered):"
+                            "Section Summary: awards_and_scholarships Wholistic summary of the candidate's academic achievements. \nThe Associate Software Engineer has received two prestigious awards, including the United Nations Datathon 2023 Participation, recognized by the United Nations in 2023, and the University of Toronto Engineering Scholar award from the University of Toronto Faculty of Applied Science and Engineering in 2018.\n\nSection Summary: volunteering_and_leadership Wholistic summary of the candidate's leadership and volunteer work.\nAlthough no specific information is provided for this section, it indicates that the candidate has shown potential for leadership or volunteer work.\n\nSection Summary: work_experience Wholistic summary of the candidate's work experience. \nThe Associate Software Engineer has 2 job titles with 2 companies in Mexico and Canada, respectively. They worked as PEY VR Technical Assistant for Medica Providencia Clinic from Dec 2022 to Mar 2023, achieving reduced downtime through systematic diagnostics and repairs. They also worked as Script Programmer and Video Project Editor for Ontario Institute for Studies in Education from Mar 2022 to May 2022, utilizing Python ML for video description generation algorithms.\n\nSection Summary: projects Wholistic summary of the candidate's projects.\nThe Associate Software Engineer has 3 project titles with the following characteristics: TTRPG Tools (Open Source Personal Project, https://github.com/Marneus981/TTRPGTools) from Jun 2023 to present, featuring automated debugging and scripting for software components using C++/Python for AI integration in TTRPG games. UNIX-based Operative System Development (University Project, URL: absent) from Jan 2021 to Jun 2021, involving the design and implementation of new features for Veeva's cloud software utilizing Java skills. Neural Signal Modelling (University Project, https://github.com/Marneus981/NeuralBioelectricityProject) from Sep 2020 to Dec 2020, featuring the utilization of strong computer science fundamentals and proficiency in Java to design and implement new features for Veea's cloud software."
+                            "
+                            expected OUTPUT FORMAT:
+                            Sections Summary: This is a summary of the awards_and_scholarships, volunteering_and_leadership, work_experience and projectssections: Wholistic summary of the sections' information, competencies, achievements, and skills.
+                        [66][SUCCESS]Traceback 18(llama3.2:latest; temperature: 0.8): 
+                            on sliding_window_four_sections:
+                                [ERROR]filter_output: No valid answer found
+                            output (unfiltered):"
+                            'Section Summary: This is a summary of the awards_and_scholarships, volunteering_and_leadership, work_experience and projectssections: \nAward Name: United Nations Datathon 2023 Participation; Issued by United Nations in 2023, recognizing participation in a global data science challenge. Award Name: University of Toronto Engineering Scholar; Received from University of Toronto Faculty of Applied Science and Engineering in 2018 for academic excellence.\nCompetencies: Academic Excellence, Data Science, Leadership\nAchievements: United Nations Datathon 2023 Participation, University of Toronto Engineering Scholar\nSkills: Cloud Software Development, Unity Game Engine Development, C++/Python Programming\n\nSection Summary: This is a summary of the awards_and_scholarships, volunteering_and_leadership, work_experience and projectssections: \nVolunteering and leadership experience are not provided.\nCompetencies: Leadership, Teamwork, Communication\nAchievements: N/A\nSkills: N/A\n\nSection Summary: This is a summary of the awards_and_scholarships, volunteering_and_leadership, work_experience and projectssections: \nPEY VR Technical Assistant at Medica Providencia Clinic (Tuxtla Gtz, CS, Mexico) Duration: 2022/12 - 2023/03; Designed and implemented new features for cloud software with high-quality code delivery through monthly releases.\nCompetencies: Cloud Software Development, Agile Methodologies\nAchievements: Successfully designed and implemented new features with high-quality code delivery\nSkills: Java Proficiency, Cloud Software Development\n\nSection Summary: This is a summary of the awards_and_scholarships, volunteering_and_leadership, work_experience and projectssections: \nMagia Chef Personal Game Project; Unity game engine development and 3D asset creation expertise, delivering high-quality code in a fast-paced environment (2023/06 - Present). TTRPG Tools Open Source Personal Project; Utilized C++/Python to develop AI-integrated software tools for playing and creating TTRPG Games with automated debugging and scripting (2023/06 - Present).\nCompetencies: Unity Game Engine Development, 3D Asset Creation\nAchievements: Delivered high-quality code in fast-paced environments\nSkills: Unity Game Engine Development, C++/Python Programming\n\nSection Summary: This is a summary of the awards_and_scholarships, volunteering_and_leadership, work_experience and projectssections: \nHorizontal Federated Learning Research Research | Capstone Project; Developed algorithm doubling network efficiency while maintaining model performance, co-authored technical papers on novel aggregation algorithms (github.com/alexjsenn/FedScale, 2021/09 - 2022/06).\nCompetencies: Algorithm Development, Network Efficiency\nAchievements: Co-authored technical papers on novel aggregation algorithms\nSkills: Algorithm Development, C++ Programming\n\nSection Summary: This is a summary of the awards_and_scholarships, volunteering_and_leadership, work_experience and projectssections: \nUNIX-based Operative System Development University Project; Utilized strong computer science fundamentals and Java proficiency to deliver innovative solutions in cloud software development, collaborating with product management and QA teams (2021/01 - 2021/06).\nCompetencies: Cloud Software Development, Java Proficiency\nAchievements: Delivered innovative solutions in cloud software development\nSkills: Java Proficiency, Cloud Software Development'
+                            "
+                            expected OUTPUT FORMAT:
+                            Sections Summary: This is a summary of the awards_and_scholarships, volunteering_and_leadership, work_experience and projectssections: Wholistic summary of the sections' information, competencies, achievements, and skills.
+                    [SAMES]
+                        [13][SUCCESS]Traceback 2(llama3:8b; temperature: 0.7):
+                            on batch_summarize_sections:
+                                same as Traceback 1
+                        [15][SUCCESS]Traceback 3(llama3:8b; temperature: 0.7):
+                            on batch_summarize_sections:
+                                same as Traceback 1
+                        [16][SUCCESS]Traceback 4(llama3:8b; temperature: 0.7):
+                            on step0_tailor_summary:
+                                same as Traceback 0
+                            on batch_summarize_sections:
+                                same as Traceback 1 except its missing certifications
+                        [20][SUCCESS]Traceback 5(llama3:8b; temperature: 0.6):
+                            on batch_summarize_sections:
+                                same as Traceback 1 except its missing work_experience
+                        [21][SUCCESS]Traceback 6(llama3:8b; temperature: 0.6):
+                            on batch_summarize_sections:
+                                same as Traceback 1 except its certifications
+                        [22][SUCCESS]Traceback 7(llama3:8b; temperature: 0.6):
+                            on batch_summarize_sections:
+                                same as Traceback 1 except its missing projects
+                        [25][SUCCESS]Traceback 8(llama3:8b; temperature: 0.6):
+                            on batch_summarize_sections:
+                                same as Traceback 1 except its missing certifications
+                            on batch_summarize_sections:
+                                same as Traceback 1 except its missing certifications
+                        [30][SUCCESS]Traceback 9(llama3:instruct; temperature: 0.8):
+                            on batch_summarize_sections:
+                                same as Traceback 1 except its missing certifications
+                        [46][SUCCESS]Traceback 10(llama3:instruct; temperature: 0.7):
+                            on batch_summarize_sections:
+                                same as Traceback 1 except its missing certifications
+                        [49][SUCCESS]Traceback 11(llama3:instruct; temperature: 0.7):
+                            on batch_summarize_sections:
+                                same as Traceback 1 except its missing projects
+                        [51][SUCCESS]Traceback 12(llama3:instruct; temperature: 0.6):
+                            on batch_summarize_sections:
+                                same as Traceback 1
+                            on batch_summarize_sections:
+                                same as Traceback 1 except its missing projects  
+                        [52][SUCCESS]Traceback 13(llama3:instruct; temperature: 0.6):
+                            on batch_summarize_sections:
+                                same as Traceback 1 except its missing certifications
+                            on batch_summarize_sections:
+                                same as Traceback 1 except its missing certifications 
+                        [55][SUCCESS]Traceback 14(llama3:instruct; temperature: 0.6):
+                            on batch_summarize_sections:
+                                same as Traceback 1 except its missing awards_and_scholarships 
+                        [57][SUCCESS]Traceback 15(llama3:instruct; temperature: 0.6):
+                            on batch_summarize_sections:
+                                same as Traceback 1  
+                        [71][SUCCESS]Traceback 19(llama3.2:latest; temperature: 0.7):
+                            on batch_summarize_sections:
+                                same as Traceback 1 except its missing work_experience  
+                        [72][SUCCESS]Traceback 20(llama3.2:latest; temperature: 0.7):
+                            on batch_summarize_sections:
+                                same as Traceback 16 
+                        [74][SUCCESS]Traceback 21(llama3.2:latest; temperature: 0.7):
+                            on sliding_window_four_sections:
+                                same as Traceback 18 
+                            on sliding_window_four_sections:
+                                same as Traceback 17 
+                        [78][SUCCESS]Traceback 22(llama3.2:latest; temperature: 0.7):
+                            on sliding_window_four_sections:
+                                same as Traceback 17          
+                        [84][SUCCESS]Traceback 23(llama3.2:latest; temperature: 0.6):
+                            on sliding_window_four_sections:
+                                same as Traceback 18 
+                            on sliding_window_four_sections:
+                                same as Traceback 18 
+                        [85][SUCCESS]Traceback 24(llama3.2:latest; temperature: 0.6):
+                            on sliding_window_four_sections:
+                                same as Traceback 17
+                            on sliding_window_four_sections:
+                                same as Traceback 18    
+                        [86][SUCCESS]Traceback 25(llama3.2:latest; temperature: 0.6):
+                            on batch_summarize_sections:
+                                same as Traceback 16
             Dynamic template system
         [TBWO]
             [WIP]Research model temperature modulation

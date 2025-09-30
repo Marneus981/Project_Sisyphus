@@ -17,5 +17,35 @@ CONFIG = {
     "MODELS": {
         "TEMPERATURE": 0.8,
         "RETRIES": 2
+    },
+    "PRUNING": {
+        #ratio, partial_ratio, toekn_sort_ratio,partial_token_sort_ratio, token_set_ratio
+        "DISTANCE_ALGO_KEY": "WRatio", 
+        "DISTANCE_ALGO_DESC": "token_set_ratio", 
+        "BASE_PRUNE": 5,
+        "SECTION_MIN": 5,
+        "EXP_H_WEIGHTS": {
+            "EXP": 1.0,
+            "DESC":1.0,
+            "PROG":1.0,
+            "TECH":1.0,
+            "SOFT":0.5
+
+        },
+        "PREFS":{
+            "V": [
+            ],
+            "W":[
+            ],
+            "P":[
+                "Project Sisyphus",
+                "MAPPA C++ Geographical Information System"
+            ],
+            "SKILLS":[
+            ]
+        },
+        "COURSES_GRPS":
+        {
+        }
     }
 }
