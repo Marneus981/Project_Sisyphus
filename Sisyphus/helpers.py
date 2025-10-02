@@ -10,7 +10,7 @@ from Sisyphus.decorators import FUNCTION_STATS
 from Sisyphus import payloads
 from plyer import notification
 import pygame
-from config import CONFIG
+from config import CONFIG, DEBUG
 import inspect
 import traceback
 # Set up logging
@@ -55,6 +55,14 @@ def performance_check(descending=True, mode="runtime"):
     logging.info(f"[PERFORMANCE] Total function calls: {total_calls}, Total runtime: {total_runtime:.4f} seconds")
     # Clear function statistics
     FUNCTION_STATS.clear()
+
+def count_experiences(text):
+    function_name = inspect_function()
+    roles = text.count("Role:")
+    projects = text.count("Project Title:")
+    jobs = text.count("Job Title:")
+    experiences = roles + projects + jobs
+    if DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: number of experiences: {experiences} (roles:{roles} + projects:{projects} + jobs:{jobs})")
 
 @log_time
 def filter_output(model_output, prefix_dict ={}):

@@ -12,6 +12,10 @@ from config import CONFIG
 from Sisyphus import payloads_wip as payloads
 import re
 import traceback
+from rapidfuzz import process, fuzz, utils
+import rapidfuzz
+from operator import itemgetter
+
 DEFAULT_MODEL = "llama3:8b"
 DEFAULT_URL = "http://localhost:11434"
 
@@ -942,6 +946,385 @@ def tailor_projects(call_info = template_call_info):
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step4_text (after filtering):\n" + step4_text)
     return step4_text
 
+def process_job_desc(job_desc):
+    function_name = helpers.inspect_function()
+    job_lines = job_desc.splitlines()
+    keywords_list = []
+    for line in job_lines:
+        line = line.lower()
+        if "keywords:" in line:
+            split_line = line.split(":",1)
+            if len(split_line)>1:
+                keywords = split_line[1].split(",")
+                for keyword in keywords:
+                    keyword = keyword.strip().lower()
+                    keywords_list.append(keyword)
+    if keywords_list == []:
+        raise ValueError(f"[ERROR]{function_name}: 'Keywords:' field not found")
+    if config.DEBUG["INFO_LOGGING"]:
+        print(f"[INFO]{function_name}: keywords extracted: {str(keywords_list)}")
+        # for keyw in keywords_list:
+        #     print(f"keyw: {str(keyw)}")
+    return keywords_list
+
+def process_exps(exp_text):
+    function_name = helpers.inspect_function()
+    text = exp_text
+    experiences = text.split("Experience:")
+    experiences =experiences[1:]
+    if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: experiences: {str(experiences)}")
+    list_exp_dcts = []
+    for exp  in experiences:
+        if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: experience: {exp}")
+        lines = exp.strip().splitlines()
+        for line in lines:
+            if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: line: '{line}'")
+        if lines[0].strip() != "":
+            exp_line_temp = (lines[0].strip(),[])
+        if "Description:" in lines[1]:
+            desc_line_temp = (lines[1].replace("Description:","").strip(),[])
+        else:
+            desc_line_temp = ""
+        if "Skills:" in lines[2]:
+            soft = []
+            tech = []
+            prog = []
+            skills_line_temp = lines[2].strip()
+            #SOFT
+            skills_line_temp_s = skills_line_temp.strip().split("Soft Skills:")
+            #None if [1] is ""
+            if len(skills_line_temp_s)>1:
+                soft_lines = skills_line_temp_s[1].strip().split(",")
+                for j in range(0,len(soft_lines)):
+                        soft_lines[j] = soft_lines[j].strip()
+                        if soft_lines[j] != "":
+                            soft.append((soft_lines[j],[]))
+            #TECH
+            skills_line_temp_t = skills_line_temp_s[0].replace(";","").strip().split("Technical Skills:")
+            #None if [1] is ""
+            if len(skills_line_temp_t)>1:
+                tech_lines = skills_line_temp_t[1].strip().split(",")
+                for j in range(0,len(tech_lines)):
+                        tech_lines[j] = tech_lines[j].strip()
+                        if tech_lines[j] != "":
+                            tech.append((tech_lines[j],[]))
+            #PROG
+            skills_line_temp_p = skills_line_temp_t[0].replace(";","").strip().split("Programming Languages:")
+            #None if [1] is ""
+            if len(skills_line_temp_p)>1:
+                prog_lines = skills_line_temp_p[1].split(",")
+                for j in range(0,len(prog_lines)):
+                        prog_lines[j] = prog_lines[j].strip()
+                        if prog_lines[j] != "":
+                            prog.append((prog_lines[j],[]))
+        else:
+            soft = []
+            tech = []
+            prog = []
+        temp_dct = {
+            "experience":exp_line_temp,
+            "description":desc_line_temp,
+            "skills": {
+                "programming_languages":prog,
+                "technical_skills":tech,
+                "soft_skills": soft
+        }}
+        if config.DEBUG["INFO_LOGGING"]:
+            print(f"[INFO]{function_name}: experience: {temp_dct["experience"]}")
+            print(f"[INFO]{function_name}: description: {temp_dct["description"]}")
+            print(f"[INFO]{function_name}: skills:")
+            print(f"[INFO]{function_name}: programming_languages: {str(temp_dct["skills"]["programming_languages"])}")
+            print(f"[INFO]{function_name}: technical_skills: {str(temp_dct["skills"]["technical_skills"])}")
+            print(f"[INFO]{function_name}: soft_skills: {str(temp_dct["skills"]["soft_skills"])}")
+        list_exp_dcts.append(temp_dct)
+    return list_exp_dcts
+
+
+    # experiences = text.split("Experience:")
+    
+    # for experience in experiences:
+    #     if config.DEBUG["INFO_LOGGING"]:
+    #         print(f"[INFO]{function_name}: current experience: {experience}")
+    #     experience_lines = experience.strip().splitlines()
+    #     #Asume 3 lines
+    #     skills = experience_lines[2].replace("Skills:","").strip()
+    #     skill_types = skills.split(";")
+    #     prog_tmp = skill_types[0].replace("Programming Languages:","").strip().split(",")
+    #     prog= []
+    #     for i in range(0,len(prog_tmp)):
+    #         prog_tmp[i] = prog_tmp[i].strip()
+    #         prog.append((prog_tmp[i],[]))
+    #     tech_tmp = skill_types[1].replace("Technical Skills:","").strip().split(",")
+    #     tech = []
+    #     for i in range(0,len(tech_tmp)):
+    #         tech_tmp[i] = tech_tmp[i].strip()
+    #         tech.append((tech_tmp[i],[]))
+    #     soft_tmp = skill_types[2].replace("Soft Skills:","").strip().split(",")
+    #     soft = []
+    #     for i in range(0,len(soft_tmp)):
+    #         soft_tmp[i] = soft_tmp[i].strip()
+    #         soft.append((soft_tmp[i],[]))
+    #     temp_dct = {
+    #         "experience":(experience_lines[0].strip(),[]),
+    #         "description":(experience_lines[1].replace("Description:","").strip(),[]),
+    #         "skills": {
+    #             "programming_languages":prog,
+    #             "technical_skills":tech,
+    #             "soft_skills": soft
+    #         }
+    #     }
+    #     if config.DEBUG["INFO_LOGGING"]:
+    #         print(f"[INFO]{function_name}: experience: {temp_dct["experience"]}")
+    #         print(f"[INFO]{function_name}: description: {temp_dct["description"]}")
+    #         print(f"[INFO]{function_name}: skills:")
+    #         print(f"[INFO]{function_name}: programming_languages: {str(temp_dct["skills"]["programming_languages"])}")
+    #         print(f"[INFO]{function_name}: technical_skills: {str(temp_dct["skills"]["technical_skills"])}")
+    #         print(f"[INFO]{function_name}: soft_skills: {str(temp_dct["skills"]["soft_skills"])}")
+    #     list_exp_dcts.append(temp_dct)
+    # return list_exp_dcts
+
+def score_experiences(exps, keywords):
+    function_name = helpers.inspect_function()
+    function_desc = getattr(rapidfuzz.fuzz, CONFIG["PRUNING"]["DISTANCE_ALGO_DESC"])
+    function_key = getattr(rapidfuzz.fuzz, CONFIG["PRUNING"]["DISTANCE_ALGO_KEY"])
+    exps_cpy =exps.copy()
+    for exp in exps_cpy:
+        for keyword in keywords:
+            exp["experience"][1].append(function_desc(keyword, exp["experience"][0], processor=utils.default_process))
+            exp["description"][1].append(function_desc(keyword, exp["description"][0], processor=utils.default_process))
+            for prog in exp["skills"]["programming_languages"]:
+                prog[1].append(function_key(keyword, prog[0], processor=utils.default_process))                     
+            for tech in exp["skills"]["technical_skills"]:
+                tech[1].append(function_key(keyword, tech[0], processor=utils.default_process))    
+            for soft in exp["skills"]["soft_skills"]:
+                soft[1].append(function_key(keyword, soft[0], processor=utils.default_process))
+    if config.DEBUG["INFO_LOGGING"]:
+        for exp in exps_cpy:
+            print(f"[INFO]{function_name}: experience: {exp["experience"][0]}")
+            print(f"[INFO]{function_name}: experience scores: {str(exp["experience"][1])}")
+            print(f"[INFO]{function_name}: description: {exp["description"][0]}")
+            print(f"[INFO]{function_name}: description scores: {str(exp["description"][1])}")
+            for prog in exp["skills"]["programming_languages"]:
+                print(f"[INFO]{function_name}: programming_languages: {prog[0]}")
+                print(f"[INFO]{function_name}: programming_languages scores: {str(prog[1])}")                    
+            for tech in exp["skills"]["technical_skills"]:
+                print(f"[INFO]{function_name}: programming_languages: {tech[0]}")
+                print(f"[INFO]{function_name}: programming_languages scores: {str(tech[1])}")    
+            for soft in exp["skills"]["soft_skills"]:
+                print(f"[INFO]{function_name}: programming_languages: {soft[0]}")
+                print(f"[INFO]{function_name}: programming_languages scores: {str(soft[1])}")
+
+    return exps_cpy
+
+def pruning_heuristics(exps_scored):
+    function_name = helpers.inspect_function()
+    #For experience do a sum
+    #For description do a sum
+    #Across each skill cathegory do a sum
+        #Highest for each skill
+    weights = CONFIG["PRUNING"]["EXP_H_WEIGHTS"]
+    exps_scored_cpy = exps_scored.copy()
+    for exp in exps_scored_cpy:
+        prog_l = []
+        tech_l = []
+        soft_l = []
+        prog_sum = 0
+        tech_sum = 0
+        soft_sum = 0
+        for prog in exp["skills"]["programming_languages"]:
+            prog_l.append(max(prog[1]))
+            prog_sum = prog_sum +  max(prog[1])           
+        for tech in exp["skills"]["technical_skills"]:
+            tech_l.append(max(tech[1]))
+            tech_sum = tech_sum +  max(tech[1])
+        for soft in exp["skills"]["soft_skills"]:
+            soft_l.append(max(soft[1]))
+            soft_sum = soft_sum +  max(soft[1])
+        no_keywords = len(exp["experience"][1])
+
+        type = config.CONFIG["PRUNING"]["SKILL_RATING_TYPE"]
+        if type == "sum":
+            prog_no = len(exp["skills"]["programming_languages"])
+            tech_no = len(exp["skills"]["technical_skills"])
+            soft_no = len(exp["skills"]["soft_skills"])
+            if prog_no > 0:
+                prog_score = prog_sum *(1/prog_no) * weights["PROG"]
+            else: prog_score = 0
+            if tech_no > 0:
+                tech_score = tech_sum *(1/tech_no) * weights["TECH"]
+            else: tech_score = 0
+            if soft_no > 0 :
+                soft_score = soft_sum *(1/soft_no) * weights["SOFT"]
+            else: soft_score = 0
+            exp_len = len(exp["experience"][1])
+            desc_len = len(exp["description"][1])
+            scores = {
+                "experience": sum(exp["experience"][1])/ exp_len* weights["EXP"],
+                "description": sum(exp["description"][1])/ desc_len* weights["DESC"],
+                "prog": prog_score,
+                "tech": tech_score,
+                "soft": soft_score
+            }
+        elif type == "max":
+            desc_len = len(exp["description"][1])
+            if len(prog_l) > 0:
+                max_prog = max(prog_l)
+            else:
+                max_prog = 0
+            if len(tech_l) > 0:
+                max_tech = max(tech_l)
+            else:
+                max_tech = 0
+            if len(soft_l) > 0:
+                max_soft = max(soft_l)
+            else:
+                max_soft = 0
+            
+            
+            scores = {
+                "experience": max(exp["experience"][1])* weights["EXP"],
+                "description": sum(exp["description"][1])/ desc_len* weights["DESC"],
+                "prog": max_prog * weights["PROG"],
+                "tech": max_tech * weights["TECH"],
+                "soft": max_soft * weights["SOFT"]
+            }
+        exp["scores"] = scores
+        exp["total_score"] = scores["experience"] + scores["description"] + scores["prog"] + scores["tech"] + scores["soft"]
+        if config.DEBUG["INFO_LOGGING"]:
+            print(f"[INFO]{function_name}: experience: {exp["experience"][0]}")
+            for score in scores:
+                print(f"[INFO]{function_name}: {score} score: {scores[score]}")
+            print(f"[INFO]{function_name}: final score: {exp["total_score"]}")
+    return exps_scored_cpy
+
+@log_time
+def experience_pruning_algorithm(job_desc,text,v_list,w_list,p_list):
+    function_name = helpers.inspect_function()
+#For experiences:
+    #Input: job desc and a text to prune
+    #Assuming: keyword matched job description
+    """
+    [E]Experience:
+    Description:
+    Skills:
+    ...
+    """    
+    #Extract keyword list
+    keywords = process_job_desc(job_desc) 
+    #Extract list
+    exps = process_exps(text)
+    #Score each experience based on % matching
+    exps_scored = score_experiences(exps,keywords)
+    #Heuristics(for final scoring)
+    exps_heuristics = pruning_heuristics(exps_scored)
+    #Rank em
+    sorted_exps = sorted(exps_heuristics, key=itemgetter('total_score'), reverse=True)
+    simple_sorted_exps = []
+    for exp in sorted_exps:
+        simple_sorted_exps.append(exp["experience"][0])
+        if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: simple_sorted_exps: exp: '{exp["experience"][0]}'")
+    sorted_v_list =[]
+    sorted_w_list = []
+    sorted_p_list = []
+    for exp in simple_sorted_exps:
+        if exp in v_list:
+            sorted_v_list.append(exp)
+        if exp in w_list:
+            sorted_w_list.append(exp)
+        if exp in p_list:
+            sorted_p_list.append(exp)
+    #Fetch any currently preferred jobs; as well as job allocaion settings (total number of jobs, jobs per section)
+
+    pref_list_v = CONFIG["PRUNING"]["PREFS"]["V"]
+    pref_list_w = CONFIG["PRUNING"]["PREFS"]["W"] 
+    pref_list_p = CONFIG["PRUNING"]["PREFS"]["P"]
+
+    if pref_list_v != []:
+        for item in reversed(pref_list_v):
+            if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: pref_list_v: item: '{item}'")
+            rmv = False
+            item_to_rmv = ""
+            for i in sorted_v_list:
+                if item in i:
+                    if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: sorted_v_list removing item: '{i}'")
+                    rmv = True
+                    item_to_rmv = i
+            if rmv:
+                sorted_v_list.remove(item_to_rmv)
+                sorted_v_list.insert(0, item_to_rmv)
+    if pref_list_w != []:
+        for item in reversed(pref_list_w):
+            if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: pref_list_w: item: '{item}'")
+            rmv = False
+            item_to_rmv = ""
+            for i in sorted_w_list:
+                if item in i:
+                    if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: sorted_w_list removing item: '{i}'")
+                    rmv = True
+                    item_to_rmv = i
+            if rmv:
+                sorted_w_list.remove(item_to_rmv)
+                sorted_w_list.insert(0, item_to_rmv)
+    if pref_list_p != []:
+        for item in reversed(pref_list_p):
+            if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: pref_list_p: item: '{item}'")
+            rmv = False
+            item_to_rmv = ""
+            for i in sorted_p_list:
+                if item in i:
+                    if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: sorted_p_list removing item: '{i}'")
+                    rmv = True
+                    item_to_rmv = i
+            if rmv:
+                sorted_p_list.remove(item_to_rmv)
+                sorted_p_list.insert(0, item_to_rmv)
+    #Assume max>=3*min
+    return_list = []
+    max_allowed = CONFIG["PRUNING"]["BASE_PRUNE"]
+    section_min = CONFIG["PRUNING"]["SECTION_MIN"]
+    if section_min > 0 :
+        if len(sorted_v_list) >0:
+            if section_min > len(sorted_v_list):
+                bound = len(sorted_v_list)
+            else:
+                bound = section_min
+            return_list = return_list + sorted_v_list[:bound]
+        if len(sorted_w_list) >0:
+            if section_min > len(sorted_w_list):
+                bound = len(sorted_w_list)
+            else:
+                bound = section_min
+            return_list = return_list + sorted_w_list[:bound]
+        if len(sorted_p_list) >0:
+            if section_min > len(sorted_p_list):
+                bound = len(sorted_p_list)
+            else:
+                bound = section_min
+            return_list = return_list + sorted_p_list[:bound]
+    curr_ret_len = len(return_list)
+    for item in return_list:
+        if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: return_list before final append: item: '{item}'")
+        simple_sorted_exps.remove(item)
+    if curr_ret_len > max_allowed:
+        return_list_real = return_list[:max_allowed]
+    elif curr_ret_len == max_allowed:
+        return_list_real = return_list
+    else:
+        return_list_real = return_list + simple_sorted_exps[:max_allowed-curr_ret_len]
+    for i in range(0, len(return_list_real)):
+        return_list_real[i] = "[E]Experience: " + return_list_real[i]
+    return_txt = "\n".join(return_list_real)
+    if config.DEBUG["INFO_LOGGING"]:
+            print(f"[INFO]{function_name}: pruned text: {return_txt}")
+    return return_txt
+
+
+
+def course_pruning_algorithm():
+    pass
+def skill_pruning_algorithm():
+    pass
+
 @log_time #USED IN MAIN
 def prune_experiences(call_info = template_call_info):
     
@@ -958,7 +1341,15 @@ def prune_experiences(call_info = template_call_info):
     job_description_summary = format["job_description_summary"]
     section = format["section"]
     reference_dct = format["reference_dct"]
-
+    v_list = []
+    w_list = []
+    p_list = []
+    for item in reference_dct["volunteering_and_leadership"]:
+        v_list.append(item["role"])
+    for item in reference_dct["work_experience"]:
+        w_list.append(item["job_title"])
+    for item in reference_dct["projects"]:
+        p_list.append(item["project_title"])
     #Original Arguments: model=DEFAULT_MODEL, system1="", ollama_url=DEFAULT_URL, 
                    #experiences="", job_description_summary="", section="vl_w_p", reference_dct={}
     system1 = payload_in.get("system","")
@@ -978,7 +1369,8 @@ def prune_experiences(call_info = template_call_info):
                               "model": payload_in["model"]
                           }               
     }
-    step1 = ollama_call(runtime_info= runtime_info_temp)
+    #step1 = ollama_call(runtime_info= runtime_info_temp)
+    step1 = experience_pruning_algorithm(job_desc = job_description_summary,text = step0,v_list = v_list,w_list = w_list,p_list = p_list)
     #step1 = step0_prune_experiences(model=model, system1=system1, ollama_url=ollama_url, experiences=step0, job_description=job_description_summary)
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step1:\n" + step1)
     step1_clean = clean_first_step(step1).strip()

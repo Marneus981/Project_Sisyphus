@@ -122,25 +122,24 @@ INPUT wholistic summary of the resume meant to accompany the above cover letter 
 Summarize the input job description by extracting the following information in the format specified under the OUTPUT FORMAT section:
 -Company Name
 -Job Title
--Key responsibilities
--Requirements:
-    -Programming Languages
-    -Techincal Skills
-    -Soft Skills
-    -Other Skills
+-Responsibilities
+-Requirements
+-Keywords
 When filling out the OUTPUT FORMAT, follow these guidelines:
 - Do not modify the format.
 - Do not add any information not present in the provided job description, your goal is to extract information and summarize.
 - Use simple and concise language when possible, but do use specific keywords.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
+- On the "Keywords" section of the OUTPUT FORMAT, you have to include the following as single words or small phrases (less than 3 words long each):
+    - The job position (e.g. the job title), the name of technologies required (e.g. object oriented programming), the specific name of programming languages/technologies required (e.g. java, mongodb, aws) education required/preferred (e.g. bachelors of engineering), soft skills preferred (e.g. good communication), general keywords (e.g. data)
 
 OUTPUT FORMAT:
 Company Name: Company Name
 Job Title: Position Name
-Responsibilities: List of key responsabilities as a single block of text separated by ";"
-Requirements: List of basic requirements as a single block of text separated by ";"
-Keywords: List of keywords present in the job description, presented as a single block of text separated by ",". These keywords can be single words or small phrases (less than 3 words long) such as "good communication skills". 
+Responsibilities: List of responsabilities that come as part of the job, presented as a single line of text separated by ";"
+Requirements: List of basic requirements, such as availability, education and required knowledge, presented as a single line of text separated by ";"
+Keywords: List of keywords present in the job description, presented as a single line of lowercase text separated by ",". These keywords can be single words or small phrases (less than 3 words long) such as "good communication skills". 
 
 INPUT:
 INPUT job description:
