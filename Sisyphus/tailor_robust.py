@@ -15,6 +15,7 @@ import traceback
 from rapidfuzz import process, fuzz, utils
 import rapidfuzz
 from operator import itemgetter
+from copy import deepcopy
 
 DEFAULT_MODEL = "llama3:8b"
 DEFAULT_URL = "http://localhost:11434"
@@ -1250,6 +1251,8 @@ def experience_pruning_algorithm(job_desc,text,v_list,w_list,p_list):
                     rmv = True
                     item_to_rmv = i
             if rmv:
+                simple_sorted_exps.remove(item_to_rmv)
+                simple_sorted_exps.insert(0, item_to_rmv)
                 sorted_v_list.remove(item_to_rmv)
                 sorted_v_list.insert(0, item_to_rmv)
     if pref_list_w != []:
@@ -1263,6 +1266,8 @@ def experience_pruning_algorithm(job_desc,text,v_list,w_list,p_list):
                     rmv = True
                     item_to_rmv = i
             if rmv:
+                simple_sorted_exps.remove(item_to_rmv)
+                simple_sorted_exps.insert(0, item_to_rmv)
                 sorted_w_list.remove(item_to_rmv)
                 sorted_w_list.insert(0, item_to_rmv)
     if pref_list_p != []:
@@ -1276,6 +1281,8 @@ def experience_pruning_algorithm(job_desc,text,v_list,w_list,p_list):
                     rmv = True
                     item_to_rmv = i
             if rmv:
+                simple_sorted_exps.remove(item_to_rmv)
+                simple_sorted_exps.insert(0, item_to_rmv)
                 sorted_p_list.remove(item_to_rmv)
                 sorted_p_list.insert(0, item_to_rmv)
     #Assume max>=3*min
@@ -2280,6 +2287,87 @@ def compose_cover_letter_dictionary(call_info = template_call_info):
     output_dict = parsers.dict_grafter(dict_list)
     #Return the output_dict
     return output_dict  
+
+@log_time #USED IN MAIN ; returns ERROR as text
+def tailor_experiences(call_info = template_call_info):
+    call_id = call_info["call_id"]
+    payload_in = call_info["payload_in"]
+    format = call_info["format"]
+    ollama_url = call_info["ollama_url"]
+    function_name = helpers.inspect_function()
+    if call_id != function_name:
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
+        return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}"
+    job_description_summary = format["job_description_summary"]
+    reference_dct = format["reference_dct"]
+
+    reference_dct_v = {"volunteering_and_leadership": deepcopy(reference_dct["volunteering_and_leadership"])}
+    reference_dct_w = {"work_experience": deepcopy(reference_dct["work_experience"])}
+    reference_dct_p = {"projects": deepcopy(reference_dct["projects"])}
+    references = [reference_dct_v,reference_dct_w,reference_dct_p]
+    names = ["volunteering_and_leadership","work_experience","projects"]
+    sections_0 = ["[0]Volunteering and Leadership:","[0]Work Experience:","[0]Projects:"]
+    sections_1 = ["[1]Role: ","[1]Job Title: ","[1]Project Title: "]
+    return_l = []
+    for i in range(0,3):
+        if references[i][names[i]] == []:
+            continue
+        step0 = prepare_input_text(parsers.inv_parse_cv(references[i]), type=names[i])
+        if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step0:\n" + step0)
+        step1 = step0.replace("Experience:", "[E]Experience:")
+        if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step1:\n" + step1)
+        step1_clean = clean_first_step(step1).strip()
+        if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step1_clean:\n" + step1_clean)
+        step2_dct = augment_output(step1_clean, reference_dct, type='vl_w_p')
+        if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step2_dct:\n" + str(step2_dct))
+        step2_text = parsers.inv_parse_cv(step2_dct)
+        if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step2_text:\n" + step2_text)
+        step2_text = step2_text.replace(sections_0[i], "").strip()
+        if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step2_text (No [0]):\n" + step2_text)
+        step3_text = step2_text.split(sections_1[i])[1:]
+        step3_text = [sections_1[i] + exp for exp in step3_text]
+        step3_list = []
+        keywords = ""
+        for line in job_description_summary.splitlines():
+            if "Keywords:" in line:
+                keywords = line.strip()
+                break
+        for exp in step3_text:
+            if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp:\n" + exp)
+            exp_dict = parsers.parse_subfields(exp.strip())
+            first_part_dict = {k: v for k, v in exp_dict.items() if k in ["description"]}
+            second_part_dict = {k: v for k, v in exp_dict.items() if k not in ["description"]}
+            first_part_text = parsers.inv_parse_subfields(first_part_dict).strip()
+            second_part_text = parsers.inv_parse_subfields(second_part_dict).strip()
+            if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp: first_part_text:\n" + first_part_text)
+            if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp: second_part_text:\n" + second_part_text)
+            
+            runtime_info_temp = {"call_id": format["standard_calls"][0],
+                            "ollama_url": ollama_url,
+                            "format": {
+                                "experience": first_part_text,
+                                "job_keywords": keywords,
+                            },
+                            "payload_in":{
+                                "system":payload_in["system"],
+                                "model": payload_in["model"]
+                            }                   
+            }   
+            first_part_text_new = ollama_call(runtime_info=runtime_info_temp)
+            if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp: {format.get("standard_calls", "")[0]}: first_part_text_new:\n" + first_part_text_new)
+            first_part_text_new = first_part_text_new.strip()
+            if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp: {format.get("standard_calls", "")[0]}: first_part_text_new (filtered):\n" + first_part_text_new)
+            temp = second_part_text + "\n" + first_part_text_new
+            if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text(loop): exp: {format.get("standard_calls", "")[0]}: temp(joined):\n" + temp)
+            step3_list.append(temp)
+        step3_text = "\n".join(step3_list)
+        if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step3_text:\n" + step3_text)
+        step4_text = f"{sections_0[i]}\n" + step3_text
+        if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step4_text (before filtering):\n" + step4_text)
+        step4_text = step4_text.strip()
+        if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: step4_text (after filtering):\n" + step4_text)
+        return_l.append(step4_text)
+    return '\n'.join(return_l)
 #endregion
 
 #region ASYNC OLLAMA CALLS

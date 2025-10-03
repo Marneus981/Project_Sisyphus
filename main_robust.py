@@ -458,8 +458,8 @@ def tailor_cv(root, show = True):
     helpers.count_experiences(parsers.inv_parse_cv(cv_dict))
     #endregion
     print("[STEP 1][COMPLETE]")
-    print("[STEP 1][OUTPUT]>>>[STEP 2][INPUT] Tailored resume text (no Summary): \n" + helpers.indent_text(str(s_text)))
-    print("[STEP 2][START]Pruning following sections: Volunteering and Leadership, Work Experience and Projects...")
+    print("[STEP 1][OUTPUT]>>>[STEP 2][INPUT] Tailored resume text (unchanged fileds added + courses): \n" + helpers.indent_text(str(s_text)))
+    print("[STEP 2][START]Pruning Experiences...")
     # #region STEP 2
     # #Extract Volunteering and Leadership, Work Experience and Projects sections from the final CV text
     # volunteering_and_leadership = tailored_dict.get("volunteering_and_leadership", {})
@@ -518,13 +518,59 @@ def tailor_cv(root, show = True):
         s_text = helpers.format_output(cv_text0)
 
     else:
-        print("No experiences section tailored, using original experiences section")
+        print("No experiences section pruned, using original experiences section")
+        tailored_dict['volunteering_and_leadership'] = deepcopy(cv_dict_complete["volunteering_and_leadership"])
+        tailored_dict['work_experience'] = deepcopy(cv_dict_complete["work_experience"])
+        tailored_dict['projects'] = deepcopy(cv_dict_complete["projects"])
+        cv_text0 = parsers.inv_parse_cv(tailored_dict)
+        s_text = helpers.format_output(cv_text0)
 
     #endregion
     print("[STEP 2][COMPLETE]")
-    print("[STEP 2][OUTPUT]>>>[STEP 3][INPUT] Tailored resume text (no Summary; pruned): \n" + helpers.indent_text(str(s_text)))
-    print("[STEP 3][START] Tailoring Summary section...")
+    print("[STEP 2][OUTPUT]>>>[STEP 3][INPUT] Pruned resume text (no Summary; pruned; untailored): \n" + helpers.indent_text(str(s_text)))
+    print("[STEP 3][START] Tailoring Experiences...")
     #region STEP 3
+    ollama_func_name = "tailor_experiences"
+    if pruned_experiences:
+        runtime_info_temp = {
+            "call_id": ollama_func_name, 
+            "payload_in": {"model": selected_model,
+                        "system": system_text},
+            "format": {
+                "job_description_summary": job_desc,
+                "reference_dct": pruned_experiences_dict #provide system through payload_in
+                }, 
+        }
+    else:
+        runtime_info_temp = {
+            "call_id": ollama_func_name, 
+            "payload_in": {"model": selected_model,
+                        "system": system_text},
+            "format": {
+                "job_description_summary": job_desc,
+                "reference_dct": all_experiences #provide system through payload_in
+                }, 
+        }
+    func = getattr(tailor_robust, ollama_func_name)
+    tailored_experiences = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function=func)
+    if tailored_experiences:
+        tailored_dct = parsers.parse_cv(tailored_experiences)
+        tailored_dict['volunteering_and_leadership'] = deepcopy(tailored_dct["volunteering_and_leadership"])
+        tailored_dict['work_experience'] = deepcopy(tailored_dct["work_experience"])
+        tailored_dict['projects'] = deepcopy(tailored_dct["projects"])
+        cv_text0 = parsers.inv_parse_cv(tailored_dict)
+        s_text = helpers.format_output(cv_text0)
+    else:
+        print("No experiences section tailored, using original experiences section")
+        tailored_dict = tailored_dict
+        cv_text0 = parsers.inv_parse_cv(tailored_dict)
+        s_text = helpers.format_output(cv_text0)
+
+    #endregion
+    print("[STEP 3][COMPLETE]")
+    print("[STEP 3][OUTPUT]>>>[STEP 4][INPUT] Tailored resume text (no Summary; pruned): \n" + helpers.indent_text(str(s_text)))
+    print("[STEP 4][START] Tailoring Summary section...")
+    #region STEP 4
     print("Tailoring summary section...")
     ollama_func_name = "tailor_summary"
     runtime_info_temp = {
@@ -575,11 +621,13 @@ def tailor_cv(root, show = True):
 
     # print("Final CV text after formatting:\n" + helpers.indent_text(str(final_cv_text)))
     #endregion
-    print("[STEP 3][COMPLETE]")
+    print("[STEP 4][COMPLETE]")
+
+
     print("All sections tailored successfully")
-    print("[STEP 3][OUTPUT]>>>[STEP 4][INPUT] Tailored resume text (with Summary; pruned): \n" + helpers.indent_text(str(final_cv_text)))
-    print("[STEP 4][START] Making skills section separate and tailoring it...")
-    #region STEP 4
+    print("[STEP 4][OUTPUT]>>>[STEP 5][INPUT] Tailored resume text (with Summary; pruned): \n" + helpers.indent_text(str(final_cv_text)))
+    print("[STEP 5][START] Making skills section separate and tailoring it...")
+    #region STEP 5
     final_final_cv_text = tailor_robust.return_text_with_skills(final_cv_text)
     # print("CV text after skills section: " +  helpers.indent_text(str(final_final_cv_text)))
     #Print final_final_cv_text
@@ -619,10 +667,10 @@ def tailor_cv(root, show = True):
         print("No skills section tailored, using original skills section")
         current_cv_text = final_final_cv_text
     #endregion
-    print("[STEP 4][COMPLETE]")
-    print("[STEP 4][OUTPUT]>>>[STEP 5][INPUT] Tailored resume text (with Summary; pruned; skills tailored): \n" + helpers.indent_text(str(current_cv_text)))
-    print("[STEP 5][START] Ordering Resume sections by end date/issue date...")
-    #region STEP 5
+    print("[STEP 5][COMPLETE]")
+    print("[STEP 5][OUTPUT]>>>[STEP 6][INPUT] Tailored resume text (with Summary; pruned; skills tailored): \n" + helpers.indent_text(str(current_cv_text)))
+    print("[STEP 6][START] Ordering Resume sections by end date/issue date...")
+    #region STEP 6
     temp_dct = parsers.parse_cv_out(current_cv_text)
     split_curr = parsers.dict_spliter(temp_dct)
     to_be_ordered = []
@@ -671,15 +719,15 @@ def tailor_cv(root, show = True):
     current_cv_text = helpers.clean_labels(current_cv_text)
     print("Ordering complete")
     #endregion
-    print("[STEP 5][COMPLETE]")
-    print("[STEP 5][OUTPUT]>>>[STEP 6][INPUT] Tailored resume text (with Summary; pruned; skills tailored; ordered): \n" + helpers.indent_text(str(current_cv_text)))
-    print("[STEP 6][START] Formatting/Consistency check for tailored resume...")
+    print("[STEP 6][COMPLETE]")
+    print("[STEP 6][OUTPUT]>>>[STEP 7][INPUT] Tailored resume text (with Summary; pruned; skills tailored; ordered): \n" + helpers.indent_text(str(current_cv_text)))
+    print("[STEP 7][START] Formatting/Consistency check for tailored resume...")
     check_summaries(update_resume = True)
-    #region STEP 6
-    print("[STEP 6][SKIP]Please use the formatting button in the UI.")
+    #region STEP 7
+    print("[STEP 7][SKIP]Please use the formatting button in the UI.")
     # format_check_current_cv_text(root)
     #endregion
-    print("[STEP 6][COMPLETE]") 
+    print("[STEP 7][COMPLETE]") 
     print("The climb has ended, the CV is tailored!")
     # Show the tailored CV text in a new window
     if show:

@@ -150,6 +150,48 @@ INPUT job description:
         "sample_starts": [] #[type, sample starts]
     },
     ##similar start
+    "tailor_experience": #DONE
+    {
+        "call_id": "tailor_experience", 
+        "payload_in": {
+                       "model": DEFAULT_MODEL, #Set at runtime
+                       "system": "",  #Set at runtime
+                       "stream": False,
+                       "temperature": CONFIG["MODELS"]["TEMPERATURE"]
+                       },
+        "format": {#Set at runtime
+                   "job_keywords": "",
+                   "experience": "",
+                   "prefix_dict": {
+                       "Description:":["[1]",True],
+                       "Dummy:":["[BIG DUMMY]"]
+                   } 
+                   },
+        "prompt_in": 
+"""REQUEST:
+Given a set of keywords and a "Description" subsection of a resume experience, rewrite the "Description" subsection following these guidelines:
+- Rewrite the "Description" subsection to highlight the role description as achievements.
+- Use 2 sentences (max 15 words each) as a single line of text separated by "." to fill the "Description" subsection; this is a hard requirement.
+- From the list of keywords provided as INPUT, use those that are already present in the provided "Description" subsection. Do NOT use those that are not already present in the provided INPUT "Description" subsection.
+- Do NOT use line breaks inside the text of any subsection. 
+- Do NOT forget to include the field name "Description:" at the start of its respective lines, as per the OUTPUT FORMAT.
+- Do NOT include any information not present in the "Description" subsection. 
+- Return the requested information, strictly filling out the OUTPUT FORMAT below.
+
+OUTPUT FORMAT:
+Description: Brief role description, described as achievements meant to concisely provide recruiters with incentives to hire the candidate.
+
+INPUT:
+INPUT job description keywords:
+{job_keywords}
+
+INPUT "Description" subsection of a resume experience:
+{experience}
+
+""",
+        "ollama_url": DEFAULT_URL, #Set at runtime
+        "sample_starts": ["strict", "digits", "[1]Description:"]
+    },
     "step0_volunteering_and_leadership": #DONE
     {
         "call_id": "step0_volunteering_and_leadership", 
@@ -1406,6 +1448,26 @@ INPUT list containing a per-section analysis of the resumes, comparing the synth
                           "[0]Contact Information:","[1]Address:","[1]Phone:","[1]Email:","[1]LinkedIn:", "[1]Github:","[1]Portfolio:",
                           "[0]Cover Letter:","[1]New Paragraph0:","[1]New Paragraph1:","[1]New Paragraph2:","[1]New Paragraph3:"]
     },
+    "tailor_experiences": #DONE
+    {
+        "call_id": "tailor_volunteering_and_leadership", 
+        "payload_in": {"model": DEFAULT_MODEL,
+                       "system": "",
+                       "stream": False,
+                         "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+        "format": {
+            "job_description_summary": "",
+            "reference_dct": {},
+            "standard_calls": ["tailor_experience"],
+            "prefix_dict" : {}
+            }, 
+        "prompt_in": "", 
+        "ollama_url": DEFAULT_URL,
+        "sample_starts": ["flexible", "digits", 
+                          "[0]Volunteering and Leadership:","[1]Role:","[1]Organization:","[1]Location:","[1]Duration:","[1]Description:","[1]Skills:",
+                          "[0]Work Experience:", "[1]Job Title:","[1]Company:",
+                          "[0]Projects:", "[1]Project Title:","[1]URL:", "[1]Type:"]
+    },
     #ASYNC
     "standard_ollama_call_async": #WIP
     {
@@ -1428,6 +1490,7 @@ INPUT list containing a per-section analysis of the resumes, comparing the synth
 
 }
 STANDARD= [
+    "tailor_experience",
     "summarize_job_description",
     "step0_volunteering_and_leadership",
     "step3_volunteering_and_leadership",
