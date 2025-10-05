@@ -13,6 +13,7 @@ import pygame
 from config import CONFIG, DEBUG
 import inspect
 import traceback
+from copy import deepcopy
 # Set up logging
 print = logging.info
 
@@ -207,20 +208,48 @@ def filter_output(model_output, prefix_dict ={}):
         #         raise ValueError(f"[ERROR]{function_name}: output is all wrong, no fields present")
         #     return "\n".join(prefixed_lines)
     #endregion    
-def revise_list_section(new_list_section_text = "", og_list = [], type = "courses"):
+def revise_list_section(new_list_section_text = "", og_pref = {}, type = "courses"):
     function_name = inspect_function()
     return_text = ""
     return_list = []
     if new_list_section_text == "":
         raise ValueError(f"[ERROR]{function_name}: list text empty")
-    if og_list == []:
+    if og_list == {}:
         return new_list_section_text
     if type == "courses":
+        og_list = og_pref["courses"]
         return_text = "[1]Courses: "
-    for item in og_list:
-        if item in new_list_section_text:
-            return_list.append(item)
-    return_text = return_text + ", ".join(return_list)
+        for item in og_list:
+            if item in new_list_section_text:
+                return_list.append(item)
+        return_text = return_text + ", ".join(return_list)
+    elif type == "skills":
+        og_list_p = og_pref["skills"]["programming_languages"]
+        og_list_t = og_pref["skills"]["technical_skills"]
+        og_list_s = og_pref["skills"]["soft_skills"]
+        ogs = [og_list_p,og_list_t,og_list_s]
+        skill_dct = parsers.parse_cv_out(new_list_section_text)
+        curr_l_p = skill_dct["skills"]["programming_languages"]
+        curr_l_t = skill_dct["skills"]["technical_skills"]
+        curr_l_s = skill_dct["skills"]["soft_skills"]
+        currs = [curr_l_p,curr_l_t,curr_l_s]
+        return_list = [[],[],[]]
+        for i in range(0,len(ogs)):
+            if ogs[i] == [] or currs[i] == []:
+                continue
+            else:
+                for og in ogs[i]:
+                    for curr in currs[i]:
+                        if og in curr:
+                            return_list[i].append(og)
+        temp_dct = {
+            "skills":{
+                "programming_languages": return_list[0],
+                "technical_skills": return_list[1],
+                "soft_skils": return_list[2]
+            }
+        }
+        return_text = parsers.parse_cv_out(temp_dct)
     return return_text
 
 

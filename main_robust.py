@@ -443,12 +443,13 @@ def tailor_cv(root, show = True):
                             },
                             "format": {
                                 "courses": ', '.join(unchanged_dict[key][i]["courses"]),
-                                "job_description": job_desc
+                                "job_description": job_desc,
+                                "no_courses": CONFIG["PRUNING"]["NO_COURSES"]
                             },
                 }
                 tailored_courses = tailor_robust.ollama_call(runtime_info=runtime_info_temp)#Standard
                 #Line to remove courses not present in the original courses list   
-                tailored_courses = helpers.revise_list_section(new_list_section_text = tailored_courses, og_list = unchanged_dict[key][i]["courses"], type = "courses")             
+                tailored_courses = helpers.revise_list_section(new_list_section_text = tailored_courses, og_pref= {"courses": unchanged_dict[key][i]["courses"]}, type = "courses")             
                 unchanged_dict[key][i]["courses"] = tailored_courses.replace("[1]Courses:", "").strip()
 
         tailored_dict[key] = value
@@ -654,7 +655,11 @@ def tailor_cv(root, show = True):
         },
         "format": {
             "cv_data": sk_text,
-            "job_description": job_desc
+            "job_description": job_desc,
+            "no_skills": CONFIG["PRUNING"]["NO_SKILLS"]["TOTAL"],
+            "no_prog":CONFIG["PRUNING"]["NO_SKILLS"]["PROG"],
+            "no_tech":CONFIG["PRUNING"]["NO_SKILLS"]["TECH"],
+            "no_soft":CONFIG["PRUNING"]["NO_SKILLS"]["SOFT"],
         }
     }
     tailored_sk = tailor_robust.ollama_call(runtime_info=runtime_info_temp)

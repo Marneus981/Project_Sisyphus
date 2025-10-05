@@ -32,6 +32,18 @@ CONFIG = {
             "SOFT":0.5
         },
         "SKILL_RATING_TYPE": "max", #or sum
+        "NO_COURSES":5,
+        "NO_SKILLS":{
+            "TOTAL":12,
+            "PROG": 3,
+            "TECH": 5,
+            "SOFT":4
+        },
+        "CUSTOM_SKILLS": {
+            "PROG": False,
+            "TECH":False,
+            "SOFT": True
+        },
         "PREFS":{
             "V": [
             ],
@@ -42,6 +54,9 @@ CONFIG = {
                 "MAPPA C++ Geographical Information System"
             ],
             "SKILLS":[
+            ],
+            "COURSES":[
+
             ]
         },
         "COURSES_GRPS":

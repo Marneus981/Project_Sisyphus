@@ -707,6 +707,10 @@ INPUTjob description:
         "format": {
             "cv_data": "",
             "job_description": "",
+            "no_skills":12,
+            "no_prog":3,
+            "no_tech":5,
+            "no_soft":4,
             "prefix_dict": {
                 "Programming Languages:":["[1]", True],
                 "Technical Skills:":["[1]", True],
@@ -720,11 +724,11 @@ INPUTjob description:
 """REQUEST:
 Given a list of "Programming Languages", "Technical Skills" and "Soft Skills" considered to be relevant for a paticular job description, and said job description:
 Prune the following 'Skills' section from a resume to best match the job description , following the guidelines below:
-- Return 3 MAXIMUM entries under "Programming Languages" (MINIMUM 0 entries)
-- Return 5 MAXIMUM entries under "Technical Skills" (MINIMUM 0 entries)
-- Return 4 MAXIMUM entries under "Soft Skills" (MINIMUM 0 entries)
+- Return {no_prog} MAXIMUM entries under "Programming Languages" (MINIMUM 0 entries)
+- Return {no_tech} MAXIMUM entries under "Technical Skills" (MINIMUM 0 entries)
+- Return {no_soft} MAXIMUM entries under "Soft Skills" (MINIMUM 0 entries)
 - Prioritize skills that are explicitly mentioned in the job description.
-- For Soft Skills (only), prioritize skills mentioned in the job description, and if these skills are less than 4, fill the remaining slots with other relevant skills from the CV.
+- For Soft Skills (only), prioritize skills mentioned in the job description, and if these skills are less than {no_soft}, fill the remaining slots with other relevant skills from the CV.
 - Do not line break any line containing the relevant skills, it should follow the format below strictly.
 - If either the "Programming Languages", "Technical Skills", or "Soft Skills" sections are empty, return them as an empty section.
 - Aside from the information requested, do not include any additional text or explanations.
@@ -734,9 +738,9 @@ Prune the following 'Skills' section from a resume to best match the job descrip
 
 OUTPUT FORMAT:
 Skills:
-Programming Languages: Programming Language 1, Programming Language 2, Programming Language 3
-Technical Skills: Technical Skill 1, Technical Skill 2, Technical Skill 3, Technical Skill 4, Technical Skill 5
-Soft Skills: Soft Skill 1, Soft Skill 2, Soft Skill 3, Soft Skill 4
+Programming Languages: Programming Language 1, Programming Language 2, ...
+Technical Skills: Technical Skill 1, Technical Skill 2, ...
+Soft Skills: Soft Skill 1, Soft Skill 2, ...
 
 
 INPUT:
@@ -954,6 +958,7 @@ INPUT job description the aforementioned resume has been tailored to:
         "format": {
             "courses": "",
             "job_description": "",
+            "no_courses": 5,
             "prefix_dict" : {
                 "Courses:":["[1]",True],
                 "Dummy:" : ["[BIG DUMMY]"]
@@ -961,7 +966,7 @@ INPUT job description the aforementioned resume has been tailored to:
         },
         "prompt_in": 
 """REQUEST:
-Given a list of courses taken on a given program and a job description, extract the 5 most relevant courses that match the skills and requirements outlined in the job description.
+Given a list of courses taken on a given program and a job description, extract the {no_courses} most relevant courses that match the skills and requirements outlined in the job description.
 Follow these guidelines when extracting courses and returning them:
 - Do not include any courses not present in the original courses list.
 - Do not use line breaks inside any subsection.
