@@ -21,6 +21,7 @@ print = logging.info
 TOKENIZER_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\tokenizers"
 LLAMA_MAX_TOKENS = 4096
 NOTIFICATION_SOUND_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\sounds\notification_sound.mp3"
+ERROR_SOUND_PATH = r"C:\CodeProjects\Sisyphus\Sisyphus\sounds\error_sound.mp3"
 
 def traceback_error(e):
     """
@@ -38,12 +39,25 @@ def notify_sound():
     pygame.mixer.music.load(NOTIFICATION_SOUND_PATH)
     pygame.mixer.music.play()
 
+def errorify_sound():
+    pygame.mixer.init()
+    pygame.mixer.music.load(ERROR_SOUND_PATH)
+    pygame.mixer.music.play()
+
 def notify(title, message):
     if CONFIG["NOTIFICATIONS"]["ENABLED"]:
         if CONFIG["NOTIFICATIONS"]["WINDOWS"]:
             notification.notify(title=title, message=message)
         if CONFIG["NOTIFICATIONS"]["SOUND"]:
             notify_sound()
+    return
+
+def errorify(title, message):
+    if CONFIG["NOTIFICATIONS"]["ENABLED"]:
+        if CONFIG["NOTIFICATIONS"]["WINDOWS"]:
+            notification.notify(title=title, message=message)
+        if CONFIG["NOTIFICATIONS"]["SOUND"]:
+            errorify_sound()
     return
 
 def performance_check(descending=True, mode="runtime"):
@@ -214,7 +228,7 @@ def revise_list_section(new_list_section_text = "", og_pref = {}, type = "course
     return_list = []
     if new_list_section_text == "":
         raise ValueError(f"[ERROR]{function_name}: list text empty")
-    if og_list == {}:
+    if og_pref == {}:
         return new_list_section_text
     if type == "courses":
         og_list = og_pref["courses"]
@@ -235,6 +249,12 @@ def revise_list_section(new_list_section_text = "", og_pref = {}, type = "course
         currs = [curr_l_p,curr_l_t,curr_l_s]
         return_list = [[],[],[]]
         for i in range(0,len(ogs)):
+            if i == 0 and CONFIG["PRUNING"]["CUSTOM_SKILLS"]["PROG"]:
+                continue
+            elif i == 1 and CONFIG["PRUNING"]["CUSTOM_SKILLS"]["TECH"]:
+                continue
+            elif i == 2 and CONFIG["PRUNING"]["CUSTOM_SKILLS"]["SOFT"]:
+                continue
             if ogs[i] == [] or currs[i] == []:
                 continue
             else:
@@ -249,7 +269,7 @@ def revise_list_section(new_list_section_text = "", og_pref = {}, type = "course
                 "soft_skils": return_list[2]
             }
         }
-        return_text = parsers.parse_cv_out(temp_dct)
+        return_text = parsers.inv_parse_cv_out(temp_dct)
     return return_text
 
 

@@ -32,12 +32,12 @@ CONFIG = {
             "SOFT":0.5
         },
         "SKILL_RATING_TYPE": "max", #or sum
-        "NO_COURSES":5,
+        "NO_COURSES":"5",
         "NO_SKILLS":{
-            "TOTAL":12,
-            "PROG": 3,
-            "TECH": 5,
-            "SOFT":4
+            "TOTAL":"12",
+            "PROG": "3",
+            "TECH": "5",
+            "SOFT":"4"
         },
         "CUSTOM_SKILLS": {
             "PROG": False,

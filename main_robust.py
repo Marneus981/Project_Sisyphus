@@ -303,457 +303,467 @@ def tailor_cv(root, show = True):
         return
         #Step 0 summarize raw cv and job description
     #cv_text = helpers.rmv_dupe_skills(cv_text)
-    print("[STEP 0][INPUT] Raw Job Description, Raw CV text: \n" + helpers.indent_text(str(job_desc)))
-    print("[STEP 0][START] Summarizing Job Description")
-    check_summaries(update_job_desc=True)
-    print("[STEP 0][COMPLETE]")
-    job_desc = summarized_job_desc
-    helpers.count_experiences(cv_text)
-    cv_dict = parsers.parse_cv(cv_text)
-    helpers.count_experiences(parsers.inv_parse_cv(cv_dict))
-    unchanged_dict = {}
-    # Copy over unchanged fields
-    print("Fetching unchanged fields...")
-    for key in [
-        'name',
-        'contact_information',
-        'title',
-        'languages',
-        'education',
-        'certifications',
-        'awards_and_scholarships'
-    ]:
-        if key in cv_dict:
-            print(f"Found field: {key} Keeping unchanged field: {key}")
-            unchanged_dict[key] = cv_dict[key]
+    try:
+        print("[STEP 0][INPUT] Raw Job Description, Raw CV text: \n" + helpers.indent_text(str(job_desc)))
+        print("[STEP 0][START] Summarizing Job Description")
+        check_summaries(update_job_desc=True)
+        print("[STEP 0][COMPLETE]")
+        job_desc = summarized_job_desc
+        helpers.count_experiences(cv_text)
+        cv_dict = parsers.parse_cv(cv_text)
+        helpers.count_experiences(parsers.inv_parse_cv(cv_dict))
+        unchanged_dict = {}
+        # Copy over unchanged fields
+        print("Fetching unchanged fields...")
+        for key in [
+            'name',
+            'contact_information',
+            'title',
+            'languages',
+            'education',
+            'certifications',
+            'awards_and_scholarships'
+        ]:
+            if key in cv_dict:
+                print(f"Found field: {key} Keeping unchanged field: {key}")
+                unchanged_dict[key] = cv_dict[key]
 
-    print("[STEP 1][INPUT] Raw CV text: \n" + helpers.indent_text(str(cv_text)))
-    print("[STEP 1][START] Tailoring resume without Summary section")
-    helpers.count_experiences(parsers.inv_parse_cv(cv_dict))
-    #region STEP 1
-    # Tailor each remaining section
-    tailored_list = []
-    cv_fields = parsers.dict_spliter(cv_dict)
-    v_and_l_section = None
-    w_section = None
-    p_section = None
-    # s_section = None
-    print("Searching fields to tailor...")
-    for field in cv_fields:
-        if 'volunteering_and_leadership' in field:
-            print("Found volunteering_and_leadership section")
-            v_and_l_section = {'volunteering_and_leadership':  field['volunteering_and_leadership']}
+        print("[STEP 1][INPUT] Raw CV text: \n" + helpers.indent_text(str(cv_text)))
+        print("[STEP 1][START] Tailoring resume without Summary section")
+        helpers.count_experiences(parsers.inv_parse_cv(cv_dict))
+        #region STEP 1
+        # Tailor each remaining section
+        tailored_list = []
+        cv_fields = parsers.dict_spliter(cv_dict)
+        v_and_l_section = None
+        w_section = None
+        p_section = None
+        # s_section = None
+        print("Searching fields to tailor...")
+        for field in cv_fields:
+            if 'volunteering_and_leadership' in field:
+                print("Found volunteering_and_leadership section")
+                v_and_l_section = {'volunteering_and_leadership':  field['volunteering_and_leadership']}
 
-        if 'work_experience' in field:
-            print("Found work_experience section")
-            w_section = {'work_experience': field['work_experience']}
+            if 'work_experience' in field:
+                print("Found work_experience section")
+                w_section = {'work_experience': field['work_experience']}
 
-        if 'projects' in field:
-            print("Found projects section")
-            p_section = {'projects': field['projects']}
+            if 'projects' in field:
+                print("Found projects section")
+                p_section = {'projects': field['projects']}
 
-    # Tailor each section if it exists
-    helpers.count_experiences(parsers.inv_parse_cv(cv_dict))
-    cv_dict_complete = deepcopy(cv_dict)
-    # print("Tailoring sections...")
-    # if v_and_l_section:
-    #     print("Tailoring volunteering and leadership section...")
-    #     v_and_l_text = parsers.inv_parse_cv(v_and_l_section)
-    #     ollama_func_name = "tailor_volunteering_and_leadership"
-    #     runtime_info_temp = {
-    #         "call_id": ollama_func_name, 
-    #         "payload_in": {"model": selected_model
-    #         },
-    #         "format": {
-    #             "raw_cv_data": v_and_l_text,
-    #             "job_description_summary": job_desc,
-    #             "section": "volunteering_and_leadership",
-    #             "reference_dct": v_and_l_section,
-    #             "systems": [system_text, system_text],
-    #             }, 
-    #     }
-    #     func = getattr(tailor_robust, ollama_func_name)
-    #     tailored_v_and_l = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function = func)
-    #     tailored_v_and_l = helpers.filter_output(tailored_v_and_l)
-    #     if tailored_v_and_l:
-    #         print("Tailored volunteering and leadership section")
-    #         tailored_list.append(parsers.parse_cv(tailored_v_and_l))
-    #         # tailored_list.append({'volunteering_and_leadership': tailored_v_and_l})
-    # helpers.count_experiences(parsers.inv_parse_cv(cv_dict))
-    # if w_section:
-    #     print("Tailoring work experience section...")
-    #     w_text = parsers.inv_parse_cv(w_section)
-    #     ollama_func_name = "tailor_work_experience"
-    #     runtime_info_temp = {
-    #         "call_id": ollama_func_name, 
-    #         "payload_in": {"model": selected_model
-    #         },
-    #         "format": {
-    #             "raw_cv_data": w_text,
-    #             "job_description_summary": job_desc,
-    #             "section": "work_experience",
-    #             "reference_dct": w_section,
-    #             "systems": [system_text, system_text],
-    #             }, 
-    #     }
-    #     func = getattr(tailor_robust, ollama_func_name)
-    #     tailored_w = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function = func)
-    #     tailored_w = helpers.filter_output(tailored_w)
-    #     if tailored_w:
-    #         print("Tailored work experience section")
-    #         tailored_list.append(parsers.parse_cv(tailored_w))
-    #         # tailored_list.append({'work_experience': tailored_w})
-    # helpers.count_experiences(parsers.inv_parse_cv(cv_dict))
-    # if p_section:
-    #     print("Tailoring projects section...")
-    #     p_text = parsers.inv_parse_cv(p_section)
-    #     ollama_func_name = "tailor_projects"
-    #     runtime_info_temp = {
-    #         "call_id": ollama_func_name, 
-    #         "payload_in": {"model": selected_model
-    #         },
-    #         "format": {
-    #             "raw_cv_data": p_text,
-    #             "job_description_summary": job_desc,
-    #             "section": "projects",
-    #             "reference_dct": p_section,
-    #             "systems": [system_text, system_text],
-    #             }, 
-    #     }
-    #     func = getattr(tailor_robust, ollama_func_name)
-    #     tailored_p = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function = func)
-    #     tailored_p = helpers.filter_output(tailored_p)
-    #     if tailored_p:
-    #         print("Tailored projects section")
-    #         tailored_list.append(parsers.parse_cv(tailored_p))
-    #         # tailored_list.append({'projects': tailored_p})
-    
-    tailored_dict = parsers.dict_grafter(tailored_list)
-    # Merge unchanged fields back into the tailored dict
-    helpers.count_experiences(parsers.inv_parse_cv(cv_dict))
-    for key, value in unchanged_dict.items():
-        if key == "education":
-            for i in range(len(value)):
-                ollama_func_name = "tailor_courses"
-                runtime_info_temp = {
-                            "call_id": ollama_func_name,
-                            "payload_in": {
-                                "model": selected_model,
-                                "system": system_text,
-                            },
-                            "format": {
-                                "courses": ', '.join(unchanged_dict[key][i]["courses"]),
-                                "job_description": job_desc,
-                                "no_courses": CONFIG["PRUNING"]["NO_COURSES"]
-                            },
-                }
-                tailored_courses = tailor_robust.ollama_call(runtime_info=runtime_info_temp)#Standard
-                #Line to remove courses not present in the original courses list   
-                tailored_courses = helpers.revise_list_section(new_list_section_text = tailored_courses, og_pref= {"courses": unchanged_dict[key][i]["courses"]}, type = "courses")             
-                unchanged_dict[key][i]["courses"] = tailored_courses.replace("[1]Courses:", "").strip()
+        # Tailor each section if it exists
+        helpers.count_experiences(parsers.inv_parse_cv(cv_dict))
+        cv_dict_complete = deepcopy(cv_dict)
+        # print("Tailoring sections...")
+        # if v_and_l_section:
+        #     print("Tailoring volunteering and leadership section...")
+        #     v_and_l_text = parsers.inv_parse_cv(v_and_l_section)
+        #     ollama_func_name = "tailor_volunteering_and_leadership"
+        #     runtime_info_temp = {
+        #         "call_id": ollama_func_name, 
+        #         "payload_in": {"model": selected_model
+        #         },
+        #         "format": {
+        #             "raw_cv_data": v_and_l_text,
+        #             "job_description_summary": job_desc,
+        #             "section": "volunteering_and_leadership",
+        #             "reference_dct": v_and_l_section,
+        #             "systems": [system_text, system_text],
+        #             }, 
+        #     }
+        #     func = getattr(tailor_robust, ollama_func_name)
+        #     tailored_v_and_l = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function = func)
+        #     tailored_v_and_l = helpers.filter_output(tailored_v_and_l)
+        #     if tailored_v_and_l:
+        #         print("Tailored volunteering and leadership section")
+        #         tailored_list.append(parsers.parse_cv(tailored_v_and_l))
+        #         # tailored_list.append({'volunteering_and_leadership': tailored_v_and_l})
+        # helpers.count_experiences(parsers.inv_parse_cv(cv_dict))
+        # if w_section:
+        #     print("Tailoring work experience section...")
+        #     w_text = parsers.inv_parse_cv(w_section)
+        #     ollama_func_name = "tailor_work_experience"
+        #     runtime_info_temp = {
+        #         "call_id": ollama_func_name, 
+        #         "payload_in": {"model": selected_model
+        #         },
+        #         "format": {
+        #             "raw_cv_data": w_text,
+        #             "job_description_summary": job_desc,
+        #             "section": "work_experience",
+        #             "reference_dct": w_section,
+        #             "systems": [system_text, system_text],
+        #             }, 
+        #     }
+        #     func = getattr(tailor_robust, ollama_func_name)
+        #     tailored_w = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function = func)
+        #     tailored_w = helpers.filter_output(tailored_w)
+        #     if tailored_w:
+        #         print("Tailored work experience section")
+        #         tailored_list.append(parsers.parse_cv(tailored_w))
+        #         # tailored_list.append({'work_experience': tailored_w})
+        # helpers.count_experiences(parsers.inv_parse_cv(cv_dict))
+        # if p_section:
+        #     print("Tailoring projects section...")
+        #     p_text = parsers.inv_parse_cv(p_section)
+        #     ollama_func_name = "tailor_projects"
+        #     runtime_info_temp = {
+        #         "call_id": ollama_func_name, 
+        #         "payload_in": {"model": selected_model
+        #         },
+        #         "format": {
+        #             "raw_cv_data": p_text,
+        #             "job_description_summary": job_desc,
+        #             "section": "projects",
+        #             "reference_dct": p_section,
+        #             "systems": [system_text, system_text],
+        #             }, 
+        #     }
+        #     func = getattr(tailor_robust, ollama_func_name)
+        #     tailored_p = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function = func)
+        #     tailored_p = helpers.filter_output(tailored_p)
+        #     if tailored_p:
+        #         print("Tailored projects section")
+        #         tailored_list.append(parsers.parse_cv(tailored_p))
+        #         # tailored_list.append({'projects': tailored_p})
+        
+        tailored_dict = parsers.dict_grafter(tailored_list)
+        # Merge unchanged fields back into the tailored dict
+        helpers.count_experiences(parsers.inv_parse_cv(cv_dict))
+        for key, value in unchanged_dict.items():
+            if key == "education":
+                for i in range(len(value)):
+                    ollama_func_name = "tailor_courses"
+                    runtime_info_temp = {
+                                "call_id": ollama_func_name,
+                                "payload_in": {
+                                    "model": selected_model,
+                                    "system": system_text,
+                                },
+                                "format": {
+                                    "courses": ', '.join(unchanged_dict[key][i]["courses"]),
+                                    "job_description": job_desc,
+                                    "no_courses": CONFIG["PRUNING"]["NO_COURSES"]
+                                },
+                    }
+                    tailored_courses = tailor_robust.ollama_call(runtime_info=runtime_info_temp)#Standard
+                    #Line to remove courses not present in the original courses list   
+                    tailored_courses = helpers.revise_list_section(new_list_section_text = tailored_courses, og_pref= {"courses": unchanged_dict[key][i]["courses"]}, type = "courses")             
+                    unchanged_dict[key][i]["courses"] = tailored_courses.replace("[1]Courses:", "").strip()
 
-        tailored_dict[key] = value
-    helpers.count_experiences(parsers.inv_parse_cv(cv_dict))
-    # Convert the tailored dict back to text (no summary section yet)
-    s_text = parsers.inv_parse_cv(tailored_dict)
-    helpers.count_experiences(parsers.inv_parse_cv(cv_dict))
-    #endregion
-    print("[STEP 1][COMPLETE]")
-    print("[STEP 1][OUTPUT]>>>[STEP 2][INPUT] Tailored resume text (unchanged fileds added + courses): \n" + helpers.indent_text(str(s_text)))
-    print("[STEP 2][START]Pruning Experiences...")
-    # #region STEP 2
-    # #Extract Volunteering and Leadership, Work Experience and Projects sections from the final CV text
-    # volunteering_and_leadership = tailored_dict.get("volunteering_and_leadership", {})
-    # work_experience = tailored_dict.get("work_experience", {})
-    # projects = tailored_dict.get("projects", {})
-    # #Graft to a single dict
-    # helpers.count_experiences(parsers.inv_parse_cv(cv_dict))
-    # experiences = {
-    #     "volunteering_and_leadership": volunteering_and_leadership,
-    #     "work_experience": work_experience,
-    #     "projects": projects
-    # }
-    all_experiences = {
-        "volunteering_and_leadership": cv_dict_complete["volunteering_and_leadership"],
-        "work_experience": cv_dict_complete["work_experience"],
-        "projects": cv_dict_complete["projects"]
-    }
-    all_experiences_text = parsers.inv_parse_cv(all_experiences)
-    #Convert to text
-    # experiences_text = parsers.inv_parse_cv(experiences)
-    # print("Experiences text before pruning: \n" + helpers.indent_text(str(experiences_text)))
-    #Prune Volunteering and Leadership, Work Experience and Projects sections based on job description
-    ollama_func_name = "prune_experiences"
-    runtime_info_temp = {
-        "call_id": ollama_func_name, 
-        "payload_in": {"model": selected_model,
-                       "system": system_text},
-        "format": {
-            "experiences": all_experiences_text,
-            "job_description_summary": job_desc,
-            "section": "vl_w_p",
-            "reference_dct": all_experiences #provide system through payload_in
-            }, 
-    }
-    func = getattr(tailor_robust, ollama_func_name)
-    pruned_experiences = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function=func)
-    # print("Remaining experiences before filtering: \n" + helpers.indent_text(str(pruned_experiences)))
-    pruned_experiences = helpers.filter_output(pruned_experiences)
-    # print("Remaining experiences after filtering: \n" + helpers.indent_text(str(pruned_experiences)))
-    
-    if pruned_experiences:
-        pruned_experiences_dict = parsers.parse_cv(pruned_experiences)
-        for key in ['volunteering_and_leadership', 'work_experience', 'projects']:
-            print("" + key + " section after pruning: " + str(pruned_experiences_dict.get(key, {})))
-        #Replace the experiences section in the final tailored dict
-        vnl_s = pruned_experiences_dict.get('volunteering_and_leadership', {})
-        print("Volunteering and Leadership section after pruning and .get(): \n" + str(vnl_s))
-        tailored_dict['volunteering_and_leadership'] = vnl_s
-        w_s = pruned_experiences_dict.get('work_experience', {})
-        print("Work Experience section after pruning and .get(): \n" + str(w_s))
-        tailored_dict['work_experience'] = w_s
-        p_s = pruned_experiences_dict.get('projects', {})
-        print("Projects section after pruning and .get(): \n" + str(p_s))
-        tailored_dict['projects'] = p_s
-        cv_text0 = parsers.inv_parse_cv(tailored_dict)
-        s_text = helpers.format_output(cv_text0)
-
-    else:
-        print("No experiences section pruned, using original experiences section")
-        tailored_dict['volunteering_and_leadership'] = deepcopy(cv_dict_complete["volunteering_and_leadership"])
-        tailored_dict['work_experience'] = deepcopy(cv_dict_complete["work_experience"])
-        tailored_dict['projects'] = deepcopy(cv_dict_complete["projects"])
-        cv_text0 = parsers.inv_parse_cv(tailored_dict)
-        s_text = helpers.format_output(cv_text0)
-
-    #endregion
-    print("[STEP 2][COMPLETE]")
-    print("[STEP 2][OUTPUT]>>>[STEP 3][INPUT] Pruned resume text (no Summary; pruned; untailored): \n" + helpers.indent_text(str(s_text)))
-    print("[STEP 3][START] Tailoring Experiences...")
-    #region STEP 3
-    ollama_func_name = "tailor_experiences"
-    if pruned_experiences:
-        runtime_info_temp = {
-            "call_id": ollama_func_name, 
-            "payload_in": {"model": selected_model,
-                        "system": system_text},
-            "format": {
-                "job_description_summary": job_desc,
-                "reference_dct": pruned_experiences_dict #provide system through payload_in
-                }, 
+            tailored_dict[key] = value
+        helpers.count_experiences(parsers.inv_parse_cv(cv_dict))
+        # Convert the tailored dict back to text (no summary section yet)
+        s_text = parsers.inv_parse_cv(tailored_dict)
+        helpers.count_experiences(parsers.inv_parse_cv(cv_dict))
+        #endregion
+        print("[STEP 1][COMPLETE]")
+        print("[STEP 1][OUTPUT]>>>[STEP 2][INPUT] Tailored resume text (unchanged fileds added + courses): \n" + helpers.indent_text(str(s_text)))
+        print("[STEP 2][START]Pruning Experiences...")
+        #region STEP 2
+        # #Extract Volunteering and Leadership, Work Experience and Projects sections from the final CV text
+        # volunteering_and_leadership = tailored_dict.get("volunteering_and_leadership", {})
+        # work_experience = tailored_dict.get("work_experience", {})
+        # projects = tailored_dict.get("projects", {})
+        # #Graft to a single dict
+        # helpers.count_experiences(parsers.inv_parse_cv(cv_dict))
+        # experiences = {
+        #     "volunteering_and_leadership": volunteering_and_leadership,
+        #     "work_experience": work_experience,
+        #     "projects": projects
+        # }
+        all_experiences = {
+            "volunteering_and_leadership": cv_dict_complete["volunteering_and_leadership"],
+            "work_experience": cv_dict_complete["work_experience"],
+            "projects": cv_dict_complete["projects"]
         }
-    else:
+        all_experiences_text = parsers.inv_parse_cv(all_experiences)
+        #Convert to text
+        # experiences_text = parsers.inv_parse_cv(experiences)
+        # print("Experiences text before pruning: \n" + helpers.indent_text(str(experiences_text)))
+        #Prune Volunteering and Leadership, Work Experience and Projects sections based on job description
+        ollama_func_name = "prune_experiences"
         runtime_info_temp = {
             "call_id": ollama_func_name, 
             "payload_in": {"model": selected_model,
                         "system": system_text},
             "format": {
+                "experiences": all_experiences_text,
                 "job_description_summary": job_desc,
+                "section": "vl_w_p",
                 "reference_dct": all_experiences #provide system through payload_in
                 }, 
         }
-    func = getattr(tailor_robust, ollama_func_name)
-    tailored_experiences = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function=func)
-    if tailored_experiences:
-        tailored_dct = parsers.parse_cv(tailored_experiences)
-        tailored_dict['volunteering_and_leadership'] = deepcopy(tailored_dct["volunteering_and_leadership"])
-        tailored_dict['work_experience'] = deepcopy(tailored_dct["work_experience"])
-        tailored_dict['projects'] = deepcopy(tailored_dct["projects"])
-        cv_text0 = parsers.inv_parse_cv(tailored_dict)
-        s_text = helpers.format_output(cv_text0)
-    else:
-        print("No experiences section tailored, using original experiences section")
-        tailored_dict = tailored_dict
-        cv_text0 = parsers.inv_parse_cv(tailored_dict)
-        s_text = helpers.format_output(cv_text0)
+        func = getattr(tailor_robust, ollama_func_name)
+        pruned_experiences = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function=func)
+        # print("Remaining experiences before filtering: \n" + helpers.indent_text(str(pruned_experiences)))
+        pruned_experiences = helpers.filter_output(pruned_experiences)
+        # print("Remaining experiences after filtering: \n" + helpers.indent_text(str(pruned_experiences)))
+        
+        if pruned_experiences:
+            pruned_experiences_dict = parsers.parse_cv(pruned_experiences)
+            for key in ['volunteering_and_leadership', 'work_experience', 'projects']:
+                print("" + key + " section after pruning: " + str(pruned_experiences_dict.get(key, {})))
+            #Replace the experiences section in the final tailored dict
+            vnl_s = pruned_experiences_dict.get('volunteering_and_leadership', {})
+            print("Volunteering and Leadership section after pruning and .get(): \n" + str(vnl_s))
+            tailored_dict['volunteering_and_leadership'] = vnl_s
+            w_s = pruned_experiences_dict.get('work_experience', {})
+            print("Work Experience section after pruning and .get(): \n" + str(w_s))
+            tailored_dict['work_experience'] = w_s
+            p_s = pruned_experiences_dict.get('projects', {})
+            print("Projects section after pruning and .get(): \n" + str(p_s))
+            tailored_dict['projects'] = p_s
+            cv_text0 = parsers.inv_parse_cv(tailored_dict)
+            s_text = helpers.format_output(cv_text0)
 
-    #endregion
-    print("[STEP 3][COMPLETE]")
-    print("[STEP 3][OUTPUT]>>>[STEP 4][INPUT] Tailored resume text (no Summary; pruned): \n" + helpers.indent_text(str(s_text)))
-    print("[STEP 4][START] Tailoring Summary section...")
-    #region STEP 4
-    print("Tailoring summary section...")
-    ollama_func_name = "tailor_summary"
-    runtime_info_temp = {
-        "call_id": ollama_func_name ,
-        "payload_in": {"model": selected_model, #model=DEFAULT_MODEL,
-        },
-        "format": {
-            "raw_cv_data" : s_text, #raw_cv_data = ""
-            "job_description": job_desc,
-            "systems": [system_text,system_text,system_text,system_text,
-                        system_text,system_text,system_text,system_text], 
-                        # system0="",system1="", system2="", system3="", system4="", system_s="",
-                                        #system00="",system01="", (min 6)
-            "skill_section": False, #skill_section=False,
-            "windows":CONFIG["WINDOWS"], #windows=2,
-            "mode": CONFIG["SUMMARY_MODE"] #mode="single"
-        }, 
-    }
-    func = getattr(tailor_robust, ollama_func_name)
-    tailored_s = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function=func)
-    print("Tailored summary section:\n" + str(tailored_s))
-    tailored_s = helpers.filter_output(tailored_s)
-    print("Tailored summary section (filtered):\n" + str(tailored_s))
+        else:
+            print("No experiences section pruned, using original experiences section")
+            tailored_dict['volunteering_and_leadership'] = deepcopy(cv_dict_complete["volunteering_and_leadership"])
+            tailored_dict['work_experience'] = deepcopy(cv_dict_complete["work_experience"])
+            tailored_dict['projects'] = deepcopy(cv_dict_complete["projects"])
+            cv_text0 = parsers.inv_parse_cv(tailored_dict)
+            s_text = helpers.format_output(cv_text0)
 
-    s_dict = parsers.parse_cv(s_text)
-    tailored_s_dict = parsers.parse_cv(tailored_s)
-    s_dict_list = parsers.dict_spliter(s_dict)
-    s_dict_list.append(tailored_s_dict)
-    s_dict_grafted = parsers.dict_grafter(s_dict_list)
-    final_cv_text = helpers.format_output(parsers.inv_parse_cv(s_dict_grafted))
+        #endregion
+        print("[STEP 2][COMPLETE]")
+        print("[STEP 2][OUTPUT]>>>[STEP 3][INPUT] Pruned resume text (no Summary; pruned; untailored): \n" + helpers.indent_text(str(s_text)))
+        print("[STEP 3][START] Tailoring Experiences...")
+        #region STEP 3
+        ollama_func_name = "tailor_experiences"
+        if pruned_experiences:
+            runtime_info_temp = {
+                "call_id": ollama_func_name, 
+                "payload_in": {"model": selected_model,
+                            "system": system_text},
+                "format": {
+                    "job_description_summary": job_desc,
+                    "reference_dct": pruned_experiences_dict #provide system through payload_in
+                    }, 
+            }
+        else:
+            runtime_info_temp = {
+                "call_id": ollama_func_name, 
+                "payload_in": {"model": selected_model,
+                            "system": system_text},
+                "format": {
+                    "job_description_summary": job_desc,
+                    "reference_dct": all_experiences #provide system through payload_in
+                    }, 
+            }
+        func = getattr(tailor_robust, ollama_func_name)
+        tailored_experiences = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function=func)
+        if tailored_experiences:
+            tailored_dct = parsers.parse_cv(tailored_experiences)
+            tailored_dict['volunteering_and_leadership'] = deepcopy(tailored_dct["volunteering_and_leadership"])
+            tailored_dict['work_experience'] = deepcopy(tailored_dct["work_experience"])
+            tailored_dict['projects'] = deepcopy(tailored_dct["projects"])
+            cv_text0 = parsers.inv_parse_cv(tailored_dict)
+            s_text = helpers.format_output(cv_text0)
+        else:
+            print("No experiences section tailored, using original experiences section")
+            tailored_dict = tailored_dict
+            cv_text0 = parsers.inv_parse_cv(tailored_dict)
+            s_text = helpers.format_output(cv_text0)
 
-
-    # if tailored_s:
-    #     # Add the tailored summary to the dict
-    #     tailored_list.append(parsers.parse_cv(tailored_s))
-    #     #tailored_dict['summary'] = tailored_s
-    # for item in tailored_list:
-    #     print("Tailored summary section (item):\n" + str(item))
-    # final_tailored_dict = parsers.dict_grafter(tailored_list)
-    # #Merge unchanged fields back into the final tailored dict
-    # for key, value in unchanged_dict.items():
-    #     final_tailored_dict[key] = value
-    # for key, value in final_tailored_dict.items():
-    #     print(f"Final tailored section '{key}': {value}")
-    # final_cv_text_unformated = parsers.inv_parse_cv(final_tailored_dict)
-    # print("Final CV text before formatting:\n" + helpers.indent_text(str(final_cv_text_unformated)))
-    # final_cv_text = helpers.format_output(final_cv_text_unformated)
-
-    # print("Final CV text after formatting:\n" + helpers.indent_text(str(final_cv_text)))
-    #endregion
-    print("[STEP 4][COMPLETE]")
-
-
-    print("All sections tailored successfully")
-    print("[STEP 4][OUTPUT]>>>[STEP 5][INPUT] Tailored resume text (with Summary; pruned): \n" + helpers.indent_text(str(final_cv_text)))
-    print("[STEP 5][START] Making skills section separate and tailoring it...")
-    #region STEP 5
-    final_final_cv_text = tailor_robust.return_text_with_skills(final_cv_text)
-    # print("CV text after skills section: " +  helpers.indent_text(str(final_final_cv_text)))
-    #Print final_final_cv_text
-    # print('Checking tailor.return_text_with_skills output:')
-    # print(final_final_cv_text)
-
-
-    #Attempt to tailor skills section
-    p_cv_out = parsers.parse_cv_out(final_final_cv_text)
-    #print("p_cv_out: ", p_cv_out)
-    final_final_split_dicts = parsers.dict_spliter(p_cv_out)
-    #print("final_final_split_dicts: ", final_final_split_dicts)
-    sk_text = parsers.inv_parse_cv_out(final_final_split_dicts[-1])
-    #print("sk_text:", sk_text)
-
-    
-    print("Tailoring skills section...")
-    ollama_func_name = "tailor_skills"
-    runtime_info_temp = {
-        "call_id": ollama_func_name,
-        "payload_in": {
-            "model": selected_model,
-            "system": system_text
-        },
-        "format": {
-            "cv_data": sk_text,
-            "job_description": job_desc,
-            "no_skills": CONFIG["PRUNING"]["NO_SKILLS"]["TOTAL"],
-            "no_prog":CONFIG["PRUNING"]["NO_SKILLS"]["PROG"],
-            "no_tech":CONFIG["PRUNING"]["NO_SKILLS"]["TECH"],
-            "no_soft":CONFIG["PRUNING"]["NO_SKILLS"]["SOFT"],
+        #endregion
+        print("[STEP 3][COMPLETE]")
+        print("[STEP 3][OUTPUT]>>>[STEP 4][INPUT] Tailored resume text (no Summary; pruned): \n" + helpers.indent_text(str(s_text)))
+        print("[STEP 4][START] Tailoring Summary section...")
+        #region STEP 4
+        print("Tailoring summary section...")
+        ollama_func_name = "tailor_summary"
+        runtime_info_temp = {
+            "call_id": ollama_func_name ,
+            "payload_in": {"model": selected_model, #model=DEFAULT_MODEL,
+            },
+            "format": {
+                "raw_cv_data" : s_text, #raw_cv_data = ""
+                "job_description": job_desc,
+                "systems": [system_text,system_text,system_text,system_text,
+                            system_text,system_text,system_text,system_text], 
+                            # system0="",system1="", system2="", system3="", system4="", system_s="",
+                                            #system00="",system01="", (min 6)
+                "skill_section": False, #skill_section=False,
+                "windows":CONFIG["WINDOWS"], #windows=2,
+                "mode": CONFIG["SUMMARY_MODE"] #mode="single"
+            }, 
         }
-    }
-    tailored_sk = tailor_robust.ollama_call(runtime_info=runtime_info_temp)
-    tailored_sk = helpers.filter_output(tailored_sk)
-    if tailored_sk:
-        print("Tailored skills section")
-        final_final_split_dicts[-1]= parsers.parse_cv_out(tailored_sk)
-        current_cv_text = parsers.inv_parse_cv_out(parsers.dict_grafter(final_final_split_dicts))
-    else:
-        print("No skills section tailored, using original skills section")
-        current_cv_text = final_final_cv_text
-    #endregion
-    print("[STEP 5][COMPLETE]")
-    print("[STEP 5][OUTPUT]>>>[STEP 6][INPUT] Tailored resume text (with Summary; pruned; skills tailored): \n" + helpers.indent_text(str(current_cv_text)))
-    print("[STEP 6][START] Ordering Resume sections by end date/issue date...")
-    #region STEP 6
-    temp_dct = parsers.parse_cv_out(current_cv_text)
-    split_curr = parsers.dict_spliter(temp_dct)
-    to_be_ordered = []
-    for section in split_curr:
-        # Check if key is one of the sections to be ordered
-        for key in section:
-            if key in ['education', 'work_experience', 'projects', 'volunteering_and_leadership', 'certifications', 'awards_and_scholarships']:
-                print(f"Found section to order: {key} with value: {section[key]}")
-                to_be_ordered.append(section)
-    grafted_curr = parsers.dict_grafter(to_be_ordered)
-    #check if grafted_curr is empty
-    if not grafted_curr:
-        print("No sections to order, skipping ordering step.")
-    else:
-        #print ("Grafted current sections: " + str(grafted_curr))
-        print("Grafted current sections:\n" +  helpers.indent_text(parsers.inv_parse_cv_out(grafted_curr)))
-    new_grafted_curr = helpers.order_chronologically(grafted_curr, mode='end_date',reverse= True)
-    if not new_grafted_curr:
-        print("No sections were ordered.")
-    else:
-        print("Ordered sections:\n" + helpers.indent_text(parsers.inv_parse_cv_out(new_grafted_curr)))
-    ordered_curr = new_grafted_curr
-    for section in ordered_curr:
-        print(f"{section} section content: {ordered_curr[section]}")
-    #Replace all ordered sections from ordered_curr to temp_dct
-    if 'education' in ordered_curr:
-        temp_dct['education'] = ordered_curr['education']
-        #print("Ordered education section: " + str(temp_dct['education']))
-    if 'work_experience' in ordered_curr:
-        temp_dct['work_experience'] = ordered_curr['work_experience']
-        #print("Ordered work experience section: " + str(temp_dct['work_experience']))
-    if 'projects' in ordered_curr:
-        temp_dct['projects'] = ordered_curr['projects']
-        #print("Ordered projects section: " + str(temp_dct['projects']))
-    if 'volunteering_and_leadership' in ordered_curr:
-        temp_dct['volunteering_and_leadership'] = ordered_curr['volunteering_and_leadership']
-        #print("Ordered volunteering and leadership section: " + str(temp_dct['volunteering_and_leadership']))
-    if 'certifications' in ordered_curr:
-        temp_dct['certifications'] = ordered_curr['certifications']
-        #print("Ordered certifications section: " + str(temp_dct['certifications']))
-    if 'awards_and_scholarships' in ordered_curr:
-        temp_dct['awards_and_scholarships'] = ordered_curr['awards_and_scholarships']
-        #print("Ordered awards and scholarships section: " + str(temp_dct['awards_and_scholarships']))
+        func = getattr(tailor_robust, ollama_func_name)
+        tailored_s = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function=func)
+        print("Tailored summary section:\n" + str(tailored_s))
+        tailored_s = helpers.filter_output(tailored_s)
+        print("Tailored summary section (filtered):\n" + str(tailored_s))
 
-    current_cv_text = parsers.inv_parse_cv_out(temp_dct)
-    current_cv_text = helpers.clean_labels(current_cv_text)
-    print("Ordering complete")
-    #endregion
-    print("[STEP 6][COMPLETE]")
-    print("[STEP 6][OUTPUT]>>>[STEP 7][INPUT] Tailored resume text (with Summary; pruned; skills tailored; ordered): \n" + helpers.indent_text(str(current_cv_text)))
-    print("[STEP 7][START] Formatting/Consistency check for tailored resume...")
-    check_summaries(update_resume = True)
-    #region STEP 7
-    print("[STEP 7][SKIP]Please use the formatting button in the UI.")
-    # format_check_current_cv_text(root)
-    #endregion
-    print("[STEP 7][COMPLETE]") 
-    print("The climb has ended, the CV is tailored!")
-    # Show the tailored CV text in a new window
-    if show:
-        result_window = tk.Toplevel(root)
-        result_window.title("Tailored CV")
-        result_textbox = tk.Text(result_window, height=20, width=80)
-        result_textbox.insert(tk.END, current_cv_text)
-        result_textbox.pack(expand=True, fill=tk.BOTH)
+        s_dict = parsers.parse_cv(s_text)
+        tailored_s_dict = parsers.parse_cv(tailored_s)
+        s_dict_list = parsers.dict_spliter(s_dict)
+        s_dict_list.append(tailored_s_dict)
+        s_dict_grafted = parsers.dict_grafter(s_dict_list)
+        final_cv_text = helpers.format_output(parsers.inv_parse_cv(s_dict_grafted))
 
-    # Enable the save button when output is generated
-    show_output_cv_button.config(state="normal")
-    save_output_cv_button.config(state="normal")
-    save_current_cv_text_button.config(state="normal")
-    format_check_current_cv_button.config(state="normal")
-    filter_output_cv_button.config(state="normal")
-    tailor_cl_button.config(state="normal")
-    helpers.performance_check()
-    helpers.notify(
-        "Resume Tailoring Complete",
-        "Your Resume has been successfully tailored."
-    )
+
+        # if tailored_s:
+        #     # Add the tailored summary to the dict
+        #     tailored_list.append(parsers.parse_cv(tailored_s))
+        #     #tailored_dict['summary'] = tailored_s
+        # for item in tailored_list:
+        #     print("Tailored summary section (item):\n" + str(item))
+        # final_tailored_dict = parsers.dict_grafter(tailored_list)
+        # #Merge unchanged fields back into the final tailored dict
+        # for key, value in unchanged_dict.items():
+        #     final_tailored_dict[key] = value
+        # for key, value in final_tailored_dict.items():
+        #     print(f"Final tailored section '{key}': {value}")
+        # final_cv_text_unformated = parsers.inv_parse_cv(final_tailored_dict)
+        # print("Final CV text before formatting:\n" + helpers.indent_text(str(final_cv_text_unformated)))
+        # final_cv_text = helpers.format_output(final_cv_text_unformated)
+
+        # print("Final CV text after formatting:\n" + helpers.indent_text(str(final_cv_text)))
+        #endregion
+        print("[STEP 4][COMPLETE]")
+        print("All sections tailored successfully")
+        print("[STEP 4][OUTPUT]>>>[STEP 5][INPUT] Tailored resume text (with Summary; pruned): \n" + helpers.indent_text(str(final_cv_text)))
+        print("[STEP 5][START] Making skills section separate and tailoring it...")
+        #region STEP 5
+        final_final_cv_text = tailor_robust.return_text_with_skills(final_cv_text)
+        # print("CV text after skills section: " +  helpers.indent_text(str(final_final_cv_text)))
+        #Print final_final_cv_text
+        # print('Checking tailor.return_text_with_skills output:')
+        # print(final_final_cv_text)
+
+
+        #Attempt to tailor skills section
+        p_cv_out = parsers.parse_cv_out(final_final_cv_text)
+        #print("p_cv_out: ", p_cv_out)
+        final_final_split_dicts = parsers.dict_spliter(p_cv_out)
+        #print("final_final_split_dicts: ", final_final_split_dicts)
+        sk_text = parsers.inv_parse_cv_out(final_final_split_dicts[-1])
+        #print("sk_text:", sk_text)
+
+        
+        print("Tailoring skills section...")
+        ollama_func_name = "tailor_skills"
+        runtime_info_temp = {
+            "call_id": ollama_func_name,
+            "payload_in": {
+                "model": selected_model,
+                "system": system_text
+            },
+            "format": {
+                "cv_data": sk_text,
+                "job_description": job_desc,
+                "no_skills": CONFIG["PRUNING"]["NO_SKILLS"]["TOTAL"],
+                "no_prog":CONFIG["PRUNING"]["NO_SKILLS"]["PROG"],
+                "no_tech":CONFIG["PRUNING"]["NO_SKILLS"]["TECH"],
+                "no_soft":CONFIG["PRUNING"]["NO_SKILLS"]["SOFT"],
+            }
+        }
+        tailored_sk = tailor_robust.ollama_call(runtime_info=runtime_info_temp)
+        tailored_sk = helpers.revise_list_section(new_list_section_text = tailored_sk, og_pref = {"skills":
+                                                                                                {
+                                                                                                    "programming_languages":deepcopy(p_cv_out["skills"]["programming_languages"]),
+                                                                                                    "technical_skills":deepcopy(p_cv_out["skills"]["technical_skills"]),
+                                                                                                    "soft_skills":deepcopy(p_cv_out["skills"]["soft_skills"])
+                                                                                                }}, type = "skills")
+        tailored_sk = helpers.filter_output(tailored_sk)
+        if tailored_sk:
+            print("Tailored skills section")
+            final_final_split_dicts[-1]= parsers.parse_cv_out(tailored_sk)
+            current_cv_text = parsers.inv_parse_cv_out(parsers.dict_grafter(final_final_split_dicts))
+        else:
+            print("No skills section tailored, using original skills section")
+            current_cv_text = final_final_cv_text
+        #endregion
+        print("[STEP 5][COMPLETE]")
+        print("[STEP 5][OUTPUT]>>>[STEP 6][INPUT] Tailored resume text (with Summary; pruned; skills tailored): \n" + helpers.indent_text(str(current_cv_text)))
+        print("[STEP 6][START] Ordering Resume sections by end date/issue date...")
+        #region STEP 6
+        temp_dct = parsers.parse_cv_out(current_cv_text)
+        split_curr = parsers.dict_spliter(temp_dct)
+        to_be_ordered = []
+        for section in split_curr:
+            # Check if key is one of the sections to be ordered
+            for key in section:
+                if key in ['education', 'work_experience', 'projects', 'volunteering_and_leadership', 'certifications', 'awards_and_scholarships']:
+                    print(f"Found section to order: {key} with value: {section[key]}")
+                    to_be_ordered.append(section)
+        grafted_curr = parsers.dict_grafter(to_be_ordered)
+        #check if grafted_curr is empty
+        if not grafted_curr:
+            print("No sections to order, skipping ordering step.")
+        else:
+            #print ("Grafted current sections: " + str(grafted_curr))
+            print("Grafted current sections:\n" +  helpers.indent_text(parsers.inv_parse_cv_out(grafted_curr)))
+        new_grafted_curr = helpers.order_chronologically(grafted_curr, mode='end_date',reverse= True)
+        if not new_grafted_curr:
+            print("No sections were ordered.")
+        else:
+            print("Ordered sections:\n" + helpers.indent_text(parsers.inv_parse_cv_out(new_grafted_curr)))
+        ordered_curr = new_grafted_curr
+        for section in ordered_curr:
+            print(f"{section} section content: {ordered_curr[section]}")
+        #Replace all ordered sections from ordered_curr to temp_dct
+        if 'education' in ordered_curr:
+            temp_dct['education'] = ordered_curr['education']
+            #print("Ordered education section: " + str(temp_dct['education']))
+        if 'work_experience' in ordered_curr:
+            temp_dct['work_experience'] = ordered_curr['work_experience']
+            #print("Ordered work experience section: " + str(temp_dct['work_experience']))
+        if 'projects' in ordered_curr:
+            temp_dct['projects'] = ordered_curr['projects']
+            #print("Ordered projects section: " + str(temp_dct['projects']))
+        if 'volunteering_and_leadership' in ordered_curr:
+            temp_dct['volunteering_and_leadership'] = ordered_curr['volunteering_and_leadership']
+            #print("Ordered volunteering and leadership section: " + str(temp_dct['volunteering_and_leadership']))
+        if 'certifications' in ordered_curr:
+            temp_dct['certifications'] = ordered_curr['certifications']
+            #print("Ordered certifications section: " + str(temp_dct['certifications']))
+        if 'awards_and_scholarships' in ordered_curr:
+            temp_dct['awards_and_scholarships'] = ordered_curr['awards_and_scholarships']
+            #print("Ordered awards and scholarships section: " + str(temp_dct['awards_and_scholarships']))
+
+        current_cv_text = parsers.inv_parse_cv_out(temp_dct)
+        current_cv_text = helpers.clean_labels(current_cv_text)
+        print("Ordering complete")
+        #endregion
+        print("[STEP 6][COMPLETE]")
+        print("[STEP 6][OUTPUT]>>>[STEP 7][INPUT] Tailored resume text (with Summary; pruned; skills tailored; ordered): \n" + helpers.indent_text(str(current_cv_text)))
+        print("[STEP 7][START] Formatting/Consistency check for tailored resume...")
+        check_summaries(update_resume = True)
+        #region STEP 7
+        print("[STEP 7][SKIP]Please use the formatting button in the UI.")
+        # format_check_current_cv_text(root)
+        #endregion
+        print("[STEP 7][COMPLETE]") 
+        print("The climb has ended, the CV is tailored!")
+        # Show the tailored CV text in a new window
+        if show:
+            result_window = tk.Toplevel(root)
+            result_window.title("Tailored CV")
+            result_textbox = tk.Text(result_window, height=20, width=80)
+            result_textbox.insert(tk.END, current_cv_text)
+            result_textbox.pack(expand=True, fill=tk.BOTH)
+
+        # Enable the save button when output is generated
+        show_output_cv_button.config(state="normal")
+        save_output_cv_button.config(state="normal")
+        save_current_cv_text_button.config(state="normal")
+        format_check_current_cv_button.config(state="normal")
+        filter_output_cv_button.config(state="normal")
+        tailor_cl_button.config(state="normal")
+        helpers.performance_check()
+        helpers.notify(
+            "[SISYPHUS][SUCCESS]Resume Tailoring Complete",
+            "Your Resume has been successfully tailored."
+        )
+    except:
+        helpers.errorify(
+            "[SISYPHUS][ERROR]Resume Tailoring Failed",
+            "Please consult log for further information."
+        )
 
 @log_time
 def tailor_cl(root, show = True):
@@ -786,48 +796,54 @@ def tailor_cl(root, show = True):
         check_summaries(update_resume=True)
 
     print("Tailoring cover letter with model: " + str(selected_model))
-
-    # Compose cover letter dictionary
-    ollama_func_name = "compose_cover_letter_dictionary"
-    runtime_info_temp = {
-        "call_id": ollama_func_name, 
-        "payload_in": {"model": selected_model #model=DEFAULT_MODEL,
-        }, 
-        "format": {
-            "cv_text_summary":summarized_resume,
-            "cv_text":current_cv_text,
-            "job_description":summarized_job_desc
+    try:
+        # Compose cover letter dictionary
+        ollama_func_name = "compose_cover_letter_dictionary"
+        runtime_info_temp = {
+            "call_id": ollama_func_name, 
+            "payload_in": {"model": selected_model #model=DEFAULT_MODEL,
+            }, 
+            "format": {
+                "cv_text_summary":summarized_resume,
+                "cv_text":current_cv_text,
+                "job_description":summarized_job_desc
+            }
         }
-    }
-    func = getattr(tailor_robust, ollama_func_name)
-    cover_letter_dict = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function=func)
-    cover_letter_text = parsers.inv_parse_cl(cover_letter_dict)
-    current_cl_text = cover_letter_text
+        func = getattr(tailor_robust, ollama_func_name)
+        cover_letter_dict = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function=func)
+        cover_letter_text = parsers.inv_parse_cl(cover_letter_dict)
+        current_cl_text = cover_letter_text
 
 
-    print("Cover letter text generated successfully.")
-    print("Formatting and consistency check skipped. Please use the formatting button in the UI.")
-    # format_check_current_cl_text(root)
+        print("Cover letter text generated successfully.")
+        print("Formatting and consistency check skipped. Please use the formatting button in the UI.")
+        # format_check_current_cl_text(root)
 
-    global cl_window, cl_textbox
+        global cl_window, cl_textbox
 
-    if show:
-        cl_window = tk.Toplevel(root)
-        cl_window.title("Tailored Cover Letter")
-        cl_textbox = tk.Text(cl_window, height=20, width=80)
-        cl_textbox.insert(tk.END, current_cl_text)
-        cl_textbox.pack(expand=True, fill=tk.BOTH)
+        if show:
+            cl_window = tk.Toplevel(root)
+            cl_window.title("Tailored Cover Letter")
+            cl_textbox = tk.Text(cl_window, height=20, width=80)
+            cl_textbox.insert(tk.END, current_cl_text)
+            cl_textbox.pack(expand=True, fill=tk.BOTH)
 
-    show_output_cl_button.config(state="normal")
-    save_current_cl_text_button.config(state="normal")
-    filter_output_cl_button.config(state="normal")
-    save_output_cl_button.config(state="normal")
-    format_check_current_cl_button.config(state="normal")
-    helpers.performance_check()
-    helpers.notify(
-        "Cover Letter Tailoring Complete",
-        "Your Cover Letter has been successfully tailored."
-    )
+        show_output_cl_button.config(state="normal")
+        save_current_cl_text_button.config(state="normal")
+        filter_output_cl_button.config(state="normal")
+        save_output_cl_button.config(state="normal")
+        format_check_current_cl_button.config(state="normal")
+        helpers.performance_check()
+        helpers.notify(
+            "[SISYPHUS][SUCCESS]Cover Letter Tailoring Complete",
+            "Your Cover Letter has been successfully tailored."
+        )
+    except:
+        helpers.errorify(
+            "[SISYPHUS][ERROR]Cover Letter Tailoring Failed",
+            "Please consult log for further information."
+        )
+
 
 def show_output_cl(root):
     global cl_window, cl_textbox, current_cl_text
@@ -855,188 +871,205 @@ def format_check_input_cv_file(root, cv_file):
     Returns True if the format is correct, False otherwise.
     """
     
+    try:
+        cv_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "cvs", cv_file))
+        
+        # Prepare CV analysis output as a string
+        analysis_stream = io.StringIO()
+        old_stdout = sys.stdout
+        sys.stdout = analysis_stream
+        helpers.read_format_checker(helpers.format_checker(cv_text))
+        sys.stdout = old_stdout
+        analysis_text = analysis_stream.getvalue()
 
-    cv_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "cvs", cv_file))
-    
-    # Prepare CV analysis output as a string
-    analysis_stream = io.StringIO()
-    old_stdout = sys.stdout
-    sys.stdout = analysis_stream
-    helpers.read_format_checker(helpers.format_checker(cv_text))
-    sys.stdout = old_stdout
-    analysis_text = analysis_stream.getvalue()
-
-    # Show the CV analysis in a new window
-    analysis_window = tk.Toplevel(root)
-    analysis_window.title("Input CV Analysis:")
-    analysis_label = tk.Label(analysis_window, text="Input CV Analysis:")
-    analysis_label.pack()
-    analysis_textbox = tk.Text(analysis_window, height=20, width=80)
-    analysis_textbox.insert(tk.END, analysis_text)
-    analysis_textbox.pack(expand=True, fill=tk.BOTH)
-    helpers.notify(
-        "Raw CV format checking complete",
-        "Your CV has been successfully checked."
-    )
+        # Show the CV analysis in a new window
+        analysis_window = tk.Toplevel(root)
+        analysis_window.title("Input CV Analysis:")
+        analysis_label = tk.Label(analysis_window, text="Input CV Analysis:")
+        analysis_label.pack()
+        analysis_textbox = tk.Text(analysis_window, height=20, width=80)
+        analysis_textbox.insert(tk.END, analysis_text)
+        analysis_textbox.pack(expand=True, fill=tk.BOTH)
+        helpers.notify(
+            "[SISYPHUS][SUCCESS]Raw CV format checking complete",
+            "Your CV has been successfully checked."
+        )
+    except:
+        helpers.errorify(
+            "[SISYPHUS][ERROR]Raw CV format checking Failed",
+            "Please consult log for further information."
+        )
 
 @log_time
 def format_check_current_cv_text(root):
     global summarized_job_desc, summarized_resume, current_cv_text
-    if summarized_job_desc == "":
-        print("Summary of job description is empty. Generating summary...")
-        if job_desc_textbox.get("1.0", tk.END).strip() == "":
-            print("Job description is empty. Please enter a job description.")
-            return
-        check_summaries(update_job_desc=True)
-    if summarized_resume == "":
-        print("Summary of resume is empty. Generating summary...")
-        if current_cv_text == "" or not current_cv_text:
-            print("Resume is empty. Please enter a resume.")
-            return
-        check_summaries(update_resume=True)
+    try:
+        if summarized_job_desc == "":
+            print("Summary of job description is empty. Generating summary...")
+            if job_desc_textbox.get("1.0", tk.END).strip() == "":
+                print("Job description is empty. Please enter a job description.")
+                return
+            check_summaries(update_job_desc=True)
+        if summarized_resume == "":
+            print("Summary of resume is empty. Generating summary...")
+            if current_cv_text == "" or not current_cv_text:
+                print("Resume is empty. Please enter a resume.")
+                return
+            check_summaries(update_resume=True)
 
-    # Prepare CV analysis output as a string
-    # analysis_stream = io.StringIO()
-    # old_stdout = sys.stdout
-    # sys.stdout = analysis_stream
-    integrity = helpers.read_format_checker(helpers.format_checker_out(current_cv_text))
-    # sys.stdout = old_stdout
-    # analysis_text = analysis_stream.getvalue()
-    analysis_text = integrity
-    cv_text_og = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "cvs", cv_var.get()))
-    selected_model = model_var.get()
-    system_file = system_var.get()  
-    system_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", system_file))
-    con_system_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", "system_consistency.txt"))
-    ollama_func_name = "consistency_checker_vs_job_desc_cv"
-    runtime_info_temp ={
-        "call_id": ollama_func_name,
-        "payload_in": {
-            "model": selected_model,
-            "system": con_system_text
-        },
-        "format": {
-            "cv_data": summarized_resume,
-            "job_description": summarized_job_desc
-        },
-    }
-    con_vs_job_desc = tailor_robust.ollama_call(runtime_info=runtime_info_temp)#Standard
-    print(con_vs_job_desc)
-    print(helpers.filter_output(con_vs_job_desc))
-    ollama_func_name = "consistency_checker_vs_cv_cv"
-    runtime_info_temp = {
-        "call_id": ollama_func_name, 
-        "payload_in": {"model": selected_model, #model=DEFAULT_MODEL,
-                        "system": con_system_text # #system="",
-                        }, 
-        "format": {
-            "cv_data" : current_cv_text, #old_resume_txt = ""
-            "cv_data_orig": cv_text_og, # new_resume_txt = ""
-            "system_s": system_text
-        }, 
-    }
-    func = getattr(tailor_robust, ollama_func_name)
-    con_vs_cv = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function = func)
-    print(con_vs_cv)
-    print(helpers.filter_output(con_vs_cv))
+        # Prepare CV analysis output as a string
+        # analysis_stream = io.StringIO()
+        # old_stdout = sys.stdout
+        # sys.stdout = analysis_stream
+        integrity = helpers.read_format_checker(helpers.format_checker_out(current_cv_text))
+        # sys.stdout = old_stdout
+        # analysis_text = analysis_stream.getvalue()
+        analysis_text = integrity
+        cv_text_og = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "cvs", cv_var.get()))
+        selected_model = model_var.get()
+        system_file = system_var.get()  
+        system_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", system_file))
+        con_system_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", "system_consistency.txt"))
+        ollama_func_name = "consistency_checker_vs_job_desc_cv"
+        runtime_info_temp ={
+            "call_id": ollama_func_name,
+            "payload_in": {
+                "model": selected_model,
+                "system": con_system_text
+            },
+            "format": {
+                "cv_data": summarized_resume,
+                "job_description": summarized_job_desc
+            },
+        }
+        con_vs_job_desc = tailor_robust.ollama_call(runtime_info=runtime_info_temp)#Standard
+        print(con_vs_job_desc)
+        print(helpers.filter_output(con_vs_job_desc))
+        ollama_func_name = "consistency_checker_vs_cv_cv"
+        runtime_info_temp = {
+            "call_id": ollama_func_name, 
+            "payload_in": {"model": selected_model, #model=DEFAULT_MODEL,
+                            "system": con_system_text # #system="",
+                            }, 
+            "format": {
+                "cv_data" : current_cv_text, #old_resume_txt = ""
+                "cv_data_orig": cv_text_og, # new_resume_txt = ""
+                "system_s": system_text
+            }, 
+        }
+        func = getattr(tailor_robust, ollama_func_name)
+        con_vs_cv = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function = func)
+        print(con_vs_cv)
+        print(helpers.filter_output(con_vs_cv))
 
-    #Append consistency check results to analysis text
-    analysis_text += "\n\nConsistency Checker Vs Job Description:\n"
-    analysis_text += helpers.filter_output(con_vs_job_desc) + "\n\n"
-    analysis_text += "Consistency Checker Vs Untailored Resume:\n"
-    analysis_text += helpers.filter_output(con_vs_cv) + "\n\n"
+        #Append consistency check results to analysis text
+        analysis_text += "\n\nConsistency Checker Vs Job Description:\n"
+        analysis_text += helpers.filter_output(con_vs_job_desc) + "\n\n"
+        analysis_text += "Consistency Checker Vs Untailored Resume:\n"
+        analysis_text += helpers.filter_output(con_vs_cv) + "\n\n"
 
-    # Show the CV analysis in a new window
-    analysis_window = tk.Toplevel(root)
-    analysis_window.title("Current Output Resume Analysis:")
-    analysis_label = tk.Label(analysis_window, text="Current Output Resume Analysis:")
-    analysis_label.pack()
-    analysis_textbox = tk.Text(analysis_window, height=20, width=80)
-    analysis_textbox.insert(tk.END, analysis_text)
-    analysis_textbox.pack(expand=True, fill=tk.BOTH)
-    helpers.notify(
-        "Tailored Resume format checking complete",
-        "Your Tailored Resume has been successfully checked."
-    )
+        # Show the CV analysis in a new window
+        analysis_window = tk.Toplevel(root)
+        analysis_window.title("Current Output Resume Analysis:")
+        analysis_label = tk.Label(analysis_window, text="Current Output Resume Analysis:")
+        analysis_label.pack()
+        analysis_textbox = tk.Text(analysis_window, height=20, width=80)
+        analysis_textbox.insert(tk.END, analysis_text)
+        analysis_textbox.pack(expand=True, fill=tk.BOTH)
+        helpers.notify(
+            "[SISYPHUS][SUCCESS]Tailored Resume format checking complete",
+            "Your Tailored Resume has been successfully checked."
+        )
+    except:
+        helpers.errorify(
+            "[SISYPHUS][ERROR]Tailored Resume format checking Failed",
+            "Please consult log for further information."
+        )
 
 @log_time
 def format_check_current_cl_text(root):
     global current_cl_text, current_cv_text, summarized_job_desc, summarized_resume
-    if summarized_job_desc == "":
-        print("Summary of job description is empty. Generating summary...")
-        if job_desc_textbox.get("1.0", tk.END).strip() == "":
-            print("Job description is empty. Please enter a job description.")
-            return
-        check_summaries(update_job_desc=True)
-    if summarized_resume == "":
-        print("Summary of resume is empty. Generating summary...")
-        if current_cv_text == "" or not current_cv_text:
-            print("Resume is empty. Please enter a resume.")
-            return
-        check_summaries(update_resume=True)
+    try:
+        if summarized_job_desc == "":
+            print("Summary of job description is empty. Generating summary...")
+            if job_desc_textbox.get("1.0", tk.END).strip() == "":
+                print("Job description is empty. Please enter a job description.")
+                return
+            check_summaries(update_job_desc=True)
+        if summarized_resume == "":
+            print("Summary of resume is empty. Generating summary...")
+            if current_cv_text == "" or not current_cv_text:
+                print("Resume is empty. Please enter a resume.")
+                return
+            check_summaries(update_resume=True)
+            
+        #Assumes current_cv_text is already defined and is the tailored resume relevant to the cover letter
+        # Prepare CV analysis output as a string
+        # analysis_stream = io.StringIO()
+        # old_stdout = sys.stdout
+        # sys.stdout = analysis_stream
+        # helpers.read_format_checker(helpers.format_checker_out_cl(current_cl_text))
+        # sys.stdout = old_stdout
+        integrity = helpers.read_format_checker(helpers.format_checker_out(current_cv_text))
+        analysis_text = integrity
         
-    #Assumes current_cv_text is already defined and is the tailored resume relevant to the cover letter
-    # Prepare CV analysis output as a string
-    # analysis_stream = io.StringIO()
-    # old_stdout = sys.stdout
-    # sys.stdout = analysis_stream
-    # helpers.read_format_checker(helpers.format_checker_out_cl(current_cl_text))
-    # sys.stdout = old_stdout
-    integrity = helpers.read_format_checker(helpers.format_checker_out(current_cv_text))
-    analysis_text = integrity
-    
-    selected_model = model_var.get()
-    system_file = system_var.get()
-    con_system_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", "system_consistency_cl.txt"))
-    ollama_func_name = "consistency_checker_vs_job_desc_cl"
-    runtime_info_temp ={
-        "call_id": ollama_func_name,
-        "payload_in": {
-            "model": selected_model,
-            "system": con_system_text
-        },
-        "format": {
-            "cv_data": summarized_resume,
-            "job_description": summarized_job_desc
-        },
-    }
-    con_vs_job_desc = tailor_robust.ollama_call(runtime_info=runtime_info_temp)#Standard
-    print(con_vs_job_desc)
-    print(helpers.filter_output(con_vs_job_desc))
-    ollama_func_name = "consistency_checker_vs_cv_cl"
-    runtime_info_temp = {
-        "call_id": ollama_func_name, 
-        "payload_in": {
-                       "model": selected_model, #Set at runtime
-                       "system": con_system_text
-                       },
-        "format": {#Set at runtime
-                   "cv_data": current_cl_text,
-                   "cv_data_orig": summarized_resume 
-                   },
+        selected_model = model_var.get()
+        system_file = system_var.get()
+        con_system_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", "system_consistency_cl.txt"))
+        ollama_func_name = "consistency_checker_vs_job_desc_cl"
+        runtime_info_temp ={
+            "call_id": ollama_func_name,
+            "payload_in": {
+                "model": selected_model,
+                "system": con_system_text
+            },
+            "format": {
+                "cv_data": summarized_resume,
+                "job_description": summarized_job_desc
+            },
+        }
+        con_vs_job_desc = tailor_robust.ollama_call(runtime_info=runtime_info_temp)#Standard
+        print(con_vs_job_desc)
+        print(helpers.filter_output(con_vs_job_desc))
+        ollama_func_name = "consistency_checker_vs_cv_cl"
+        runtime_info_temp = {
+            "call_id": ollama_func_name, 
+            "payload_in": {
+                        "model": selected_model, #Set at runtime
+                        "system": con_system_text
+                        },
+            "format": {#Set at runtime
+                    "cv_data": current_cl_text,
+                    "cv_data_orig": summarized_resume 
+                    },
 
-    }
-    con_vs_cv = tailor_robust.ollama_call(runtime_info=runtime_info_temp)#Standard
-    print(con_vs_cv)
-    print(helpers.filter_output(con_vs_cv))
-    #Append consistency check results to analysis text
-    analysis_text += "\n\nConsistency Checker Vs Job Description:\n"
-    analysis_text += helpers.filter_output(con_vs_job_desc) + "\n\n"
-    analysis_text += "Consistency Checker Vs Tailored Resume:\n"
-    analysis_text += helpers.filter_output(con_vs_cv) + "\n\n"
+        }
+        con_vs_cv = tailor_robust.ollama_call(runtime_info=runtime_info_temp)#Standard
+        print(con_vs_cv)
+        print(helpers.filter_output(con_vs_cv))
+        #Append consistency check results to analysis text
+        analysis_text += "\n\nConsistency Checker Vs Job Description:\n"
+        analysis_text += helpers.filter_output(con_vs_job_desc) + "\n\n"
+        analysis_text += "Consistency Checker Vs Tailored Resume:\n"
+        analysis_text += helpers.filter_output(con_vs_cv) + "\n\n"
 
-    # Show the CV analysis in a new window
-    analysis_window = tk.Toplevel(root)
-    analysis_window.title("Current Output CL Analysis:")
-    analysis_label = tk.Label(analysis_window, text="Current Output CL Analysis:")
-    analysis_label.pack()
-    analysis_textbox = tk.Text(analysis_window, height=20, width=80)
-    analysis_textbox.insert(tk.END, analysis_text)
-    analysis_textbox.pack(expand=True, fill=tk.BOTH)
-    helpers.notify(
-        "Cover Letter format checking complete",
-        "Your Cover Letter has been successfully checked."
-    )
+        # Show the CV analysis in a new window
+        analysis_window = tk.Toplevel(root)
+        analysis_window.title("Current Output CL Analysis:")
+        analysis_label = tk.Label(analysis_window, text="Current Output CL Analysis:")
+        analysis_label.pack()
+        analysis_textbox = tk.Text(analysis_window, height=20, width=80)
+        analysis_textbox.insert(tk.END, analysis_text)
+        analysis_textbox.pack(expand=True, fill=tk.BOTH)
+        helpers.notify(
+            "[SISYPHUS][SUCCESS]Cover Letter format checking complete",
+            "Your Cover Letter has been successfully checked."
+        )
+    except:
+        helpers.errorify(
+            "[SISYPHUS][ERROR]Cover Letter format checking Failed",
+            "Please consult log for further information."
+        )
 
 @log_time
 def filter_output_cv_text(root):
