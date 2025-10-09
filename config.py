@@ -21,7 +21,11 @@ CONFIG = {
     "PRUNING": {
         #ratio, partial_ratio, toekn_sort_ratio,partial_token_sort_ratio, token_set_ratio
         "DISTANCE_ALGO_KEY": "token_set_ratio", 
-        "DISTANCE_ALGO_DESC": "token_set_ratio", 
+        "DISTANCE_ALGO_DESC": "token_set_ratio",
+        "DISTANCE_ALGO_PROG":  "token_set_ratio",
+        "DISTANCE_ALGO_TECH":  "token_set_ratio",
+        "DISTANCE_ALGO_SOFT":  "token_set_ratio",
+        "DISTANCE_ALGO_COURSES": "token_set_ratio",
         "BASE_PRUNE": 5,
         "SECTION_MIN": 1,
         "EXP_H_WEIGHTS": {
@@ -31,7 +35,15 @@ CONFIG = {
             "TECH":1.0,
             "SOFT":0.5
         },
-        "SKILL_RATING_TYPE": "max", #or sum
+        "PROG_H_WEIGHT": 1.0,
+        "TECH_H_WEIGHT": 1.0,
+        "SOFT_H_WEIGHT": 1.0,
+        "EXP_RATING_TYPE": "max", #or sum
+        "PROG_RATING_TYPE": "max", #or sum
+        "TECH_RATING_TYPE": "max", #or sum
+        "SOFT_RATING_TYPE": "max", #or sum
+        "COURSES_RATING_TYPE": "max",
+        "COURSES_PRUNING_TYPE": "max",
         "NO_COURSES":"5",
         "NO_SKILLS":{
             "TOTAL":"12",
@@ -53,14 +65,16 @@ CONFIG = {
                 "Project Sisyphus",
                 "MAPPA C++ Geographical Information System"
             ],
-            "SKILLS":[
-            ],
-            "COURSES":[
+            "PROG":[],
+            "TECH":[],
+            "SOFT":[],
+            "COURSES":[]
 
-            ]
-        },
-        "COURSES_GRPS":
-        {
+        }
+    },
+    "TAGS":{
+        "COURSES":{
+
         }
     }
 }
