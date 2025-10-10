@@ -738,9 +738,9 @@ Prune the following 'Skills' section from a resume to best match the job descrip
 
 OUTPUT FORMAT:
 Skills:
-Programming Languages: Programming Language 1, Programming Language 2, ...
-Technical Skills: Technical Skill 1, Technical Skill 2, ...
-Soft Skills: Soft Skill 1, Soft Skill 2, ...
+Programming Languages: comma-separated list of Programming Languages
+Technical Skills: comma-separated list of Technical Skills
+Soft Skills: comma-separated list of Soft Skills
 
 
 INPUT:
@@ -1031,6 +1031,34 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
 """,
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["flexible", "cap_letters", "[S]Section Summary:"]
+    },
+    "tailor_skills_robust": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
+    {
+        "call_id": "tailor_skills_robust", 
+        "payload_in": {"model": DEFAULT_MODEL,
+                       "system": "",
+                       "stream": False,
+                        "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+        "format": {
+            "cv_data": "",
+            "job_description": "",
+            "no_skills":12,
+            "no_prog":3,
+            "no_tech":5,
+            "no_soft":4,
+            "prefix_dict": {
+                "Programming Languages:":["[1]", True],
+                "Technical Skills:":["[1]", True],
+                "Soft Skills:":["[1]", True],
+                "Skills:":["[0]", False],
+                "Dummy:" : ["[BIG DUMMY]"]
+
+            },
+            "standard_calls": ["tailor_skills"]    
+        },
+        "prompt_in": "", 
+        "ollama_url": DEFAULT_URL,
+        "sample_starts": ["strict", "digits", "[0]Skills:","[1]Programming Languages:","[1]Technical Skills:","[1]Soft Skills:"]
     },
     ##similar start
     "tailor_volunteering_and_leadership": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)

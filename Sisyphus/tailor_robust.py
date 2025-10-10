@@ -1377,7 +1377,6 @@ def skill_heuristics(scored_list, type = "programming_languages"):
         else: heuristic_vals.append(0)
     return_list = deepcopy(heuristic_vals)
     return return_list
-    
 @log_time
 def skill_pruning_algorithm(job_desc, list_to_prune, type = "programming_languages"):
     function_name = helpers.inspect_function()
@@ -1410,8 +1409,61 @@ def skill_pruning_algorithm(job_desc, list_to_prune, type = "programming_languag
             off_set = off_set+1
     paired_list = deepcopy(paired_prefs) +  deepcopy(sorted_list_heuristic)
     return deepcopy(paired_list[:max_no])
-##IDEA FOR COURSES/SKILLS: HYBRID APPROACH: PRIORITIZE THOSE WITH SCORED SIGNIFICANCE,
-##FILL WITH LLAMA; ADD TAGS PER COURSE
+
+def tailor_skills_robust(call_info = template_call_info):
+    call_id = call_info["call_id"]
+    payload_in = call_info["payload_in"]
+    format = call_info["format"]
+    prompt_in = call_info["prompt_in"]
+    ollama_url = call_info["ollama_url"]
+    function_name = helpers.inspect_function()
+    if call_id != function_name:
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
+        return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}"
+    
+    standard_call = format["standard_calls"][0]
+    model = payload_in["model"]
+    system_text = payload_in["system"]
+    cv_data = format["cv_data"]
+    job_description = format["job_description"]
+    no_skills =format["no_skills"]
+    no_prog = format["no_prog"]
+    no_tech = format["no_tech"]
+    no_soft = format["no_soft"]
+
+
+    runtime_info_temp = {
+        "call_id": standard_call,
+        "payload_in": {
+            "model": model,
+            "system": system_text
+        },
+        "format": {
+            "cv_data": cv_data,
+            "job_description": job_description,
+            "no_skills": no_skills,#on config, set on main
+            "no_prog":no_prog,#on config, set on main
+            "no_tech":no_tech,#on config, set on main
+            "no_soft":no_soft,#on config, set on main
+        }
+    }
+    sk_ollama = ollama_call(runtime_info=runtime_info_temp)
+    sk_ollama_dct = parsers.parse_cv_out(sk_ollama)
+    skills_dct = parsers.parse_cv_out(cv_data)
+    prog_list = skills_dct["skills"]["programming_languages"]
+    tech_list = skills_dct["skills"]["technical_skills"]
+    soft_list = skills_dct["skills"]["soft_skills"]
+    prog_list_pruned = skill_pruning_algorithm(job_description,prog_list,"programming_languages")
+    tech_list_pruned = skill_pruning_algorithm(job_description,tech_list,"technical_skills")
+    soft_list_pruned = skill_pruning_algorithm(job_description,soft_list,"soft_skills")
+    sk_pruning_dct = {
+        "skills":{
+            "programming_languages":deepcopy(prog_list_pruned),
+            "technical_skills":deepcopy(tech_list_pruned),
+            "soft_skills":deepcopy(soft_list_pruned)
+        }
+    }
+    #Now, what do do with tailored lists...
 
 def course_scoring(course_dct,keywords):
     """
@@ -1526,7 +1578,8 @@ def course_pruning_algorithm(job_desc, course_list):
     max_courses = CONFIG["PRUNING"]["NO_COURSES"]
     return return_list_final[:int(max_courses)]
 
-
+def tailor_courses_robust(call_info = template_call_info)
+    pass
 @log_time #USED IN MAIN
 def prune_experiences(call_info = template_call_info):
     
