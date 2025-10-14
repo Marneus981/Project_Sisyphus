@@ -722,15 +722,10 @@ INPUTjob description:
         },
         "prompt_in": 
 """REQUEST:
-Given a list of "Programming Languages", "Technical Skills" and "Soft Skills" considered to be relevant for a paticular job description, and said job description:
-Prune the following 'Skills' section from a resume to best match the job description , following the guidelines below:
-- Return {no_prog} MAXIMUM entries under "Programming Languages" (MINIMUM 0 entries)
-- Return {no_tech} MAXIMUM entries under "Technical Skills" (MINIMUM 0 entries)
-- Return {no_soft} MAXIMUM entries under "Soft Skills" (MINIMUM 0 entries)
-- Prioritize skills that are explicitly mentioned in the job description.
-- For Soft Skills (only), prioritize skills mentioned in the job description, and if these skills are less than {no_soft}, fill the remaining slots with other relevant skills from the CV.
+Given a job description:
+Extract relevant "Programming Language","Technical Skills", and "Soft Skills" following the guidelines below:
 - Do not line break any line containing the relevant skills, it should follow the format below strictly.
-- If either the "Programming Languages", "Technical Skills", or "Soft Skills" sections are empty, return them as an empty section.
+- If either the "Programming Languages", "Technical Skills", or "Soft Skills" sections are empty (which means no relevant skills of said cathegory were found), return them as an empty section (without any extra text to denote its empty status).
 - Aside from the information requested, do not include any additional text or explanations.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
@@ -738,18 +733,14 @@ Prune the following 'Skills' section from a resume to best match the job descrip
 
 OUTPUT FORMAT:
 Skills:
-Programming Languages: comma-separated list of Programming Languages
-Technical Skills: comma-separated list of Technical Skills
-Soft Skills: comma-separated list of Soft Skills
+Programming Languages: comma-separated list of Programming Languages required by job description
+Technical Skills: comma-separated list of Technical Skills required by job description
+Soft Skills: comma-separated list of Soft Skills required by job description
 
 
 INPUT:
-INPUT list of "Programming Languages", "Technical Skills" and "Soft Skills" considered to be relevant for a paticular job description:
-{cv_data}
-
 INPUT job description:
 {job_description}
-
 
 """,
         "ollama_url": DEFAULT_URL,
@@ -991,7 +982,27 @@ INPUT job description:
         "ollama_url": DEFAULT_URL,
         "sample_starts": ["strict", "digits", "[1]Courses:"]
     },
+
     # NON-STANDARD CALLS
+    "tailor_courses_robust": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
+    {
+        "call_id": "tailor_courses_robust", 
+        "payload_in": {"model": DEFAULT_MODEL,
+                       "system": "",
+                       "stream": False,
+                        "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+        "format": {
+            "courses": "",
+            "job_description": "",
+            "prefix_dict" : {
+                "Courses:":["[1]",True],
+                "Dummy:" : ["[BIG DUMMY]"]
+            }   
+        },
+        "prompt_in": "", 
+        "ollama_url": DEFAULT_URL,
+        "sample_starts": ["strict", "digits", "[1]Courses:"]
+    },
     "batch_summarize_sections": #DONE
     {
         "call_id": "batch_summarize_sections",

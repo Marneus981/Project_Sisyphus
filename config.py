@@ -20,6 +20,24 @@ CONFIG = {
     },
     "PRUNING": {
         #ratio, partial_ratio, toekn_sort_ratio,partial_token_sort_ratio, token_set_ratio
+        "MALICIOUS_COMPLIANCE_SK":{
+            "PROG":{
+                "STATUS":False,
+                "NO":"1"
+            },
+            "TECH":{
+                "STATUS":False,
+                "NO": "1"
+            },
+            "SOFT":{
+                "STATUS":True,
+                "NO":"all"
+            },
+        },
+        "MALICIOUS_COMPLIANCE_COURSES":{
+            "STATUS": False,
+            "NO": "3"
+        },
         "DISTANCE_ALGO_KEY": "token_set_ratio", 
         "DISTANCE_ALGO_DESC": "token_set_ratio",
         "DISTANCE_ALGO_PROG":  "token_set_ratio",
@@ -46,7 +64,7 @@ CONFIG = {
         "COURSES_PRUNING_TYPE": "max",
         "NO_COURSES":"5",
         "NO_SKILLS":{
-            "TOTAL":"12",
+            #"TOTAL":"12",
             "PROG": "3",
             "TECH": "5",
             "SOFT":"4"

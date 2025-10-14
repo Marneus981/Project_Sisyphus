@@ -1445,7 +1445,8 @@ def tailor_skills_robust(call_info = template_call_info):
             "no_prog":no_prog,#on config, set on main
             "no_tech":no_tech,#on config, set on main
             "no_soft":no_soft,#on config, set on main
-        }
+        },
+        "ollama_url":ollama_url
     }
     sk_ollama = ollama_call(runtime_info=runtime_info_temp)
     sk_ollama_dct = parsers.parse_cv_out(sk_ollama)
@@ -1463,7 +1464,99 @@ def tailor_skills_robust(call_info = template_call_info):
             "soft_skills":deepcopy(soft_list_pruned)
         }
     }
-    #Now, what do do with tailored lists...
+    new_pruning_dct = deepcopy(sk_pruning_dct)
+    malicious_compliance_dct = CONFIG["PRUNING"]["MALICIOUS_COMPLIANCE_SK"]
+    #Create new pruned lists without ollama chosen skills to avoid duplicates
+    for prog in sk_ollama_dct["skills"]["programming_languages"]:
+        if prog in new_pruning_dct["skills"]["programming_languages"]:
+            del new_pruning_dct["skills"]["programming_languages"][prog]
+    for tech in sk_ollama_dct["skills"]["technical_skills"]:
+        if tech in new_pruning_dct["skills"]["technical_skills"]:
+            del new_pruning_dct["skills"]["technical_skills"][tech]
+    for soft in sk_ollama_dct["skills"]["soft_skills"]:
+        if soft in new_pruning_dct["skills"]["soft_skills"]:
+            del new_pruning_dct["skills"]["soft_skills"][soft]
+    
+    return_dct = {}
+    return_dct["skills"] = {}
+    for setting in malicious_compliance_dct:
+        status = malicious_compliance_dct[setting]["STATUS"]
+        no = malicious_compliance_dct[setting]["NO"]
+        if status == True:
+            if no == "all":
+                if setting == "PROG":
+                    curr_no = len(sk_ollama_dct["skills"]["programming_languages"])
+                    if curr_no > int(no_prog):
+                        curr_no = int(no_prog)
+                    return_dct["skills"]["programming_languages"] = deepcopy(sk_ollama_dct["skills"]["programming_languages"][:curr_no])
+                elif setting == "TECH":
+                    curr_no = len(sk_ollama_dct["skills"]["technical_skills"])
+                    if curr_no > int(no_tech):
+                        curr_no = int(no_tech)
+                    return_dct["skills"]["technical_skills"] = deepcopy(sk_ollama_dct["skills"]["technical_skills"][:curr_no])
+                elif setting == "SOFT":
+                    curr_no = len(sk_ollama_dct["skills"]["soft_skills"])
+                    if curr_no > int(no_soft):
+                        curr_no = int(no_soft)
+                    return_dct["skills"]["soft_skills"] = deepcopy(sk_ollama_dct["skills"]["soft_skills"][:curr_no])
+            else:
+                no = int(no)
+                if setting == "PROG":
+                    max_no = int(no_prog)
+                    ollama_curr_no = len(sk_ollama_dct["skills"]["programming_languages"])
+                    if ollama_curr_no > no:
+                        ollama_curr_no = no
+                    if ollama_curr_no > max_no:
+                        ollama_curr_no = max_no
+                    pruning_curr_no = len(new_pruning_dct["skills"]["programming_languages"])
+                    if ollama_curr_no + pruning_curr_no > max_no:
+                        pruning_curr_no = max_no - ollama_curr_no
+                    return_dct["skills"]["programming_languages"] = deepcopy(sk_ollama_dct["skills"]["programming_languages"][:ollama_curr_no])+deepcopy(new_pruning_dct["skills"]["programming_languages"][:pruning_curr_no])
+
+                elif setting == "TECH":
+                    max_no = int(no_tech)
+                    ollama_curr_no = len(sk_ollama_dct["skills"]["technical_skills"])
+                    if ollama_curr_no > no:
+                        ollama_curr_no = no
+                    if ollama_curr_no > max_no:
+                        ollama_curr_no = max_no
+                    pruning_curr_no = len(new_pruning_dct["skills"]["technical_skills"])
+                    if ollama_curr_no + pruning_curr_no > max_no:
+                        pruning_curr_no = max_no - ollama_curr_no
+                    return_dct["skills"]["technical_skills"] = deepcopy(sk_ollama_dct["skills"]["technical_skills"][:ollama_curr_no])+deepcopy(new_pruning_dct["skills"]["technical_skills"][:pruning_curr_no])
+
+                elif setting == "SOFT":
+                #return first "no" of ai generated lists, then fill with algo lists (within limits)
+                    max_no = int(no_soft)
+                    ollama_curr_no = len(sk_ollama_dct["skills"]["soft_skills"])
+                    if ollama_curr_no > no:
+                        ollama_curr_no = no
+                    if ollama_curr_no > max_no:
+                        ollama_curr_no = max_no
+                    pruning_curr_no = len(new_pruning_dct["skills"]["soft_skills"])
+                    if ollama_curr_no + pruning_curr_no > max_no:
+                        pruning_curr_no = max_no - ollama_curr_no
+                    return_dct["skills"]["soft_skills"] = deepcopy(sk_ollama_dct["skills"]["soft_skills"][:ollama_curr_no])+deepcopy(new_pruning_dct["skills"]["soft_skills"][:pruning_curr_no])
+
+        else:
+            if setting == "PROG":
+                curr_no = len(sk_pruning_dct["skills"]["programming_languages"])
+                if curr_no >= int(no_prog):
+                    curr_no = int(no_prog)
+                return_dct["skills"]["programming_languages"] = deepcopy(sk_pruning_dct["skills"]["programming_languages"][:curr_no])
+            elif setting == "TECH":
+                curr_no = len(sk_pruning_dct["skills"]["technical_skills"])
+                if curr_no >= int(no_tech):
+                    curr_no = int(no_tech)
+                return_dct["skills"]["technical_skills"] = deepcopy(sk_pruning_dct["skills"]["technical_skills"][:curr_no])
+            elif setting == "SOFT":
+                curr_no = len(sk_pruning_dct["skills"]["soft_skills"])
+                if curr_no >= int(no_soft):
+                    curr_no = int(no_soft)
+                return_dct["skills"]["soft_skills"] = deepcopy(sk_pruning_dct["skills"]["soft_skills"][:curr_no])
+            #return algo decided lists (they are already compliantwith limits)
+    return_txt = parsers.inv_parse_cv_out(return_dct)
+    return return_txt
 
 def course_scoring(course_dct,keywords):
     """
@@ -1578,8 +1671,28 @@ def course_pruning_algorithm(job_desc, course_list):
     max_courses = CONFIG["PRUNING"]["NO_COURSES"]
     return return_list_final[:int(max_courses)]
 
-def tailor_courses_robust(call_info = template_call_info)
-    pass
+def tailor_courses_robust(call_info = template_call_info): 
+    call_id = call_info["call_id"]
+    payload_in = call_info["payload_in"]
+    format = call_info["format"]
+    prompt_in = call_info["prompt_in"]
+    ollama_url = call_info["ollama_url"]
+    function_name = helpers.inspect_function()
+    if call_id != function_name:
+        if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
+        return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}"
+    courses0 = format["courses"].replace("Courses:","").strip()
+    courses1 = courses0.split(",")
+    for i in range(0,len(courses1)):
+        courses1[i]= courses1[i].strip()
+    job_description = format["job_description"]
+    robust_courses0 = course_pruning_algorithm(job_description,courses1)
+    robust_courses1 = "Courses: " + ", ".join(robust_courses0)
+    return robust_courses1
+    #Input is Courses: ..., ..., ...
+        #And job description
+    #Output is text Courses: ..., ..., ...
+    
 @log_time #USED IN MAIN
 def prune_experiences(call_info = template_call_info):
     
