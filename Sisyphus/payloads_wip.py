@@ -179,7 +179,7 @@ Given a set of keywords and a "Description" subsection of a resume experience, r
 - Return the requested information, strictly filling out the OUTPUT FORMAT below.
 
 OUTPUT FORMAT:
-Description: Brief role description, described as achievements meant to concisely provide recruiters with incentives to hire the candidate.
+Description: Brief role description, described as achievements meant to concisely provide recruiters with incentives to hire the candidate; written as a single line of text, with sentences separated by a "." character.
 
 INPUT:
 INPUT job description keywords:

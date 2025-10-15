@@ -435,7 +435,7 @@ def tailor_cv(root, show = True):
         for key, value in unchanged_dict.items():
             if key == "education":
                 for i in range(len(value)):
-                    ollama_func_name = "tailor_courses"
+                    ollama_func_name = "tailor_courses_robust"
                     runtime_info_temp = {
                                 "call_id": ollama_func_name,
                                 "payload_in": {
@@ -445,7 +445,6 @@ def tailor_cv(root, show = True):
                                 "format": {
                                     "courses": ', '.join(unchanged_dict[key][i]["courses"]),
                                     "job_description": job_desc,
-                                    "no_courses": CONFIG["PRUNING"]["NO_COURSES"]
                                 },
                     }
                     tailored_courses = tailor_robust.ollama_call(runtime_info=runtime_info_temp)#Standard
@@ -645,7 +644,7 @@ def tailor_cv(root, show = True):
 
         
         print("Tailoring skills section...")
-        ollama_func_name = "tailor_skills"
+        ollama_func_name = "tailor_skills_robust"
         runtime_info_temp = {
             "call_id": ollama_func_name,
             "payload_in": {
