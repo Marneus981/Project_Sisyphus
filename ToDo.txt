@@ -1,6 +1,16 @@
 [1.0 DEV RELEASE CHECKBOX]
     [][1.0 DEV PUBLIC RELEASE] Clean code and prompt engineer a bit; make a single UI window;deal with debug prints in "a way"
         [WIP]
+            TODO_NEXT:
+                make sure that even if skills field is empty, it still shows up in formatting
+                rewire selection logic for algorithmic pruning to account for more possibilities
+                turn config file into a text file, make it reload on runtime
+                IMPORTANT: Add report at the end of algorithmic functions
+                IMPORTANT: 
+                    [DONE]add a score filter
+                    create another heuristic criterion sum of thresheld maxes  
+                    [DONE]new scoring option: dual scoring
+                IMPORTANT: make keyword obtaining algorithm separate from summarize job desc, and make it run several times; delete duplicate entries
             Prompt Engineering:
                 [NOTES]
                     [TACKLED?]

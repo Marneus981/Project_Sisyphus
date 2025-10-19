@@ -73,39 +73,60 @@ def return_text_with_skills(cv_text):
         if line.startswith("[1]Skills:"):
             templine = line.replace("[1]Skills:", "").strip()
             if (templine != "") or templine:
-                parts = line.split(";")
+                parts = line.replace("[1]Skills:", "").strip().split(";")
                 parts = [part.strip() for part in parts]
                     #Programming Languages: Programming Language N1, ..., Programming Language NN
                     #Technical Skills: Technical Skill N1, ..., Technical Skill N2
                     #Soft Skills: Soft Skill N1, ..., Soft Skill N2
                 for part in parts:
                     if "Programming Languages:" in part:
-                        skills = part.split(":")
-                        if len(skills) > 1:
-                            skills = [skill.strip() for skill in skills]
-                            skills_r = skills[1].split(",")
+                        skills = part.replace("Programming Languages:","").strip()
+                        if skills == "":
+                            print("No Programming Languages found in Skills section")
+                        else:
+                            skills_r = skills.split(",")
                             skills_r = [skill.strip() for skill in skills_r]
                             programming_skills += skills_r
-                        else:
-                            print("No Programming Languages found in Skills section")
+                        # skills = part.split(":")
+                        # if len(skills) > 1:
+                        #     skills = [skill.strip() for skill in skills]
+                        #     skills_r = skills[1].split(",")
+                        #     skills_r = [skill.strip() for skill in skills_r]
+                        #     programming_skills += skills_r
+                        # else:
+                        #     print("No Programming Languages found in Skills section")
                     elif "Technical Skills:" in part:
-                        skills = part.split(":")
-                        if len(skills) > 1:
-                            skills = [skill.strip() for skill in skills]
-                            skills_r = skills[1].split(",")
+                        skills = part.replace("Technical Skills:","").strip()
+                        if skills == "":
+                            print("No Technical Skills found in Skills section")
+                        else:
+                            skills_r = skills.split(",")
                             skills_r = [skill.strip() for skill in skills_r]
                             technical_skills += skills_r
-                        else:
-                            print("No Technical Skills found in Skills section")
+                        # skills = part.split(":")
+                        # if len(skills) > 1:
+                        #     skills = [skill.strip() for skill in skills]
+                        #     skills_r = skills[1].split(",")
+                        #     skills_r = [skill.strip() for skill in skills_r]
+                        #     technical_skills += skills_r
+                        # else:
+                        #     print("No Technical Skills found in Skills section")
                     elif "Soft Skills:" in part:
-                        skills = part.split(":")
-                        if len(skills) > 1:
-                            skills = [skill.strip() for skill in skills]
-                            skills_r = skills[1].split(",")
+                        skills = part.replace("Technical Skills:","").strip()
+                        if skills == "":
+                            print("No Technical Skills found in Skills section")
+                        else:
+                            skills_r = skills.split(",")
                             skills_r = [skill.strip() for skill in skills_r]
                             soft_skills += skills_r
-                        else:
-                            print("No Soft Skills found in Skills section")
+                        # skills = part.split(":")
+                        # if len(skills) > 1:
+                        #     skills = [skill.strip() for skill in skills]
+                        #     skills_r = skills[1].split(",")
+                        #     skills_r = [skill.strip() for skill in skills_r]
+                        #     soft_skills += skills_r
+                        # else:
+                        #     print("No Soft Skills found in Skills section")
 
                 # if "Programming Languages" in line:
 
@@ -1088,17 +1109,41 @@ def experience_scoring(exps, keywords):
     function_name = helpers.inspect_function()
     function_desc = getattr(rapidfuzz.fuzz, CONFIG["PRUNING"]["DISTANCE_ALGO_DESC"])
     function_key = getattr(rapidfuzz.fuzz, CONFIG["PRUNING"]["DISTANCE_ALGO_KEY"])
+    scoring_mode = CONFIG["PRUNING"]["DUAL_SCORING"]["EXP"]
     exps_cpy =exps.copy()
     for exp in exps_cpy:
         for keyword in keywords:
-            exp["experience"][1].append(function_desc(keyword, exp["experience"][0], processor=utils.default_process))
-            exp["description"][1].append(function_desc(keyword, exp["description"][0], processor=utils.default_process))
+            if not scoring_mode:
+                exp["experience"][1].append(function_desc(keyword, exp["experience"][0], processor=utils.default_process))
+                exp["description"][1].append(function_desc(keyword, exp["description"][0], processor=utils.default_process))
+            else:
+                way1_exp = function_desc(keyword, exp["experience"][0], processor=utils.default_process)
+                way1_desc = function_desc(keyword, exp["description"][0], processor=utils.default_process)
+                way2_exp = function_desc( exp["experience"][0],keyword, processor=utils.default_process)
+                way2_desc = function_desc(exp["description"][0],keyword,  processor=utils.default_process)
+                exp["experience"][1].append(max([way1_exp,way2_exp]))
+                exp["description"][1].append(max([way1_desc,way2_desc]))
             for prog in exp["skills"]["programming_languages"]:
-                prog[1].append(function_key(keyword, prog[0], processor=utils.default_process))                     
+                if not scoring_mode:
+                    prog[1].append(function_key(keyword, prog[0], processor=utils.default_process))
+                else:
+                    way1_prog = function_desc(keyword,prog[0], processor=utils.default_process)
+                    way2_prog = function_desc( prog[0],keyword, processor=utils.default_process)
+                    prog[1].append(max([way1_prog,way2_prog]))                  
             for tech in exp["skills"]["technical_skills"]:
-                tech[1].append(function_key(keyword, tech[0], processor=utils.default_process))    
+                if not scoring_mode:
+                    tech[1].append(function_key(keyword, tech[0], processor=utils.default_process))
+                else:
+                    way1_tech = function_desc(keyword,tech[0], processor=utils.default_process)
+                    way2_tech = function_desc( tech[0],keyword, processor=utils.default_process)
+                    tech[1].append(max([way1_tech,way2_tech]))                      
             for soft in exp["skills"]["soft_skills"]:
-                soft[1].append(function_key(keyword, soft[0], processor=utils.default_process))
+                if not scoring_mode:
+                    soft[1].append(function_key(keyword, soft[0], processor=utils.default_process))
+                else:
+                    way1_soft = function_desc(keyword,soft[0], processor=utils.default_process)
+                    way2_soft = function_desc( soft[0],keyword, processor=utils.default_process)
+                    soft[1].append(max([way1_soft,way2_soft]))
     if config.DEBUG["INFO_LOGGING"]:
         for exp in exps_cpy:
             print(f"[INFO]{function_name}: experience: {exp["experience"][0]}")
@@ -1109,11 +1154,11 @@ def experience_scoring(exps, keywords):
                 print(f"[INFO]{function_name}: programming_languages: {prog[0]}")
                 print(f"[INFO]{function_name}: programming_languages scores: {str(prog[1])}")                    
             for tech in exp["skills"]["technical_skills"]:
-                print(f"[INFO]{function_name}: programming_languages: {tech[0]}")
-                print(f"[INFO]{function_name}: programming_languages scores: {str(tech[1])}")    
+                print(f"[INFO]{function_name}: technical_skills: {tech[0]}")
+                print(f"[INFO]{function_name}: technical_skills scores: {str(tech[1])}")    
             for soft in exp["skills"]["soft_skills"]:
-                print(f"[INFO]{function_name}: programming_languages: {soft[0]}")
-                print(f"[INFO]{function_name}: programming_languages scores: {str(soft[1])}")
+                print(f"[INFO]{function_name}: soft_skills: {soft[0]}")
+                print(f"[INFO]{function_name}: soft_skills scores: {str(soft[1])}")
 
     return exps_cpy
 
@@ -1121,6 +1166,8 @@ def experience_heuristics(exps_scored):
     function_name = helpers.inspect_function()
     weights = CONFIG["PRUNING"]["EXP_H_WEIGHTS"]
     exps_scored_cpy = exps_scored.copy()
+    exp_threshold = CONFIG["PRUNING"]["THRESHOLDS"]["EXP"]
+
     for exp in exps_scored_cpy:
         prog_l = []
         tech_l = []
@@ -1129,16 +1176,29 @@ def experience_heuristics(exps_scored):
         tech_sum = 0
         soft_sum = 0
         for prog in exp["skills"]["programming_languages"]:
-            prog_l.append(max(prog[1]))
-            prog_sum = prog_sum +  max(prog[1])           
+            best_score = max(prog[1])
+            if best_score < exp_threshold:
+                best_score = 0.0
+            prog_l.append(best_score)
+            prog_sum = prog_sum +  best_score           
         for tech in exp["skills"]["technical_skills"]:
-            tech_l.append(max(tech[1]))
-            tech_sum = tech_sum +  max(tech[1])
+            best_score = max(tech[1])
+            if best_score < exp_threshold:
+                best_score = 0.0
+            tech_l.append(best_score)
+            tech_sum = tech_sum +  best_score
         for soft in exp["skills"]["soft_skills"]:
-            soft_l.append(max(soft[1]))
-            soft_sum = soft_sum +  max(soft[1])
+            best_score = max(soft[1])
+            if best_score < exp_threshold:
+                best_score = 0.0
+            soft_l.append(best_score)
+            soft_sum = soft_sum +  best_score
         no_keywords = len(exp["experience"][1])
-
+        for i in range(0, len (exp["experience"][1])):
+            if exp["experience"][1][i]< exp_threshold:
+                exp["experience"][1][i] = 0.0
+            if exp["description"][1][i]< exp_threshold:
+                exp["description"][1][i] = 0.0
         type = config.CONFIG["PRUNING"]["EXP_RATING_TYPE"]
         if type == "sum":
             prog_no = len(exp["skills"]["programming_languages"])
@@ -1180,13 +1240,31 @@ def experience_heuristics(exps_scored):
             
             scores = {
                 "experience": max(exp["experience"][1])* weights["EXP"],
-                "description": sum(exp["description"][1])/ desc_len* weights["DESC"],
+                "description": max(exp["description"][1])* weights["DESC"],
                 "prog": max_prog * weights["PROG"],
                 "tech": max_tech * weights["TECH"],
                 "soft": max_soft * weights["SOFT"]
             }
         exp["scores"] = scores
         exp["total_score"] = scores["experience"] + scores["description"] + scores["prog"] + scores["tech"] + scores["soft"]
+        """
+        each exp = {
+            "experience": (experience_text,[distance_algo_scores with len(keywords)] )
+            "description": (description_text,[distance_algo_scores with len(keywords)])
+            "skills":{
+                "programming_languages": [(prog_word1, [scores for prog_word1 with len(keywords)]),...],
+                "technical_skills": [(tech_word1, [scores for tech_word1 with len(keywords)]),...],
+                "soft_skills": [(soft_word1, [scores for soft_word1 with len(keywords)]),...]
+            }
+            "scores":{
+                "experience":(heuristic value for experience)
+                "description":(heuristic value for description)
+                "prog": (heuristic value for prog)
+                "tech": (heuristic value for tech)
+                "soft": (heuristic value for soft)
+            }
+        }
+        """
         if config.DEBUG["INFO_LOGGING"]:
             print(f"[INFO]{function_name}: experience: {exp["experience"][0]}")
             for score in scores:
@@ -1331,18 +1409,24 @@ def skill_scoring(list_to_score, keywords, type = "programming_languages"):
     score_lists = []
     # if type != "courses":
     if type == "programming_languages":
+        scoring_mode = CONFIG["PRUNING"]["DUAL_SCORING"]["PROG"]
         function_score = getattr(rapidfuzz.fuzz, CONFIG["PRUNING"]["DISTANCE_ALGO_PROG"])
     elif type == "technical_skills":
+        scoring_mode = CONFIG["PRUNING"]["DUAL_SCORING"]["TECH"]
         function_score = getattr(rapidfuzz.fuzz, CONFIG["PRUNING"]["DISTANCE_ALGO_TECH"])
     elif type == "soft_skills":
+        scoring_mode = CONFIG["PRUNING"]["DUAL_SCORING"]["SOFT"]
         function_score = getattr(rapidfuzz.fuzz, CONFIG["PRUNING"]["DISTANCE_ALGO_SOFT"])
     else:
         raise  ValueError(f"[INFO]{function_name}: invalid list type")
     for item in list_to_score_cpy:
         score_list = []
         for keyword in keywords:
-            score = function_score(keyword, item, processor=utils.default_process)
-            if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: scored list item: {item} against {keyword}: {score}")
+            if not scoring_mode:
+                score = function_score(item, keyword, processor=utils.default_process)
+            else:
+                score = max([function_score(item, keyword, processor=utils.default_process),function_score( keyword, item, processor=utils.default_process)])
+            if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: scored list item: {keyword} against {item}: {score}")
             score_list.append(score)
         score_lists.append(score_list)
     return score_lists
@@ -1355,15 +1439,22 @@ def skill_heuristics(scored_list, type = "programming_languages"):
     if type == "programming_languages":
         weight = CONFIG["PRUNING"]["PROG_H_WEIGHT"]
         heuristic_type = config.CONFIG["PRUNING"]["PROG_RATING_TYPE"]
+        threshold = CONFIG["PRUNING"]["THRESHOLDS"]["PROG"]
     elif type == "technical_skills":
         weight = CONFIG["PRUNING"]["TECH_H_WEIGHT"]
         heuristic_type = config.CONFIG["PRUNING"]["TECH_RATING_TYPE"]
+        threshold = CONFIG["PRUNING"]["THRESHOLDS"]["TECH"]
     elif type == "soft_skills":
         weight = CONFIG["PRUNING"]["SOFT_H_WEIGHT"]
         heuristic_type = config.CONFIG["PRUNING"]["SOFT_RATING_TYPE"]
+        threshold = CONFIG["PRUNING"]["THRESHOLDS"]["SOFT"]
     else:
         raise  ValueError(f"[INFO]{function_name}: invalid list type")
     scored_list_cpy = deepcopy(scored_list)
+    for i in range(0, len(scored_list_cpy)):
+        for j in range(0,len(scored_list_cpy[i])):
+            if scored_list_cpy[i][j] < threshold:
+                scored_list_cpy[i][j] = 0.0
     heuristic_vals = []
     for item in scored_list_cpy:
         list_len = len(item)
@@ -1374,7 +1465,7 @@ def skill_heuristics(scored_list, type = "programming_languages"):
                 heuristic_vals.append(max(item) * weight)
             else:
                 ValueError(f"[INFO]{function_name}: invalid heuristic type, check config")
-        else: heuristic_vals.append(0)
+        else: heuristic_vals.append(0.0)
     return_list = deepcopy(heuristic_vals)
     return return_list
 @log_time
@@ -1417,6 +1508,7 @@ def tailor_skills_robust(call_info = template_call_info):
     prompt_in = call_info["prompt_in"]
     ollama_url = call_info["ollama_url"]
     function_name = helpers.inspect_function()
+    if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: initiated")
     if call_id != function_name:
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
         return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}"
@@ -1430,8 +1522,6 @@ def tailor_skills_robust(call_info = template_call_info):
     no_prog = format["no_prog"]
     no_tech = format["no_tech"]
     no_soft = format["no_soft"]
-
-
     runtime_info_temp = {
         "call_id": standard_call,
         "payload_in": {
@@ -1448,15 +1538,47 @@ def tailor_skills_robust(call_info = template_call_info):
         },
         "ollama_url":ollama_url
     }
+    if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: setup completed")
+    if config.DEBUG["INFO_LOGGING"]: 
+        print(f"[INFO]{function_name}: ai-powered pruning initiated")
+        print(f"[INFO]{function_name}: ai-powered pruning input:")
+        print(f"{cv_data}")
+
     sk_ollama = ollama_call(runtime_info=runtime_info_temp)
+    if config.DEBUG["INFO_LOGGING"]: 
+        print(f"[INFO]{function_name}: ai-powered pruning completed")
+        print(f"[INFO]{function_name}: ai-powered pruning output:")
+        print(f"{sk_ollama}")
     sk_ollama_dct = parsers.parse_cv_out(sk_ollama)
     skills_dct = parsers.parse_cv_out(cv_data)
     prog_list = skills_dct["skills"]["programming_languages"]
     tech_list = skills_dct["skills"]["technical_skills"]
     soft_list = skills_dct["skills"]["soft_skills"]
+    if config.DEBUG["INFO_LOGGING"]: 
+        print(f"[INFO]{function_name}: algorithmic pruning initiated")
+        print(f"[INFO]{function_name}: algorithmic pruning input: prog_list:")
+        for p in prog_list:
+            print(str(p))
+        print(f"[INFO]{function_name}: algorithmic pruning input: tech_list:")
+        for t in tech_list:
+            print(str(t))
+        print(f"[INFO]{function_name}: algorithmic pruning input: soft_list:")
+        for s in soft_list:
+            print(str(s))
     prog_list_pruned = skill_pruning_algorithm(job_description,prog_list,"programming_languages")
     tech_list_pruned = skill_pruning_algorithm(job_description,tech_list,"technical_skills")
     soft_list_pruned = skill_pruning_algorithm(job_description,soft_list,"soft_skills")
+    if config.DEBUG["INFO_LOGGING"]: 
+        print(f"[INFO]{function_name}: algorithmic pruning completed")
+        print(f"[INFO]{function_name}: algorithmic pruning output: prog_list_pruned:")
+        for p in prog_list_pruned:
+            print(str(p))
+        print(f"[INFO]{function_name}: algorithmic pruning output: tech_list_pruned:")
+        for t in tech_list_pruned:
+            print(str(t))
+        print(f"[INFO]{function_name}: algorithmic pruning output: soft_list_pruned:")
+        for s in soft_list_pruned:
+            print(str(s))
     sk_pruning_dct = {
         "skills":{
             "programming_languages":deepcopy(prog_list_pruned),
@@ -1467,23 +1589,46 @@ def tailor_skills_robust(call_info = template_call_info):
     new_pruning_dct = deepcopy(sk_pruning_dct)
     malicious_compliance_dct = CONFIG["PRUNING"]["MALICIOUS_COMPLIANCE_SK"]
     #Create new pruned lists without ollama chosen skills to avoid duplicates
+    if config.DEBUG["INFO_LOGGING"]: 
+        print(f"[INFO]{function_name}: malicious compliance deletion: deleting entries for algorithmic approach if found in ai-powered approach")
     for prog in sk_ollama_dct["skills"]["programming_languages"]:
         if prog in new_pruning_dct["skills"]["programming_languages"]:
+            print(f"deleted {str(new_pruning_dct["skills"]["soft_skills"][prog])}")
             del new_pruning_dct["skills"]["programming_languages"][prog]
     for tech in sk_ollama_dct["skills"]["technical_skills"]:
         if tech in new_pruning_dct["skills"]["technical_skills"]:
+            print(f"deleted {str(new_pruning_dct["skills"]["soft_skills"][tech])}")
             del new_pruning_dct["skills"]["technical_skills"][tech]
     for soft in sk_ollama_dct["skills"]["soft_skills"]:
         if soft in new_pruning_dct["skills"]["soft_skills"]:
+            print(f"deleted {str(new_pruning_dct["skills"]["soft_skills"][soft])}")
             del new_pruning_dct["skills"]["soft_skills"][soft]
-    
+    if config.DEBUG["INFO_LOGGING"]: 
+        print(f"[INFO]{function_name}: malicious compliance deletion: completed:")
+        print(f"[INFO]{function_name}: new_pruning_dct[skills][programming_languages]:")
+        for p in new_pruning_dct["skills"]["programming_languages"]:
+            print(str(p))
+        print(f"[INFO]{function_name}: new_pruning_dct[skills][technical_skills]::")
+        for t in new_pruning_dct["skills"]["technical_skills"]:
+            print(str(t))
+        print(f"[INFO]{function_name}: new_pruning_dct[skills][soft_skills]:")
+        for s in new_pruning_dct["skills"]["soft_skills"]:
+            print(str(s))
+
+
     return_dct = {}
     return_dct["skills"] = {}
+    if config.DEBUG["INFO_LOGGING"]: 
+        print(f"[INFO]{function_name}: applying selection protocols:")
     for setting in malicious_compliance_dct:
         status = malicious_compliance_dct[setting]["STATUS"]
         no = malicious_compliance_dct[setting]["NO"]
-        if status == True:
+        if config.DEBUG["INFO_LOGGING"]: 
+            print(f"[INFO]{function_name}: setting {setting}: status: {status}; no of max ai-generated skills: {no};")
+        if status == True:   
             if no == "all":
+                if config.DEBUG["INFO_LOGGING"]: 
+                    print(f"[INFO]{function_name}: no of max ai-generated skills is 'all'; returning all ai-generated skills for {setting}")
                 if setting == "PROG":
                     curr_no = len(sk_ollama_dct["skills"]["programming_languages"])
                     if curr_no > int(no_prog):
@@ -1500,13 +1645,19 @@ def tailor_skills_robust(call_info = template_call_info):
                         curr_no = int(no_soft)
                     return_dct["skills"]["soft_skills"] = deepcopy(sk_ollama_dct["skills"]["soft_skills"][:curr_no])
             else:
+                if config.DEBUG["INFO_LOGGING"]: 
+                    print(f"[INFO]{function_name}: no of max ai-generated skills is '{no}'; returning first {no} ai-generated skills for {setting}; filling with algorithm selected skills")
                 no = int(no)
                 if setting == "PROG":
                     max_no = int(no_prog)
                     ollama_curr_no = len(sk_ollama_dct["skills"]["programming_languages"])
                     if ollama_curr_no > no:
+                        if config.DEBUG["INFO_LOGGING"]: 
+                            print(f"[INFO]{function_name}: no of max ai-generated skills is less than current length of ai-generated skills; setting no as max number of ai-generated skills")
                         ollama_curr_no = no
                     if ollama_curr_no > max_no:
+                        if config.DEBUG["INFO_LOGGING"]: 
+                            print(f"[INFO]{function_name}: max ai-generated skills is more than max skills for {setting}; setting max skills to config-set max skills")
                         ollama_curr_no = max_no
                     pruning_curr_no = len(new_pruning_dct["skills"]["programming_languages"])
                     if ollama_curr_no + pruning_curr_no > max_no:
@@ -1517,8 +1668,12 @@ def tailor_skills_robust(call_info = template_call_info):
                     max_no = int(no_tech)
                     ollama_curr_no = len(sk_ollama_dct["skills"]["technical_skills"])
                     if ollama_curr_no > no:
+                        if config.DEBUG["INFO_LOGGING"]: 
+                            print(f"[INFO]{function_name}: no of max ai-generated skills is less than current length of ai-generated skills; setting no as max number of ai-generated skills")
                         ollama_curr_no = no
                     if ollama_curr_no > max_no:
+                        if config.DEBUG["INFO_LOGGING"]: 
+                            print(f"[INFO]{function_name}: max ai-generated skills is more than max skills for {setting}; setting max skills to config-set max skills")
                         ollama_curr_no = max_no
                     pruning_curr_no = len(new_pruning_dct["skills"]["technical_skills"])
                     if ollama_curr_no + pruning_curr_no > max_no:
@@ -1530,8 +1685,12 @@ def tailor_skills_robust(call_info = template_call_info):
                     max_no = int(no_soft)
                     ollama_curr_no = len(sk_ollama_dct["skills"]["soft_skills"])
                     if ollama_curr_no > no:
+                        if config.DEBUG["INFO_LOGGING"]: 
+                            print(f"[INFO]{function_name}: no of max ai-generated skills is less than current length of ai-generated skills; setting no as max number of ai-generated skills")
                         ollama_curr_no = no
                     if ollama_curr_no > max_no:
+                        if config.DEBUG["INFO_LOGGING"]: 
+                            print(f"[INFO]{function_name}: max ai-generated skills is more than max skills for {setting}; setting max skills to config-set max skills")
                         ollama_curr_no = max_no
                     pruning_curr_no = len(new_pruning_dct["skills"]["soft_skills"])
                     if ollama_curr_no + pruning_curr_no > max_no:
@@ -1539,6 +1698,8 @@ def tailor_skills_robust(call_info = template_call_info):
                     return_dct["skills"]["soft_skills"] = deepcopy(sk_ollama_dct["skills"]["soft_skills"][:ollama_curr_no])+deepcopy(new_pruning_dct["skills"]["soft_skills"][:pruning_curr_no])
 
         else:
+            if config.DEBUG["INFO_LOGGING"]: 
+                print(f"[INFO]{function_name}: setting found to have False status; returning only algorithm-selescted skills:")
             if setting == "PROG":
                 curr_no = len(sk_pruning_dct["skills"]["programming_languages"])
                 if curr_no >= int(no_prog):
@@ -1556,6 +1717,9 @@ def tailor_skills_robust(call_info = template_call_info):
                 return_dct["skills"]["soft_skills"] = deepcopy(sk_pruning_dct["skills"]["soft_skills"][:curr_no])
             #return algo decided lists (they are already compliantwith limits)
     return_txt = parsers.inv_parse_cv_out(return_dct)
+    if config.DEBUG["INFO_LOGGING"]: 
+            print(f"[INFO]{function_name}: final output:")
+            print(return_txt)
     return return_txt
 
 def course_scoring(course_dct,keywords):
@@ -1572,16 +1736,24 @@ def course_scoring(course_dct,keywords):
     """
     function_name = helpers.inspect_function()
     function_score = getattr(rapidfuzz.fuzz, CONFIG["PRUNING"]["DISTANCE_ALGO_COURSES"])
+    scoring_mode = CONFIG["PRUNING"]["DUAL_SCORING"]["COURSES"]
+
     course_dct_cpy = deepcopy(course_dct)
     for course in course_dct_cpy:
-        for tag in course:
+        if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: current course: {course}")
+        for tag in course_dct_cpy[course]:
+            if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: current tag: {tag}")
             temp_score_list = []
             for keyword in keywords:
                 if tag == "itself":
                     temp_tag = course
                 else:
                     temp_tag = tag
-                temp_score_list.append(function_score(keyword, temp_tag, processor=utils.default_process))
+                if not scoring_mode:
+                    temp_score_list.append(function_score(keyword, temp_tag, processor=utils.default_process))
+                else:
+                    temp_score_list.append(max([function_score(keyword, temp_tag, processor=utils.default_process),function_score( temp_tag, keyword, processor=utils.default_process)]))
+            if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: {course}: temp_score_list: {str(temp_score_list)}")
             course_dct_cpy[course][tag] = deepcopy(temp_score_list)
     return course_dct_cpy
 
@@ -1599,10 +1771,16 @@ def course_heuristics(scored_course_dct):
     function_name = helpers.inspect_function()
     heuristic_type = config.CONFIG["PRUNING"]["COURSES_RATING_TYPE"]
     heuristic_course_dct = deepcopy(scored_course_dct)
+    threshold = CONFIG["PRUNING"]["THRESHOLDS"]["COURSES"]
     for course in heuristic_course_dct:
+        print(str(heuristic_course_dct[course]))
         no_tags = len(heuristic_course_dct[course])
         if no_tags > 0:#always itself
-            for tag in course:
+            for tag in heuristic_course_dct[course]:
+                for i in range(0,len(heuristic_course_dct[course][tag])):
+                    if heuristic_course_dct[course][tag][i] < threshold:
+                        heuristic_course_dct[course][tag][i] = 0.0
+                print(str(heuristic_course_dct[course][tag]))
                 no_keywords = len(heuristic_course_dct[course][tag])
                 if no_keywords > 0 :
                     if heuristic_type == "sum":
@@ -1610,10 +1788,10 @@ def course_heuristics(scored_course_dct):
                     elif heuristic_type == "max":
                         heuristic_course_dct[course][tag] = max(heuristic_course_dct[course][tag])
                     else:
-                        ValueError(f"[INFO]{function_name}: invalid heuristic type, check config")
+                        ValueError(f"[ERROR]{function_name}: invalid heuristic type, check config")
                 else: heuristic_course_dct[course][tag] = 0.0
         else:
-            ValueError(F"[INFO]{function_name}: no tags found, please revise config file or algorithm")
+            ValueError(F"[ERROR]{function_name}: no tags found, please revise config file or algorithm")
     return heuristic_course_dct
 
 def course_pruning_algorithm(job_desc, course_list):
@@ -1628,13 +1806,16 @@ def course_pruning_algorithm(job_desc, course_list):
     keywords = process_job_desc(job_desc)
     dct_to_score = {}
     for course in course_list:
+        if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: current course: {course}")
         dct_to_score[course] = {}
         dct_to_score[course]["itself"] = []
         tags = CONFIG["TAGS"]["COURSES"][course]
+        if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: current course tags: {str(tags)}")
         if tags == []:
             continue
         else:
             for tag in tags:
+                if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: current tag: {tag}")
                 dct_to_score[course][tag] = []
     scored_courses = course_scoring(dct_to_score,keywords=keywords)
     heursitic_courses = course_heuristics(scored_courses)

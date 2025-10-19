@@ -447,7 +447,8 @@ def tailor_cv(root, show = True):
                                     "job_description": job_desc,
                                 },
                     }
-                    tailored_courses = tailor_robust.ollama_call(runtime_info=runtime_info_temp)#Standard
+                    func = getattr(tailor_robust, ollama_func_name)
+                    tailored_courses = tailor_robust.ollama_call(runtime_info=runtime_info_temp,function=func)#Standard
                     #Line to remove courses not present in the original courses list   
                     tailored_courses = helpers.revise_list_section(new_list_section_text = tailored_courses, og_pref= {"courses": unchanged_dict[key][i]["courses"]}, type = "courses")             
                     unchanged_dict[key][i]["courses"] = tailored_courses.replace("[1]Courses:", "").strip()
@@ -627,8 +628,9 @@ def tailor_cv(root, show = True):
         print("[STEP 4][OUTPUT]>>>[STEP 5][INPUT] Tailored resume text (with Summary; pruned): \n" + helpers.indent_text(str(final_cv_text)))
         print("[STEP 5][START] Making skills section separate and tailoring it...")
         #region STEP 5
+        print("final_cv_text: " +  helpers.indent_text(str(final_cv_text)))
         final_final_cv_text = tailor_robust.return_text_with_skills(final_cv_text)
-        # print("CV text after skills section: " +  helpers.indent_text(str(final_final_cv_text)))
+        print("final_final_cv_text: " +  helpers.indent_text(str(final_final_cv_text)))
         #Print final_final_cv_text
         # print('Checking tailor.return_text_with_skills output:')
         # print(final_final_cv_text)
@@ -636,7 +638,6 @@ def tailor_cv(root, show = True):
 
         #Attempt to tailor skills section
         p_cv_out = parsers.parse_cv_out(final_final_cv_text)
-        #print("p_cv_out: ", p_cv_out)
         final_final_split_dicts = parsers.dict_spliter(p_cv_out)
         #print("final_final_split_dicts: ", final_final_split_dicts)
         sk_text = parsers.inv_parse_cv_out(final_final_split_dicts[-1])
@@ -660,13 +661,13 @@ def tailor_cv(root, show = True):
                 "no_soft":CONFIG["PRUNING"]["NO_SKILLS"]["SOFT"],
             }
         }
-        tailored_sk = tailor_robust.ollama_call(runtime_info=runtime_info_temp)
-        tailored_sk = helpers.revise_list_section(new_list_section_text = tailored_sk, og_pref = {"skills":
-                                                                                                {
-                                                                                                    "programming_languages":deepcopy(p_cv_out["skills"]["programming_languages"]),
-                                                                                                    "technical_skills":deepcopy(p_cv_out["skills"]["technical_skills"]),
-                                                                                                    "soft_skills":deepcopy(p_cv_out["skills"]["soft_skills"])
-                                                                                                }}, type = "skills")
+        func = getattr(tailor_robust, ollama_func_name)
+        tailored_sk = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function=func)
+        tailored_sk = helpers.revise_list_section(new_list_section_text = tailored_sk, og_pref = {"skills":{
+                                                                                                                "programming_languages":deepcopy(p_cv_out["skills"]["programming_languages"]),
+                                                                                                                "technical_skills":deepcopy(p_cv_out["skills"]["technical_skills"]),
+                                                                                                                "soft_skills":deepcopy(p_cv_out["skills"]["soft_skills"])
+                                                                                                            }}, type = "skills")
         tailored_sk = helpers.filter_output(tailored_sk)
         if tailored_sk:
             print("Tailored skills section")
@@ -758,11 +759,17 @@ def tailor_cv(root, show = True):
             "[SISYPHUS][SUCCESS]Resume Tailoring Complete",
             "Your Resume has been successfully tailored."
         )
-    except:
+    except Exception as e:
         helpers.errorify(
             "[SISYPHUS][ERROR]Resume Tailoring Failed",
             "Please consult log for further information."
         )
+        error_trace =  helpers.traceback_error(e)
+        if config.DEBUG["ERROR_LOGGING"]:
+            function_name = helpers.inspect_function()
+            logging.error("[ERROR][OLLAMA]Traceback:")
+            logging.error(f"{error_trace}")
+            logging.error(f"[ERROR][OLLAMA]{function_name}:", exc_info=True) 
 
 @log_time
 def tailor_cl(root, show = True):
@@ -837,11 +844,17 @@ def tailor_cl(root, show = True):
             "[SISYPHUS][SUCCESS]Cover Letter Tailoring Complete",
             "Your Cover Letter has been successfully tailored."
         )
-    except:
+    except Exception as e:
         helpers.errorify(
             "[SISYPHUS][ERROR]Cover Letter Tailoring Failed",
             "Please consult log for further information."
         )
+        error_trace =  helpers.traceback_error(e)
+        if config.DEBUG["ERROR_LOGGING"]:
+            function_name = helpers.inspect_function()
+            logging.error("[ERROR][OLLAMA]Traceback:")
+            logging.error(f"{error_trace}")
+            logging.error(f"[ERROR][OLLAMA]{function_name}:", exc_info=True) 
 
 
 def show_output_cl(root):
@@ -893,11 +906,17 @@ def format_check_input_cv_file(root, cv_file):
             "[SISYPHUS][SUCCESS]Raw CV format checking complete",
             "Your CV has been successfully checked."
         )
-    except:
+    except Exception as e:
         helpers.errorify(
             "[SISYPHUS][ERROR]Raw CV format checking Failed",
             "Please consult log for further information."
         )
+        error_trace =  helpers.traceback_error(e)
+        if config.DEBUG["ERROR_LOGGING"]:
+            function_name = helpers.inspect_function()
+            logging.error("[ERROR][OLLAMA]Traceback:")
+            logging.error(f"{error_trace}")
+            logging.error(f"[ERROR][OLLAMA]{function_name}:", exc_info=True) 
 
 @log_time
 def format_check_current_cv_text(root):
@@ -979,11 +998,17 @@ def format_check_current_cv_text(root):
             "[SISYPHUS][SUCCESS]Tailored Resume format checking complete",
             "Your Tailored Resume has been successfully checked."
         )
-    except:
+    except Exception as e:
         helpers.errorify(
             "[SISYPHUS][ERROR]Tailored Resume format checking Failed",
             "Please consult log for further information."
         )
+        error_trace =  helpers.traceback_error(e)
+        if config.DEBUG["ERROR_LOGGING"]:
+            function_name = helpers.inspect_function()
+            logging.error("[ERROR][OLLAMA]Traceback:")
+            logging.error(f"{error_trace}")
+            logging.error(f"[ERROR][OLLAMA]{function_name}:", exc_info=True) 
 
 @log_time
 def format_check_current_cl_text(root):
@@ -1064,11 +1089,17 @@ def format_check_current_cl_text(root):
             "[SISYPHUS][SUCCESS]Cover Letter format checking complete",
             "Your Cover Letter has been successfully checked."
         )
-    except:
+    except Exception as e:
         helpers.errorify(
             "[SISYPHUS][ERROR]Cover Letter format checking Failed",
             "Please consult log for further information."
         )
+        error_trace =  helpers.traceback_error(e)
+        if config.DEBUG["ERROR_LOGGING"]:
+            function_name = helpers.inspect_function()
+            logging.error("[ERROR][OLLAMA]Traceback:")
+            logging.error(f"{error_trace}")
+            logging.error(f"[ERROR][OLLAMA]{function_name}:", exc_info=True) 
 
 @log_time
 def filter_output_cv_text(root):

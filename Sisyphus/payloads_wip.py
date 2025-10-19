@@ -132,13 +132,21 @@ When filling out the OUTPUT FORMAT, follow these guidelines:
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 - On the "Keywords" section of the OUTPUT FORMAT, you have to include the following as single words or small phrases (less than 3 words long each):
-    - The job position (e.g. the job title), the name of technologies required (e.g. object oriented programming), the specific name of programming languages/technologies required (e.g. java, mongodb, aws) education required/preferred (e.g. bachelors of engineering), soft skills preferred (e.g. good communication), general keywords (e.g. data)
+    - The job position (e.g. the job title)
+    - The name of technologies required (e.g. object oriented programming, etc)
+    - The specific name of programming languages required (e.g. java, etc) 
+    - Education required/preferred (e.g. bachelors of engineering)
+    - Soft skills preferred (e.g. good communication)
+    - Words abbreviated as capitalized acronyms (e.g. RMT, OOP, etc) 
 
 OUTPUT FORMAT:
 Company Name: Company Name
 Job Title: Position Name
 Responsibilities: List of responsabilities that come as part of the job, presented as a single line of text separated by ";"
 Requirements: List of basic requirements, such as availability, education and required knowledge, presented as a single line of text separated by ";"
+Programming Languages: List of required programming languages required for the position, presented as a single line of text separated by commas
+Technical Skills: List of required technical required for the position skills, presented as a single line of text separated by commas. These are defined as all skills other than Soft Skills and Programming Languages needed
+Soft Skills: List of required soft skills required for the position, presented as a single line of text separated by commas.
 Keywords: List of keywords present in the job description, presented as a single line of lowercase text separated by ",". These keywords can be single words or small phrases (less than 3 words long) such as "good communication skills". 
 
 INPUT:
@@ -147,7 +155,7 @@ INPUT job description:
 
 """,
         "ollama_url": DEFAULT_URL, #Set at runtime
-        "sample_starts": [] #[type, sample starts]
+        "sample_starts": ["strict","digits", "[0]Company Name:","[0]Job Title:","[0]Responsibilities:","[0]Requirements:","[0]Programming Languages:","[0]Technical Skills:","[0]Soft Skills:","[0]Keywords:"] #[type, sample starts]
     },
     ##similar start
     "tailor_experience": #DONE

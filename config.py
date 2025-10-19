@@ -56,22 +56,36 @@ CONFIG = {
         "PROG_H_WEIGHT": 1.0,
         "TECH_H_WEIGHT": 1.0,
         "SOFT_H_WEIGHT": 1.0,
-        "EXP_RATING_TYPE": "max", #or sum
-        "PROG_RATING_TYPE": "max", #or sum
-        "TECH_RATING_TYPE": "max", #or sum
-        "SOFT_RATING_TYPE": "max", #or sum
-        "COURSES_RATING_TYPE": "max",
+        "EXP_RATING_TYPE": "max", #or sum or SoM (sum of maxes)
+        "PROG_RATING_TYPE": "max", #or sum or SoM (sum of tmaxes)
+        "TECH_RATING_TYPE": "max", #or sum or SoM (sum of maxes)
+        "SOFT_RATING_TYPE": "max", #or sum or SoM (sum of maxes)
+        "COURSES_RATING_TYPE": "max", #or sum or SoM (sum of maxes)
         "COURSES_PRUNING_TYPE": "max",
+        "THRESHOLDS":{
+            "PROG": 60.0,
+            "TECH": 60.0,
+            "SOFT": 60.0,
+            "EXP": 60.0,
+            "COURSES": 60.0
+        },
+        "DUAL_SCORING":{ #take highest score when performing the DITANCE_ALGO both ways
+            "PROG": True,
+            "TECH": True,
+            "SOFT": True,
+            "EXP": True,
+            "COURSES": True
+        },
         "NO_COURSES":"5",
         "NO_SKILLS":{
-            #"TOTAL":"12",
+            "TOTAL":"12",
             "PROG": "3",
             "TECH": "5",
             "SOFT":"4"
         },
         "CUSTOM_SKILLS": {
             "PROG": False,
-            "TECH":False,
+            "TECH": False,
             "SOFT": True
         },
         "PREFS":{
@@ -108,7 +122,8 @@ CONFIG = {
                 "mathematics",
                 "computation",
                 "math",
-                "matlab"
+                "matlab",
+                "backend",
             ],
             "ESC180 Introduction to Computer Programming":[
                 "software",
@@ -117,7 +132,9 @@ CONFIG = {
                 "object oriented",
                 "linux os",
                 "python",
-                "git"
+                "git",
+                "backend",
+                "frontend"
             ],
             "MAT194 Calculus I":[
                 "calculus",
@@ -149,7 +166,13 @@ CONFIG = {
                 "object oriented",
                 "data structures",
                 "algorithms",
-                "git"
+                "git",
+                "backend",
+                "frontend",
+                "fullstack",
+                "object oriented programming",
+                "oop",
+                "object oriented design"
             ],
             "MAT185 Linear Algebra":[
                 "mathematics",
@@ -174,7 +197,8 @@ CONFIG = {
             ], 
             "ECE241 Digital Systems":[
                 "digital systems",
-                "cpu design"
+                "cpu design",
+                "backend"
             ], 
             "ECE244 Programming Fundamentals":[
                 "software",
@@ -184,7 +208,13 @@ CONFIG = {
                 "object oriented",
                 "data structures",
                 "algorithms",
-                "git"
+                "git",
+                "backend",
+                "frontend",
+                "fullstack",
+                "object oriented programming",
+                "oop",
+                "object oriented design"
             ], 
             "MAT290 Advanced Engineering Mathematics":[
                 "calculus",
@@ -222,6 +252,8 @@ CONFIG = {
                 "baremetal programming",
                 "linux os",
                 "compilers",
+                "backend",
+                "veriloghdl"
             ], 
             "ECE297 Software Communication and Design":[
                 "project management",
@@ -232,7 +264,13 @@ CONFIG = {
                 "linux os",
                 "gis design",
                 "ui/ux design",
-                "git"
+                "git",
+                "backend",
+                "frontend",
+                "fullstack",
+                "object oriented programming",
+                "oop",
+                "object oriented design"
             ], 
             "BME445 Neural Bioelectricity":[
                 "biology",
@@ -257,14 +295,18 @@ CONFIG = {
                 "mutlthreading",
                 "unix os",
                 "linux os",
-                "pair programming"          
+                "pair programming",
+                "backend"          
             ], 
             "ECE361 Computer Networks I":[
                 "networks",
                 "cyber security",
                 "c programming",
                 "git", 
-                "network protocols"
+                "network protocols",
+                "backend",
+                "tcp",
+                "ip"
             ], 
             "ECE421 Introduction to Machine Learning":[
                 "machine learning",
@@ -276,6 +318,7 @@ CONFIG = {
                 "data science",
                 "data engineering",
                 "data sets",
+                "backend"
             ], 
             "APS360 Applied Fundamentals of Machine Learning":[
                 "machine learning",
@@ -287,6 +330,7 @@ CONFIG = {
                 "data science",
                 "data engineering",
                 "data sets",
+                "backend"
             ], 
             "CSC384 Introduction to Artificial Intelligence":[
                 "machine learning",
@@ -298,7 +342,11 @@ CONFIG = {
                 "algorithms",
                 "data science",
                 "data engineering",
-                "data sets"
+                "data sets",
+                "backend",
+                "object oriented programming",
+                "oop",
+                "object oriented design"
             ], 
             "ECE320 Fields and Waves":[
                 "waves",
@@ -314,7 +362,11 @@ CONFIG = {
                 "data engineering",
                 "data sets",
                 "algorithms",
-                "git"
+                "git",
+                "backend",
+                "object oriented programming",
+                "oop",
+                "object oriented design"
             ], 
             "ECE496 Machine Learning Capstone Project":[
                 "project management",
@@ -334,7 +386,11 @@ CONFIG = {
                 "data engineering",
                 "data sets",
                 "research",
-                "federated learning"
+                "federated learning",
+                "backend",
+                "object oriented programming",
+                "oop",
+                "object oriented design"
             ], 
             "CLA204 Introduction to Classical Mythology":[
                 "mythology",
@@ -350,7 +406,8 @@ CONFIG = {
             "ECE470 Robot Modeling and Control":[
                 "control systems",
                 "matlab",
-                "robotics"
+                "robotics",
+                "backend"
             ], 
             "AST 251 Life on Other Worlds":[
                 "astronomy",
