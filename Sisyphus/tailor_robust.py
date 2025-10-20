@@ -1204,20 +1204,42 @@ def experience_heuristics(exps_scored):
             prog_no = len(exp["skills"]["programming_languages"])
             tech_no = len(exp["skills"]["technical_skills"])
             soft_no = len(exp["skills"]["soft_skills"])
-            if prog_no > 0:
+            if prog_no > 0.0:
                 prog_score = prog_sum *(1/prog_no) * weights["PROG"]
-            else: prog_score = 0
-            if tech_no > 0:
+            else: prog_score =  0.0
+            if tech_no >  0.0:
                 tech_score = tech_sum *(1/tech_no) * weights["TECH"]
-            else: tech_score = 0
-            if soft_no > 0 :
+            else: tech_score =  0.0
+            if soft_no >  0.0 :
                 soft_score = soft_sum *(1/soft_no) * weights["SOFT"]
-            else: soft_score = 0
+            else: soft_score =  0.0
             exp_len = len(exp["experience"][1])
             desc_len = len(exp["description"][1])
             scores = {
                 "experience": sum(exp["experience"][1])/ exp_len* weights["EXP"],
                 "description": sum(exp["description"][1])/ desc_len* weights["DESC"],
+                "prog": prog_score,
+                "tech": tech_score,
+                "soft": soft_score
+            }
+        elif type == "SoM":
+            prog_no = len(exp["skills"]["programming_languages"])
+            tech_no = len(exp["skills"]["technical_skills"])
+            soft_no = len(exp["skills"]["soft_skills"])
+            if prog_no > 0.0:
+                prog_score = prog_sum* weights["PROG"]
+            else: prog_score =  0.0
+            if tech_no >  0.0:
+                tech_score = tech_sum* weights["TECH"]
+            else: tech_score =  0.0
+            if soft_no >  0.0 :
+                soft_score = soft_sum* weights["SOFT"]
+            else: soft_score =  0.0
+            exp_len = len(exp["experience"][1])
+            desc_len = len(exp["description"][1])
+            scores = {
+                "experience": sum(exp["experience"][1])* weights["EXP"],
+                "description": sum(exp["description"][1])* weights["DESC"],
                 "prog": prog_score,
                 "tech": tech_score,
                 "soft": soft_score
@@ -1463,6 +1485,8 @@ def skill_heuristics(scored_list, type = "programming_languages"):
                 heuristic_vals.append(sum(item)/list_len * weight)
             elif heuristic_type == "max":
                 heuristic_vals.append(max(item) * weight)
+            elif heuristic_type == "SoM":
+                heuristic_vals.append(sum(item) * weight)
             else:
                 ValueError(f"[INFO]{function_name}: invalid heuristic type, check config")
         else: heuristic_vals.append(0.0)
@@ -1787,6 +1811,8 @@ def course_heuristics(scored_course_dct):
                         heuristic_course_dct[course][tag] = sum(heuristic_course_dct[course][tag])/no_keywords
                     elif heuristic_type == "max":
                         heuristic_course_dct[course][tag] = max(heuristic_course_dct[course][tag])
+                    elif heuristic_type == "SoM":
+                        heuristic_course_dct[course][tag] = sum(heuristic_course_dct[course][tag])
                     else:
                         ValueError(f"[ERROR]{function_name}: invalid heuristic type, check config")
                 else: heuristic_course_dct[course][tag] = 0.0
@@ -1832,6 +1858,8 @@ def course_pruning_algorithm(job_desc, course_list):
                 final_score_dct[course] = max(compare_list)
             elif pruning_type == "sum":
                 final_score_dct[course] = sum(compare_list)/no_tags
+            elif pruning_type == "SoM":
+                final_score_dct[course] = sum(compare_list)
             else:
                 ValueError(f"[INFO]{function_name}: invalid pruning type, check config")
         else: final_score_dct[course] = 0.0

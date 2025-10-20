@@ -113,6 +113,9 @@ INPUT wholistic summary of the resume meant to accompany the above cover letter 
                        "Job Title:":["[0]",True],
                        "Responsibilities:":["[0]",True],
                        "Requirements:":["[0]",True],
+                       "Programming Languages:":["[0]",True],
+                       "Technical Skills:":["[0]",True],
+                       "Soft Skills:":["[0]",True],
                        "Keywords":["[0]",True],
                        "Dummy:":["[BIG DUMMY]"]
                    } 
@@ -124,6 +127,9 @@ Summarize the input job description by extracting the following information in t
 -Job Title
 -Responsibilities
 -Requirements
+-Programming Languages
+-Technical Skills
+-Soft Skills
 -Keywords
 When filling out the OUTPUT FORMAT, follow these guidelines:
 - Do not modify the format.
@@ -131,13 +137,13 @@ When filling out the OUTPUT FORMAT, follow these guidelines:
 - Use simple and concise language when possible, but do use specific keywords.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
-- On the "Keywords" section of the OUTPUT FORMAT, you have to include the following as single words or small phrases (less than 3 words long each):
-    - The job position (e.g. the job title)
-    - The name of technologies required (e.g. object oriented programming, etc)
-    - The specific name of programming languages required (e.g. java, etc) 
-    - Education required/preferred (e.g. bachelors of engineering)
-    - Soft skills preferred (e.g. good communication)
-    - Words abbreviated as capitalized acronyms (e.g. RMT, OOP, etc) 
+On the "Keywords" section of the OUTPUT FORMAT, you have to include the following as single words or small phrases (less than 3 words long each):
+- The job position (e.g. the job title)
+- The name of technologies required (e.g. object oriented programming, etc)
+- The specific name of programming languages required (e.g. java, etc) 
+- Education required/preferred (e.g. bachelors of engineering)
+- Soft skills preferred (e.g. good communication)
+- Words abbreviated as capitalized acronyms (e.g. RMT, OOP, etc) 
 
 OUTPUT FORMAT:
 Company Name: Company Name

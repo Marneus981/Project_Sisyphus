@@ -56,12 +56,12 @@ CONFIG = {
         "PROG_H_WEIGHT": 1.0,
         "TECH_H_WEIGHT": 1.0,
         "SOFT_H_WEIGHT": 1.0,
-        "EXP_RATING_TYPE": "max", #or sum or SoM (sum of maxes)
-        "PROG_RATING_TYPE": "max", #or sum or SoM (sum of tmaxes)
-        "TECH_RATING_TYPE": "max", #or sum or SoM (sum of maxes)
-        "SOFT_RATING_TYPE": "max", #or sum or SoM (sum of maxes)
+        "EXP_RATING_TYPE": "SoM", #or sum or SoM (sum of maxes)
+        "PROG_RATING_TYPE": "SoM", #or sum or SoM (sum of tmaxes)
+        "TECH_RATING_TYPE": "SoM", #or sum or SoM (sum of maxes)
+        "SOFT_RATING_TYPE": "SoM", #or sum or SoM (sum of maxes)
         "COURSES_RATING_TYPE": "max", #or sum or SoM (sum of maxes)
-        "COURSES_PRUNING_TYPE": "max",
+        "COURSES_PRUNING_TYPE": "SoM",
         "THRESHOLDS":{
             "PROG": 60.0,
             "TECH": 60.0,
