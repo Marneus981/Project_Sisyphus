@@ -47,20 +47,99 @@ def check_summaries(update_job_desc = False, update_resume = False):
     job_desc = job_desc_textbox.get("1.0", tk.END).strip()
     global summarized_job_desc, summarized_resume, current_cv_text
     if update_job_desc:
-        ollama_func_name = "summarize_job_description"
-        runtime_info_temp = {
-            "call_id": ollama_func_name, 
-            "payload_in": {
-                        "model": selected_model, #Set at runtime
-                        "system": system_text,  #Set at runtime
-                        },
-            "format": {#Set at runtime
-                    "job_description": job_desc 
-                    }
-                    
+        job_dct = {
+            "Company Name":"",
+            "Job Title":"",
+            "Responsibilities":"",
+            "Requirements":"",
+            "Programming Languages":[],
+            "Technical Skills":[],
+            "Soft Skills":[],
+            "Keywords":[],
         }
-        
-        summarized_job_desc = tailor_robust.ollama_call(runtime_info=runtime_info_temp)#Standard
+        first = False
+        second = False
+        third = False
+        fourth = False
+        for i in range(0,config.CONFIG["JOB_SUMM_PRECISION"]):
+
+            ollama_func_name = "summarize_job_description"
+            runtime_info_temp = {
+                "call_id": ollama_func_name, 
+                "payload_in": {
+                            "model": selected_model, #Set at runtime
+                            "system": system_text,  #Set at runtime
+                            },
+                "format": {#Set at runtime
+                        "job_description": job_desc 
+                        }
+                        
+            }
+            temp_job_s = tailor_robust.ollama_call(runtime_info=runtime_info_temp)#Standard
+            lines = temp_job_s.splitlines()
+            for line in lines:
+                tmp_line= line.strip()
+                if "Company Name" in tmp_line and not first:
+                    data = tmp_line.replace("Company Name:", "").strip()
+                    if data != "":
+                        job_dct["Company Name"] = data
+                        first = True
+                elif "Job Title" in tmp_line and not second:
+                    data = tmp_line.replace("Job Title:", "").strip()
+                    if data != "":
+                        job_dct["Job Title"] = data
+                        second = True
+                elif "Responsibilities" in tmp_line and not third:
+                    data = tmp_line.replace("Responsibilities:", "").strip()
+                    if data != "":
+                        job_dct["Responsibilities"] = data
+                        third = True
+                elif "Requirements" in tmp_line and not fourth:
+                    data = tmp_line.replace("Requirements:", "").strip()
+                    if data != "":
+                        job_dct["Requirements"] = data
+                        fourth = True
+                elif "Programming Languages" in tmp_line:
+                    data = tmp_line.replace("Programming Languages:", "").strip()
+                    if data != "":
+                        values = data.split(",")
+                        for value in values:
+                            tmp_val = value.strip().lower()
+                            if tmp_val not in job_dct["Programming Languages"]:
+                                job_dct["Programming Languages"].append(tmp_val)
+                elif "Technical Skills" in tmp_line:
+                    data = tmp_line.replace("Technical Skills:", "").strip()
+                    if data != "":
+                        values = data.split(",")
+                        for value in values:
+                            tmp_val = value.strip().lower()
+                            if tmp_val not in job_dct["Technical Skills"]:
+                                job_dct["Technical Skills"].append(tmp_val)
+                elif "Soft Skills" in tmp_line:
+                    data = tmp_line.replace("Soft Skills:", "").strip()
+                    if data != "":
+                        values = data.split(",")
+                        for value in values:
+                            tmp_val = value.strip().lower()
+                            if tmp_val not in job_dct["Soft Skills"]:
+                                job_dct["Soft Skills"].append(tmp_val)
+                elif "Keywords" in tmp_line:
+                    data = tmp_line.replace("Keywords:", "").strip()
+                    if data != "":
+                        values = data.split(",")
+                        for value in values:
+                            tmp_val = value.strip().lower()
+                            if tmp_val not in job_dct["Keywords"]:
+                                job_dct["Keywords"].append(tmp_val)
+        summarized_job_desc = ""
+        summarized_job_desc = summarized_job_desc + "Company Name: " + job_dct["Company Name"] + "\n"
+        summarized_job_desc = summarized_job_desc + "Job Title: " + job_dct["Job Title"] + "\n"
+        summarized_job_desc = summarized_job_desc + "Responsibilities: " + job_dct["Responsibilities"] + "\n"
+        summarized_job_desc = summarized_job_desc + "Requirements: " + job_dct["Requirements"] + "\n"
+        summarized_job_desc = summarized_job_desc + "Programming Languages: " + ", ".join(job_dct["Programming Languages"]) + "\n"
+        summarized_job_desc = summarized_job_desc + "Technical Skills: " + ", ".join(job_dct["Technical Skills"]) + "\n"
+        summarized_job_desc = summarized_job_desc + "Soft Skills: " + ", ".join(job_dct["Soft Skills"]) + "\n"
+        summarized_job_desc = summarized_job_desc + "Keywords: " + ", ".join(job_dct["Keywords"]) + "\n"
     if update_resume and current_cv_text:
         #current_cv_text is supposed to be the end product, but it gets assigned after step 4, so do keep that in mind when debugging
         ollama_func_name = "step0_tailor_summary"

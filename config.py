@@ -6,6 +6,7 @@ DEBUG = {
     "INFO_LOGGING": True
 }
 CONFIG = {
+    "JOB_SUMM_PRECISION": 4,
     "WINDOWS": 4,
     "SUMMARY_MODE": "batch", #Options: "single", "batch" or "parallel"
     "SUMMARY_REQUESTS": 2,
@@ -69,7 +70,7 @@ CONFIG = {
             "EXP": 60.0,
             "COURSES": 60.0
         },
-        "DUAL_SCORING":{ #take highest score when performing the DITANCE_ALGO both ways
+        "DUAL_SCORING":{ #take highest score when performing the DISTANCE_ALGO both ways
             "PROG": True,
             "TECH": True,
             "SOFT": True,

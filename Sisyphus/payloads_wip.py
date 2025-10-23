@@ -137,6 +137,7 @@ When filling out the OUTPUT FORMAT, follow these guidelines:
 - Use simple and concise language when possible, but do use specific keywords.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
+- If no information matching a given OUTPUT FORMAT field is found, return the field as empty and continue unto filling out the next field.
 On the "Keywords" section of the OUTPUT FORMAT, you have to include the following as single words or small phrases (less than 3 words long each):
 - The job position (e.g. the job title)
 - The name of technologies required (e.g. object oriented programming, etc)
