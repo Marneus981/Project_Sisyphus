@@ -3,7 +3,8 @@ DEBUG = {
     "TOKEN_LOGGING": False,
     "ERROR_LOGGING": True,
     "WARNING_LOGGING": True,
-    "INFO_LOGGING": True
+    "INFO_LOGGING": False,
+    "HEURISTIC_LOGGING": True
 }
 CONFIG = {
     "JOB_SUMM_PRECISION": 4,

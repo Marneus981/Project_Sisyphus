@@ -2,14 +2,17 @@
     [][1.0 DEV PUBLIC RELEASE] Clean code and prompt engineer a bit; make a single UI window;deal with debug prints in "a way"
         [WIP]
             TODO_NEXT:
-                IMPORTANT: make sure that even if skills field is empty, it still shows up in formatting
-                IMPORTANT: rewire selection logic for algorithmic pruning to account for more possibilities
-                turn config file into a text file, make it reload on runtime
                 IMPORTANT: Add report at the end of algorithmic functions
+                IMPORTANT: make sure that even if skills field is empty, it still shows up in formatting (missing soft skills)
                 IMPORTANT: Verify chosen skills come only from chosen experiences
-                IMPORTANT: tune pruning algorithms
-                IMPORTANT: make keyword obtaining algorithm separate from summarize job desc, and make it run several times; delete duplicate entries
                 IMPORTANT: remove all unnecessary sections from the summary fed to tailor_experiences
+                check if thresholds are correctly applied
+                Make sure skill pruning takes into account skills found by ai
+                IMPORTANT: rewire selection logic for algorithmic pruning to account for more possibilities
+                add print conditionals to main robust and other pruning related functions
+                Tune pruning algo:
+                    consider omitting title/desc matching
+                    change selection function
             Prompt Engineering:
                 [NOTES]
                     [TACKLED?]

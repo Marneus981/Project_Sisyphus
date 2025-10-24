@@ -80,27 +80,27 @@ def check_summaries(update_job_desc = False, update_resume = False):
             for line in lines:
                 tmp_line= line.strip()
                 if "Company Name" in tmp_line and not first:
-                    data = tmp_line.replace("Company Name:", "").strip()
+                    data = tmp_line.replace("[0]Company Name:", "").strip()
                     if data != "":
                         job_dct["Company Name"] = data
                         first = True
                 elif "Job Title" in tmp_line and not second:
-                    data = tmp_line.replace("Job Title:", "").strip()
+                    data = tmp_line.replace("[0]Job Title:", "").strip()
                     if data != "":
                         job_dct["Job Title"] = data
                         second = True
                 elif "Responsibilities" in tmp_line and not third:
-                    data = tmp_line.replace("Responsibilities:", "").strip()
+                    data = tmp_line.replace("[0]Responsibilities:", "").strip()
                     if data != "":
                         job_dct["Responsibilities"] = data
                         third = True
                 elif "Requirements" in tmp_line and not fourth:
-                    data = tmp_line.replace("Requirements:", "").strip()
+                    data = tmp_line.replace("[0]Requirements:", "").strip()
                     if data != "":
                         job_dct["Requirements"] = data
                         fourth = True
                 elif "Programming Languages" in tmp_line:
-                    data = tmp_line.replace("Programming Languages:", "").strip()
+                    data = tmp_line.replace("[0]Programming Languages:", "").strip()
                     if data != "":
                         values = data.split(",")
                         for value in values:
@@ -108,7 +108,7 @@ def check_summaries(update_job_desc = False, update_resume = False):
                             if tmp_val not in job_dct["Programming Languages"]:
                                 job_dct["Programming Languages"].append(tmp_val)
                 elif "Technical Skills" in tmp_line:
-                    data = tmp_line.replace("Technical Skills:", "").strip()
+                    data = tmp_line.replace("[0]Technical Skills:", "").strip()
                     if data != "":
                         values = data.split(",")
                         for value in values:
@@ -116,7 +116,7 @@ def check_summaries(update_job_desc = False, update_resume = False):
                             if tmp_val not in job_dct["Technical Skills"]:
                                 job_dct["Technical Skills"].append(tmp_val)
                 elif "Soft Skills" in tmp_line:
-                    data = tmp_line.replace("Soft Skills:", "").strip()
+                    data = tmp_line.replace("[0]Soft Skills:", "").strip()
                     if data != "":
                         values = data.split(",")
                         for value in values:
@@ -124,7 +124,7 @@ def check_summaries(update_job_desc = False, update_resume = False):
                             if tmp_val not in job_dct["Soft Skills"]:
                                 job_dct["Soft Skills"].append(tmp_val)
                 elif "Keywords" in tmp_line:
-                    data = tmp_line.replace("Keywords:", "").strip()
+                    data = tmp_line.replace("[0]Keywords:", "").strip()
                     if data != "":
                         values = data.split(",")
                         for value in values:

@@ -1114,36 +1114,52 @@ def experience_scoring(exps, keywords):
     for exp in exps_cpy:
         for keyword in keywords:
             if not scoring_mode:
-                exp["experience"][1].append(function_desc(keyword, exp["experience"][0], processor=utils.default_process))
-                exp["description"][1].append(function_desc(keyword, exp["description"][0], processor=utils.default_process))
+                exp["experience"][1].append((keyword,function_desc(keyword, exp["experience"][0], processor=utils.default_process)))
+                exp["description"][1].append((keyword,function_desc(keyword, exp["description"][0], processor=utils.default_process)))
             else:
                 way1_exp = function_desc(keyword, exp["experience"][0], processor=utils.default_process)
                 way1_desc = function_desc(keyword, exp["description"][0], processor=utils.default_process)
                 way2_exp = function_desc( exp["experience"][0],keyword, processor=utils.default_process)
                 way2_desc = function_desc(exp["description"][0],keyword,  processor=utils.default_process)
-                exp["experience"][1].append(max([way1_exp,way2_exp]))
-                exp["description"][1].append(max([way1_desc,way2_desc]))
+                if way1_exp > way2_exp:
+                    exp["experience"][1].append((keyword, way1_exp))
+                else:
+                    exp["experience"][1].append((keyword, way2_exp))
+                if way1_desc > way2_desc:
+                    exp["description"][1].append((keyword, way1_desc))
+                else:
+                    exp["description"][1].append((keyword, way2_desc))
+
             for prog in exp["skills"]["programming_languages"]:
                 if not scoring_mode:
-                    prog[1].append(function_key(keyword, prog[0], processor=utils.default_process))
+                    prog[1].append((keyword,function_key(keyword, prog[0], processor=utils.default_process)))
                 else:
                     way1_prog = function_desc(keyword,prog[0], processor=utils.default_process)
                     way2_prog = function_desc( prog[0],keyword, processor=utils.default_process)
-                    prog[1].append(max([way1_prog,way2_prog]))                  
+                    if way1_prog > way2_prog:
+                        prog[1].append((keyword, way1_prog))
+                    else:
+                        prog[1].append((keyword, way2_prog))             
             for tech in exp["skills"]["technical_skills"]:
                 if not scoring_mode:
-                    tech[1].append(function_key(keyword, tech[0], processor=utils.default_process))
+                    tech[1].append((keyword, function_key(keyword, tech[0], processor=utils.default_process)))
                 else:
                     way1_tech = function_desc(keyword,tech[0], processor=utils.default_process)
                     way2_tech = function_desc( tech[0],keyword, processor=utils.default_process)
-                    tech[1].append(max([way1_tech,way2_tech]))                      
+                    if way1_tech > way2_tech:
+                        tech[1].append((keyword, way1_tech))
+                    else:
+                        tech[1].append((keyword, way2_tech))                    
             for soft in exp["skills"]["soft_skills"]:
                 if not scoring_mode:
-                    soft[1].append(function_key(keyword, soft[0], processor=utils.default_process))
+                    soft[1].append((keyword,function_key(keyword, soft[0], processor=utils.default_process)))
                 else:
                     way1_soft = function_desc(keyword,soft[0], processor=utils.default_process)
                     way2_soft = function_desc( soft[0],keyword, processor=utils.default_process)
-                    soft[1].append(max([way1_soft,way2_soft]))
+                    if way1_soft > way2_soft:
+                        soft[1].append((keyword, way1_soft))
+                    else:
+                        soft[1].append((keyword, way2_soft)) 
     if config.DEBUG["INFO_LOGGING"]:
         for exp in exps_cpy:
             print(f"[INFO]{function_name}: experience: {exp["experience"][0]}")
@@ -1169,100 +1185,111 @@ def experience_heuristics(exps_scored):
     exp_threshold = CONFIG["PRUNING"]["THRESHOLDS"]["EXP"]
 
     for exp in exps_scored_cpy:
-        prog_l = []
+        prog_l = []#Lists of tuples
         tech_l = []
         soft_l = []
-        prog_sum = 0
-        tech_sum = 0
-        soft_sum = 0
+        prog_sum = 0.0
+        tech_sum = 0.0
+        soft_sum = 0.0
+        prog_offset = 0
+        tech_offset = 0
+        soft_offset = 0
         for prog in exp["skills"]["programming_languages"]:
-            best_score = max(prog[1])
-            if best_score < exp_threshold:
-                best_score = 0.0
+            best_score = max(prog[1], key=itemgetter(1))
+            if best_score[1] < exp_threshold:
+                best_score = (best_score[0], 0.0)
+                prog_offset = prog_offset + 1
             prog_l.append(best_score)
-            prog_sum = prog_sum +  best_score           
+            prog_sum = prog_sum +  best_score[1]           
         for tech in exp["skills"]["technical_skills"]:
-            best_score = max(tech[1])
-            if best_score < exp_threshold:
-                best_score = 0.0
+            best_score = max(tech[1], key=itemgetter(1))
+            if best_score[1] < exp_threshold:
+                best_score = (best_score[0], 0.0)
+                tech_offset = tech_offset + 1
             tech_l.append(best_score)
-            tech_sum = tech_sum +  best_score
+            tech_sum = tech_sum +  best_score[1]
         for soft in exp["skills"]["soft_skills"]:
-            best_score = max(soft[1])
-            if best_score < exp_threshold:
-                best_score = 0.0
+            best_score = max(soft[1], key=itemgetter(1))
+            if best_score[1] < exp_threshold:
+                best_score = (best_score[0], 0.0)
+                soft_offset = soft_offset + 1
             soft_l.append(best_score)
-            soft_sum = soft_sum +  best_score
-        no_keywords = len(exp["experience"][1])
+            soft_sum = soft_sum +  best_score[1]
+        exp_sum = 0.0
+        desc_sum = 0.0
+        exp_offset = 0
+        desc_offset = 0
         for i in range(0, len (exp["experience"][1])):
-            if exp["experience"][1][i]< exp_threshold:
-                exp["experience"][1][i] = 0.0
-            if exp["description"][1][i]< exp_threshold:
-                exp["description"][1][i] = 0.0
+            if exp["experience"][1][i][1]< exp_threshold:
+                exp["experience"][1][i] = (exp["experience"][1][i][0],0.0)
+                exp_offset = exp_offset + 1
+            if exp["description"][1][i][1]< exp_threshold:
+                exp["description"][1][i] = (exp["description"][1][i][0],0.0)
+                desc_offset = desc_offset + 1
+            exp_sum = exp_sum + exp["experience"][1][i][1]
+            desc_sum = desc_sum + exp["description"][1][i][1]
         type = config.CONFIG["PRUNING"]["EXP_RATING_TYPE"]
         if type == "sum":
-            prog_no = len(exp["skills"]["programming_languages"])
-            tech_no = len(exp["skills"]["technical_skills"])
-            soft_no = len(exp["skills"]["soft_skills"])
-            if prog_no > 0.0:
+            prog_no = len(exp["skills"]["programming_languages"])-prog_offset
+            tech_no = len(exp["skills"]["technical_skills"])-tech_offset
+            soft_no = len(exp["skills"]["soft_skills"])-soft_offset
+            exp_len = len(exp["experience"][1]) - exp_offset
+            desc_len = len(exp["description"][1]) - desc_offset
+            if prog_no > 0:
                 prog_score = prog_sum *(1/prog_no) * weights["PROG"]
             else: prog_score =  0.0
-            if tech_no >  0.0:
+            if tech_no >  0:
                 tech_score = tech_sum *(1/tech_no) * weights["TECH"]
             else: tech_score =  0.0
-            if soft_no >  0.0 :
+            if soft_no > 0 :
                 soft_score = soft_sum *(1/soft_no) * weights["SOFT"]
             else: soft_score =  0.0
-            exp_len = len(exp["experience"][1])
-            desc_len = len(exp["description"][1])
+            if exp_len > 0 :
+                exp_score = exp_sum *(1/exp_len) * weights["EXP"]
+            else: exp_score =  0.0
+            if desc_len > 0 :
+                desc_score = desc_sum *(1/desc_len) * weights["DESC"]
+            else: desc_score =  0.0
             scores = {
-                "experience": sum(exp["experience"][1])/ exp_len* weights["EXP"],
-                "description": sum(exp["description"][1])/ desc_len* weights["DESC"],
+                "experience": exp_score,
+                "description": desc_score,
                 "prog": prog_score,
                 "tech": tech_score,
                 "soft": soft_score
             }
         elif type == "SoM":
-            prog_no = len(exp["skills"]["programming_languages"])
-            tech_no = len(exp["skills"]["technical_skills"])
-            soft_no = len(exp["skills"]["soft_skills"])
-            if prog_no > 0.0:
-                prog_score = prog_sum* weights["PROG"]
-            else: prog_score =  0.0
-            if tech_no >  0.0:
-                tech_score = tech_sum* weights["TECH"]
-            else: tech_score =  0.0
-            if soft_no >  0.0 :
-                soft_score = soft_sum* weights["SOFT"]
-            else: soft_score =  0.0
-            exp_len = len(exp["experience"][1])
-            desc_len = len(exp["description"][1])
+
+            prog_score = prog_sum * weights["PROG"]
+            tech_score = tech_sum * weights["TECH"]
+            soft_score = soft_sum * weights["SOFT"]
+            exp_score = exp_sum * weights["EXP"]
+            desc_score = desc_sum * weights["DESC"]
             scores = {
-                "experience": sum(exp["experience"][1])* weights["EXP"],
-                "description": sum(exp["description"][1])* weights["DESC"],
+                "experience": exp_score,
+                "description": desc_score,
                 "prog": prog_score,
                 "tech": tech_score,
                 "soft": soft_score
             }
         elif type == "max":
-            desc_len = len(exp["description"][1])
             if len(prog_l) > 0:
-                max_prog = max(prog_l)
+                max(prog_l, key=itemgetter(1))
+                max_prog = max(prog_l, key=itemgetter(1))[1]
             else:
                 max_prog = 0
             if len(tech_l) > 0:
-                max_tech = max(tech_l)
+                max_tech = max(tech_l, key=itemgetter(1))[1]
             else:
                 max_tech = 0
             if len(soft_l) > 0:
-                max_soft = max(soft_l)
+                max_soft = max(soft_l, key=itemgetter(1))[1]
             else:
                 max_soft = 0
             
             
             scores = {
-                "experience": max(exp["experience"][1])* weights["EXP"],
-                "description": max(exp["description"][1])* weights["DESC"],
+                "experience": max(exp["experience"][1], key=itemgetter(1))[1]* weights["EXP"],
+                "description": max(exp["description"][1], key=itemgetter(1))[1]* weights["DESC"],
                 "prog": max_prog * weights["PROG"],
                 "tech": max_tech * weights["TECH"],
                 "soft": max_soft * weights["SOFT"]
@@ -1271,12 +1298,12 @@ def experience_heuristics(exps_scored):
         exp["total_score"] = scores["experience"] + scores["description"] + scores["prog"] + scores["tech"] + scores["soft"]
         """
         each exp = {
-            "experience": (experience_text,[distance_algo_scores with len(keywords)] )
+            "experience": (experience_text,[(keyword,score) with len(keywords)] )
             "description": (description_text,[distance_algo_scores with len(keywords)])
-            "skills":{
-                "programming_languages": [(prog_word1, [scores for prog_word1 with len(keywords)]),...],
-                "technical_skills": [(tech_word1, [scores for tech_word1 with len(keywords)]),...],
-                "soft_skills": [(soft_word1, [scores for soft_word1 with len(keywords)]),...]
+            c:{
+                "programming_languages": [(prog_word1, [(keyword,score) with len(keywords),...],
+                "technical_skills": [(tech_word1, [(keyword,score) with len(keywords),...],
+                "soft_skills": [(soft_word1, [(keyword,score) with len(keywords),...]
             }
             "scores":{
                 "experience":(heuristic value for experience)
@@ -1284,14 +1311,32 @@ def experience_heuristics(exps_scored):
                 "prog": (heuristic value for prog)
                 "tech": (heuristic value for tech)
                 "soft": (heuristic value for soft)
-            }
+            },
+            "total_score": float number
         }
         """
-        if config.DEBUG["INFO_LOGGING"]:
-            print(f"[INFO]{function_name}: experience: {exp["experience"][0]}")
-            for score in scores:
-                print(f"[INFO]{function_name}: {score} score: {scores[score]}")
-            print(f"[INFO]{function_name}: final score: {exp["total_score"]}")
+        if config.DEBUG["HEURISTIC_LOGGING"]:
+            print(f"[HEURISTIC][EXPERIENCES]{function_name}:HEURISTIC REPORT")
+            print(f"[HEURISTIC]{function_name}: experience: {exp["experience"][0]}; with title score: {exp["scores"]["experience"]}; title weight: {weights["EXP"]}")
+            print(f"[HEURISTIC]{function_name}: description: {exp["description"][0]}; with description score: {exp["scores"]["description"]}; description weight: {weights["DESC"]}")
+            print(f"[HEURISTIC]{function_name}: prog score: {exp["scores"]["prog"]}; prog weight: {weights["PROG"]}")
+            for skill in exp["skills"]["programming_languages"]:
+                for keyword in skill[1]:
+                    if keyword[1]>exp_threshold:
+                        print(f"[HEURISTIC]{function_name}: skill {skill[0]}: keyword {keyword[0]}:score (before heuristic): {keyword[1]}")
+            print(f"[HEURISTIC]{function_name}: tech score: {exp["scores"]["tech"]}; tech weight: {weights["TECH"]}")
+            for skill in exp["skills"]["technical_skills"]:
+                for keyword in skill[1]:
+                    if keyword[1]>exp_threshold:
+                        print(f"[HEURISTIC]{function_name}: skill {skill[0]}: keyword {keyword[0]}:score (before heuristic): {keyword[1]}")
+            print(f"[HEURISTIC]{function_name}: soft score: {exp["scores"]["soft"]}; soft weight: {weights["SOFT"]}")
+            for skill in exp["skills"]["soft_skills"]:
+                for keyword in skill[1]:
+                    if keyword[1]>exp_threshold:
+                        print(f"[HEURISTIC]{function_name}: skill {skill[0]}: keyword {keyword[0]}:score (before heuristic): {keyword[1]}")
+            print(f"[HEURISTIC]{function_name}: final score: {exp["total_score"]}")
+            
+            
     return exps_scored_cpy
 
 @log_time
@@ -1420,7 +1465,7 @@ def experience_pruning_algorithm(job_desc,text,v_list,w_list,p_list):
     if config.DEBUG["INFO_LOGGING"]:
             print(f"[INFO]{function_name}: pruned text: {return_txt}")
     return return_txt
-
+    
 def skill_scoring(list_to_score, keywords, type = "programming_languages"):
     """
     Input: List of strings to score
