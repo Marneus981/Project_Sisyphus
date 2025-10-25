@@ -4,7 +4,8 @@ DEBUG = {
     "ERROR_LOGGING": True,
     "WARNING_LOGGING": True,
     "INFO_LOGGING": False,
-    "HEURISTIC_LOGGING": True
+    "HEURISTIC_LOGGING": True,
+    "PRUNING_LOGGING":True
 }
 CONFIG = {
     "JOB_SUMM_PRECISION": 4,
@@ -65,11 +66,11 @@ CONFIG = {
         "COURSES_RATING_TYPE": "max", #or sum or SoM (sum of maxes)
         "COURSES_PRUNING_TYPE": "SoM",
         "THRESHOLDS":{
-            "PROG": 60.0,
-            "TECH": 60.0,
-            "SOFT": 60.0,
-            "EXP": 60.0,
-            "COURSES": 60.0
+            "PROG": 70.0,
+            "TECH": 70.0,
+            "SOFT": 70.0,
+            "EXP": 70.0,
+            "COURSES": 70.0
         },
         "DUAL_SCORING":{ #take highest score when performing the DISTANCE_ALGO both ways
             "PROG": True,

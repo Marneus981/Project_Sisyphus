@@ -1485,7 +1485,7 @@ def skill_scoring(list_to_score, keywords, type = "programming_languages"):
         scoring_mode = CONFIG["PRUNING"]["DUAL_SCORING"]["SOFT"]
         function_score = getattr(rapidfuzz.fuzz, CONFIG["PRUNING"]["DISTANCE_ALGO_SOFT"])
     else:
-        raise  ValueError(f"[INFO]{function_name}: invalid list type")
+        raise  ValueError(f"[ERROR]{function_name}: invalid list type")
     for item in list_to_score_cpy:
         score_list = []
         for keyword in keywords:
@@ -1494,14 +1494,26 @@ def skill_scoring(list_to_score, keywords, type = "programming_languages"):
             else:
                 score = max([function_score(item, keyword, processor=utils.default_process),function_score( keyword, item, processor=utils.default_process)])
             if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: scored list item: {keyword} against {item}: {score}")
-            score_list.append(score)
+            score_list.append((item,keyword,score))
         score_lists.append(score_list)
+    """
+    returns a list of lists of pairs = [ 
+    [(skill 1,keyword,score),etc..], ###list for skill 1,
+    ...    
+    ]
+    """
     return score_lists
     # else:        
     #     function_score = getattr(rapidfuzz.fuzz, CONFIG["PRUNING"]["DISTANCE_ALGO_COURSES"])
     #     ##Implementation with added tags##
 
 def skill_heuristics(scored_list, type = "programming_languages"):
+    """
+   input is list of lists of pairs = [ 
+    [(skill1,keyword,score),etc..], ###list for skill 1,
+    ...    
+    ]
+    """
     function_name = helpers.inspect_function()
     if type == "programming_languages":
         weight = CONFIG["PRUNING"]["PROG_H_WEIGHT"]
@@ -1516,26 +1528,36 @@ def skill_heuristics(scored_list, type = "programming_languages"):
         heuristic_type = config.CONFIG["PRUNING"]["SOFT_RATING_TYPE"]
         threshold = CONFIG["PRUNING"]["THRESHOLDS"]["SOFT"]
     else:
-        raise  ValueError(f"[INFO]{function_name}: invalid list type")
+        raise  ValueError(f"[ERROR]{function_name}: invalid list type")
     scored_list_cpy = deepcopy(scored_list)
+    list_offset = [0] * len(scored_list_cpy)
     for i in range(0, len(scored_list_cpy)):
         for j in range(0,len(scored_list_cpy[i])):
-            if scored_list_cpy[i][j] < threshold:
-                scored_list_cpy[i][j] = 0.0
+            if scored_list_cpy[i][j][2] < threshold:
+                scored_list_cpy[i][j] = (scored_list_cpy[i][j][0],scored_list_cpy[i][j][1],0.0)
+                list_offset[i] = list_offset[i] + 1
     heuristic_vals = []
-    for item in scored_list_cpy:
-        list_len = len(item)
+    for i in range(0,len(scored_list_cpy)):
+        item = scored_list_cpy[i]
+        list_len = len(item)-list_offset[i]
         if list_len > 0:
             if heuristic_type == "sum":
-                heuristic_vals.append(sum(item)/list_len * weight)
+                heuristic_vals.append(sum(keyword[2] for keyword in item)/list_len * weight)
             elif heuristic_type == "max":
-                heuristic_vals.append(max(item) * weight)
+                heuristic_vals.append(max(item,key=itemgetter(2))[2] * weight)
             elif heuristic_type == "SoM":
-                heuristic_vals.append(sum(item) * weight)
+                heuristic_vals.append(sum(keyword[2] for keyword in item) * weight)
             else:
-                ValueError(f"[INFO]{function_name}: invalid heuristic type, check config")
+                ValueError(f"[ERROR]{function_name}: invalid heuristic type, check config")
         else: heuristic_vals.append(0.0)
     return_list = deepcopy(heuristic_vals)
+    if config.DEBUG["HEURISTIC_LOGGING"]:
+        print(f"[HEURISTIC][SKILLS]{function_name}:HEURISTIC REPORT")
+        print(f"[HEURISTIC]{function_name}: type: {type}; threshold: {threshold}; weight: {weight}")
+        for i in range(0,len(scored_list_cpy)):
+            for j in range(0,len(scored_list_cpy[i])):
+                if scored_list_cpy[i][j][2]>threshold:
+                    print(f"[HEURISTIC]{function_name}: skill {scored_list_cpy[i][j][0]}: keyword {scored_list_cpy[i][j][1]}: score (before heuristic): {scored_list_cpy[i][j][2]}; score (after heuristic) type {heuristic_type}: {return_list[i]}")
     return return_list
 @log_time
 def skill_pruning_algorithm(job_desc, list_to_prune, type = "programming_languages"):
@@ -1558,7 +1580,7 @@ def skill_pruning_algorithm(job_desc, list_to_prune, type = "programming_languag
         max_no = int(CONFIG["PRUNING"]["NO_SKILLS"]["SOFT"])
         prefs = CONFIG["PRUNING"]["PREFS"]["SOFT"]
     else:
-        raise  ValueError(f"[INFO]{function_name}: invalid list type")
+        raise  ValueError(f"[ERROR]{function_name}: invalid list type")
     paired_prefs = []
     for pref in reversed(prefs):
         paired_prefs.append((pref,1000.0))     
@@ -1794,6 +1816,7 @@ def tailor_skills_robust(call_info = template_call_info):
 def course_scoring(course_dct,keywords):
     """
     Needs to be done per education
+    OUTPUT
     sample_dct = {
         course1: {
             itself: [list of scores (1 per keyword)], #Appended at runtime
@@ -1826,8 +1849,9 @@ def course_scoring(course_dct,keywords):
             course_dct_cpy[course][tag] = deepcopy(temp_score_list)
     return course_dct_cpy
 
-def course_heuristics(scored_course_dct):
+def course_heuristics(scored_course_dct, keywords):
     """
+    OUTPUT
     sample_dct = {
         course1: {
             itself: float_score (max or sum), #Appended at runtime
@@ -1863,6 +1887,18 @@ def course_heuristics(scored_course_dct):
                 else: heuristic_course_dct[course][tag] = 0.0
         else:
             ValueError(F"[ERROR]{function_name}: no tags found, please revise config file or algorithm")
+    if config.DEBUG["HEURISTIC_LOGGING"]:
+        print(f"[HEURISTIC][COURSES][STEP0]{function_name}:HEURISTIC REPORT")
+        print(f"[HEURISTIC]{function_name}: threshold: {threshold}; heuristic type: {heuristic_type}")
+        for course in heuristic_course_dct:
+            for tag in heuristic_course_dct[course]:
+                if heuristic_course_dct[course][tag]>threshold:
+                    if heuristic_type == max:
+                        key_index = scored_course_dct[course][tag].index(heuristic_course_dct[course][tag])
+                        print(f"[HEURISTIC]{function_name}: course {course}: tag: {tag}: keyword: {keywords[key_index]}: score (before heuristic): {scored_course_dct[course][tag][key_index]}; score (after heuristic) type {heuristic_type}: {heuristic_course_dct[course][tag]}")
+                    else:
+                        print(f"[HEURISTIC]{function_name}: course {course}: tag: {tag}: score (after heuristic) type {heuristic_type}: {heuristic_course_dct[course][tag]}")
+
     return heuristic_course_dct
 
 def course_pruning_algorithm(job_desc, course_list):
@@ -1889,16 +1925,16 @@ def course_pruning_algorithm(job_desc, course_list):
                 if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: current tag: {tag}")
                 dct_to_score[course][tag] = []
     scored_courses = course_scoring(dct_to_score,keywords=keywords)
-    heursitic_courses = course_heuristics(scored_courses)
+    heuristic_courses = course_heuristics(scored_courses,keywords)
     #Assign single score to course
     final_score_dct= {}
     pruning_type = config.CONFIG["PRUNING"]["COURSES_PRUNING_TYPE"]
-    for course in heursitic_courses:
+    for course in heuristic_courses:
         compare_list = []
-        no_tags = len(heursitic_courses[course])
+        no_tags = len(heuristic_courses[course])
         if no_tags != 0 :
-            for tag in heursitic_courses[course]:
-                compare_list.append(heursitic_courses[course][tag])
+            for tag in heuristic_courses[course]:
+                compare_list.append(heuristic_courses[course][tag])
             if pruning_type == "max":
                 final_score_dct[course] = max(compare_list)
             elif pruning_type == "sum":
@@ -1906,9 +1942,14 @@ def course_pruning_algorithm(job_desc, course_list):
             elif pruning_type == "SoM":
                 final_score_dct[course] = sum(compare_list)
             else:
-                ValueError(f"[INFO]{function_name}: invalid pruning type, check config")
+                ValueError(f"[ERROR]{function_name}: invalid pruning type, check config")
         else: final_score_dct[course] = 0.0
-    
+    if config.DEBUG["HEURISTIC_LOGGING"]:
+        print(f"[HEURISTIC][COURSES][STEP1]{function_name}:HEURISTIC REPORT")
+        print(f"[HEURISTIC]{function_name}: pruning type: {pruning_type}")
+        for course in final_score_dct:
+            print(f"[HEURISTIC]{function_name}: course {course}: score: {final_score_dct[course]}")
+
     sorted_courses = dict(sorted(final_score_dct.items(), reverse=True))
     sorted_list = []
     for course in sorted_courses:
