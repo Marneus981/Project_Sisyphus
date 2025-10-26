@@ -166,7 +166,7 @@ def title_type(cv_text):
     if desired_job_title_checkbox_var.get():
         #Replace line that starts with [0]Title with [0]Title: <desired_job_title_textbox>
         if desired_job_title_textbox.get("1.0", tk.END).strip() == "":
-            print("[ERROR][INPUT] Desired job title is empty. Please enter a desired job title or uncheck the box.")
+            if config.DEBUG["ERROR_LOGGING"]:print("[ERROR][INPUT] Desired job title is empty. Please enter a desired job title or uncheck the box.")
             # Stop operation to try again
             return None
         new_title = f"[0]Title: {desired_job_title_textbox.get('1.0', tk.END).strip()}"
@@ -718,9 +718,9 @@ def tailor_cv(root, show = True):
         #Attempt to tailor skills section
         p_cv_out = parsers.parse_cv_out(final_final_cv_text)
         final_final_split_dicts = parsers.dict_spliter(p_cv_out)
-        #print("final_final_split_dicts: ", final_final_split_dicts)
+        print("final_final_split_dicts: ", final_final_split_dicts)
         sk_text = parsers.inv_parse_cv_out(final_final_split_dicts[-1])
-        #print("sk_text:", sk_text)
+        print("sk_text:", sk_text)
 
         
         print("Tailoring skills section...")

@@ -112,9 +112,9 @@ def return_text_with_skills(cv_text):
                         # else:
                         #     print("No Technical Skills found in Skills section")
                     elif "Soft Skills:" in part:
-                        skills = part.replace("Technical Skills:","").strip()
+                        skills = part.replace("Soft Skills:","").strip()
                         if skills == "":
-                            print("No Technical Skills found in Skills section")
+                            print("No Soft Skills found in Skills section")
                         else:
                             skills_r = skills.split(",")
                             skills_r = [skill.strip() for skill in skills_r]

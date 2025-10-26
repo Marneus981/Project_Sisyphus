@@ -3,7 +3,7 @@ DEBUG = {
     "TOKEN_LOGGING": False,
     "ERROR_LOGGING": True,
     "WARNING_LOGGING": True,
-    "INFO_LOGGING": False,
+    "INFO_LOGGING": True,
     "HEURISTIC_LOGGING": True,
     "PRUNING_LOGGING":True
 }
@@ -52,19 +52,19 @@ CONFIG = {
         "EXP_H_WEIGHTS": {
             "EXP": 1.0,
             "DESC":1.0,
-            "PROG":1.5,
+            "PROG":2.0,
             "TECH":1.0,
             "SOFT":0.5
         },
         "PROG_H_WEIGHT": 1.0,
         "TECH_H_WEIGHT": 1.0,
         "SOFT_H_WEIGHT": 1.0,
-        "EXP_RATING_TYPE": "SoM", #or sum or SoM (sum of maxes)
-        "PROG_RATING_TYPE": "SoM", #or sum or SoM (sum of tmaxes)
-        "TECH_RATING_TYPE": "SoM", #or sum or SoM (sum of maxes)
-        "SOFT_RATING_TYPE": "SoM", #or sum or SoM (sum of maxes)
+        "EXP_RATING_TYPE": "sum", #or sum or SoM (sum of maxes)
+        "PROG_RATING_TYPE": "sum", #or sum or SoM (sum of tmaxes)
+        "TECH_RATING_TYPE": "sum", #or sum or SoM (sum of maxes)
+        "SOFT_RATING_TYPE": "sum", #or sum or SoM (sum of maxes)
         "COURSES_RATING_TYPE": "max", #or sum or SoM (sum of maxes)
-        "COURSES_PRUNING_TYPE": "SoM",
+        "COURSES_PRUNING_TYPE": "sum",
         "THRESHOLDS":{
             "PROG": 70.0,
             "TECH": 70.0,

@@ -48,8 +48,16 @@ def process_log(processed = "",by_iter = True, by_step  = False, rsrv_trcbck = T
                 current_step = line
         else:
             if current_step != "":
-                current_step = current_step + "\n"+ line
-        progress_bar_0.update(1)
+                current_step = current_step +"\n"+ line
+        progress_bar_0.update(1) 
+    if current_step != "":
+        by_step_list.append(current_step)
+    else:
+        by_step_list =[processed]
+    if current_iter != "":
+        by_iter_list.append(current_iter)
+    else:
+        by_iter_list =[processed]
     if rsrv_trcbck:
         if by_step:
             progress_bar_1 = tqdm.tqdm(total=len(by_step_list))
@@ -63,9 +71,24 @@ def process_log(processed = "",by_iter = True, by_step  = False, rsrv_trcbck = T
                 if "Traceback:" in iter:
                     rsrv_trcbck_list.append(iter)
                 progress_bar_2.update(1)
+    else:
+        if by_step:
+            progress_bar_1 = tqdm.tqdm(total=len(by_step_list))
+            for step in by_step_list:
+                rsrv_trcbck_list.append(step)
+                progress_bar_1.update(1)
+        elif by_iter:
+            progress_bar_2 = tqdm.tqdm(total=len(by_step_list))
+            for iter in by_iter_list:
+                rsrv_trcbck_list.append(iter)
+                progress_bar_2.update(1)
     date= datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     folder_name = f"folder_{date}"
     folder_path = os.path.join(SAVE_PATH, folder_name)
+    if os.path.exists(SAVE_PATH):
+        print(f"[WARNING]{SAVE_PATH} already exists.")
+    else:
+        os.mkdir(SAVE_PATH)
     if os.path.exists(folder_path):
         print(f"[WARNING]{folder_path} already exists.")
     else:
