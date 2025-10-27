@@ -249,11 +249,16 @@ def revise_list_section(new_list_section_text = "", og_pref = {}, type = "course
         currs = [curr_l_p,curr_l_t,curr_l_s]
         return_list = [[],[],[]]
         for i in range(0,len(ogs)):
-            if i == 0 and CONFIG["PRUNING"]["CUSTOM_SKILLS"]["PROG"]:
+            if DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: current i: {i}")
+            if (i == 0 and CONFIG["PRUNING"]["CUSTOM_SKILLS"]["PROG"]):
+                if DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: i: set ogs: {str(currs[i])} to i = {i}")
+                return_list[i] = deepcopy(currs[i])
                 continue
-            elif i == 1 and CONFIG["PRUNING"]["CUSTOM_SKILLS"]["TECH"]:
+            elif (i == 1 and CONFIG["PRUNING"]["CUSTOM_SKILLS"]["TECH"]):
+                return_list[i] = deepcopy(currs[i])
                 continue
-            elif i == 2 and CONFIG["PRUNING"]["CUSTOM_SKILLS"]["SOFT"]:
+            elif (i == 2 and CONFIG["PRUNING"]["CUSTOM_SKILLS"]["SOFT"]):
+                return_list[i] = deepcopy(currs[i])
                 continue
             if ogs[i] == [] or currs[i] == []:
                 continue
@@ -261,6 +266,7 @@ def revise_list_section(new_list_section_text = "", og_pref = {}, type = "course
                 for og in ogs[i]:
                     for curr in currs[i]:
                         if og in curr:
+                            if DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: i: appended og: {str(og)} to i = {i}")
                             return_list[i].append(og)
         temp_dct = {
             "skills":{

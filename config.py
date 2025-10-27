@@ -33,7 +33,7 @@ CONFIG = {
                 "NO": "1"
             },
             "SOFT":{
-                "STATUS":True,
+                "STATUS":False,
                 "NO":"all"
             },
         },
@@ -89,7 +89,7 @@ CONFIG = {
         "CUSTOM_SKILLS": {
             "PROG": False,
             "TECH": False,
-            "SOFT": True
+            "SOFT": False
         },
         "PREFS":{
             "V": [

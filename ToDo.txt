@@ -2,14 +2,26 @@
     [][1.0 DEV PUBLIC RELEASE] Clean code and prompt engineer a bit; make a single UI window;deal with debug prints in "a way"
         [WIP]
             TODO_NEXT:
-                [0]IMPORTANT: make sure that even if skills field is empty, it still shows up in formatting (missing soft skills)
+                [0]IMPORTANT: fix missing soft skills [STEP 5 BUG]
                 [1]IMPORTANT: remove all unnecessary sections from the summary fed to tailor_experiences
                 [4]IMPORTANT: rewire selection logic for algorithmic pruning to account for more possibilities
+                    AI/ALGO TOGGLE + PRIORITY MODE (ALGO VS AI) + MAX AI NUMBER + ALGO THRESHOLD
+                            AI + ALGO SELECT
+                            Count AI
+                            Count ALGO
+                            Within global limits:
+                                Within local limits:
+                                    Fill best till max AI or Fill with algo threshold
+                                    If remaining spaces, fill with opposite
+                                    (Maybe, fill in last with preferences
+
                 [5]Tune pruning algo:
                     consider omitting title/desc matching
                     change selection function
                 Make it so that neither lone letters nor e.g. nor "." at the end are included in ai-generated lists
                 Make it so that algo detects words like "none" and skip rest
+                Filter out similar skills with - or other symbols
+                Must break down job desc into dict whenm feeding selection algorithms (llm fails to recognize tech skills and soft skills in one pass)
             Prompt Engineering:
                 [NOTES]
                     [TACKLED?]
