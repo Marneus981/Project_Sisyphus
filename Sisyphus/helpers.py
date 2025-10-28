@@ -272,7 +272,7 @@ def revise_list_section(new_list_section_text = "", og_pref = {}, type = "course
             "skills":{
                 "programming_languages": return_list[0],
                 "technical_skills": return_list[1],
-                "soft_skils": return_list[2]
+                "soft_skills": return_list[2]
             }
         }
         return_text = parsers.inv_parse_cv_out(temp_dct)

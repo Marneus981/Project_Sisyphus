@@ -742,15 +742,19 @@ def tailor_cv(root, show = True):
         }
         func = getattr(tailor_robust, ollama_func_name)
         tailored_sk = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function=func)
+        print(f"tailored_sk: RAW: {str(tailored_sk)}")
         tailored_sk = helpers.revise_list_section(new_list_section_text = tailored_sk, og_pref = {"skills":{
                                                                                                                 "programming_languages":deepcopy(p_cv_out["skills"]["programming_languages"]),
                                                                                                                 "technical_skills":deepcopy(p_cv_out["skills"]["technical_skills"]),
                                                                                                                 "soft_skills":deepcopy(p_cv_out["skills"]["soft_skills"])
                                                                                                             }}, type = "skills")
+        print(f"tailored_sk: REVISED: {str(tailored_sk)}")
         tailored_sk = helpers.filter_output(tailored_sk)
+        print(f"tailored_sk: FILTERED: {str(tailored_sk)}")
         if tailored_sk:
             print("Tailored skills section")
             final_final_split_dicts[-1]= parsers.parse_cv_out(tailored_sk)
+            print(f"final_final_split_dicts[-1]: {str(final_final_split_dicts[-1])}")
             current_cv_text = parsers.inv_parse_cv_out(parsers.dict_grafter(final_final_split_dicts))
         else:
             print("No skills section tailored, using original skills section")

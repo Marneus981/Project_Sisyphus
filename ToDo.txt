@@ -2,13 +2,12 @@
     [][1.0 DEV PUBLIC RELEASE] Clean code and prompt engineer a bit; make a single UI window;deal with debug prints in "a way"
         [WIP]
             TODO_NEXT:
-                [0]IMPORTANT: fix missing soft skills [STEP 5 BUG]
                 [1]IMPORTANT: remove all unnecessary sections from the summary fed to tailor_experiences
                 [4]IMPORTANT: rewire selection logic for algorithmic pruning to account for more possibilities
                     AI/ALGO TOGGLE + PRIORITY MODE (ALGO VS AI) + MAX AI NUMBER + ALGO THRESHOLD
                             AI + ALGO SELECT
-                            Count AI
-                            Count ALGO
+                            AI (make new prompts) (to fill)
+                            ALGO above threshold (till max number of algo)
                             Within global limits:
                                 Within local limits:
                                     Fill best till max AI or Fill with algo threshold

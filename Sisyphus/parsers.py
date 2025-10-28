@@ -325,6 +325,7 @@ def parse_cv_out(cv_text):
         if sub_match:
             field, value = sub_match.groups()
             field_key = field.lower().replace(' ', '_')
+            print(f"cat_key: {field_key}")
             if parent_field in allowed_subfields:
                 if field_key not in allowed_subfields[parent_field]:
                     continue
