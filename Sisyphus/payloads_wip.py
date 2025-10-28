@@ -175,7 +175,7 @@ INPUT job description:
                        "temperature": CONFIG["MODELS"]["TEMPERATURE"]
                        },
         "format": {#Set at runtime
-                   "job_keywords": "",
+                   #"job_keywords": "",
                    "experience": "",
                    "prefix_dict": {
                        "Description:":["[1]",True],
@@ -187,7 +187,6 @@ INPUT job description:
 Given a set of keywords and a "Description" subsection of a resume experience, rewrite the "Description" subsection following these guidelines:
 - Rewrite the "Description" subsection to highlight the role description as achievements.
 - Use 2 sentences (max 15 words each) as a single line of text separated by "." to fill the "Description" subsection; this is a hard requirement.
-- From the list of keywords provided as INPUT, use those that are already present in the provided "Description" subsection. Do NOT use those that are not already present in the provided INPUT "Description" subsection.
 - Do NOT use line breaks inside the text of any subsection. 
 - Do NOT forget to include the field name "Description:" at the start of its respective lines, as per the OUTPUT FORMAT.
 - Do NOT include any information not present in the "Description" subsection. 
@@ -197,9 +196,6 @@ OUTPUT FORMAT:
 Description: Brief role description, described as achievements meant to concisely provide recruiters with incentives to hire the candidate; written as a single line of text, with sentences separated by a "." character.
 
 INPUT:
-INPUT job description keywords:
-{job_keywords}
-
 INPUT "Description" subsection of a resume experience:
 {experience}
 

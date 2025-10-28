@@ -45,7 +45,7 @@ def check_summaries(update_job_desc = False, update_resume = False):
     system_file = system_var.get().strip()
     system_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", system_file))
     job_desc = job_desc_textbox.get("1.0", tk.END).strip()
-    global summarized_job_desc, summarized_resume, current_cv_text
+    global summarized_job_desc, summarized_resume, current_cv_text, summarized_job_desc_dct
     if update_job_desc:
         job_dct = {
             "Company Name":"",
@@ -104,7 +104,9 @@ def check_summaries(update_job_desc = False, update_resume = False):
                     if data != "":
                         values = data.split(",")
                         for value in values:
-                            tmp_val = value.strip().lower()
+                            tmp_val = value.replace("-","").replace(".","").strip().lower()
+                            if len(tmp_val) == 1 or "none" in tmp_val:
+                                continue
                             if tmp_val not in job_dct["Programming Languages"]:
                                 job_dct["Programming Languages"].append(tmp_val)
                 elif "Technical Skills" in tmp_line:
@@ -112,7 +114,9 @@ def check_summaries(update_job_desc = False, update_resume = False):
                     if data != "":
                         values = data.split(",")
                         for value in values:
-                            tmp_val = value.strip().lower()
+                            tmp_val = value.replace("-","").replace(".","").strip().lower()
+                            if len(tmp_val) == 1 or "none" in tmp_val:
+                                continue
                             if tmp_val not in job_dct["Technical Skills"]:
                                 job_dct["Technical Skills"].append(tmp_val)
                 elif "Soft Skills" in tmp_line:
@@ -120,7 +124,9 @@ def check_summaries(update_job_desc = False, update_resume = False):
                     if data != "":
                         values = data.split(",")
                         for value in values:
-                            tmp_val = value.strip().lower()
+                            tmp_val = value.replace("-","").replace(".","").strip().lower()
+                            if len(tmp_val) == 1 or "none" in tmp_val:
+                                continue
                             if tmp_val not in job_dct["Soft Skills"]:
                                 job_dct["Soft Skills"].append(tmp_val)
                 elif "Keywords" in tmp_line:
@@ -128,9 +134,12 @@ def check_summaries(update_job_desc = False, update_resume = False):
                     if data != "":
                         values = data.split(",")
                         for value in values:
-                            tmp_val = value.strip().lower()
+                            tmp_val = value.replace("-","").replace(".","").strip().lower()
+                            if len(tmp_val) == 1 or "none" in tmp_val:
+                                continue
                             if tmp_val not in job_dct["Keywords"]:
                                 job_dct["Keywords"].append(tmp_val)
+        summarized_job_desc_dct = deepcopy(job_dct)
         summarized_job_desc = ""
         summarized_job_desc = summarized_job_desc + "Company Name: " + job_dct["Company Name"] + "\n"
         summarized_job_desc = summarized_job_desc + "Job Title: " + job_dct["Job Title"] + "\n"
@@ -1472,7 +1481,7 @@ def main():
     
     # Save Output CV Button (initially disabled)
     global desired_job_title_checkbox_var, desired_job_title_textbox
-    global summarized_job_desc, summarized_resume
+    global summarized_job_desc, summarized_resume, summarized_job_desc_dct
     global current_cl_text
     global tailor_cl_button
     global save_output_cv_button
@@ -1521,6 +1530,7 @@ def main():
     cl_templates = []
 
     summarized_job_desc = ""
+    summarized_job_desc_dct = {}
     summarized_resume = ""
 
     # models = options[0]

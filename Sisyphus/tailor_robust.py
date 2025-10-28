@@ -3002,7 +3002,7 @@ def tailor_experiences(call_info = template_call_info):
                             "ollama_url": ollama_url,
                             "format": {
                                 "experience": first_part_text,
-                                "job_keywords": keywords,
+                                #"job_keywords": keywords,
                             },
                             "payload_in":{
                                 "system":payload_in["system"],
