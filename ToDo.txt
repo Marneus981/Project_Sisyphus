@@ -12,10 +12,14 @@
                                     Fill best till max AI or Fill with algo threshold
                                     If remaining spaces, fill with opposite
                                     (Maybe, fill in last with preferences
-
+                    for skills make a toggle for feeding all skills vs just the ones from selected expereinces
                 [5]Tune pruning algo:
                     consider omitting title/desc matching
                     change selection function
+                    give in precision parameter for ai generation
+                    amybe make dynamic algorithm importance? ai vs algo vs pref vs copy
+                    revise tags and skills from cv
+                    when appending ai/copy skills, check they are not present anywhere else
                 [NOTES]
                     [TACKLED?]
                         Check explicit declaration of Javscript usage.

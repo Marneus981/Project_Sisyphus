@@ -973,8 +973,8 @@ def process_job_desc(job_desc):
     job_lines = job_desc.splitlines()
     keywords_list = []
     for line in job_lines:
-        line = line.lower()
-        if "keywords:" in line:
+        tmp_line = line.lower()
+        if "keywords:" in tmp_line:
             split_line = line.split(":",1)
             if len(split_line)>1:
                 keywords = split_line[1].split(",")
@@ -1428,8 +1428,8 @@ def experience_pruning_algorithm(job_desc,text,v_list,w_list,p_list):
                 sorted_p_list.insert(0, item_to_rmv)
     #Assume max>=3*min
     return_list = []
-    max_allowed = CONFIG["PRUNING"]["BASE_PRUNE"]
-    section_min = CONFIG["PRUNING"]["SECTION_MIN"]
+    max_allowed = CONFIG["PRUNING"]["NO_EXPERIENCES"]["MAX"]
+    section_min = CONFIG["PRUNING"]["NO_EXPERIENCES"]["PER_SECTION"]
     if section_min > 0 :
         if len(sorted_v_list) >0:
             if section_min > len(sorted_v_list):
@@ -1571,26 +1571,48 @@ def skill_pruning_algorithm(job_desc, list_to_prune, type = "programming_languag
         paired_list_heuristic.append((list_to_prune[i],list_heuristic[i]))
     sorted_list_heuristic = sorted(paired_list_heuristic,key=itemgetter(1), reverse=True)
     if type == "programming_languages":
-        max_no = int(CONFIG["PRUNING"]["NO_SKILLS"]["PROG"])
+        max_total = CONFIG["PRUNING"]["NO_SKILLS"]["PROG"]
+        max_algo = CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_PROG"]
         prefs = CONFIG["PRUNING"]["PREFS"]["PROG"]
+        prefs_toggle = CONFIG["PRUNING"]["NO_SKILLS"]["PREFERENCES_PROG"]
+        threshold = CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_PROG_TH"]
     elif type == "technical_skills":
-        max_no = int(CONFIG["PRUNING"]["NO_SKILLS"]["TECH"])
+        max_total = CONFIG["PRUNING"]["NO_SKILLS"]["TECH"]
+        max_algo = CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_TECH"]
+        prefs_toggle = CONFIG["PRUNING"]["NO_SKILLS"]["PREFERENCES_TECH"]
         prefs = CONFIG["PRUNING"]["PREFS"]["TECH"]
+        threshold = CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_TECH_TH"]
     elif type == "soft_skills":
-        max_no = int(CONFIG["PRUNING"]["NO_SKILLS"]["SOFT"])
+        max_total = CONFIG["PRUNING"]["NO_SKILLS"]["SOFT"]
+        max_algo = CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_SOFT"]
         prefs = CONFIG["PRUNING"]["PREFS"]["SOFT"]
+        prefs_toggle = CONFIG["PRUNING"]["NO_SKILLS"]["PREFERENCES_SOFT"]
+        threshold = CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_SOFT_TH"]
     else:
         raise  ValueError(f"[ERROR]{function_name}: invalid list type")
+    if max_total < 0 or max_algo < 0 or threshold < 0 :
+        raise  ValueError(f"[ERROR]{function_name}: max_total, max_algo, threshold cannot be < 0")
     paired_prefs = []
-    for pref in reversed(prefs):
-        paired_prefs.append((pref,1000.0))     
+    if prefs_toggle:
+        for pref in reversed(prefs):
+            paired_prefs.append((pref,1000.0))     
     off_set = 0
     for i in range(0,len(sorted_list_heuristic)):
-        if sorted_list_heuristic[i-off_set][0] in prefs:
-            sorted_list_heuristic.remove(sorted_list_heuristic[i])
+        if sorted_list_heuristic[i-off_set][0] in prefs or sorted_list_heuristic[i-off_set][1]< threshold:
+            sorted_list_heuristic.remove(sorted_list_heuristic[i-off_set])
             off_set = off_set+1
-    paired_list = deepcopy(paired_prefs) +  deepcopy(sorted_list_heuristic)
-    return deepcopy(paired_list[:max_no])
+    if max_algo < len(sorted_list_heuristic): max_algo = max_algo
+    else:max_algo = len(sorted_list_heuristic)
+    if max_algo>0:
+        paired_list = deepcopy(paired_prefs) +  deepcopy(sorted_list_heuristic[:max_algo])
+    else:
+        paired_list = deepcopy(paired_prefs)
+    if max_total < len(paired_list): max_no = max_total
+    else: max_no = len(paired_list)
+    if max_no > 0 :
+        return deepcopy(paired_list[:max_no])
+    else:
+        return([])
 
 def tailor_skills_robust(call_info = template_call_info):
     call_id = call_info["call_id"]
@@ -1609,10 +1631,13 @@ def tailor_skills_robust(call_info = template_call_info):
     system_text = payload_in["system"]
     cv_data = format["cv_data"]
     job_description = format["job_description"]
-    no_skills =format["no_skills"]
-    no_prog = format["no_prog"]
-    no_tech = format["no_tech"]
-    no_soft = format["no_soft"]
+    job_description_dct = format["job_description_dct"]
+    # no_skills =format["no_skills"]
+    # no_prog = format["no_prog"]
+    # no_tech = format["no_tech"]
+    # no_soft = format["no_soft"]
+
+    #AI GENERATION (FILLER)
     runtime_info_temp = {
         "call_id": standard_call,
         "payload_in": {
@@ -1622,10 +1647,10 @@ def tailor_skills_robust(call_info = template_call_info):
         "format": {
             "cv_data": cv_data,
             "job_description": job_description,
-            "no_skills": no_skills,#on config, set on main
-            "no_prog":no_prog,#on config, set on main
-            "no_tech":no_tech,#on config, set on main
-            "no_soft":no_soft,#on config, set on main
+            # "no_skills": no_skills,#on config, set on main
+            # "no_prog":no_prog,#on config, set on main
+            # "no_tech":no_tech,#on config, set on main
+            # "no_soft":no_soft,#on config, set on main
         },
         "ollama_url":ollama_url
     }
@@ -1642,6 +1667,8 @@ def tailor_skills_robust(call_info = template_call_info):
         print(f"{sk_ollama}")
     sk_ollama_dct = parsers.parse_cv_out(sk_ollama)
     skills_dct = parsers.parse_cv_out(cv_data)
+    
+    #ALGORITHMIC PRUNING (MAIN)
     prog_list = skills_dct["skills"]["programming_languages"]
     tech_list = skills_dct["skills"]["technical_skills"]
     soft_list = skills_dct["skills"]["soft_skills"]
@@ -1677,136 +1704,107 @@ def tailor_skills_robust(call_info = template_call_info):
             "soft_skills":deepcopy(soft_list_pruned)
         }
     }
-    new_pruning_dct = deepcopy(sk_pruning_dct)
-    malicious_compliance_dct = CONFIG["PRUNING"]["MALICIOUS_COMPLIANCE_SK"]
-    #Create new pruned lists without ollama chosen skills to avoid duplicates
+    #PREFS + ALGO: sk_pruning_dct; NEXT: Add skills from job description if toggled
+    prog_settings = {
+        "type": "programming_languages",
+        "max":CONFIG["PRUNING"]["NO_SKILLS"]["PROG"],
+        # "pref":CONFIG["PRUNING"]["NO_SKILLS"]["PREFERENCES_PROG"],
+        # "algo_max":CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_PROG"],
+        # "threshold":CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_PROG_TH"]
+        "copy": CONFIG["PRUNING"]["NO_SKILLS"]["COPY_PROG"],
+        "copy_len": CONFIG["PRUNING"]["NO_SKILLS"]["COPY_LEN_PROG"]  
+    }
+    tech_settings = {
+        "type":"technical_skills",
+        "max":CONFIG["PRUNING"]["NO_SKILLS"]["TECH"],
+        # "pref":CONFIG["PRUNING"]["NO_SKILLS"]["PREFERENCES_TECH"],
+        # "algo_max":CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_TECH"],
+        # "threshold":CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_TECH_TH"]
+       "copy": CONFIG["PRUNING"]["NO_SKILLS"]["COPY_TECH"],
+       "copy_len": CONFIG["PRUNING"]["NO_SKILLS"]["COPY_LEN_TECH"]   
+    }
+    soft_settings = {
+        "type": "soft_skills",
+        "max":CONFIG["PRUNING"]["NO_SKILLS"]["SOFT"],
+        # "pref":CONFIG["PRUNING"]["NO_SKILLS"]["PREFERENCES_SOFT"],
+        # "algo_max":CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_SOFT"],
+        # "threshold":CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_SOFT_TH"]
+        "copy": CONFIG["PRUNING"]["NO_SKILLS"]["COPY_SOFT"],
+        "copy_len": CONFIG["PRUNING"]["NO_SKILLS"]["COPY_LEN_SOFT"]  
+    }
+    settings = [prog_settings,tech_settings,soft_settings]
+    for setting in settings:
+        curr_len = len(sk_pruning_dct["skills"][setting["type"]])
+        if setting["copy"] and curr_len<setting["max"]:
+            #We can continue adding
+            if setting["copy_len"]==0:
+                continue
+            non_repeats = []
+            for item in job_description_dct[setting["type"].replace("_"," ").title()]:
+                if item.replace("-","").replace(".","").lower() not in [val[0].replace("-","").replace(".","").lower() for val in sk_pruning_dct["skills"][setting["type"]]]:
+                    non_repeats.append((item,1000.0))
+            if setting["copy_len"]<= setting["max"] - curr_len and setting["copy_len"] > 0 :
+                copy_len = setting["copy_len"]
+            else: copy_len =  setting["max"] - curr_len
+            if len(non_repeats)< copy_len: copy_len = len(non_repeats)
+            else: copy_len = copy_len
+            sk_pruning_dct["skills"][setting["type"]] =  sk_pruning_dct["skills"][setting["type"]] + deepcopy(non_repeats[:copy_len])
+    #AI GEN: new_sk_ollama_dct ; REMOVE DUPLICATES
+    new_sk_ollama_dct = deepcopy(sk_ollama_dct)
     if config.DEBUG["INFO_LOGGING"]: 
         print(f"[INFO]{function_name}: malicious compliance deletion: deleting entries for algorithmic approach if found in ai-powered approach")
-    for prog in sk_ollama_dct["skills"]["programming_languages"]:
-        if prog in new_pruning_dct["skills"]["programming_languages"]:
-            print(f"deleted {str(new_pruning_dct["skills"]["soft_skills"][prog])}")
-            del new_pruning_dct["skills"]["programming_languages"][prog]
-    for tech in sk_ollama_dct["skills"]["technical_skills"]:
-        if tech in new_pruning_dct["skills"]["technical_skills"]:
-            print(f"deleted {str(new_pruning_dct["skills"]["soft_skills"][tech])}")
-            del new_pruning_dct["skills"]["technical_skills"][tech]
-    for soft in sk_ollama_dct["skills"]["soft_skills"]:
-        if soft in new_pruning_dct["skills"]["soft_skills"]:
-            print(f"deleted {str(new_pruning_dct["skills"]["soft_skills"][soft])}")
-            del new_pruning_dct["skills"]["soft_skills"][soft]
+    for prog in sk_pruning_dct["skills"]["programming_languages"]:
+        search_this = prog[0].replace("-","").replace(".","").lower()
+        this_list = [val.replace("-","").replace(".","").lower() for val in new_sk_ollama_dct["skills"]["programming_languages"]]
+        if search_this in this_list:
+            index = this_list.index(search_this)
+            print(f"deleted {str(prog[0])}")
+            del new_sk_ollama_dct["skills"]["programming_languages"][index]
+    for tech in sk_pruning_dct["skills"]["technical_skills"]:
+        search_this =  tech[0].replace("-","").replace(".","").lower()
+        this_list = [val.replace("-","").replace(".","").lower() for val in new_sk_ollama_dct["skills"]["technical_skills"]]
+        if search_this in this_list:
+            index = this_list.index(search_this)
+            print(f"deleted {str(tech[0])}")
+            del new_sk_ollama_dct["skills"]["technical_skills"][index]
+    for soft in sk_pruning_dct["skills"]["soft_skills"]:
+        search_this =soft[0].replace("-","").replace(".","").lower()
+        this_list = [val.replace("-","").replace(".","").lower() for val in new_sk_ollama_dct["skills"]["soft_skills"]]
+        if search_this in this_list:
+            index = this_list.index(search_this)
+            print(f"deleted {str(soft[0])}")
+            del new_sk_ollama_dct["skills"]["soft_skills"][index]
     if config.DEBUG["INFO_LOGGING"]: 
         print(f"[INFO]{function_name}: malicious compliance deletion: completed:")
-        print(f"[INFO]{function_name}: new_pruning_dct[skills][programming_languages]:")
-        for p in new_pruning_dct["skills"]["programming_languages"]:
+        print(f"[INFO]{function_name}: new_sk_ollama_dct[skills][programming_languages]:")
+        for p in new_sk_ollama_dct["skills"]["programming_languages"]:
             print(str(p))
-        print(f"[INFO]{function_name}: new_pruning_dct[skills][technical_skills]::")
-        for t in new_pruning_dct["skills"]["technical_skills"]:
+        print(f"[INFO]{function_name}: new_sk_ollama_dct[skills][technical_skills]::")
+        for t in new_sk_ollama_dct["skills"]["technical_skills"]:
             print(str(t))
-        print(f"[INFO]{function_name}: new_pruning_dct[skills][soft_skills]:")
-        for s in new_pruning_dct["skills"]["soft_skills"]:
+        print(f"[INFO]{function_name}: new_sk_ollama_dct[skills][soft_skills]:")
+        for s in new_sk_ollama_dct["skills"]["soft_skills"]:
             print(str(s))
-
-
+    #LAST: Fill with AI
     return_dct = {}
     return_dct["skills"] = {}
-    if config.DEBUG["INFO_LOGGING"]: 
-        print(f"[INFO]{function_name}: applying selection protocols:")
-    for setting in malicious_compliance_dct:
-        status = malicious_compliance_dct[setting]["STATUS"]
-        no = malicious_compliance_dct[setting]["NO"]
-        if config.DEBUG["INFO_LOGGING"]: 
-            print(f"[INFO]{function_name}: setting {setting}: status: {status}; no of max ai-generated skills: {no};")
-        if status == True:   
-            if no == "all":
-                if config.DEBUG["INFO_LOGGING"]: 
-                    print(f"[INFO]{function_name}: no of max ai-generated skills is 'all'; returning all ai-generated skills for {setting}")
-                if setting == "PROG":
-                    curr_no = len(sk_ollama_dct["skills"]["programming_languages"])
-                    if curr_no > int(no_prog):
-                        curr_no = int(no_prog)
-                    return_dct["skills"]["programming_languages"] = deepcopy(sk_ollama_dct["skills"]["programming_languages"][:curr_no])
-                elif setting == "TECH":
-                    curr_no = len(sk_ollama_dct["skills"]["technical_skills"])
-                    if curr_no > int(no_tech):
-                        curr_no = int(no_tech)
-                    return_dct["skills"]["technical_skills"] = deepcopy(sk_ollama_dct["skills"]["technical_skills"][:curr_no])
-                elif setting == "SOFT":
-                    curr_no = len(sk_ollama_dct["skills"]["soft_skills"])
-                    if curr_no > int(no_soft):
-                        curr_no = int(no_soft)
-                    return_dct["skills"]["soft_skills"] = deepcopy(sk_ollama_dct["skills"]["soft_skills"][:curr_no])
+    for setting in settings:
+        return_algo = []
+        for tuple_item in sk_pruning_dct["skills"][setting["type"]]:
+            print(f"appended {tuple_item[0]}")
+            return_algo.append(tuple_item[0])
+        print(f"type: {setting["type"]}; return_algo: {str(return_algo)}")
+
+        if len(sk_pruning_dct["skills"][setting["type"]]) < setting["max"]:
+            #We fill with AI
+            return_algo =  return_algo + deepcopy(new_sk_ollama_dct["skills"][setting["type"]])
+            ##############
+            if len(return_algo) > setting["max"]:
+                return_dct["skills"][setting["type"]] = deepcopy(return_algo[:setting["max"]])
             else:
-                if config.DEBUG["INFO_LOGGING"]: 
-                    print(f"[INFO]{function_name}: no of max ai-generated skills is '{no}'; returning first {no} ai-generated skills for {setting}; filling with algorithm selected skills")
-                no = int(no)
-                if setting == "PROG":
-                    max_no = int(no_prog)
-                    ollama_curr_no = len(sk_ollama_dct["skills"]["programming_languages"])
-                    if ollama_curr_no > no:
-                        if config.DEBUG["INFO_LOGGING"]: 
-                            print(f"[INFO]{function_name}: no of max ai-generated skills is less than current length of ai-generated skills; setting no as max number of ai-generated skills")
-                        ollama_curr_no = no
-                    if ollama_curr_no > max_no:
-                        if config.DEBUG["INFO_LOGGING"]: 
-                            print(f"[INFO]{function_name}: max ai-generated skills is more than max skills for {setting}; setting max skills to config-set max skills")
-                        ollama_curr_no = max_no
-                    pruning_curr_no = len(new_pruning_dct["skills"]["programming_languages"])
-                    if ollama_curr_no + pruning_curr_no > max_no:
-                        pruning_curr_no = max_no - ollama_curr_no
-                    return_dct["skills"]["programming_languages"] = deepcopy(sk_ollama_dct["skills"]["programming_languages"][:ollama_curr_no])+deepcopy(new_pruning_dct["skills"]["programming_languages"][:pruning_curr_no])
-
-                elif setting == "TECH":
-                    max_no = int(no_tech)
-                    ollama_curr_no = len(sk_ollama_dct["skills"]["technical_skills"])
-                    if ollama_curr_no > no:
-                        if config.DEBUG["INFO_LOGGING"]: 
-                            print(f"[INFO]{function_name}: no of max ai-generated skills is less than current length of ai-generated skills; setting no as max number of ai-generated skills")
-                        ollama_curr_no = no
-                    if ollama_curr_no > max_no:
-                        if config.DEBUG["INFO_LOGGING"]: 
-                            print(f"[INFO]{function_name}: max ai-generated skills is more than max skills for {setting}; setting max skills to config-set max skills")
-                        ollama_curr_no = max_no
-                    pruning_curr_no = len(new_pruning_dct["skills"]["technical_skills"])
-                    if ollama_curr_no + pruning_curr_no > max_no:
-                        pruning_curr_no = max_no - ollama_curr_no
-                    return_dct["skills"]["technical_skills"] = deepcopy(sk_ollama_dct["skills"]["technical_skills"][:ollama_curr_no])+deepcopy(new_pruning_dct["skills"]["technical_skills"][:pruning_curr_no])
-
-                elif setting == "SOFT":
-                #return first "no" of ai generated lists, then fill with algo lists (within limits)
-                    max_no = int(no_soft)
-                    ollama_curr_no = len(sk_ollama_dct["skills"]["soft_skills"])
-                    if ollama_curr_no > no:
-                        if config.DEBUG["INFO_LOGGING"]: 
-                            print(f"[INFO]{function_name}: no of max ai-generated skills is less than current length of ai-generated skills; setting no as max number of ai-generated skills")
-                        ollama_curr_no = no
-                    if ollama_curr_no > max_no:
-                        if config.DEBUG["INFO_LOGGING"]: 
-                            print(f"[INFO]{function_name}: max ai-generated skills is more than max skills for {setting}; setting max skills to config-set max skills")
-                        ollama_curr_no = max_no
-                    pruning_curr_no = len(new_pruning_dct["skills"]["soft_skills"])
-                    if ollama_curr_no + pruning_curr_no > max_no:
-                        pruning_curr_no = max_no - ollama_curr_no
-                    return_dct["skills"]["soft_skills"] = deepcopy(sk_ollama_dct["skills"]["soft_skills"][:ollama_curr_no])+deepcopy(new_pruning_dct["skills"]["soft_skills"][:pruning_curr_no])
-
+                return_dct["skills"][setting["type"]] = deepcopy(return_algo)
         else:
-            if config.DEBUG["INFO_LOGGING"]: 
-                print(f"[INFO]{function_name}: setting found to have False status; returning only algorithm-selescted skills:")
-            if setting == "PROG":
-                curr_no = len(sk_pruning_dct["skills"]["programming_languages"])
-                if curr_no >= int(no_prog):
-                    curr_no = int(no_prog)
-                return_dct["skills"]["programming_languages"] = deepcopy(sk_pruning_dct["skills"]["programming_languages"][:curr_no])
-            elif setting == "TECH":
-                curr_no = len(sk_pruning_dct["skills"]["technical_skills"])
-                if curr_no >= int(no_tech):
-                    curr_no = int(no_tech)
-                return_dct["skills"]["technical_skills"] = deepcopy(sk_pruning_dct["skills"]["technical_skills"][:curr_no])
-            elif setting == "SOFT":
-                curr_no = len(sk_pruning_dct["skills"]["soft_skills"])
-                if curr_no >= int(no_soft):
-                    curr_no = int(no_soft)
-                return_dct["skills"]["soft_skills"] = deepcopy(sk_pruning_dct["skills"]["soft_skills"][:curr_no])
-            #return algo decided lists (they are already compliantwith limits)
+            return_dct["skills"][setting["type"]] = deepcopy(return_algo[:setting["max"]])
     return_txt = parsers.inv_parse_cv_out(return_dct)
     if config.DEBUG["INFO_LOGGING"]: 
             print(f"[INFO]{function_name}: final output:")
@@ -1963,7 +1961,7 @@ def course_pruning_algorithm(job_desc, course_list):
         if item not in unique:
             unique.add(item)
             return_list_final.append(item)
-    max_courses = CONFIG["PRUNING"]["NO_COURSES"]
+    max_courses = CONFIG["PRUNING"]["NO_COURSES"]["MAX"]
     return return_list_final[:int(max_courses)]
 
 def tailor_courses_robust(call_info = template_call_info): 

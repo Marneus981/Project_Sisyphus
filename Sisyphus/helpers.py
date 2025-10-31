@@ -250,14 +250,14 @@ def revise_list_section(new_list_section_text = "", og_pref = {}, type = "course
         return_list = [[],[],[]]
         for i in range(0,len(ogs)):
             if DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: current i: {i}")
-            if (i == 0 and CONFIG["PRUNING"]["CUSTOM_SKILLS"]["PROG"]):
+            if (i == 0 and CONFIG["PRUNING"]["NO_SKILLS"]["COPY_PROG"]):
                 if DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: i: set ogs: {str(currs[i])} to i = {i}")
                 return_list[i] = deepcopy(currs[i])
                 continue
-            elif (i == 1 and CONFIG["PRUNING"]["CUSTOM_SKILLS"]["TECH"]):
+            elif (i == 1 and CONFIG["PRUNING"]["NO_SKILLS"]["COPY_TECH"]):
                 return_list[i] = deepcopy(currs[i])
                 continue
-            elif (i == 2 and CONFIG["PRUNING"]["CUSTOM_SKILLS"]["SOFT"]):
+            elif (i == 2 and CONFIG["PRUNING"]["NO_SKILLS"]["COPY_SOFT"]):
                 return_list[i] = deepcopy(currs[i])
                 continue
             if ogs[i] == [] or currs[i] == []:

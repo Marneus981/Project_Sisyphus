@@ -718,10 +718,10 @@ INPUTjob description:
         "format": {
             "cv_data": "",
             "job_description": "",
-            "no_skills":12,
-            "no_prog":3,
-            "no_tech":5,
-            "no_soft":4,
+            # "no_skills":12,
+            # "no_prog":3,
+            # "no_tech":5,
+            # "no_soft":4,
             "prefix_dict": {
                 "Programming Languages:":["[1]", True],
                 "Technical Skills:":["[1]", True],
@@ -733,14 +733,15 @@ INPUTjob description:
         },
         "prompt_in": 
 """REQUEST:
-Given a job description:
-Extract relevant "Programming Language","Technical Skills", and "Soft Skills" following the guidelines below:
+Given a job description and the "Skills" section from a resume:
+Extract the "Programming Languages","Technical Skills", and "Soft Skills" relevant to the INPUT job description from the INPUT "Skills" resume section,following the guidelines below:
 - Do not line break any line containing the relevant skills, it should follow the format below strictly.
 - If either the "Programming Languages", "Technical Skills", or "Soft Skills" sections are empty (which means no relevant skills of said cathegory were found), return them as an empty section (without any extra text to denote its empty status).
 - Aside from the information requested, do not include any additional text or explanations.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 - Do not break down any OUTPUT FORMAT lines into multiple instances(e.g. do not output 2 lines labeled "Technical Skills:", one is sufficient as per the format)
+- The skills you extract MUST be present in the INPUT "Skills" resume section.
 
 OUTPUT FORMAT:
 Skills:
@@ -752,6 +753,9 @@ Soft Skills: comma-separated list of Soft Skills required by job description
 INPUT:
 INPUT job description:
 {job_description}
+
+INPUT "Skills" section from resume:
+{cv_data}
 
 """,
         "ollama_url": DEFAULT_URL,
@@ -1064,10 +1068,11 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
         "format": {
             "cv_data": "",
             "job_description": "",
-            "no_skills":12,
-            "no_prog":3,
-            "no_tech":5,
-            "no_soft":4,
+            # "no_skills":12,
+            # "no_prog":3,
+            # "no_tech":5,
+            # "no_soft":4,
+            "job_description_dct": {},
             "prefix_dict": {
                 "Programming Languages:":["[1]", True],
                 "Technical Skills:":["[1]", True],

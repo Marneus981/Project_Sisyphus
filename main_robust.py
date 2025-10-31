@@ -107,8 +107,8 @@ def check_summaries(update_job_desc = False, update_resume = False):
                             tmp_val = value.replace("-","").replace(".","").strip().lower()
                             if len(tmp_val) == 1 or "none" in tmp_val:
                                 continue
-                            if tmp_val not in job_dct["Programming Languages"]:
-                                job_dct["Programming Languages"].append(tmp_val)
+                            if tmp_val not in [val.replace("-","").replace(".","").strip().lower() for val in job_dct["Programming Languages"]]:
+                                job_dct["Programming Languages"].append(value)
                 elif "Technical Skills" in tmp_line:
                     data = tmp_line.replace("[0]Technical Skills:", "").strip()
                     if data != "":
@@ -117,8 +117,8 @@ def check_summaries(update_job_desc = False, update_resume = False):
                             tmp_val = value.replace("-","").replace(".","").strip().lower()
                             if len(tmp_val) == 1 or "none" in tmp_val:
                                 continue
-                            if tmp_val not in job_dct["Technical Skills"]:
-                                job_dct["Technical Skills"].append(tmp_val)
+                            if tmp_val not in [val.replace("-","").replace(".","").strip().lower() for val in job_dct["Technical Skills"]]:
+                                job_dct["Technical Skills"].append(value)
                 elif "Soft Skills" in tmp_line:
                     data = tmp_line.replace("[0]Soft Skills:", "").strip()
                     if data != "":
@@ -127,8 +127,8 @@ def check_summaries(update_job_desc = False, update_resume = False):
                             tmp_val = value.replace("-","").replace(".","").strip().lower()
                             if len(tmp_val) == 1 or "none" in tmp_val:
                                 continue
-                            if tmp_val not in job_dct["Soft Skills"]:
-                                job_dct["Soft Skills"].append(tmp_val)
+                            if tmp_val not in [val.replace("-","").replace(".","").strip().lower() for val in job_dct["Soft Skills"]]:
+                                job_dct["Soft Skills"].append(value)
                 elif "Keywords" in tmp_line:
                     data = tmp_line.replace("[0]Keywords:", "").strip()
                     if data != "":
@@ -137,8 +137,8 @@ def check_summaries(update_job_desc = False, update_resume = False):
                             tmp_val = value.replace("-","").replace(".","").strip().lower()
                             if len(tmp_val) == 1 or "none" in tmp_val:
                                 continue
-                            if tmp_val not in job_dct["Keywords"]:
-                                job_dct["Keywords"].append(tmp_val)
+                            if tmp_val not in [val.replace("-","").replace(".","").strip().lower() for val in job_dct["Keywords"]]:
+                                job_dct["Keywords"].append(value)
         summarized_job_desc_dct = deepcopy(job_dct)
         summarized_job_desc = ""
         summarized_job_desc = summarized_job_desc + "Company Name: " + job_dct["Company Name"] + "\n"
@@ -355,7 +355,7 @@ def batch_application_packages(root, benchmark = False, cv = True, cl = True):
 
 @log_time
 def tailor_cv(root, show = True):
-    global summarized_job_desc, summarized_resume
+    global summarized_job_desc, summarized_resume, summarized_job_desc_dct
     global tailor_cl_button
     global result_window, result_textbox, show_output_cv_button, save_output_cv_button, save_current_cv_text_button
     global format_check_current_cv_button, filter_output_cv_button, current_cv_text
@@ -743,10 +743,11 @@ def tailor_cv(root, show = True):
             "format": {
                 "cv_data": sk_text,
                 "job_description": job_desc,
-                "no_skills": CONFIG["PRUNING"]["NO_SKILLS"]["TOTAL"],
-                "no_prog":CONFIG["PRUNING"]["NO_SKILLS"]["PROG"],
-                "no_tech":CONFIG["PRUNING"]["NO_SKILLS"]["TECH"],
-                "no_soft":CONFIG["PRUNING"]["NO_SKILLS"]["SOFT"],
+                # "no_skills": CONFIG["PRUNING"]["NO_SKILLS"]["TOTAL"],
+                # "no_prog":CONFIG["PRUNING"]["NO_SKILLS"]["PROG"],
+                # "no_tech":CONFIG["PRUNING"]["NO_SKILLS"]["TECH"],
+                # "no_soft":CONFIG["PRUNING"]["NO_SKILLS"]["SOFT"],
+                "job_description_dct": summarized_job_desc_dct
             }
         }
         func = getattr(tailor_robust, ollama_func_name)

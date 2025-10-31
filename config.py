@@ -18,37 +18,82 @@ CONFIG = {
         "SOUND": True
     },
     "MODELS": {
-        "TEMPERATURE": 0.8,
+        "TEMPERATURE": 0.1,
         "RETRIES": 2
     },
     "PRUNING": {
+        
+        # "MALICIOUS_COMPLIANCE_SK":{
+        #     "PROG":{
+        #         "STATUS":False,
+        #         "NO":"1"
+        #     },
+        #     "TECH":{
+        #         "STATUS":False,
+        #         "NO": "1"
+        #     },
+        #     "SOFT":{
+        #         "STATUS":False,
+        #         "NO":"all"
+        #     },
+        # },
+        # "MALICIOUS_COMPLIANCE_COURSES":{
+        #     "STATUS": False,
+        #     "NO": "3"
+        # },
+        # "CUSTOM_SKILLS": {
+        #     "PROG": False,
+        #     "TECH": False,
+        #     "SOFT": False
+        # },
+        #HEURISTIC FUNCTIONS PER PRUNING ALGORITHM
         #ratio, partial_ratio, toekn_sort_ratio,partial_token_sort_ratio, token_set_ratio
-        "MALICIOUS_COMPLIANCE_SK":{
-            "PROG":{
-                "STATUS":False,
-                "NO":"1"
-            },
-            "TECH":{
-                "STATUS":False,
-                "NO": "1"
-            },
-            "SOFT":{
-                "STATUS":False,
-                "NO":"all"
-            },
-        },
-        "MALICIOUS_COMPLIANCE_COURSES":{
-            "STATUS": False,
-            "NO": "3"
-        },
         "DISTANCE_ALGO_KEY": "token_set_ratio", 
         "DISTANCE_ALGO_DESC": "token_set_ratio",
         "DISTANCE_ALGO_PROG":  "token_set_ratio",
         "DISTANCE_ALGO_TECH":  "token_set_ratio",
         "DISTANCE_ALGO_SOFT":  "token_set_ratio",
         "DISTANCE_ALGO_COURSES": "token_set_ratio",
-        "BASE_PRUNE": 5,
-        "SECTION_MIN": 1,
+        #PARAMETERS TO CONTROL NUMBER OF EXPERIENCES
+        # "MAX_EXPERIENCES": 5,
+        # "PER_SECTION_MIN": 1,
+        #PARAMETERS TO CONTROL NUMBER OF COURSES    
+        # "NO_COURSES":"5",
+        #PARAMETERS TO CONTROL NUMBER OF SKILLS    
+        "NO_SKILLS":{
+            "PROG": 3,
+            "TECH": 5,
+            "SOFT":4,
+            "PREFERENCES_PROG":False,
+            "PREFERENCES_TECH":False,
+            "PREFERENCES_SOFT":False,
+            "ALGO_PROG":2, #AI always fills rest unless ALGO >= MAX
+            "ALGO_TECH":2, #AI always fills rest unless ALGO >= MAX
+            "ALGO_SOFT":2, #AI always fills rest unless ALGO >= MAX
+            "ALGO_PROG_TH": 1.0,
+            "ALGO_TECH_TH": 1.0,
+            "ALGO_SOFT_TH": 1.0,
+            "COPY_PROG": True,#Toggle copy from job description
+            "COPY_LEN_PROG":1,
+            "COPY_TECH":True, #Toggle copy from job description
+            "COPY_LEN_TECH":1,
+            "COPY_SOFT":True, #Toggle copy from job description
+            "COPY_LEN_SOFT":1,
+        },
+        "NO_COURSES":{
+            "MAX":5,
+            "PREFERENCES":False,
+            "ALGO":2, #AI always fills rest unless ALGO >= MAX
+            "ALGO_TH":1.0
+        },
+        "NO_EXPERIENCES":{
+            "MAX":5,
+            "PER_SECTION": 1,
+            "PREFERENCES": False,
+            "ALGO":2, #AI always fills rest unless ALGO >= MAX
+            "ALGO_TH": 1.0
+        },
+        #WEIGHTS
         "EXP_H_WEIGHTS": {
             "EXP": 1.0,
             "DESC":1.0,
@@ -59,12 +104,14 @@ CONFIG = {
         "PROG_H_WEIGHT": 1.0,
         "TECH_H_WEIGHT": 1.0,
         "SOFT_H_WEIGHT": 1.0,
+        #HEURISTIC OPERATION TYPES
         "EXP_RATING_TYPE": "sum", #or sum or SoM (sum of maxes)
         "PROG_RATING_TYPE": "sum", #or sum or SoM (sum of tmaxes)
         "TECH_RATING_TYPE": "sum", #or sum or SoM (sum of maxes)
         "SOFT_RATING_TYPE": "sum", #or sum or SoM (sum of maxes)
         "COURSES_RATING_TYPE": "max", #or sum or SoM (sum of maxes)
         "COURSES_PRUNING_TYPE": "sum",
+        #THRESHOLDS FOR SIMILARITY (SET TO 0 IF BELOW SAID NUMBER)
         "THRESHOLDS":{
             "PROG": 70.0,
             "TECH": 70.0,
@@ -72,6 +119,7 @@ CONFIG = {
             "EXP": 70.0,
             "COURSES": 70.0
         },
+        #TAKE HIGHEST OF HEURISTICS WHEN APPLIED BOTH WAYS
         "DUAL_SCORING":{ #take highest score when performing the DISTANCE_ALGO both ways
             "PROG": True,
             "TECH": True,
@@ -79,18 +127,7 @@ CONFIG = {
             "EXP": True,
             "COURSES": True
         },
-        "NO_COURSES":"5",
-        "NO_SKILLS":{
-            "TOTAL":"12",
-            "PROG": "3",
-            "TECH": "5",
-            "SOFT":"4"
-        },
-        "CUSTOM_SKILLS": {
-            "PROG": False,
-            "TECH": False,
-            "SOFT": False
-        },
+        #PREFERRED ITEMS PER CATHEGORY
         "PREFS":{
             "V": [
             ],
@@ -107,6 +144,7 @@ CONFIG = {
 
         }
     },
+    #COURSE TAGS
     "TAGS":{
         "COURSES":{
             ##Insert course tags for all your degrees
