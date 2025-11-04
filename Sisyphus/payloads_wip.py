@@ -964,7 +964,7 @@ INPUT job description the aforementioned resume has been tailored to:
         "format": {
             "courses": "",
             "job_description": "",
-            "no_courses": 5,
+            "no_courses": 10,
             "prefix_dict" : {
                 "Courses:":["[1]",True],
                 "Dummy:" : ["[BIG DUMMY]"]
@@ -1009,6 +1009,7 @@ INPUT job description:
         "format": {
             "courses": "",
             "job_description": "",
+            "standard_calls": ["tailor_courses"], 
             "prefix_dict" : {
                 "Courses:":["[1]",True],
                 "Dummy:" : ["[BIG DUMMY]"]

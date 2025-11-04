@@ -289,7 +289,7 @@ def missing_format_pieces(prompt,format):
             if temp_match in format:
                 print(f"[INFO]{function_name}: regex match '{temp_match}'")
                 print(f"[INFO]{function_name}: regex match format value '{format[temp_match]}'")
-                if format[temp_match].strip() == "":
+                if str(format[temp_match]).strip() == "":
                     raise ValueError(f"[ERROR]{function_name}: regex match '{temp_match}' is empty")
                 
 def process_input(filled_prompt):

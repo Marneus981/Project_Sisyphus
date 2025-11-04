@@ -1868,11 +1868,14 @@ def course_heuristics(scored_course_dct, keywords):
         no_tags = len(heuristic_course_dct[course])
         if no_tags > 0:#always itself
             for tag in heuristic_course_dct[course]:
+                non_zero_keywords = 0
                 for i in range(0,len(heuristic_course_dct[course][tag])):
                     if heuristic_course_dct[course][tag][i] < threshold:
                         heuristic_course_dct[course][tag][i] = 0.0
+                    else:
+                        non_zero_keywords = non_zero_keywords + 1
                 print(str(heuristic_course_dct[course][tag]))
-                no_keywords = len(heuristic_course_dct[course][tag])
+                no_keywords = non_zero_keywords
                 if no_keywords > 0 :
                     if heuristic_type == "sum":
                         heuristic_course_dct[course][tag] = sum(heuristic_course_dct[course][tag])/no_keywords
@@ -1927,9 +1930,13 @@ def course_pruning_algorithm(job_desc, course_list):
     #Assign single score to course
     final_score_dct= {}
     pruning_type = config.CONFIG["PRUNING"]["COURSES_PRUNING_TYPE"]
+    threshold = CONFIG["PRUNING"]["THRESHOLDS"]["COURSES"]
     for course in heuristic_courses:
         compare_list = []
         no_tags = len(heuristic_courses[course])
+        for tag in heuristic_courses[course]:
+            if heuristic_courses[course][tag] >= threshold:
+                no_tags = no_tags -1
         if no_tags != 0 :
             for tag in heuristic_courses[course]:
                 compare_list.append(heuristic_courses[course][tag])
@@ -1950,18 +1957,31 @@ def course_pruning_algorithm(job_desc, course_list):
 
     sorted_courses = dict(sorted(final_score_dct.items(), reverse=True))
     sorted_list = []
+    algo_th = CONFIG["PRUNING"]["NO_COURSES"]["ALGO_TH"]
     for course in sorted_courses:
+        if sorted_courses[course]< algo_th:
+            continue
         sorted_list.append(course)
     pref_list_courses = CONFIG["PRUNING"]["PREFS"]["COURSES"]
+    max_algo = CONFIG["PRUNING"]["NO_COURSES"]["ALGO"]
+    if max_algo > len(sorted_list):
+        max_algo = len(sorted_list)
+    sorted_list = sorted_list[:max_algo]
+    if CONFIG["PRUNING"]["NO_COURSES"]["PREFERENCES"]:
 
-    return_list = deepcopy(pref_list_courses) + deepcopy(sorted_list)
-    unique = set()
-    return_list_final = []
-    for item in return_list:
-        if item not in unique:
-            unique.add(item)
-            return_list_final.append(item)
+        return_list = deepcopy(pref_list_courses) + deepcopy(sorted_list)
+        unique = set()
+        return_list_final = []
+        for item in return_list:
+            if item not in unique:
+                unique.add(item)
+                return_list_final.append(item)
+    else:
+        return_list_final = deepcopy(sorted_list)
     max_courses = CONFIG["PRUNING"]["NO_COURSES"]["MAX"]
+    if config.DEBUG["HEURISTIC_LOGGING"]:
+        print(f"[HEURISTIC][COURSES][STEP2]{function_name}:HEURISTIC REPORT")
+        print(f"[HEURISTIC]{function_name}: max_courses: {max_courses}; preferences appended at the start: {str(pref_list_courses)}")
     return return_list_final[:int(max_courses)]
 
 def tailor_courses_robust(call_info = template_call_info): 
@@ -1970,18 +1990,61 @@ def tailor_courses_robust(call_info = template_call_info):
     format = call_info["format"]
     prompt_in = call_info["prompt_in"]
     ollama_url = call_info["ollama_url"]
+    job_description = format["job_description"]
+    courses = format["courses"]
+    standard_call = format["standard_calls"][0]
     function_name = helpers.inspect_function()
+    model = payload_in["model"]
+    system = payload_in["system"]
+    #ALGO (ALGO +PREFS)
     if call_id != function_name:
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}")
         return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} is not {function_name}"
-    courses0 = format["courses"].replace("Courses:","").strip()
+    courses0 = courses.replace("Courses:","").strip()
     courses1 = courses0.split(",")
     for i in range(0,len(courses1)):
         courses1[i]= courses1[i].strip()
-    job_description = format["job_description"]
-    robust_courses0 = course_pruning_algorithm(job_description,courses1)
-    robust_courses1 = "Courses: " + ", ".join(robust_courses0)
-    return robust_courses1
+    algo_courses = course_pruning_algorithm(job_description,courses1)
+    #AI
+    max_courses = CONFIG["PRUNING"]["NO_COURSES"]["MAX"]
+    if len(algo_courses)< max_courses:
+        #fill with AI
+        runtime_info_temp = {
+            "call_id": standard_call,
+            "payload_in": {
+                "model": model,
+                "system": system
+            },
+            "format": {
+                "courses": courses,
+                "job_description": job_description,
+            },
+            "ollama_url":ollama_url
+        }
+        ##
+        courses_ollama_txt = ollama_call(runtime_info=runtime_info_temp)
+        step0 = courses_ollama_txt.replace("[1]Courses:","").strip()
+        if step0 != "":
+            step1 = [item.strip() for item in step0.split(",")]
+        ai_courses = []
+        for item in step1:
+            if step1 != "":
+                ai_courses.append(item)
+        final_courses = list(set(deepcopy(algo_courses) + deepcopy(ai_courses)))
+        if config.DEBUG["HEURISTIC_LOGGING"]:
+            print(f"[HEURISTIC][COURSES][STEP3]{function_name}:HEURISTIC REPORT")
+            print(f"[HEURISTIC]{function_name}: {max_courses-len(algo_courses)} ai_courses appended")
+            print(f"[HEURISTIC]{function_name}: final_courses: {str(final_courses)}")
+            print(f"[HEURISTIC]{function_name}: algo_courses: {str(algo_courses)}")
+            print(f"[HEURISTIC]{function_name}: ai_courses: {str(ai_courses)}")
+
+    else:
+        #do not fill with AI
+        final_courses = deepcopy(algo_courses)
+    if len(final_courses)> max_courses:
+        final_courses = final_courses[:max_courses]
+    return_text = "Courses: " + ", ".join(final_courses)
+    return return_text
     #Input is Courses: ..., ..., ...
         #And job description
     #Output is text Courses: ..., ..., ...
