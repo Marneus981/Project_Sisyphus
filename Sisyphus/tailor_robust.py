@@ -1434,58 +1434,24 @@ def experience_pruning_algorithm(job_desc,text,v_list,w_list,p_list):
                 # simple_sorted_exps.insert(0, item_to_rmv)
                 sorted_p_list.remove(item_to_rmv)
                 # sorted_p_list.insert(0, item_to_rmv)
+    combined_pref_list = pref_list_v + pref_list_w + pref_list_p
     #Now we have a list of sorted experiences, with preferred ones removed from the list but stored in pref_list_x:
     #Two lists: preferred experiences, sorted experiences
-    return_list = []
-    
-    section_min = CONFIG["PRUNING"]["NO_EXPERIENCES"]["PER_SECTION"]
-    pref_and_algo_v = pref_list_v + sorted_v_list
-    pref_and_algo_w = pref_list_w + sorted_w_list
-    pref_and_algo_p = pref_list_p + sorted_p_list
-    #Add per-section minimums first to return list
-    if section_min > 0 :
-        if len(pref_and_algo_v) >0:
-            if section_min > len(pref_and_algo_w):
-                bound = len(pref_and_algo_w)
-            else:
-                bound = section_min
-            return_list = return_list + pref_and_algo_v[:bound]
-        if len(pref_and_algo_w) >0:
-            if section_min > len(pref_and_algo_w):
-                bound = len(pref_and_algo_w)
-            else:
-                bound = section_min
-            return_list = return_list + pref_and_algo_w[:bound]
-        if len(pref_and_algo_p) >0:
-            if section_min > len(pref_and_algo_p):
-                bound = len(pref_and_algo_p)
-            else:
-                bound = section_min
-            return_list = return_list + pref_and_algo_p[:bound]
-    #Fill up to max allowed
-    max_allowed = CONFIG["PRUNING"]["NO_EXPERIENCES"]["MAX"]
-    if max_allowed > CONFIG["PRUNING"]["NO_EXPERIENCES"]["ALGO"]:
-        max_allowed = CONFIG["PRUNING"]["NO_EXPERIENCES"]["ALGO"]
-    curr_ret_len = len(return_list)
-    for item in return_list:
-        if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: return_list before final append: item: '{item}'")
-        if item in simple_sorted_exps:
-            simple_sorted_exps.remove(item)
-    if curr_ret_len > max_allowed:
-        return_list_real = return_list[:max_allowed]
-    elif curr_ret_len == max_allowed:
-        return_list_real = return_list
+    max_algo = CONFIG["PRUNING"]["NO_EXPERIENCES"]["ALGO"]
+    if len(simple_sorted_exps)> max_algo:
+        return_list = combined_pref_list + simple_sorted_exps[:max_algo]
     else:
-        return_list_real = return_list + simple_sorted_exps[:max_allowed-curr_ret_len]
-    for i in range(0, len(return_list_real)):
-        return_list_real[i] = "[E]Experience: " + return_list_real[i]
-    return_txt = "\n".join(return_list_real)
+        return_list = combined_pref_list + simple_sorted_exps
+    #We have a combined list of preferred + algorithm selected experiences(up to max_algo)
+    #min and max will be imposed on STEP1
+    for i in range(0, len(return_list)):
+        return_list[i] = "[E]Experience: " + return_list[i]
+    return_txt = "\n".join(return_list)
     if config.DEBUG["INFO_LOGGING"]:
             print(f"[INFO]{function_name}: pruned text: {return_txt}")
     if config.DEBUG["HEURISTIC_LOGGING"]:
         print(f"[HEURISTIC][EXPERIENCES][STEP0]{function_name}:HEURISTIC REPORT")
-        print(f"[HEURISTIC]{function_name}: section_min: {section_min}; max_allowed: {max_allowed}")
-        print(f"[HEURISTIC]{function_name}: algorithm-selected experiences(v,w,p): {len(sorted_v_list_cpy)}, {len(sorted_w_list_cpy)}, {len(sorted_p_list_cpy)}")
+        print(f"[HEURISTIC]{function_name}: algorithm-selected experiences, including preferrences(v,w,p): {len(sorted_v_list_cpy)}, {len(sorted_w_list_cpy)}, {len(sorted_p_list_cpy)}")
         for item in sorted_v_list_cpy:
             print(f"    [HEURISTIC]{function_name}: sorted v item: '{str(item)}'")
         for item in sorted_w_list_cpy:
@@ -1502,7 +1468,7 @@ def experience_pruning_algorithm(job_desc,text,v_list,w_list,p_list):
             print(f"    [HEURISTIC]{function_name}: preferred p item: '{str(item)}'")
         
 
-        print(f"[HEURISTIC]{function_name}: final pruned experiences count: {len(return_list_real)}")
+        print(f"[HEURISTIC]{function_name}: final pruned experiences count: {len(return_list)}")
         print(f"[HEURISTIC]{function_name}: final pruned experiences:")
         print(f"{return_txt}")
     return return_txt
@@ -2141,19 +2107,47 @@ def prune_experiences(call_info = template_call_info):
     step1 = experience_pruning_algorithm(job_desc = job_description_summary,text = step0,v_list = v_list,w_list = w_list,p_list = p_list)
     step1_ai = ollama_call(runtime_info= runtime_info_temp)
     #step1 = step0_prune_experiences(model=model, system1=system1, ollama_url=ollama_url, experiences=step0, job_description=job_description_summary)
-    if config.DEBUG["HEURISTIC_LOGGING"]: print(f"[HEURISTIC]{function_name}: step1:\n" + step1)
-    if config.DEBUG["HEURISTIC_LOGGING"]: print(f"[HEURISTIC][OLLAMA]{function_name}: step1_ai:\n" + step1_ai)
+    if config.DEBUG["HEURISTIC_LOGGING"]: 
+        print(f"[HEURISTIC]{function_name}: step1:\n" + step1)
+        print(f"[HEURISTIC][OLLAMA]{function_name}: step1_ai:\n" + step1_ai)
     step1_clean = clean_first_step(step1).strip()
     step1_clean_ai = clean_first_step(step1_ai).strip()
+    if config.DEBUG["HEURISTIC_LOGGING"]: 
+        print(f"[HEURISTIC]{function_name}: step1:\n" + step1_clean)
+        print(f"[HEURISTIC][OLLAMA]{function_name}: step1_ai:\n" + step1_clean_ai)
     step1_split = step1_clean.splitlines()
     step1_split_ai = step1_clean_ai.splitlines()
     for line in step1_split:
         if line in step1_split_ai:
             step1_split_ai.remove(line)
-    
-    if len(step1_split) + len(step1_split_ai) < max_exps:
-        max_exps = len(step1_split) + len(step1_split_ai)
-    step1_merged = "\n".join(step1_split) + "\n" +"\n".join(step1_split_ai)
+    step1_list = step1_split + step1_split_ai     
+    #Keep min per section
+    min_per_section = CONFIG["PRUNING"]["NO_EXPERIENCES"]["PER_SECTION"]
+    step1_list_min = []
+    ctr_v= 0 
+    ctr_w= 0 
+    ctr_p= 0 
+    for item in step1_list:
+        if ctr_v == min_per_section and ctr_w == min_per_section and ctr_p == min_per_section:
+            break 
+        temp_item = item.replace("[E]","").strip()
+        if temp_item in v_list and ctr_v < min_per_section:
+            step1_list_min.append(item)
+            ctr_v += 1
+        if temp_item in w_list and ctr_w < min_per_section:
+            step1_list_min.append(item)
+            ctr_w += 1
+        if temp_item in p_list and ctr_p < min_per_section:
+            step1_list_min.append(item)
+            ctr_p += 1
+    step1_remaining = list(set(step1_list) - set(step1_list_min))
+    #Maintain max overall
+
+    step1_merged_list = step1_list_min+step1_remaining
+    if len(step1_merged_list) <= max_exps:
+        max_exps = len(step1_merged_list)
+    step1_merged_list = step1_merged_list[:max_exps]
+    step1_merged = "\n".join(step1_merged_list)
     if config.DEBUG["HEURISTIC_LOGGING"]:
         print(f"[HEURISTIC]{function_name}: algorithm-chosen experiences:{len(step1_split)}; ai-chosen experiences:{len(step1_split_ai)}; max_exps after adjustment:{max_exps}")
         print(f"[HEURISTIC]{function_name}: step1_merged:\n" + step1_merged)
