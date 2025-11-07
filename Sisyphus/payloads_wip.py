@@ -1529,6 +1529,28 @@ INPUT list containing a per-section analysis of the resumes, comparing the synth
                           "[0]Work Experience:", "[1]Job Title:","[1]Company:",
                           "[0]Projects:", "[1]Project Title:","[1]URL:", "[1]Type:"]
     },
+    "prune_experiences_ai": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
+    {
+        "call_id": "prune_experiences_ai", 
+        "payload_in": {"model": DEFAULT_MODEL,
+                       "system": "",
+                       "stream": False,
+                       "temperature": CONFIG["MODELS"]["TEMPERATURE"]}, 
+        "format": {
+            "experiences": "",
+            "job_description_summary": "",
+            "section": "vl_w_p",
+            "reference_dct": {}, #provide system through payload_in
+            "standard_calls": ["step0_prune_experiences"],
+            "prefix_dict":{}
+            }, 
+        "prompt_in": "", #Empty
+        "ollama_url": DEFAULT_URL,
+        "sample_starts": ["flexible", "digits", 
+                          "[0]Volunteering and Leadership:","[1]Role:","[1]Organization:","[1]Location:","[1]Duration:","[1]Description:","[1]Skills:",
+                          "[0]Work Experience:", "[1]Job Title:","[1]Company:",
+                          "[0]Projects:", "[1]Project Title:","[1]URL:", "[1]Type:"]#Might lead to error, check later
+    },
     #ASYNC
     "standard_ollama_call_async": #WIP
     {

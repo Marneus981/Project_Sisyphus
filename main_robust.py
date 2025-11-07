@@ -609,9 +609,9 @@ def tailor_cv(root, show = True):
 
         else:
             print("No experiences section pruned, using original experiences section")
-            tailored_dict['volunteering_and_leadership'] = deepcopy(cv_dict_complete["volunteering_and_leadership"])
-            tailored_dict['work_experience'] = deepcopy(cv_dict_complete["work_experience"])
-            tailored_dict['projects'] = deepcopy(cv_dict_complete["projects"])
+            tailored_dict['volunteering_and_leadership'] = deepcopy(cv_dict_complete.get("volunteering_and_leadership", {}))
+            tailored_dict['work_experience'] = deepcopy(cv_dict_complete.get("work_experience", {}))
+            tailored_dict['projects'] = deepcopy(cv_dict_complete.get("projects", {}))
             cv_text0 = parsers.inv_parse_cv(tailored_dict)
             s_text = helpers.format_output(cv_text0)
 
@@ -645,9 +645,9 @@ def tailor_cv(root, show = True):
         tailored_experiences = tailor_robust.ollama_call(runtime_info=runtime_info_temp, function=func)
         if tailored_experiences:
             tailored_dct = parsers.parse_cv(tailored_experiences)
-            tailored_dict['volunteering_and_leadership'] = deepcopy(tailored_dct["volunteering_and_leadership"])
-            tailored_dict['work_experience'] = deepcopy(tailored_dct["work_experience"])
-            tailored_dict['projects'] = deepcopy(tailored_dct["projects"])
+            tailored_dict['volunteering_and_leadership'] = deepcopy(tailored_dct.get("volunteering_and_leadership", {}))
+            tailored_dict['work_experience'] = deepcopy(tailored_dct.get("work_experience", {}))
+            tailored_dict['projects'] = deepcopy(tailored_dct.get("projects", {}))
             cv_text0 = parsers.inv_parse_cv(tailored_dict)
             s_text = helpers.format_output(cv_text0)
         else:

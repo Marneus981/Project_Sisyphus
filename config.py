@@ -90,7 +90,7 @@ CONFIG = {
             "MAX":5,
             "PER_SECTION": 1,
             "PREFERENCES": False,
-            "ALGO":2, #AI always fills rest unless ALGO >= MAX
+            "ALGO":3, #AI always fills rest unless ALGO >= MAX
             "ALGO_TH": 1.0
         },
         #WEIGHTS
