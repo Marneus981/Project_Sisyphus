@@ -1,0 +1,9 @@
+{
+    "TIME_LOGGING": true,
+    "TOKEN_LOGGING": false,
+    "ERROR_LOGGING": true,
+    "WARNING_LOGGING": true,
+    "INFO_LOGGING": true,
+    "HEURISTIC_LOGGING": true,
+    "PRUNING_LOGGING": true
+}

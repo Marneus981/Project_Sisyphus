@@ -1,58 +1,13 @@
-from config import config
-DEFAULT_MODEL = "llama3:8b"
-DEFAULT_URL = "http://localhost:11434"
-"""
-Call functions: Ollama and Ollama Sync
-    These merge the runtime_info passed by the user and the payloads.PAYLOADS templates
-Runtime Functions: All these
-         These take a merged call_info object (sample_starts used rarely so it is included)
-On ollama functions (not ollama_call or ollama_sync):
-FIRST 5 attributes will be used generally from call_id = {
-        "call_id": "tailor_summary", #ALWAYS PROVIDED
-        "payload_in": {"model": DEFAULT_MODEL, #PROVIDED
-                        "system": "", # #system="", #PROVIDED
-                        "stream": False, #MERGED
-                        "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]}, #MERGED
-        "format": {
-            "info_piece_1": "" or [] or {} #PROVIDED
-            "info_piece_2": "" or [] or {} #PROVIDED
-            ...
-            "standard_calls": [], #MERGED
-            "non_standard_calls": [],#MERGED
-        }, 
-        "prompt_in": "", #USUALLY MERGED, SOMETIMES COULD BE EMPTY/PROVIDED
-        "ollama_url": DEFAULT_URL, #PROVIDED
-        "sample_starts": [] #MERGED
-    },
-Provided means that these attrubutes must be provided to ollama_call or ollama_call_async as
-runtime_info objects. Merged fields will be fetched from payloads.PAYLOADS
-"""
-
-"""
-Prompt Format:
-
-REQUEST:
-
-OUTPUT FORMAT:
-
-INPUT:
-
-- Return the requested information, strictly filling out the OUTPUT FORMAT.
-field mode (digits/cap_letters) will be vestigial in next commit.
-
-
-"""
-
 PAYLOADS= {
     # STANDARD CALLS
     "consistency_checker_vs_cv_cl": #DONE
     {
         "call_id": "consistency_checker_vs_cv_cl", 
         "payload_in": {
-                       "model": DEFAULT_MODEL, #Set at runtime
+                       "model": "llama3:8b", #Set at runtime
                        "system": "",  #Set at runtime
                        "stream": False,
-                       "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]
+                       "temperature": 0.7
                        },
         "format": {#Set at runtime
                    "cv_data": "",
@@ -94,17 +49,17 @@ INPUT wholistic summary of the resume meant to accompany the above cover letter 
 {cv_data_orig}
 
 """,
-        "ollama_url": DEFAULT_URL, #Set at runtime
+        "ollama_url": "http://localhost:11434", #Set at runtime
         "sample_starts": ["strict", "digits", "[0]Consistency Checker Vs Resume:", "[1]Inconsistencies With Resume:","[1]Inconsistencies With Self:","[1]Suggestions for Improvement:"] #[type, sample starts]
     },
     "summarize_job_description": #DONE
     {
         "call_id": "summarize_job_description", 
         "payload_in": {
-                       "model": DEFAULT_MODEL, #Set at runtime
+                       "model": "llama3:8b", #Set at runtime
                        "system": "",  #Set at runtime
                        "stream": False,
-                       "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]
+                       "temperature": 0.7
                        },
         "format": {#Set at runtime
                    "job_description": "",
@@ -161,7 +116,7 @@ INPUT job description:
 {job_description}
 
 """,
-        "ollama_url": DEFAULT_URL, #Set at runtime
+        "ollama_url": "http://localhost:11434", #Set at runtime
         "sample_starts": ["strict","digits", "[0]Company Name:","[0]Job Title:","[0]Responsibilities:","[0]Requirements:","[0]Programming Languages:","[0]Technical Skills:","[0]Soft Skills:","[0]Keywords:"] #[type, sample starts]
     },
     ##similar start
@@ -169,10 +124,10 @@ INPUT job description:
     {
         "call_id": "tailor_experience", 
         "payload_in": {
-                       "model": DEFAULT_MODEL, #Set at runtime
+                       "model": "llama3:8b", #Set at runtime
                        "system": "",  #Set at runtime
                        "stream": False,
-                       "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]
+                       "temperature": 0.7
                        },
         "format": {#Set at runtime
                    #"job_keywords": "",
@@ -200,17 +155,17 @@ INPUT "Description" subsection of a resume experience:
 {experience}
 
 """,
-        "ollama_url": DEFAULT_URL, #Set at runtime
+        "ollama_url": "http://localhost:11434", #Set at runtime
         "sample_starts": ["strict", "digits", "[1]Description:"]
     },
     "step0_volunteering_and_leadership": #DONE
     {
         "call_id": "step0_volunteering_and_leadership", 
         "payload_in": {
-                       "model": DEFAULT_MODEL, #Set at runtime
+                       "model": "llama3:8b", #Set at runtime
                        "system": "",  #Set at runtime
                        "stream": False,
-                       "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]
+                       "temperature": 0.7
                        },
         "format": {#Set at runtime
                    "raw_cv_data": "",
@@ -248,17 +203,17 @@ INPUT job description:
 {job_description}
 
 """,
-        "ollama_url": DEFAULT_URL, #Set at runtime
+        "ollama_url": "http://localhost:11434", #Set at runtime
         "sample_starts": ["flexible", "cap_letters", "[R]Experience:"]
     },
     "step3_volunteering_and_leadership": #DONE
     {
         "call_id": "step3_volunteering_and_leadership", 
         "payload_in": {
-                       "model": DEFAULT_MODEL, #Set at runtime
+                       "model": "llama3:8b", #Set at runtime
                        "system": "",  #Set at runtime
                        "stream": False,
-                       "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]
+                       "temperature": 0.7
                        },
         "format": {#Set at runtime
                    "experience": "",
@@ -299,17 +254,17 @@ INPUT "Description" and "Skills" attributes of a role belonging to the "Voluntee
 {experience}
 
 """,
-        "ollama_url": DEFAULT_URL, #Set at runtime
+        "ollama_url": "http://localhost:11434", #Set at runtime
         "sample_starts": ["strict", "digits", "[1]Description:", "[1]Skills:"]
     },
     "step0_work_experience": #DONE
     {
         "call_id": "step0_work_experience",
         "payload_in": {
-            "model": DEFAULT_MODEL,
+            "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]
+            "temperature": 0.7
         },
         "format": {
             "raw_cv_data": "",
@@ -348,17 +303,17 @@ INPUT job description:
 {job_description}
 
 """,
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["flexible", "cap_letters", "[J]Experience:"]
     },
     "step3_work_experience": #DONE
     {
         "call_id": "step3_work_experience",
         "payload_in": {
-            "model": DEFAULT_MODEL,
+            "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]
+            "temperature": 0.7
         },
         "format": {
             "experience": "",
@@ -399,17 +354,17 @@ INPUT "Description" and "Skills" subsections of a role belonging to the "Work Ex
 {experience}
 
 """,
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["strict", "digits" ,"[1]Description:", "[1]Skills:"]
     },
     "step0_projects": #DONE
     {
         "call_id": "step0_projects",
         "payload_in": {
-            "model": DEFAULT_MODEL,
+            "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]
+            "temperature": 0.7
         },
         "format": {
             "raw_cv_data": "",
@@ -448,17 +403,17 @@ INPUT job description:
 {job_description}
 
 """,
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["flexible", "cap_letters", "[P]Experience:"]
     },
     "step3_projects": #DONE
     {
         "call_id": "step3_projects",
         "payload_in": {
-            "model": DEFAULT_MODEL,
+            "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]
+            "temperature": 0.7
         },
         "format": {
             "experience": "",
@@ -499,7 +454,7 @@ INPUT "Description" and "Skills" subsections of a project belonging to the "Proj
 {experience}
 
 """,
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["strict", "digits", "[1]Description:", "[1]Skills:"]
     },
     ##similar end
@@ -507,10 +462,10 @@ INPUT "Description" and "Skills" subsections of a project belonging to the "Proj
     {
         "call_id": "step0_prune_experiences",
         "payload_in": {
-            "model": DEFAULT_MODEL,
+            "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]
+            "temperature": 0.7
         },
         "format": {
             "experiences": "",
@@ -548,17 +503,17 @@ INPUT experiences from 3 resume sections (Volunteering and Leadership, Work Expe
 {experiences}
 
 """,
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["flexible", "cap_letters", "[E]Experience:"]
     },
     "summarize_section": #DONE
     {
         "call_id": "summarize_section",
         "payload_in": {
-            "model": DEFAULT_MODEL,
+            "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]
+            "temperature": 0.7
         },
         "format": {
             "section": "",
@@ -587,17 +542,17 @@ INPUT section from a resume:
 
 
 """,
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["strict", "cap_letters", "[S]Section Summary:"]
     },
     "summarize_general_info": #DONE
     {
         "call_id": "summarize_general_info",
         "payload_in": {
-            "model": DEFAULT_MODEL,
+            "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]
+            "temperature": 0.7
         },
         "format": {
             "general_info_text": "",
@@ -623,17 +578,17 @@ INPUT general information from a resume:
 
 
 """,
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["strict", "cap_letters", "[S]General Information Summary:"]
     },
     "summarize_skills":#DONE
     {
         "call_id": "summarize_skills",
         "payload_in": {
-            "model": DEFAULT_MODEL,
+            "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]
+            "temperature": 0.7
         },
         "format": {
             "skill_section": "",
@@ -658,17 +613,17 @@ INPUT "Skills" section from a resume:
 
 
 """,
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["strict", "cap_letters", "[S]Skills Summary:"]
     },
     "step1_tailor_summary": #DONE
     {
         "call_id": "step1_tailor_summary",
         "payload_in": {
-            "model": DEFAULT_MODEL,
+            "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]
+            "temperature": 0.7
         },
         "format": {
             "prev_summary": "",
@@ -703,17 +658,17 @@ INPUTjob description:
 
 
 """,
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["strict", "digits", "[0]Summary:"]
     },
     "tailor_skills": #DONE
     {
         "call_id": "tailor_skills",
         "payload_in": {
-            "model": DEFAULT_MODEL,
+            "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]
+            "temperature": 0.7
         },
         "format": {
             "cv_data": "",
@@ -758,17 +713,17 @@ INPUT "Skills" section from resume:
 {cv_data}
 
 """,
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["strict", "digits", "[0]Skills:","[1]Programming Languages:","[1]Technical Skills:","[1]Soft Skills:"]
     },
     "new_vs_old_section": #DONE
     {
         "call_id": "new_vs_old_section",
         "payload_in": {
-            "model": DEFAULT_MODEL,
+            "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]
+            "temperature": 0.7
         },
         "format": {
             "old_resume_s_txt": "",
@@ -802,17 +757,17 @@ INPUT already tailored resumesection:
 
 
 """,
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["strict", "digits", "[0]Comparative Analysis:"]
     },
     "make_cover_letter_text": #DONE
     {
         "call_id": "make_cover_letter_text",
         "payload_in": {
-            "model": DEFAULT_MODEL,
+            "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]
+            "temperature": 0.7
         },
         "format": {
             "cv_data": "",
@@ -857,17 +812,17 @@ INPUT summary of the job description it has been tailored to:
 
 
 """,
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["strict", "digits", "[0]Cover Letter:", "[1]New Paragraph0:", "[1]New Paragraph1:", "[1]New Paragraph2:", "[1]New Paragraph3:"]
     },
     "consistency_checker_vs_job_desc_cv": #DONE
     {
         "call_id": "consistency_checker_vs_job_desc_cv",
         "payload_in": {
-            "model": DEFAULT_MODEL,
+            "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]
+            "temperature": 0.7
         },
         "format": {
             "cv_data": "",
@@ -903,17 +858,17 @@ INPUT job description the aforementioned resume has been tailored to:
 {job_description}
 
 """,
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["strict", "digits", "[0]Consistency Checker Vs Job Description:", "[1]Inconsistencies With Job Description:", "[1]Suggestions for Improvement:"]
     },
     "consistency_checker_vs_job_desc_cl": #DONE
     {
         "call_id": "consistency_checker_vs_job_desc_cl",
         "payload_in": {
-            "model": DEFAULT_MODEL,
+            "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]
+            "temperature": 0.7
         },
         "format": {
             "cv_data": "",
@@ -949,17 +904,17 @@ INPUT job description the aforementioned resume has been tailored to:
 {job_description}
 
 """,
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["strict", "digits", "[0]Consistency Checker Vs Job Description:", "[1]Inconsistencies With Job Description:", "[1]Suggestions for Improvement:"]
     },
     "tailor_courses": #DONE
     {
         "call_id": "tailor_courses",
         "payload_in": {
-            "model": DEFAULT_MODEL,
+            "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]
+            "temperature": 0.7
         },
         "format": {
             "courses": "",
@@ -994,7 +949,7 @@ INPUT job description:
 
 
 """,
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["strict", "digits", "[1]Courses:"]
     },
 
@@ -1002,10 +957,10 @@ INPUT job description:
     "tailor_courses_robust": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
     {
         "call_id": "tailor_courses_robust", 
-        "payload_in": {"model": DEFAULT_MODEL,
+        "payload_in": {"model": "llama3:8b",
                        "system": "",
                        "stream": False,
-                        "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]}, 
+                        "temperature": 0.7}, 
         "format": {
             "courses": "",
             "job_description": "",
@@ -1016,17 +971,17 @@ INPUT job description:
             }   
         },
         "prompt_in": "", 
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["strict", "digits", "[1]Courses:"]
     },
     "batch_summarize_sections": #DONE
     {
         "call_id": "batch_summarize_sections",
         "payload_in": {
-            "model": DEFAULT_MODEL,
+            "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]
+            "temperature": 0.7
         },
         "format": {
             "sections": [],
@@ -1056,16 +1011,16 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
 - There must be 1 "Section Summary:" per section given, in this case the sections given are {no_sections}:
     - {section_names}
 """,
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["flexible", "cap_letters", "[S]Section Summary:"]
     },
     "tailor_skills_robust": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
     {
         "call_id": "tailor_skills_robust", 
-        "payload_in": {"model": DEFAULT_MODEL,
+        "payload_in": {"model": "llama3:8b",
                        "system": "",
                        "stream": False,
-                        "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]}, 
+                        "temperature": 0.7}, 
         "format": {
             "cv_data": "",
             "job_description": "",
@@ -1085,17 +1040,17 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
             "standard_calls": ["tailor_skills"]    
         },
         "prompt_in": "", 
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["strict", "digits", "[0]Skills:","[1]Programming Languages:","[1]Technical Skills:","[1]Soft Skills:"]
     },
     ##similar start
     "tailor_volunteering_and_leadership": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
     {
         "call_id": "tailor_volunteering_and_leadership", 
-        "payload_in": {"model": DEFAULT_MODEL,
+        "payload_in": {"model": "llama3:8b",
                        "system": "",
                        "stream": False,
-                         "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]}, 
+                         "temperature": 0.7}, 
         "format": {
             "raw_cv_data": "",
             "job_description_summary": "",
@@ -1106,17 +1061,17 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
             "prefix_dict" : {}
             }, 
         "prompt_in": "", 
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["flexible", "digits", "[0]Volunteering and Leadership:",
                            "[1]Role:","[1]Organization:","[1]Location:","[1]Duration:","[1]Description:","[1]Skills:"]
     },
     "tailor_work_experience": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
     {
         "call_id": "tailor_work_experience", 
-        "payload_in": {"model": DEFAULT_MODEL,
+        "payload_in": {"model": "llama3:8b",
                        "system": "",
                        "stream": False,
-                         "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]}, 
+                         "temperature": 0.7}, 
         "format": {
             "raw_cv_data": "",
             "job_description_summary": "",
@@ -1127,16 +1082,16 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
             "prefix_dict" : {}
             }, 
         "prompt_in": "", 
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["flexible", "digits", "[0]Work Experience:", "[1]Job Title:","[1]Company:", "[1]Location:", "[1]Duration:", "[1]Description:","[1]Skills:"]
     },
     "tailor_projects": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
     {
         "call_id": "tailor_projects", 
-        "payload_in": {"model": DEFAULT_MODEL,
+        "payload_in": {"model": "llama3:8b",
                        "system": "",
                        "stream": False,
-                       "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]}, 
+                       "temperature": 0.7}, 
         "format": {
             "raw_cv_data": "",
             "job_description_summary": "",
@@ -1147,7 +1102,7 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
             "prefix_dict" : {}
             }, 
         "prompt_in": "", 
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["flexible", "digits", "[0]Projects:", "[1]Project Title:","[1]URL:", "[1]Type:", "[1]Duration:", "[1]Description:", "[1]Skills:"]
     },
     ##similar end
@@ -1156,10 +1111,10 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
     {
         "call_id": "sliding_window_two_sections", 
         "payload_in": {
-            "model": DEFAULT_MODEL,
+            "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]}, 
+            "temperature": 0.7}, 
         "format": {
             "sections" : ["", ""],
             "section_names":  ["", ""],
@@ -1198,17 +1153,17 @@ INPUT {section2_name} section summary:
 
 
 """, #Set at runtime
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["strict", "cap_letters", "[S]"]#Might lead to error, check later
     },
     "sliding_window_three_sections": #DONE
     {
         "call_id": "sliding_window_three_sections", 
         "payload_in": {
-            "model": DEFAULT_MODEL,
+            "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]}, 
+            "temperature": 0.7}, 
         "format": {
             "sections" : ["", "", ""],
             "section_names":  ["", "", ""],
@@ -1249,17 +1204,17 @@ INPUT {section3_name} section summary:
 
 
 """, #Set at runtime
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["strict", "cap_letters", "[S]"]#Might lead to error, check later
     },
     "sliding_window_four_sections": #DONE
     {
         "call_id": "sliding_window_four_sections", 
         "payload_in": {
-            "model": DEFAULT_MODEL,
+            "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]}, 
+            "temperature": 0.7}, 
         "format": {
             "sections" : ["", "", "", ""],
             "section_names":  ["", "", "", ""],
@@ -1304,17 +1259,17 @@ INPUT {section4_name} section summary:
 
 
 """, #Set at runtime
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["strict", "cap_letters", "[S]"]#Might lead to error, check later
     },
     ##similar end
     "prune_experiences": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
     {
         "call_id": "prune_experiences", 
-        "payload_in": {"model": DEFAULT_MODEL,
+        "payload_in": {"model": "llama3:8b",
                        "system": "",
                        "stream": False,
-                       "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]}, 
+                       "temperature": 0.7}, 
         "format": {
             "experiences": "",
             "job_description_summary": "",
@@ -1324,7 +1279,7 @@ INPUT {section4_name} section summary:
             "prefix_dict":{}
             }, 
         "prompt_in": "", #Empty
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["flexible", "digits", 
                           "[0]Volunteering and Leadership:","[1]Role:","[1]Organization:","[1]Location:","[1]Duration:","[1]Description:","[1]Skills:",
                           "[0]Work Experience:", "[1]Job Title:","[1]Company:",
@@ -1333,10 +1288,10 @@ INPUT {section4_name} section summary:
     "slide_summary": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
     {
         "call_id": "slide_summary", 
-        "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
+        "payload_in": {"model": "llama3:8b", #model="llama3:8b",
                         "system": "", # #system="",
                         "stream": False,
-                        "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]}, 
+                        "temperature": 0.7}, 
         "format": {
             "sections_dct_list" : [], #sections_dct_list=[]
             "systems": [], #(min size: 3) system1="", system2="", system3="", system4="", system_s="",
@@ -1350,16 +1305,16 @@ INPUT {section4_name} section summary:
             "prefix_dict":{}
         }, 
         "prompt_in": "", #Empty
-        "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
+        "ollama_url": "http://localhost:11434", #ollama_url="http://localhost:11434",
         "sample_starts": [] #Empty
     },
     "step0_tailor_summary": #DONE
     {
         "call_id": "step0_tailor_summary", 
-        "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
+        "payload_in": {"model": "llama3:8b", #model="llama3:8b",
                         "system": "", # #system="",
                         "stream": False,
-                        "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]}, 
+                        "temperature": 0.7}, 
         "format": {
             "raw_cv_data" : "", #raw_cv_data = ""
             "systems": [], #(min size: 4) , system0 = "", system1 = "", system2 = "", system3 = "", system4 = "",system_s = ""
@@ -1396,16 +1351,16 @@ INPUT summarized sections of a resume:
 {slides_txt}
 
 """,
-        "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
+        "ollama_url": "http://localhost:11434", #ollama_url="http://localhost:11434",
         "sample_starts": ["strict", "digits", "[0]Summary:"]
     },
     "tailor_summary": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
     {
         "call_id": "tailor_summary", 
-        "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
+        "payload_in": {"model": "llama3:8b", #model="llama3:8b",
                         "system": "", # #system="",
                         "stream": False,
-                        "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]}, 
+                        "temperature": 0.7}, 
         "format": {
             "raw_cv_data" : "", #raw_cv_data = ""
             "systems": [], # system0="",system1="", system2="", system3="", system4="", system_s="",
@@ -1419,16 +1374,16 @@ INPUT summarized sections of a resume:
             "prefix_dict":{}
         }, 
         "prompt_in": "",#Empty
-        "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
+        "ollama_url": "http://localhost:11434", #ollama_url="http://localhost:11434",
         "sample_starts": ["strict", "digits", "[0]Summary:"]
     },
     "new_vs_old_resume": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
     {
         "call_id": "new_vs_old_resume", 
-        "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
+        "payload_in": {"model": "llama3:8b", #model="llama3:8b",
                         "system": "", # #system="",
                         "stream": False,
-                        "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]}, 
+                        "temperature": 0.7}, 
         "format": {
             "old_resume_txt" : "", #old_resume_txt = ""
             "new_resume_txt": "", # new_resume_txt = ""
@@ -1437,16 +1392,16 @@ INPUT summarized sections of a resume:
             "prefix_dct":{}
         }, 
         "prompt_in": "",#Empty
-        "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
+        "ollama_url": "http://localhost:11434", #ollama_url="http://localhost:11434",
         "sample_starts": ["flexible", "digits", "[0]Comparative Analysis:"]
     },
     "consistency_checker_vs_cv_cv": #DONE
     {
         "call_id": "consistency_checker_vs_cv_cv", 
-        "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
+        "payload_in": {"model": "llama3:8b", #model="llama3:8b",
                         "system": "", # #system="",
                         "stream": False,
-                        "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]}, 
+                        "temperature": 0.7}, 
         "format": {
             "cv_data" : "", #old_resume_txt = ""
             "cv_data_orig": "", # new_resume_txt = ""
@@ -1485,16 +1440,16 @@ INPUT list containing a per-section analysis of the resumes, comparing the synth
 {all_analysis}
 
 """,
-        "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
+        "ollama_url": "http://localhost:11434", #ollama_url="http://localhost:11434",
         "sample_starts": ["strict", "digits", "[0]Consistency Checker VS Original Resume:","[1]Inconsistencies With Original Resume:","[1]Inconsistencies With Self:", "[1]Suggestions for Improvement:"]
     },
     "compose_cover_letter_dictionary": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
     {
         "call_id": "compose_cover_letter_dictionary", 
-        "payload_in": {"model": DEFAULT_MODEL, #model=DEFAULT_MODEL,
+        "payload_in": {"model": "llama3:8b", #model="llama3:8b",
                         "system": "", # #Empty
                         "stream": False,
-                        "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]}, 
+                        "temperature": 0.7}, 
         "format": {
             "cv_text_summary":"",
             "cv_text":"",
@@ -1504,7 +1459,7 @@ INPUT list containing a per-section analysis of the resumes, comparing the synth
             "prefix_dict": {}
         }, 
         "prompt_in": "",#Empty
-        "ollama_url": DEFAULT_URL, #ollama_url=DEFAULT_URL,
+        "ollama_url": "http://localhost:11434", #ollama_url="http://localhost:11434",
         "sample_starts": ["strict", "digits", "[0]Name:","[0]Languages:",
                           "[0]Contact Information:","[1]Address:","[1]Phone:","[1]Email:","[1]LinkedIn:", "[1]Github:","[1]Portfolio:",
                           "[0]Cover Letter:","[1]New Paragraph0:","[1]New Paragraph1:","[1]New Paragraph2:","[1]New Paragraph3:"]
@@ -1512,10 +1467,10 @@ INPUT list containing a per-section analysis of the resumes, comparing the synth
     "tailor_experiences": #DONE
     {
         "call_id": "tailor_volunteering_and_leadership", 
-        "payload_in": {"model": DEFAULT_MODEL,
+        "payload_in": {"model": "llama3:8b",
                        "system": "",
                        "stream": False,
-                         "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]}, 
+                         "temperature": 0.7}, 
         "format": {
             "job_description_summary": "",
             "reference_dct": {},
@@ -1523,7 +1478,7 @@ INPUT list containing a per-section analysis of the resumes, comparing the synth
             "prefix_dict" : {}
             }, 
         "prompt_in": "", 
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["flexible", "digits", 
                           "[0]Volunteering and Leadership:","[1]Role:","[1]Organization:","[1]Location:","[1]Duration:","[1]Description:","[1]Skills:",
                           "[0]Work Experience:", "[1]Job Title:","[1]Company:",
@@ -1532,10 +1487,10 @@ INPUT list containing a per-section analysis of the resumes, comparing the synth
     "prune_experiences_ai": #DONE (NO NEED FOR prefix_dict SINCE NO filter_output calls are made inside the function, instead we skip final filtering)
     {
         "call_id": "prune_experiences_ai", 
-        "payload_in": {"model": DEFAULT_MODEL,
+        "payload_in": {"model": "llama3:8b",
                        "system": "",
                        "stream": False,
-                       "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]}, 
+                       "temperature": 0.7}, 
         "format": {
             "experiences": "",
             "job_description_summary": "",
@@ -1545,7 +1500,7 @@ INPUT list containing a per-section analysis of the resumes, comparing the synth
             "prefix_dict":{}
             }, 
         "prompt_in": "", #Empty
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["flexible", "digits", 
                           "[0]Volunteering and Leadership:","[1]Role:","[1]Organization:","[1]Location:","[1]Duration:","[1]Description:","[1]Skills:",
                           "[0]Work Experience:", "[1]Job Title:","[1]Company:",
@@ -1556,10 +1511,10 @@ INPUT list containing a per-section analysis of the resumes, comparing the synth
     {
         "call_id": "standard_ollama_call_async", 
         "payload_in": {
-            "model": DEFAULT_MODEL,
+            "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]}, 
+            "temperature": 0.7}, 
         "format": {
             "prefix_dict": {
                 "Section Summary:" : ["[S]",True],
@@ -1567,33 +1522,8 @@ INPUT list containing a per-section analysis of the resumes, comparing the synth
             }
             }, 
         "prompt_in": "", #Set at runtime
-        "ollama_url": DEFAULT_URL,
+        "ollama_url": "http://localhost:11434",
         "sample_starts": ["strict", "cap_letters", "[S]Section Summary:"]#Might lead to error, check later
     }
 
 }
-STANDARD= [
-    "tailor_experience",
-    "summarize_job_description",
-    "step0_volunteering_and_leadership",
-    "step3_volunteering_and_leadership",
-    "step0_work_experience",
-    "step3_work_experience",
-    "step0_projects",
-    "step3_projects",
-    "step0_prune_experiences",
-    "summarize_section",
-    "summarize_general_info",
-    "summarize_skills",
-    "step1_tailor_summary",
-    "tailor_skills",
-    "new_vs_old_section",
-    "make_cover_letter_text",
-    "consistency_checker_vs_job_desc_cv",
-    "consistency_checker_vs_job_desc_cl",
-    "tailor_courses",
-    "consistency_checker_vs_cv_cl"
-]
-ASYNC = [
-    "standard_ollama_call_async"
-]

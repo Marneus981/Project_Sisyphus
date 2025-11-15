@@ -8,8 +8,8 @@ import config
 import aiohttp
 import asyncio
 import warnings
-from config import CONFIG
-from Sisyphus import payloads_wip as payloads
+from config import config
+# from Sisyphus import payloads_wip as payloads
 import re
 import traceback
 from rapidfuzz import process, fuzz, utils
@@ -26,7 +26,7 @@ template_call_info = {
                     "model": DEFAULT_MODEL, #Set at runtime
                     "system": "",  #Set at runtime
                     "stream": False,
-                    "temperature": CONFIG["MODELS"]["TEMPERATURE"]
+                    "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]
                     },
     "format": {},
     "prompt_in": "",
@@ -39,14 +39,14 @@ print = logging.info
 def fetch_complete_call_info(call_id = "", runtime_info = {}):
     function_name =helpers.inspect_function()
     if config.DEBUG["INFO_LOGGING"]: print(f"[INFO][OLLAMA]{function_name}: fetching complete call info for call id {call_id}...")
-    if call_id not in payloads.PAYLOADS:
-        if config.DEBUG["ERROR_LOGGING"]: print(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} not found in payloads.PAYLOADS")
-        raise ValueError(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} not found in payloads.PAYLOADS")
+    if call_id not in config.PAYLOADS:
+        if config.DEBUG["ERROR_LOGGING"]: print(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} not found in config.PAYLOADS")
+        raise ValueError(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} not found in config.PAYLOADS")
     if call_id == "":
         if config.DEBUG["ERROR_LOGGING"]: print(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} not provided")
         raise ValueError(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} not provided")
     runtime_info_tmp = runtime_info.copy()
-    fixed_call_info = payloads.PAYLOADS[call_id].copy()
+    fixed_call_info = config.PAYLOADS[call_id].copy()
     for key in runtime_info_tmp:
         if key == "payload_in" or key == "format":
             for key_n in runtime_info_tmp[key]:
@@ -506,12 +506,12 @@ def prepare_input_text(input_text, type):
 """
 Call Payload Format:
 {
-        "call_id": "call_id_string", #Usually the old tailor function name, used to fetch info from payloads.PAYLOADS
+        "call_id": "call_id_string", #Usually the old tailor function name, used to fetch info from config.PAYLOADS
         "payload_in": {
                        "model": DEFAULT_MODEL, #Set at runtime
                        "system": "",  #Set at runtime
                        "stream": False,
-                       "temperature": CONFIG["MODELS"]["TEMPERATURE"]
+                       "temperature": config.CONFIG["MODELS"]["TEMPERATURE"]
                        # Add prompt at runtime
                        ...
                        },
@@ -536,7 +536,7 @@ def standard_ollama_call(call_info =template_call_info):
     ollama_url = call_info["ollama_url"]
     function_name = helpers.inspect_function()
     #General Checks
-    if call_id not in payloads.STANDARD:
+    if call_id not in config.CONFIG["PAYLOADS"]["STANDARD"]:
         if config.DEBUG["ERROR_LOGGING"]: logging.error(f"[ERROR][OLLAMA]{function_name}: call_id {call_id} not found in STANDARD payloads")
         return f"[ERROR][OLLAMA]{function_name}: call_id {call_id} not found in STANDARD payloads"
     if config.DEBUG["INFO_LOGGING"]: logging.info(f"[OLLAMA]{function_name}: call_id: {call_id}")
@@ -1107,9 +1107,9 @@ def process_exps(exp_text):
 
 def experience_scoring(exps, keywords):
     function_name = helpers.inspect_function()
-    function_desc = getattr(rapidfuzz.fuzz, CONFIG["PRUNING"]["DISTANCE_ALGO_DESC"])
-    function_key = getattr(rapidfuzz.fuzz, CONFIG["PRUNING"]["DISTANCE_ALGO_KEY"])
-    scoring_mode = CONFIG["PRUNING"]["DUAL_SCORING"]["EXP"]
+    function_desc = getattr(rapidfuzz.fuzz, config.CONFIG["PRUNING"]["DISTANCE_ALGO_DESC"])
+    function_key = getattr(rapidfuzz.fuzz, config.CONFIG["PRUNING"]["DISTANCE_ALGO_KEY"])
+    scoring_mode = config.CONFIG["PRUNING"]["DUAL_SCORING"]["EXP"]
     exps_cpy =exps.copy()
     for exp in exps_cpy:
         for keyword in keywords:
@@ -1180,9 +1180,9 @@ def experience_scoring(exps, keywords):
 
 def experience_heuristics(exps_scored):
     function_name = helpers.inspect_function()
-    weights = CONFIG["PRUNING"]["EXP_H_WEIGHTS"]
+    weights = config.CONFIG["PRUNING"]["EXP_H_WEIGHTS"]
     exps_scored_cpy = exps_scored.copy()
-    exp_threshold = CONFIG["PRUNING"]["THRESHOLDS"]["EXP"]
+    exp_threshold = config.CONFIG["PRUNING"]["THRESHOLDS"]["EXP"]
 
     for exp in exps_scored_cpy:
         prog_l = []#Lists of tuples
@@ -1362,7 +1362,7 @@ def experience_pruning_algorithm(job_desc,text,v_list,w_list,p_list):
     #Rank em
     sorted_exps = sorted(exps_heuristics, key=itemgetter('total_score'), reverse=True)
     simple_sorted_exps = []
-    algo_th = CONFIG["PRUNING"]["NO_EXPERIENCES"]["ALGO_TH"]
+    algo_th = config.CONFIG["PRUNING"]["NO_EXPERIENCES"]["ALGO_TH"]
     for exp in sorted_exps:
         if exp["total_score"] < algo_th:
             continue
@@ -1385,9 +1385,9 @@ def experience_pruning_algorithm(job_desc,text,v_list,w_list,p_list):
     sorted_p_list_cpy = deepcopy(sorted_p_list)
     #Fetch any currently preferred jobs; as well as job allocaion settings (total number of jobs, jobs per section)
 
-    pref_list_v = CONFIG["PRUNING"]["PREFS"]["V"]
-    pref_list_w = CONFIG["PRUNING"]["PREFS"]["W"] 
-    pref_list_p = CONFIG["PRUNING"]["PREFS"]["P"]
+    pref_list_v = config.CONFIG["PRUNING"]["PREFS"]["V"]
+    pref_list_w = config.CONFIG["PRUNING"]["PREFS"]["W"] 
+    pref_list_p = config.CONFIG["PRUNING"]["PREFS"]["P"]
 
     if pref_list_v != []:
         for item in reversed(pref_list_v):
@@ -1437,7 +1437,7 @@ def experience_pruning_algorithm(job_desc,text,v_list,w_list,p_list):
     combined_pref_list = pref_list_v + pref_list_w + pref_list_p
     #Now we have a list of sorted experiences, with preferred ones removed from the list but stored in pref_list_x:
     #Two lists: preferred experiences, sorted experiences
-    max_algo = CONFIG["PRUNING"]["NO_EXPERIENCES"]["ALGO"]
+    max_algo = config.CONFIG["PRUNING"]["NO_EXPERIENCES"]["ALGO"]
     if len(simple_sorted_exps)> max_algo:
         return_list = combined_pref_list + simple_sorted_exps[:max_algo]
     else:
@@ -1483,14 +1483,14 @@ def skill_scoring(list_to_score, keywords, type = "programming_languages"):
     score_lists = []
     # if type != "courses":
     if type == "programming_languages":
-        scoring_mode = CONFIG["PRUNING"]["DUAL_SCORING"]["PROG"]
-        function_score = getattr(rapidfuzz.fuzz, CONFIG["PRUNING"]["DISTANCE_ALGO_PROG"])
+        scoring_mode = config.CONFIG["PRUNING"]["DUAL_SCORING"]["PROG"]
+        function_score = getattr(rapidfuzz.fuzz, config.CONFIG["PRUNING"]["DISTANCE_ALGO_PROG"])
     elif type == "technical_skills":
-        scoring_mode = CONFIG["PRUNING"]["DUAL_SCORING"]["TECH"]
-        function_score = getattr(rapidfuzz.fuzz, CONFIG["PRUNING"]["DISTANCE_ALGO_TECH"])
+        scoring_mode = config.CONFIG["PRUNING"]["DUAL_SCORING"]["TECH"]
+        function_score = getattr(rapidfuzz.fuzz, config.CONFIG["PRUNING"]["DISTANCE_ALGO_TECH"])
     elif type == "soft_skills":
-        scoring_mode = CONFIG["PRUNING"]["DUAL_SCORING"]["SOFT"]
-        function_score = getattr(rapidfuzz.fuzz, CONFIG["PRUNING"]["DISTANCE_ALGO_SOFT"])
+        scoring_mode = config.CONFIG["PRUNING"]["DUAL_SCORING"]["SOFT"]
+        function_score = getattr(rapidfuzz.fuzz, config.CONFIG["PRUNING"]["DISTANCE_ALGO_SOFT"])
     else:
         raise  ValueError(f"[ERROR]{function_name}: invalid list type")
     for item in list_to_score_cpy:
@@ -1511,7 +1511,7 @@ def skill_scoring(list_to_score, keywords, type = "programming_languages"):
     """
     return score_lists
     # else:        
-    #     function_score = getattr(rapidfuzz.fuzz, CONFIG["PRUNING"]["DISTANCE_ALGO_COURSES"])
+    #     function_score = getattr(rapidfuzz.fuzz, config.CONFIG["PRUNING"]["DISTANCE_ALGO_COURSES"])
     #     ##Implementation with added tags##
 
 def skill_heuristics(scored_list, type = "programming_languages"):
@@ -1523,17 +1523,17 @@ def skill_heuristics(scored_list, type = "programming_languages"):
     """
     function_name = helpers.inspect_function()
     if type == "programming_languages":
-        weight = CONFIG["PRUNING"]["PROG_H_WEIGHT"]
+        weight = config.CONFIG["PRUNING"]["PROG_H_WEIGHT"]
         heuristic_type = config.CONFIG["PRUNING"]["PROG_RATING_TYPE"]
-        threshold = CONFIG["PRUNING"]["THRESHOLDS"]["PROG"]
+        threshold = config.CONFIG["PRUNING"]["THRESHOLDS"]["PROG"]
     elif type == "technical_skills":
-        weight = CONFIG["PRUNING"]["TECH_H_WEIGHT"]
+        weight = config.CONFIG["PRUNING"]["TECH_H_WEIGHT"]
         heuristic_type = config.CONFIG["PRUNING"]["TECH_RATING_TYPE"]
-        threshold = CONFIG["PRUNING"]["THRESHOLDS"]["TECH"]
+        threshold = config.CONFIG["PRUNING"]["THRESHOLDS"]["TECH"]
     elif type == "soft_skills":
-        weight = CONFIG["PRUNING"]["SOFT_H_WEIGHT"]
+        weight = config.CONFIG["PRUNING"]["SOFT_H_WEIGHT"]
         heuristic_type = config.CONFIG["PRUNING"]["SOFT_RATING_TYPE"]
-        threshold = CONFIG["PRUNING"]["THRESHOLDS"]["SOFT"]
+        threshold = config.CONFIG["PRUNING"]["THRESHOLDS"]["SOFT"]
     else:
         raise  ValueError(f"[ERROR]{function_name}: invalid list type")
     scored_list_cpy = deepcopy(scored_list)
@@ -1578,23 +1578,23 @@ def skill_pruning_algorithm(job_desc, list_to_prune, type = "programming_languag
         paired_list_heuristic.append((list_to_prune[i],list_heuristic[i]))
     sorted_list_heuristic = sorted(paired_list_heuristic,key=itemgetter(1), reverse=True)
     if type == "programming_languages":
-        max_total = CONFIG["PRUNING"]["NO_SKILLS"]["PROG"]
-        max_algo = CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_PROG"]
-        prefs = CONFIG["PRUNING"]["PREFS"]["PROG"]
-        prefs_toggle = CONFIG["PRUNING"]["NO_SKILLS"]["PREFERENCES_PROG"]
-        threshold = CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_PROG_TH"]
+        max_total = config.CONFIG["PRUNING"]["NO_SKILLS"]["PROG"]
+        max_algo = config.CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_PROG"]
+        prefs = config.CONFIG["PRUNING"]["PREFS"]["PROG"]
+        prefs_toggle = config.CONFIG["PRUNING"]["NO_SKILLS"]["PREFERENCES_PROG"]
+        threshold = config.CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_PROG_TH"]
     elif type == "technical_skills":
-        max_total = CONFIG["PRUNING"]["NO_SKILLS"]["TECH"]
-        max_algo = CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_TECH"]
-        prefs_toggle = CONFIG["PRUNING"]["NO_SKILLS"]["PREFERENCES_TECH"]
-        prefs = CONFIG["PRUNING"]["PREFS"]["TECH"]
-        threshold = CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_TECH_TH"]
+        max_total = config.CONFIG["PRUNING"]["NO_SKILLS"]["TECH"]
+        max_algo = config.CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_TECH"]
+        prefs_toggle = config.CONFIG["PRUNING"]["NO_SKILLS"]["PREFERENCES_TECH"]
+        prefs = config.CONFIG["PRUNING"]["PREFS"]["TECH"]
+        threshold = config.CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_TECH_TH"]
     elif type == "soft_skills":
-        max_total = CONFIG["PRUNING"]["NO_SKILLS"]["SOFT"]
-        max_algo = CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_SOFT"]
-        prefs = CONFIG["PRUNING"]["PREFS"]["SOFT"]
-        prefs_toggle = CONFIG["PRUNING"]["NO_SKILLS"]["PREFERENCES_SOFT"]
-        threshold = CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_SOFT_TH"]
+        max_total = config.CONFIG["PRUNING"]["NO_SKILLS"]["SOFT"]
+        max_algo = config.CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_SOFT"]
+        prefs = config.CONFIG["PRUNING"]["PREFS"]["SOFT"]
+        prefs_toggle = config.CONFIG["PRUNING"]["NO_SKILLS"]["PREFERENCES_SOFT"]
+        threshold = config.CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_SOFT_TH"]
     else:
         raise  ValueError(f"[ERROR]{function_name}: invalid list type")
     if max_total < 0 or max_algo < 0 or threshold < 0 :
@@ -1714,30 +1714,30 @@ def tailor_skills_robust(call_info = template_call_info):
     #PREFS + ALGO: sk_pruning_dct; NEXT: Add skills from job description if toggled
     prog_settings = {
         "type": "programming_languages",
-        "max":CONFIG["PRUNING"]["NO_SKILLS"]["PROG"],
-        # "pref":CONFIG["PRUNING"]["NO_SKILLS"]["PREFERENCES_PROG"],
-        # "algo_max":CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_PROG"],
-        # "threshold":CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_PROG_TH"]
-        "copy": CONFIG["PRUNING"]["NO_SKILLS"]["COPY_PROG"],
-        "copy_len": CONFIG["PRUNING"]["NO_SKILLS"]["COPY_LEN_PROG"]  
+        "max":config.CONFIG["PRUNING"]["NO_SKILLS"]["PROG"],
+        # "pref":config.CONFIG["PRUNING"]["NO_SKILLS"]["PREFERENCES_PROG"],
+        # "algo_max":config.CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_PROG"],
+        # "threshold":config.CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_PROG_TH"]
+        "copy": config.CONFIG["PRUNING"]["NO_SKILLS"]["COPY_PROG"],
+        "copy_len": config.CONFIG["PRUNING"]["NO_SKILLS"]["COPY_LEN_PROG"]  
     }
     tech_settings = {
         "type":"technical_skills",
-        "max":CONFIG["PRUNING"]["NO_SKILLS"]["TECH"],
-        # "pref":CONFIG["PRUNING"]["NO_SKILLS"]["PREFERENCES_TECH"],
-        # "algo_max":CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_TECH"],
-        # "threshold":CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_TECH_TH"]
-       "copy": CONFIG["PRUNING"]["NO_SKILLS"]["COPY_TECH"],
-       "copy_len": CONFIG["PRUNING"]["NO_SKILLS"]["COPY_LEN_TECH"]   
+        "max":config.CONFIG["PRUNING"]["NO_SKILLS"]["TECH"],
+        # "pref":config.CONFIG["PRUNING"]["NO_SKILLS"]["PREFERENCES_TECH"],
+        # "algo_max":config.CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_TECH"],
+        # "threshold":config.CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_TECH_TH"]
+       "copy": config.CONFIG["PRUNING"]["NO_SKILLS"]["COPY_TECH"],
+       "copy_len": config.CONFIG["PRUNING"]["NO_SKILLS"]["COPY_LEN_TECH"]   
     }
     soft_settings = {
         "type": "soft_skills",
-        "max":CONFIG["PRUNING"]["NO_SKILLS"]["SOFT"],
-        # "pref":CONFIG["PRUNING"]["NO_SKILLS"]["PREFERENCES_SOFT"],
-        # "algo_max":CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_SOFT"],
-        # "threshold":CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_SOFT_TH"]
-        "copy": CONFIG["PRUNING"]["NO_SKILLS"]["COPY_SOFT"],
-        "copy_len": CONFIG["PRUNING"]["NO_SKILLS"]["COPY_LEN_SOFT"]  
+        "max":config.CONFIG["PRUNING"]["NO_SKILLS"]["SOFT"],
+        # "pref":config.CONFIG["PRUNING"]["NO_SKILLS"]["PREFERENCES_SOFT"],
+        # "algo_max":config.CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_SOFT"],
+        # "threshold":config.CONFIG["PRUNING"]["NO_SKILLS"]["ALGO_SOFT_TH"]
+        "copy": config.CONFIG["PRUNING"]["NO_SKILLS"]["COPY_SOFT"],
+        "copy_len": config.CONFIG["PRUNING"]["NO_SKILLS"]["COPY_LEN_SOFT"]  
     }
     settings = [prog_settings,tech_settings,soft_settings]
     for setting in settings:
@@ -1832,8 +1832,8 @@ def course_scoring(course_dct,keywords):
     }
     """
     function_name = helpers.inspect_function()
-    function_score = getattr(rapidfuzz.fuzz, CONFIG["PRUNING"]["DISTANCE_ALGO_COURSES"])
-    scoring_mode = CONFIG["PRUNING"]["DUAL_SCORING"]["COURSES"]
+    function_score = getattr(rapidfuzz.fuzz, config.CONFIG["PRUNING"]["DISTANCE_ALGO_COURSES"])
+    scoring_mode = config.CONFIG["PRUNING"]["DUAL_SCORING"]["COURSES"]
 
     course_dct_cpy = deepcopy(course_dct)
     for course in course_dct_cpy:
@@ -1869,7 +1869,7 @@ def course_heuristics(scored_course_dct, keywords):
     function_name = helpers.inspect_function()
     heuristic_type = config.CONFIG["PRUNING"]["COURSES_RATING_TYPE"]
     heuristic_course_dct = deepcopy(scored_course_dct)
-    threshold = CONFIG["PRUNING"]["THRESHOLDS"]["COURSES"]
+    threshold = config.CONFIG["PRUNING"]["THRESHOLDS"]["COURSES"]
     for course in heuristic_course_dct:
         print(str(heuristic_course_dct[course]))
         no_tags = len(heuristic_course_dct[course])
@@ -1924,7 +1924,7 @@ def course_pruning_algorithm(job_desc, course_list):
         if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: current course: {course}")
         dct_to_score[course] = {}
         dct_to_score[course]["itself"] = []
-        tags = CONFIG["TAGS"]["COURSES"][course]
+        tags = config.CONFIG["TAGS"]["COURSES"][course]
         if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: current course tags: {str(tags)}")
         if tags == []:
             continue
@@ -1937,7 +1937,7 @@ def course_pruning_algorithm(job_desc, course_list):
     #Assign single score to course
     final_score_dct= {}
     pruning_type = config.CONFIG["PRUNING"]["COURSES_PRUNING_TYPE"]
-    threshold = CONFIG["PRUNING"]["THRESHOLDS"]["COURSES"]
+    threshold = config.CONFIG["PRUNING"]["THRESHOLDS"]["COURSES"]
     for course in heuristic_courses:
         compare_list = []
         no_tags = len(heuristic_courses[course])
@@ -1964,17 +1964,17 @@ def course_pruning_algorithm(job_desc, course_list):
 
     sorted_courses = dict(sorted(final_score_dct.items(), reverse=True))
     sorted_list = []
-    algo_th = CONFIG["PRUNING"]["NO_COURSES"]["ALGO_TH"]
+    algo_th = config.CONFIG["PRUNING"]["NO_COURSES"]["ALGO_TH"]
     for course in sorted_courses:
         if sorted_courses[course]< algo_th:
             continue
         sorted_list.append(course)
-    pref_list_courses = CONFIG["PRUNING"]["PREFS"]["COURSES"]
-    max_algo = CONFIG["PRUNING"]["NO_COURSES"]["ALGO"]
+    pref_list_courses = config.CONFIG["PRUNING"]["PREFS"]["COURSES"]
+    max_algo = config.CONFIG["PRUNING"]["NO_COURSES"]["ALGO"]
     if max_algo > len(sorted_list):
         max_algo = len(sorted_list)
     sorted_list = sorted_list[:max_algo]
-    if CONFIG["PRUNING"]["NO_COURSES"]["PREFERENCES"]:
+    if config.CONFIG["PRUNING"]["NO_COURSES"]["PREFERENCES"]:
 
         return_list = deepcopy(pref_list_courses) + deepcopy(sorted_list)
         unique = set()
@@ -1985,7 +1985,7 @@ def course_pruning_algorithm(job_desc, course_list):
                 return_list_final.append(item)
     else:
         return_list_final = deepcopy(sorted_list)
-    max_courses = CONFIG["PRUNING"]["NO_COURSES"]["MAX"]
+    max_courses = config.CONFIG["PRUNING"]["NO_COURSES"]["MAX"]
     if config.DEBUG["HEURISTIC_LOGGING"]:
         print(f"[HEURISTIC][COURSES][STEP2]{function_name}:HEURISTIC REPORT")
         print(f"[HEURISTIC]{function_name}: max_courses: {max_courses}; preferences appended at the start: {str(pref_list_courses)}")
@@ -2013,7 +2013,7 @@ def tailor_courses_robust(call_info = template_call_info):
         courses1[i]= courses1[i].strip()
     algo_courses = course_pruning_algorithm(job_description,courses1)
     #AI
-    max_courses = CONFIG["PRUNING"]["NO_COURSES"]["MAX"]
+    max_courses = config.CONFIG["PRUNING"]["NO_COURSES"]["MAX"]
     if len(algo_courses)< max_courses:
         #fill with AI
         runtime_info_temp = {
@@ -2100,7 +2100,7 @@ def prune_experiences(call_info = template_call_info):
                               "model": payload_in["model"]
                           }               
     }
-    max_exps = CONFIG["PRUNING"]["NO_EXPERIENCES"]["MAX"]
+    max_exps = config.CONFIG["PRUNING"]["NO_EXPERIENCES"]["MAX"]
     if config.DEBUG["HEURISTIC_LOGGING"]:
         print(f"[HEURISTIC][EXPERIENCES][STEP1]{function_name}:HEURISTIC REPORT")
         print(f"[HEURISTIC]{function_name}: max_exps: {max_exps}")
@@ -2122,7 +2122,7 @@ def prune_experiences(call_info = template_call_info):
             step1_split_ai.remove(line)
     step1_list = step1_split + step1_split_ai     
     #Keep min per section
-    min_per_section = CONFIG["PRUNING"]["NO_EXPERIENCES"]["PER_SECTION"]
+    min_per_section = config.CONFIG["PRUNING"]["NO_EXPERIENCES"]["PER_SECTION"]
     step1_list_min = []
     ctr_v= 0 
     ctr_w= 0 
@@ -2225,9 +2225,9 @@ def sliding_window_two_sections(call_info = template_call_info):
                         # section1_name = "", section2_name = "", 
                         # candidate_name = "", candidate_title = "", 
                         # mode = "single"
-    if CONFIG["SUMMARY_REQUESTS"] > 2:
+    if config.CONFIG["SUMMARY_REQUESTS"] > 2:
         if config.DEBUG["WARNING_LOGGING"]: logging.warning(f"[WARNING][OLLAMA]{function_name}: number of requests SUMMARY_REQUESTS exceeds sliding window size, using maximum possible request number (2)")
-    if CONFIG["SUMMARY_REQUESTS"] < 0:
+    if config.CONFIG["SUMMARY_REQUESTS"] < 0:
         return f"[ERROR][OLLAMA]{function_name}: number of requests SUMMARY_REQUESTS must be a positive integer"
 
     summaries = []
@@ -2338,15 +2338,15 @@ def sliding_window_three_sections(call_info = template_call_info):
                        # model=DEFAULT_MODEL, system1="", system2="", system3="", system = "", ollama_url=DEFAULT_URL,
                        # section1_name = "", section2_name = "", section3_name = "", 
                        # candidate_name = "", candidate_title = "", mode = "single"
-    if CONFIG["SUMMARY_REQUESTS"] > 3:
+    if config.CONFIG["SUMMARY_REQUESTS"] > 3:
         if config.DEBUG["WARNING_LOGGING"]: warnings.warn("[WARNING]sliding_window_three_sections: number of requests exceeds sliding window size, using maximum possible request number (3)")
-    if CONFIG["SUMMARY_REQUESTS"] < 0:
+    if config.CONFIG["SUMMARY_REQUESTS"] < 0:
         raise ValueError("[ERROR]sliding_window_three_sections: SUMMARY_REQUESTS must be a positive integer")
 
     summaries = []
-    for i in range(0, 3, CONFIG["SUMMARY_REQUESTS"]):
+    for i in range(0, 3, config.CONFIG["SUMMARY_REQUESTS"]):
         if mode == "single":
-            for j in range(0,CONFIG["SUMMARY_REQUESTS"]):
+            for j in range(0,config.CONFIG["SUMMARY_REQUESTS"]):
                 if i+j >= 3:
                     break
                 else:
@@ -2366,7 +2366,7 @@ def sliding_window_three_sections(call_info = template_call_info):
                     #helpers.filter_output(summary.strip(), mode= "cap_letters")#REDUNDANT?
                     summaries.append(summary.strip())
         if mode == "batch":
-            upper_bound = i + CONFIG["SUMMARY_REQUESTS"]
+            upper_bound = i + config.CONFIG["SUMMARY_REQUESTS"]
             if upper_bound > 3:
                 upper_bound = 3
             runtime_info_temp = {
@@ -2391,7 +2391,7 @@ def sliding_window_three_sections(call_info = template_call_info):
             if upper_bound == 3:
                 break
         if mode == "parallel":
-            upper_bound = i + CONFIG["SUMMARY_REQUESTS"]
+            upper_bound = i + config.CONFIG["SUMMARY_REQUESTS"]
             if upper_bound > 3:
                 upper_bound = 3
             runtime_info_temps = generate_call_infos_summarize_section(sections=sections[i:upper_bound], section_names=section_names[i:upper_bound], systems=systems[i:upper_bound], model=payload_in["model"], ollama_url=ollama_url)
@@ -2476,15 +2476,15 @@ def sliding_window_four_sections(call_info = template_call_info):
                         #candidate_title="",
                         #mode="single"
 
-    if CONFIG["SUMMARY_REQUESTS"] > 4:
+    if config.CONFIG["SUMMARY_REQUESTS"] > 4:
         if config.DEBUG["WARNING_LOGGING"]: warnings.warn("[WARNING]sliding_window_four_sections: number of requests exceeds sliding window size, using maximum possible request number (4)")
-    if CONFIG["SUMMARY_REQUESTS"] < 0:
+    if config.CONFIG["SUMMARY_REQUESTS"] < 0:
         raise ValueError("[ERROR]sliding_window_four_sections: SUMMARY_REQUESTS must be a positive integer")
 
     summaries = []
-    for i in range(0, 4, CONFIG["SUMMARY_REQUESTS"]):
+    for i in range(0, 4, config.CONFIG["SUMMARY_REQUESTS"]):
         if mode == "single":
-            for j in range(0,CONFIG["SUMMARY_REQUESTS"]):
+            for j in range(0,config.CONFIG["SUMMARY_REQUESTS"]):
                 if i+j >= 4:
                     break
                 else:
@@ -2504,7 +2504,7 @@ def sliding_window_four_sections(call_info = template_call_info):
                     #helpers.filter_output(summary.strip(), mode= "cap_letters")#REDUNDANT?
                     summaries.append(summary.strip())
         if mode == "batch":
-            upper_bound = i + CONFIG["SUMMARY_REQUESTS"]
+            upper_bound = i + config.CONFIG["SUMMARY_REQUESTS"]
             if upper_bound > 4:
                 upper_bound = 4
             runtime_info_temp = {
@@ -2528,7 +2528,7 @@ def sliding_window_four_sections(call_info = template_call_info):
             if upper_bound == 4:
                 break
         if mode == "parallel":
-            upper_bound = i + CONFIG["SUMMARY_REQUESTS"]
+            upper_bound = i + config.CONFIG["SUMMARY_REQUESTS"]
             if upper_bound > 4:
                 upper_bound = 4
             runtime_info_temps = generate_call_infos_summarize_section(sections=sections[i:upper_bound], section_names=section_names[i:upper_bound], systems=systems[i:upper_bound], model=payload_in["model"], ollama_url=ollama_url)
@@ -3148,7 +3148,7 @@ async def standard_ollama_call_async(session, retries = config.CONFIG["MODELS"][
     ollama_url = call_info["ollama_url"]
     sample_starts = call_info["sample_starts"]
     function_name = helpers.inspect_function()
-    if call_id not in payloads.ASYNC:
+    if call_id not in config.CONFIG["PAYLOADS"]["ASYNC"]:
         return f"[ERROR][OLLAMA][ASYNC]{function_name}: call_id {call_id} not found in ASYNC payloads"
     if format != {}:
         helpers.missing_format_pieces(prompt_in,format)

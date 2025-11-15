@@ -1,6 +1,6 @@
 import time
 import logging
-from config import DEBUG
+from config import config
 
 FUNCTION_STATS = {}
 
@@ -16,6 +16,6 @@ def log_time(func):
         FUNCTION_STATS[fname]["runtime"] += elapsed
         logging.info(f"[TIME] {fname} took {elapsed:.4f} seconds")
         return result
-    if DEBUG.get("TIME_LOGGING"):
+    if config.DEBUG.get("TIME_LOGGING"):
         return wrapper
     return func

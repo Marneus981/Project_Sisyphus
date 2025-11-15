@@ -1,4 +1,4 @@
-from Sisyphus import runLocalModel, parsers, tailor_robust, helpers, payloads_wip
+from Sisyphus import runLocalModel, parsers, tailor_robust, helpers
 import os
 import tkinter as tk
 from tkinter import ttk
@@ -8,11 +8,10 @@ import Sisyphus.fileGenerator as fileGenerator
 import datetime
 import logging
 from Sisyphus.decorators import log_time
-from config import CONFIG
+from config import config  
 from tkinter import filedialog
 import csv
 import re
-import config
 from copy import deepcopy
 
 
@@ -161,8 +160,8 @@ def check_summaries(update_job_desc = False, update_resume = False):
                 "raw_cv_data" : current_cv_text, #raw_cv_data = ""
                 "systems": [system_text,system_text,system_text,system_text,system_text,system_text], #(min size: 4) , system0 = "", system1 = "", system2 = "", system3 = "", system4 = "",system_s = ""
                 "skill_section":    True, #skill_section=False,
-                "windows":CONFIG["WINDOWS"], #windows=2,
-                "mode": CONFIG["SUMMARY_MODE"], #mode="single"
+                "windows":config.CONFIG["WINDOWS"], #windows=2,
+                "mode": config.CONFIG["SUMMARY_MODE"], #mode="single"
         }, 
         }
         func = getattr(tailor_robust, ollama_func_name)
@@ -306,7 +305,7 @@ def batch_application_packages(root, benchmark = False, cv = True, cl = True):
     
     
     else:
-        current_default_temp = CONFIG["MODELS"]["TEMPERATURE"]
+        current_default_temp = config.CONFIG["MODELS"]["TEMPERATURE"]
         start_n = int(start_number)
         for i in range(0,len(model_list)):
             
@@ -316,8 +315,8 @@ def batch_application_packages(root, benchmark = False, cv = True, cl = True):
             #Set model to be used
             model_var.set(model)
             # config.CONFIG["MODELS"]["TEMPERATURE"] = temperature
-            for payload in payloads_wip.PAYLOADS:
-                payloads_wip.PAYLOADS[payload]["payload_in"]["temperature"] = float(temperature)
+            for payload in config.PAYLOADS:
+                config.PAYLOADS[payload]["payload_in"]["temperature"] = float(temperature)
             
             # for job in job_list:
             job_title, job_desc = job_list[i]
@@ -346,8 +345,8 @@ def batch_application_packages(root, benchmark = False, cv = True, cl = True):
                 print(f"[BATCH][FAIL]Parameters: start_n: {start_n};model: {model}; temperature: {temperature}; job_title: {job_title}")
                 start_n += 1
                 continue
-        for payload in payloads_wip.PAYLOADS:
-            payloads_wip.PAYLOADS[payload]["payload_in"]["temperature"] = current_default_temp
+        for payload in config.PAYLOADS:
+            config.PAYLOADS[payload]["payload_in"]["temperature"] = current_default_temp
         # config.CONFIG["MODELS"]["TEMPERATURE"] = current_default_temp
         # if current_default_temp != CONFIG["MODELS"]["TEMPERATURE"]:
         #     print(f"Warning: Failed to reset model temperature to default") 
@@ -675,8 +674,8 @@ def tailor_cv(root, show = True):
                             # system0="",system1="", system2="", system3="", system4="", system_s="",
                                             #system00="",system01="", (min 6)
                 "skill_section": False, #skill_section=False,
-                "windows":CONFIG["WINDOWS"], #windows=2,
-                "mode": CONFIG["SUMMARY_MODE"] #mode="single"
+                "windows":config.CONFIG["WINDOWS"], #windows=2,
+                "mode": config.CONFIG["SUMMARY_MODE"] #mode="single"
             }, 
         }
         func = getattr(tailor_robust, ollama_func_name)

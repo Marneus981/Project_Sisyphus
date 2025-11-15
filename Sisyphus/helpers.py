@@ -7,10 +7,10 @@ import logging
 import re
 from Sisyphus.decorators import log_time
 from Sisyphus.decorators import FUNCTION_STATS
-from Sisyphus import payloads
+# from Sisyphus import payloads
 from plyer import notification
 import pygame
-from config import CONFIG, DEBUG
+from config import config 
 import inspect
 import traceback
 from copy import deepcopy
@@ -45,18 +45,18 @@ def errorify_sound():
     pygame.mixer.music.play()
 
 def notify(title, message):
-    if CONFIG["NOTIFICATIONS"]["ENABLED"]:
-        if CONFIG["NOTIFICATIONS"]["WINDOWS"]:
+    if config.CONFIG["NOTIFICATIONS"]["ENABLED"]:
+        if config.CONFIG["NOTIFICATIONS"]["WINDOWS"]:
             notification.notify(title=title, message=message)
-        if CONFIG["NOTIFICATIONS"]["SOUND"]:
+        if config.CONFIG["NOTIFICATIONS"]["SOUND"]:
             notify_sound()
     return
 
 def errorify(title, message):
-    if CONFIG["NOTIFICATIONS"]["ENABLED"]:
-        if CONFIG["NOTIFICATIONS"]["WINDOWS"]:
+    if config.CONFIG["NOTIFICATIONS"]["ENABLED"]:
+        if config.CONFIG["NOTIFICATIONS"]["WINDOWS"]:
             notification.notify(title=title, message=message)
-        if CONFIG["NOTIFICATIONS"]["SOUND"]:
+        if config.CONFIG["NOTIFICATIONS"]["SOUND"]:
             errorify_sound()
     return
 
@@ -77,7 +77,7 @@ def count_experiences(text):
     projects = text.count("Project Title:")
     jobs = text.count("Job Title:")
     experiences = roles + projects + jobs
-    if DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: number of experiences: {experiences} (roles:{roles} + projects:{projects} + jobs:{jobs})")
+    if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: number of experiences: {experiences} (roles:{roles} + projects:{projects} + jobs:{jobs})")
 
 @log_time
 def filter_output(model_output, prefix_dict ={}):
@@ -249,15 +249,15 @@ def revise_list_section(new_list_section_text = "", og_pref = {}, type = "course
         currs = [curr_l_p,curr_l_t,curr_l_s]
         return_list = [[],[],[]]
         for i in range(0,len(ogs)):
-            if DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: current i: {i}")
-            if (i == 0 and CONFIG["PRUNING"]["NO_SKILLS"]["COPY_PROG"]):
-                if DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: i: set ogs: {str(currs[i])} to i = {i}")
+            if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: current i: {i}")
+            if (i == 0 and config.CONFIG["PRUNING"]["NO_SKILLS"]["COPY_PROG"]):
+                if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: i: set ogs: {str(currs[i])} to i = {i}")
                 return_list[i] = deepcopy(currs[i])
                 continue
-            elif (i == 1 and CONFIG["PRUNING"]["NO_SKILLS"]["COPY_TECH"]):
+            elif (i == 1 and config.CONFIG["PRUNING"]["NO_SKILLS"]["COPY_TECH"]):
                 return_list[i] = deepcopy(currs[i])
                 continue
-            elif (i == 2 and CONFIG["PRUNING"]["NO_SKILLS"]["COPY_SOFT"]):
+            elif (i == 2 and config.CONFIG["PRUNING"]["NO_SKILLS"]["COPY_SOFT"]):
                 return_list[i] = deepcopy(currs[i])
                 continue
             if ogs[i] == [] or currs[i] == []:
@@ -266,7 +266,7 @@ def revise_list_section(new_list_section_text = "", og_pref = {}, type = "course
                 for og in ogs[i]:
                     for curr in currs[i]:
                         if og in curr:
-                            if DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: i: appended og: {str(og)} to i = {i}")
+                            if config.DEBUG["INFO_LOGGING"]: print(f"[INFO]{function_name}: i: appended og: {str(og)} to i = {i}")
                             return_list[i].append(og)
         temp_dct = {
             "skills":{

@@ -1,0 +1,1430 @@
+{
+  "consistency_checker_vs_cv_cl": {
+    "call_id": "consistency_checker_vs_cv_cl",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "cv_data": "",
+      "cv_data_orig": "",
+      "prefix_dict": {
+        "Consistency Checker Vs Resume:": [
+          "[0]",
+          false
+        ],
+        "Inconsistencies With Resume:": [
+          "[1]",
+          true
+        ],
+        "Inconsistencies With Self:": [
+          "[1]",
+          true
+        ],
+        "Suggestions for Improvement:": [
+          "[1]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven a cover letter and a wholistic summary of a resume (both part of the same job application):\nPerform a consistency check on the tailored cover letter against the resume. This consistency check should include:\n- Whether the cover letter is consistent with the resume, meaning that all skills and experiences mentioned in the cover letter should be present in the resume.\n- Whether the cover letter is consistent with itself, meaning that there should be no contradictions or inconsistencies in the information provided.\nThe report should follow these guidelines:\n- Be mindful not to include any line breaks in  the content of any of the sections/subsections.\n- Be as objective as possible, and if you must make assumptions, make very conservative assumptions\n- Do not create nor imagine any data that is not present in the original data.\n- Do not modify the output format.\n- Return the requested information, strictly filling out the OUTPUT FORMAT.\n- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.\n\nOUTPUT FORMAT:\nConsistency Checker Vs Resume:\nInconsistencies With Resume: Number of inconsistencies found (return 'None.' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by \";\", not line breaks.\nInconsistencies With Self: Number of inconsistencies found (return 'None.' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by \";\", not line breaks.\nSuggestions for Improvement: List of suggestions for improvement, if any (return 'None.' if no suggestions). must be a continuous block of text, composed of sentences separated by \";\", not line breaks.\n\n\nINPUT:\nINPUT cover letter:\n{cv_data}\n\nINPUT wholistic summary of the resume meant to accompany the above cover letter on a job application:\n{cv_data_orig}\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "digits",
+      "[0]Consistency Checker Vs Resume:",
+      "[1]Inconsistencies With Resume:",
+      "[1]Inconsistencies With Self:",
+      "[1]Suggestions for Improvement:"
+    ]
+  },
+  "summarize_job_description": {
+    "call_id": "summarize_job_description",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "job_description": "",
+      "prefix_dict": {
+        "Company Name:": [
+          "[0]",
+          true
+        ],
+        "Job Title:": [
+          "[0]",
+          true
+        ],
+        "Responsibilities:": [
+          "[0]",
+          true
+        ],
+        "Requirements:": [
+          "[0]",
+          true
+        ],
+        "Programming Languages:": [
+          "[0]",
+          true
+        ],
+        "Technical Skills:": [
+          "[0]",
+          true
+        ],
+        "Soft Skills:": [
+          "[0]",
+          true
+        ],
+        "Keywords": [
+          "[0]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nSummarize the input job description by extracting the following information in the format specified under the OUTPUT FORMAT section:\n-Company Name\n-Job Title\n-Responsibilities\n-Requirements\n-Programming Languages\n-Technical Skills\n-Soft Skills\n-Keywords\nWhen filling out the OUTPUT FORMAT, follow these guidelines:\n- Do not modify the format.\n- Do not add any information not present in the provided job description, your goal is to extract information and summarize.\n- Use simple and concise language when possible, but do use specific keywords.\n- Return the requested information, strictly filling out the OUTPUT FORMAT.\n- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.\n- If no information matching a given OUTPUT FORMAT field is found, return the field as empty and continue unto filling out the next field.\nOn the \"Keywords\" section of the OUTPUT FORMAT, you have to include the following as single words or small phrases (less than 3 words long each):\n- The job position (e.g. the job title)\n- The name of technologies required (e.g. object oriented programming, etc)\n- The specific name of programming languages required (e.g. java, etc) \n- Education required/preferred (e.g. bachelors of engineering)\n- Soft skills preferred (e.g. good communication)\n- Words abbreviated as capitalized acronyms (e.g. RMT, OOP, etc) \n\nOUTPUT FORMAT:\nCompany Name: Company Name\nJob Title: Position Name\nResponsibilities: List of responsabilities that come as part of the job, presented as a single line of text separated by \";\"\nRequirements: List of basic requirements, such as availability, education and required knowledge, presented as a single line of text separated by \";\"\nProgramming Languages: List of required programming languages required for the position, presented as a single line of text separated by commas\nTechnical Skills: List of required technical required for the position skills, presented as a single line of text separated by commas. These are defined as all skills other than Soft Skills and Programming Languages needed\nSoft Skills: List of required soft skills required for the position, presented as a single line of text separated by commas.\nKeywords: List of keywords present in the job description, presented as a single line of lowercase text separated by \",\". These keywords can be single words or small phrases (less than 3 words long) such as \"good communication skills\". \n\nINPUT:\nINPUT job description:\n{job_description}\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "digits",
+      "[0]Company Name:",
+      "[0]Job Title:",
+      "[0]Responsibilities:",
+      "[0]Requirements:",
+      "[0]Programming Languages:",
+      "[0]Technical Skills:",
+      "[0]Soft Skills:",
+      "[0]Keywords:"
+    ]
+  },
+  "tailor_experience": {
+    "call_id": "tailor_experience",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "experience": "",
+      "prefix_dict": {
+        "Description:": [
+          "[1]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven a set of keywords and a \"Description\" subsection of a resume experience, rewrite the \"Description\" subsection following these guidelines:\n- Rewrite the \"Description\" subsection to highlight the role description as achievements.\n- Use 2 sentences (max 15 words each) as a single line of text separated by \".\" to fill the \"Description\" subsection; this is a hard requirement.\n- Do NOT use line breaks inside the text of any subsection. \n- Do NOT forget to include the field name \"Description:\" at the start of its respective lines, as per the OUTPUT FORMAT.\n- Do NOT include any information not present in the \"Description\" subsection. \n- Return the requested information, strictly filling out the OUTPUT FORMAT below.\n\nOUTPUT FORMAT:\nDescription: Brief role description, described as achievements meant to concisely provide recruiters with incentives to hire the candidate; written as a single line of text, with sentences separated by a \".\" character.\n\nINPUT:\nINPUT \"Description\" subsection of a resume experience:\n{experience}\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "digits",
+      "[1]Description:"
+    ]
+  },
+  "step0_volunteering_and_leadership": {
+    "call_id": "step0_volunteering_and_leadership",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "raw_cv_data": "",
+      "job_description": "",
+      "prefix_dict": {
+        "Experience:": [
+          "[R]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven a \"Volunteering and Leadership\" resume section and a job description, select up to 5 roles based on the job description. When selecting:\n- If the total number of roles is less than or equal to 5, return all of them.\n- If the total number of roles is greater than or equal to 5 before selection: Select the most relevant 5 roles based on the job description.\n- Do not change the name of the roles.\n- Prioritize roles that match relevant skills and experience present in the job description.\n- It is okay to not select any roles if none are relevant.\n- Display the Role Titles explicitly and without changing them.\n- When filling out the output format  you may not change the role title text, and do not include any text before or after the role title text.\n- Return the requested information, strictly filling out the OUTPUT FORMAT.\n- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.\n\nOUTPUT FORMAT:\nExperience:Role Title 1\nExperience:Role Title 2\nExperience:Role Title 3\nExperience:Role Title 4\nExperience:Role Title 5\n\n\nINPUT:\nINPUT \"Volunteering and Leadership\" resume section:\n{raw_cv_data}\nINPUT job description:\n{job_description}\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "flexible",
+      "cap_letters",
+      "[R]Experience:"
+    ]
+  },
+  "step3_volunteering_and_leadership": {
+    "call_id": "step3_volunteering_and_leadership",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "experience": "",
+      "job_description": "",
+      "prefix_dict": {
+        "Description:": [
+          "[1]",
+          true
+        ],
+        "Skills:": [
+          "[1]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven the \"Description\" and \"Skills\" subsections of a role belonging to the \"Volunteering and Leadership\" section of a resume and a job description, rewrite the \"Description\" and \"Skills\" subsections following these guidelines:\n- In the \"Description\" subsection:\n    - Rewrite to highlight achievements and relevant skills, using up to 2 sentences (max 20 words each), as a single line of text.\n- In the \"Skills\" subsection:\n    - Select up to 6 skills relevant to the job description (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.\n    - Skills must be comma-separated and follow the format below.\n    - If there are no skills in a given category, use \" \", then follow up as the format below indicates \n        - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork\n- Prioritize using keywords found in both the job description and the \"Description\" and \"Skills\" sections (do not use keywords present solely in the job description since that would be a lie).\n- Do NOT use line breaks inside the text of any subsection. \n- Do NOT forget to include the field names \"Description:\" and \"Skills:\" at the start of their respective lines, as per the OUTPUT FORMAT.\n- Do NOT include any information not present in the \"Description\" and \"Skills\" subsections. \n- DO NOT include information that is present solely in the job description.\n- Return the requested information, strictly filling out the OUTPUT FORMAT below\n\nOUTPUT FORMAT:\nDescription: Brief role description.\nSkills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...\n\n\nINPUT:\nINPUT job description:\n{job_description}\n\nINPUT \"Description\" and \"Skills\" attributes of a role belonging to the \"Volunteering and Leadership\" section of a resume:\n{experience}\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "digits",
+      "[1]Description:",
+      "[1]Skills:"
+    ]
+  },
+  "step0_work_experience": {
+    "call_id": "step0_work_experience",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "raw_cv_data": "",
+      "job_description": "",
+      "prefix_dict": {
+        "Experience:": [
+          "[J]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven a \"Work Experience\" resume section and a job description, select up to 5 jobs based on the job description. When selecting:\n- If the total number of jobs is less than or equal to 5, return all of them.\n- If the total number of jobs is greater than or equal to 5 before selection: Select the most relevant 5 jobs based on the job description.\n- Do not change the name of the jobs.\n- Prioritize jobs that match relevant skills and experience present in the job description.\n- It is okay to not select any jobs if none are relevant.\n- Display the Job Titles explicitly and without changing them.\n- When filling out the output format  you may not change the job title text, and do not include any text before or after the job title text.\n- Return the requested information, strictly filling out the OUTPUT FORMAT.\n- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.\n\nOUTPUT FORMAT:\nExperience:Job Title 1\nExperience:Job Title 2\nExperience:Job Title 3\nExperience:Job Title 4\nExperience:Job Title 5\n\n\nINPUT:\nINPUT \"Work Experience\" resume section:\n{raw_cv_data}\n\nINPUT job description:\n{job_description}\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "flexible",
+      "cap_letters",
+      "[J]Experience:"
+    ]
+  },
+  "step3_work_experience": {
+    "call_id": "step3_work_experience",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "experience": "",
+      "job_description": "",
+      "prefix_dict": {
+        "Description:": [
+          "[1]",
+          true
+        ],
+        "Skills:": [
+          "[1]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven the \"Description\" and \"Skills\" subsections of a role belonging to the \"Work Experience\" section of a resume and a job description, rewrite the \"Description\" and \"Skills\" subsections following these guidelines:\n- In the \"Description\" subsection:\n    - Rewrite to highlight achievements and relevant skills, using up to 2 sentences (max 20 words each), as a single line of text.\n- In the \"Skills\" subsection:\n    - Select up to 6 skills relevant to the job description (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.\n    - Skills must be comma-separated and follow the format below.\n    - If there are no skills in a given category, use \" \", then follow up as the format below indicates \n        - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork\n- Prioritize using keywords found in both the job description and the \"Description\" and \"Skills\" sections (do not use keywords present solely in the job description since that would be a lie).\n- Do NOT use line breaks inside the text of any subsection. \n- Do NOT forget to include the field names \"Description:\" and \"Skills:\" at the start of their respective lines, as per the OUTPUT FORMAT.\n- Do NOT include any information not present in the \"Description\" and \"Skills\" subsections. \n- DO NOT include information that is present solely in the job description.\n- Return the requested information, strictly filling out the OUTPUT FORMAT below\n\nOUTPUT FORMAT:\nDescription: Brief role description.\nSkills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...\n\n\nINPUT:\nINPUT job description:\n{job_description}\n\nINPUT \"Description\" and \"Skills\" subsections of a role belonging to the \"Work Experience\" section of a resume:\n{experience}\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "digits",
+      "[1]Description:",
+      "[1]Skills:"
+    ]
+  },
+  "step0_projects": {
+    "call_id": "step0_projects",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "raw_cv_data": "",
+      "job_description": "",
+      "prefix_dict": {
+        "Experience:": [
+          "[P]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven a \"Projects\" resume section and a job description, select up to 5 projects based on the job description. When selecting:\n- If the total number of projects is less than or equal to 5, return all of them.\n- If the total number of projects is greater than or equal to 5 before selection: Select the most relevant 5 projects based on the job description.\n- Do not change the name of the projects.\n- Prioritize projects that match relevant skills and experience present in the job description.\n- It is okay to not select any projects if none are relevant.\n- Display the Project Titles explicitly and without changing them.\n- When filling out the output format  you may not change the project title text, and do not include any text before or after the project title text.\n- Return the requested information, strictly filling out the OUTPUT FORMAT.\n- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.\n\nOUTPUT FORMAT:\nExperience:Project Title 1\nExperience:Project Title 2\nExperience:Project Title 3\nExperience:Project Title 4\nExperience:Project Title 5\n\n\nINPUT:\nINPUT \"Projects\" resume section:\n{raw_cv_data}\n\nINPUT job description:\n{job_description}\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "flexible",
+      "cap_letters",
+      "[P]Experience:"
+    ]
+  },
+  "step3_projects": {
+    "call_id": "step3_projects",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "experience": "",
+      "job_description": "",
+      "prefix_dict": {
+        "Description:": [
+          "[1]",
+          true
+        ],
+        "Skills:": [
+          "[1]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven the \"Description\" and \"Skills\" subsections of a role belonging to the \"Projects\" section of a resume and a job description, rewrite the \"Description\" and \"Skills\" subsections following these guidelines:\n- In the \"Description\" subsection:\n    - Rewrite to highlight achievements and relevant skills, using up to 2 sentences (max 20 words each), as a single line of text.\n- In the \"Skills\" subsection:\n    - Select up to 6 skills relevant to the job description (Programming Languages, Technical Skills, Soft Skills). Every skill category should be present, even if empty.\n    - Skills must be comma-separated and follow the format below.\n    - If there are no skills in a given category, use \" \", then follow up as the format below indicates \n        - For example: Programming Languages: ; Technical Skills: ; Soft Skills: Communication, Teamwork\n- Prioritize using keywords found in both the job description and the \"Description\" and \"Skills\" sections (do not use keywords present solely in the job description since that would be a lie).\n- Do NOT use line breaks inside the text of any subsection. \n- Do NOT forget to include the field names \"Description:\" and \"Skills:\" at the start of their respective lines, as per the OUTPUT FORMAT.\n- Do NOT include any information not present in the \"Description\" and \"Skills\" subsections. \n- DO NOT include information that is present solely in the job description.\n- Return the requested information, strictly filling out the OUTPUT FORMAT below\n\nOUTPUT FORMAT:\nDescription: Brief role description.\nSkills: Programming Languages: ...; Technical Skills: ...; Soft Skills: ...\n\n\nINPUT:\nINPUT job description:\n{job_description}\n\nINPUT \"Description\" and \"Skills\" subsections of a project belonging to the \"Projects\" section of a resume:\n{experience}\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "digits",
+      "[1]Description:",
+      "[1]Skills:"
+    ]
+  },
+  "step0_prune_experiences": {
+    "call_id": "step0_prune_experiences",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "experiences": "",
+      "job_description": "",
+      "prefix_dict": {
+        "Experience:": [
+          "[E]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven the all experiences across 3 resume sections (Volunteering and Leadership, Work Experience, and Projects) and a job description, select up to 5 experiences based on the job description. When selecting:\n- If the total number of experiences/roles is less than or equal to 5, return all of them.\n- If the total number of experiences/roles is greater than or equal to 5 before selection: \n    - Select the most relevant 5 experiences/roles based on the job description (you still must return exactly 5).\n- Do not change the name of the experiences/roles.\n- Prioritize Projects that match relevant skills and experience present in the job description.\n- While filling out the output format, do not change the experience text, and do not include any text before or after the experience title text.\n- Return the requested information, strictly filling out the OUTPUT FORMAT.\n- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.\n\nOUTPUT FORMAT:\nExperience:Experience Title 1\nExperience:Experience Title 2\nExperience:Experience Title 3\nExperience:Experience Title 4\nExperience: Experience Title 5\n\n\nINPUT:\nINPUT job description:\n{job_description}\n\nINPUT experiences from 3 resume sections (Volunteering and Leadership, Work Experience, and Projects):\n{experiences}\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "flexible",
+      "cap_letters",
+      "[E]Experience:"
+    ]
+  },
+  "summarize_section": {
+    "call_id": "summarize_section",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "section": "",
+      "section_name": "",
+      "prefix_dict": {
+        "Section Summary:": [
+          "[S]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven a section from a resume, summarize the sections in a wholistic manner while following these guidelines:\n- Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.\n- Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.\n- Return the summarized information as a single continuous string of text, following the output format strictly. \n- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.\n- Return the requested information, strictly filling out the OUTPUT FORMAT.\n\nOUTPUT FORMAT:\nSection Summary: {section_name} Summary; Wholistic summary of the section's information.\n\n\nINPUT:\nINPUT section from a resume:\n{section}\n\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "cap_letters",
+      "[S]Section Summary:"
+    ]
+  },
+  "summarize_general_info": {
+    "call_id": "summarize_general_info",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "general_info_text": "",
+      "prefix_dict": {
+        "General Information Summary:": [
+          "[S]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven the general information from a resume, summarize it in a wholistic manner; be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.\nSince this is a summary of a resume's general information, you need to include the candidate's Name, Contact Information, Title, and Languages Spoken.\nReturn the requested information, strictly filling out the OUTPUT FORMAT. (do not forget to include the \"General Information Summary:\" text at the start of the output).\nAlso, do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.\n\nOUTPUT FORMAT:\nGeneral Information Summary: Brief and concise summary of the resume's general information, presented as a single continuous string of text.\n\n\nINPUT:\nINPUT general information from a resume:\n{general_info_text}\n\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "cap_letters",
+      "[S]General Information Summary:"
+    ]
+  },
+  "summarize_skills": {
+    "call_id": "summarize_skills",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "skill_section": "",
+      "prefix_dict": {
+        "Skills Summary:": [
+          "[S]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven a \"Skills\" section from a resume, summarize the skills section of a resume in a wholistic manner; be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.\nReturn the requested information, strictly filling out the OUTPUT FORMAT. (do not forget to include the \"Skills Summary:\" text at the start of the output).\nAlso, do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.\n\nOUTPUT FORMAT:\nSkills Summary: Wholistic summary of the resume's skills, presented as a single continuous string of text.\n\n\nINPUT:\nINPUT \"Skills\" section from a resume:\n{skill_section}\n\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "cap_letters",
+      "[S]Skills Summary:"
+    ]
+  },
+  "step1_tailor_summary": {
+    "call_id": "step1_tailor_summary",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "prev_summary": "",
+      "job_description": "",
+      "prefix_dict": {
+        "Summary:": [
+          "[0]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven a wholistic summary of a resume and a job description, tailor a Summary section for a resume to best match the job description; follow these guidelines:\n- Write the tailored summary section as the candidate, not as an external observer.\n- The summary mustn't exceed 100 words.\n- Do not line break the summary section, it should be a continuous block of text.\n- When mentioning specific qualifications, these must be relevant to the job description:\n    -  Preferably mention qualifications and keywords that appear on both the resume and the job description, particularly those which demonstrate the candidate's technical expertise.\n- Return only the revised summary and strictly follow the output format, filling in the parts that have **fill-in:\"text\"**\n- Return the requested information, strictly filling out the OUTPUT FORMAT.\n- Do not forget to include the field name \"Summary:\", as per the OUTPUT FORMAT.\n\nOUTPUT FORMAT:\nSummary: Despite limited work experience, I bring strong work ethic, adaptability and curiosity. Experienced in **fill-in specific relevant technical skills\"**. Now seeking a position that offers growth and learning opportunities.\n\n\nINPUT:\nINPUT wholistic summary of a resume:\n{prev_summary}\n\nINPUTjob description:\n{job_description}\n\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "digits",
+      "[0]Summary:"
+    ]
+  },
+  "tailor_skills": {
+    "call_id": "tailor_skills",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "cv_data": "",
+      "job_description": "",
+      "prefix_dict": {
+        "Programming Languages:": [
+          "[1]",
+          true
+        ],
+        "Technical Skills:": [
+          "[1]",
+          true
+        ],
+        "Soft Skills:": [
+          "[1]",
+          true
+        ],
+        "Skills:": [
+          "[0]",
+          false
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven a job description and the \"Skills\" section from a resume:\nExtract the \"Programming Languages\",\"Technical Skills\", and \"Soft Skills\" relevant to the INPUT job description from the INPUT \"Skills\" resume section,following the guidelines below:\n- Do not line break any line containing the relevant skills, it should follow the format below strictly.\n- If either the \"Programming Languages\", \"Technical Skills\", or \"Soft Skills\" sections are empty (which means no relevant skills of said cathegory were found), return them as an empty section (without any extra text to denote its empty status).\n- Aside from the information requested, do not include any additional text or explanations.\n- Return the requested information, strictly filling out the OUTPUT FORMAT.\n- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.\n- Do not break down any OUTPUT FORMAT lines into multiple instances(e.g. do not output 2 lines labeled \"Technical Skills:\", one is sufficient as per the format)\n- The skills you extract MUST be present in the INPUT \"Skills\" resume section.\n\nOUTPUT FORMAT:\nSkills:\nProgramming Languages: comma-separated list of Programming Languages required by job description\nTechnical Skills: comma-separated list of Technical Skills required by job description\nSoft Skills: comma-separated list of Soft Skills required by job description\n\n\nINPUT:\nINPUT job description:\n{job_description}\n\nINPUT \"Skills\" section from resume:\n{cv_data}\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "digits",
+      "[0]Skills:",
+      "[1]Programming Languages:",
+      "[1]Technical Skills:",
+      "[1]Soft Skills:"
+    ]
+  },
+  "new_vs_old_section": {
+    "call_id": "new_vs_old_section",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "old_resume_s_txt": "",
+      "new_resume_s_txt": "",
+      "section_name": "",
+      "prefix_dict": {
+        "Comparative Analysis:": [
+          "[0]",
+          true
+        ],
+        "Dummy": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven a raw untailored resume section and and its counterpart from an already tailored resume, compare the two resume sections and:\n- Confirm that the tailored section does not contain any made-up information.\n- Verify that all information in the tailored section is present in the raw section, even if paraphrased.\n- Identify any contradictions between the two sections.\n- Identify any contradictions within the tailored section (with itself).\n- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.\n- Return the requested information, strictly filling out the OUTPUT FORMAT.\n\nOUTPUT FORMAT:\nComparative Analysis: {section_name} Section; Analysis of the tailored resume section vs the raw section, as a single line of text.\n\n\nINPUT:\nINPUT raw untailored resume section:\n{old_resume_s_txt}\n\nINPUT already tailored resumesection:\n{new_resume_s_txt}\n\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "digits",
+      "[0]Comparative Analysis:"
+    ]
+  },
+  "make_cover_letter_text": {
+    "call_id": "make_cover_letter_text",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "cv_data": "",
+      "job_description": "",
+      "prefix_dict": {
+        "Cover Letter:": [
+          "[0]",
+          false
+        ],
+        "New Paragraph0:": [
+          "[1]",
+          true
+        ],
+        "New Paragraph2:": [
+          "[1]",
+          true
+        ],
+        "New Paragraph3:": [
+          "[1]",
+          true
+        ],
+        "New Paragraph1:": [
+          "[1]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven a wholistic summary of a resume, and the summary of the job description it has been tailored to, write a cover letter tailored to the job description, following the guidelines below:\n- It should highlight the most relevant skills and experiences from the resume that match the job description.\n- It should be written in a professional tone.\n- Do not invent information or experiences, only include what is present in the resume.\n- Do not make use of run-on sentences.\n- The only line breaks allowed are those that separate paragraphs, as per the format below.\n- Only 4 paragraphs are allowed, each starting with \"New ParagraphX: \" and then the text of the new paragraph; X starts at 0 and goes up to 3.\n- Total word count must not exceed 400 words. This is a hard limit, so be concise and to the point.\n- Write the cover letter as the candidate, not as an external observer.\n- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.\n- Return the requested information, strictly filling out the OUTPUT FORMAT.\n\nOUTPUT FORMAT:\nCover Letter: \nNew Paragraph0: Cover Letter introduction, mentioning the job title and company, as well as the candidate's enthusiasm for the role.\nNew Paragraph1: Explain why the candidate is a good fit for the role, briefly mentioning the most relevant information from the resume that matches the job description.\nNew Paragraph2: Provide further information about the candidate's qualifications and how they align with the job requirements. Make use of specific examples and metrics to demonstrate impact (if applicable).\nNew Paragraph3: Closing statement, thanking the employer for their time and consideration. Invite them to contact the candidate for further discussion, providing email address.\n\n\nINPUT:\nINPUT wholistic summary of a resume:\n{cv_data}\n\nINPUT summary of the job description it has been tailored to:\n{job_description}\n\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "digits",
+      "[0]Cover Letter:",
+      "[1]New Paragraph0:",
+      "[1]New Paragraph1:",
+      "[1]New Paragraph2:",
+      "[1]New Paragraph3:"
+    ]
+  },
+  "consistency_checker_vs_job_desc_cv": {
+    "call_id": "consistency_checker_vs_job_desc_cv",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "cv_data": "",
+      "job_description": "",
+      "prefix_dict": {
+        "Consistency Checker Vs Job Description:": [
+          "[0]",
+          false
+        ],
+        "Inconsistencies With Job Description:": [
+          "[1]",
+          true
+        ],
+        "Suggestions for Improvement:": [
+          "[1]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven the a summary of a resume and the job description the aforementioned resume has been tailored to, perform a consistency check on the tailored resume against the job description. This consistency check will check if the resume is consistent with the job description, meaning that all skills and experiences mentioned in the resume should be relevant to the job description.\nFollow these guidelines:\n- Be mindful not to include any line breaks in the content of any of the sections/subsections.\n- Be as objective as possible, and do not make any assumptions about the data.\n- Do not create nor imagine any data that is not present in the original data.\n- Do not modify the OUTPUT FORMAT.\n- Return the requested information, strictly filling out the OUTPUT FORMAT.\n- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.\n\nOUTPUT FORMAT:\nConsistency Checker Vs Job Description:\nInconsistencies With Job Description: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by \";\", not line breaks.\nSuggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by \";\", not line breaks.\n\n\nINPUT:\nINPUT summary of a resume tailored to a particular job description:\n{cv_data}\nINPUT job description the aforementioned resume has been tailored to:\n{job_description}\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "digits",
+      "[0]Consistency Checker Vs Job Description:",
+      "[1]Inconsistencies With Job Description:",
+      "[1]Suggestions for Improvement:"
+    ]
+  },
+  "consistency_checker_vs_job_desc_cl": {
+    "call_id": "consistency_checker_vs_job_desc_cl",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "cv_data": "",
+      "job_description": "",
+      "prefix_dict": {
+        "Consistency Checker Vs Job Description:": [
+          "[0]",
+          false
+        ],
+        "Inconsistencies With Job Description:": [
+          "[1]",
+          true
+        ],
+        "Suggestions for Improvement:": [
+          "[1]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven a cover letter and the job description the aforementioned cover letter has been tailored to, perform a consistency check on the tailored cover letter against the job description. This consistency check will check if the cover letter is consistent with the job description, meaning that all skills and experiences mentioned in the cover letter should be relevant to the job description.\nFollow these guidelines:\n- Be mindful not to include any line breaks in  the content of any of the sections/subsections.\n- Be as objective as possible, and do not make any assumptions about the data.\n- Do not create nor imagine any data that is not present in the original data.\n- Do not modify the OUTPUT FORMAT.\n- Return the requested information, strictly filling out the OUTPUT FORMAT.\n- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.\n\nOUTPUT FORMAT:\nConsistency Checker Vs Job Description:\nInconsistencies With Job Description: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by \";\", not line breaks.\nSuggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by \";\", not line breaks.\n\n\nINPUT:\nINPUT cover letter tailored to a particular job description:\n{cv_data}\nINPUT job description the aforementioned resume has been tailored to:\n{job_description}\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "digits",
+      "[0]Consistency Checker Vs Job Description:",
+      "[1]Inconsistencies With Job Description:",
+      "[1]Suggestions for Improvement:"
+    ]
+  },
+  "tailor_courses": {
+    "call_id": "tailor_courses",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "courses": "",
+      "job_description": "",
+      "no_courses": 10,
+      "prefix_dict": {
+        "Courses:": [
+          "[1]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven a list of courses taken on a given program and a job description, extract the {no_courses} most relevant courses that match the skills and requirements outlined in the job description.\nFollow these guidelines when extracting courses and returning them:\n- Do not include any courses not present in the original courses list.\n- Do not use line breaks inside any subsection.\n- Courses must be comma-separated and follow the format below.\n- Return the requested information, strictly filling out the OUTPUT FORMAT.\n- Be mindful that courses may or may not have a course code (represented by \"XXX001\" in the OUTPUT FORMAT section)\n- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.\n\nOUTPUT FORMAT:\nCourses: XXX001 Course Name1, XXX002 Course Name2, XXX003 Course Name3...\n\n\nINPUT:\nINPUT list of courses taken on a given program:\n{courses}\n\nINPUT job description:\n{job_description}\n\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "digits",
+      "[1]Courses:"
+    ]
+  },
+  "tailor_courses_robust": {
+    "call_id": "tailor_courses_robust",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "courses": "",
+      "job_description": "",
+      "standard_calls": [
+        "tailor_courses"
+      ],
+      "prefix_dict": {
+        "Courses:": [
+          "[1]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "digits",
+      "[1]Courses:"
+    ]
+  },
+  "batch_summarize_sections": {
+    "call_id": "batch_summarize_sections",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "sections": [],
+      "section_names": [],
+      "second_half": "\n\nINPUT:\nINPUT sections from a resume:\n{sections_text}\n\n\n",
+      "prefix_dict": {
+        "Section Summary:": [
+          "[S]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven a number of sections from a resume, summarize the sections in a wholistic manner while following these guidelines:\n- Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.\n- Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.\n- Keep in mind that these summaries will be used in a \"Sliding Window\" approach to summarize the entire resume effectively, so include information that is relevant for the overall context of the resume.\n- Return the requested information, strictly filling out the OUTPUT FORMAT.\n- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.\n- The only field name allowed is \"Section Summary:\", do NOT include a separate \"Summary:\" section as this will result in an error.\n- There must be 1 \"Section Summary:\" per section given, in this case the sections given are {no_sections}:\n    - {section_names}\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "flexible",
+      "cap_letters",
+      "[S]Section Summary:"
+    ]
+  },
+  "tailor_skills_robust": {
+    "call_id": "tailor_skills_robust",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "cv_data": "",
+      "job_description": "",
+      "job_description_dct": {},
+      "prefix_dict": {
+        "Programming Languages:": [
+          "[1]",
+          true
+        ],
+        "Technical Skills:": [
+          "[1]",
+          true
+        ],
+        "Soft Skills:": [
+          "[1]",
+          true
+        ],
+        "Skills:": [
+          "[0]",
+          false
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      },
+      "standard_calls": [
+        "tailor_skills"
+      ]
+    },
+    "prompt_in": "",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "digits",
+      "[0]Skills:",
+      "[1]Programming Languages:",
+      "[1]Technical Skills:",
+      "[1]Soft Skills:"
+    ]
+  },
+  "tailor_volunteering_and_leadership": {
+    "call_id": "tailor_volunteering_and_leadership",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "raw_cv_data": "",
+      "job_description_summary": "",
+      "section": "volunteering_and_leadership",
+      "reference_dct": {},
+      "systems": [
+        "",
+        ""
+      ],
+      "standard_calls": [
+        "step0_volunteering_and_leadership",
+        "step3_volunteering_and_leadership"
+      ],
+      "prefix_dict": {}
+    },
+    "prompt_in": "",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "flexible",
+      "digits",
+      "[0]Volunteering and Leadership:",
+      "[1]Role:",
+      "[1]Organization:",
+      "[1]Location:",
+      "[1]Duration:",
+      "[1]Description:",
+      "[1]Skills:"
+    ]
+  },
+  "tailor_work_experience": {
+    "call_id": "tailor_work_experience",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "raw_cv_data": "",
+      "job_description_summary": "",
+      "section": "work_experience",
+      "reference_dct": {},
+      "systems": [
+        "",
+        ""
+      ],
+      "standard_calls": [
+        "step0_work_experience",
+        "step3_work_experience"
+      ],
+      "prefix_dict": {}
+    },
+    "prompt_in": "",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "flexible",
+      "digits",
+      "[0]Work Experience:",
+      "[1]Job Title:",
+      "[1]Company:",
+      "[1]Location:",
+      "[1]Duration:",
+      "[1]Description:",
+      "[1]Skills:"
+    ]
+  },
+  "tailor_projects": {
+    "call_id": "tailor_projects",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "raw_cv_data": "",
+      "job_description_summary": "",
+      "section": "projects",
+      "reference_dct": {},
+      "systems": [
+        "",
+        ""
+      ],
+      "standard_calls": [
+        "step0_projects",
+        "step3_projects"
+      ],
+      "prefix_dict": {}
+    },
+    "prompt_in": "",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "flexible",
+      "digits",
+      "[0]Projects:",
+      "[1]Project Title:",
+      "[1]URL:",
+      "[1]Type:",
+      "[1]Duration:",
+      "[1]Description:",
+      "[1]Skills:"
+    ]
+  },
+  "sliding_window_two_sections": {
+    "call_id": "sliding_window_two_sections",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "sections": [
+        "",
+        ""
+      ],
+      "section_names": [
+        "",
+        ""
+      ],
+      "systems": [
+        "",
+        ""
+      ],
+      "candidate_name": "",
+      "candidate_title": "",
+      "mode": "single",
+      "standard_calls": [
+        "summarize_section"
+      ],
+      "non_standard_calls": [
+        "batch_summarize_sections"
+      ],
+      "async_calls": [
+        "standard_ollama_call_async"
+      ],
+      "prefix_dict": {
+        "Sections Summary:": [
+          "[S]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven 2 resume section summaries, create a new summary that incorporates all two summaries, following these guidelines:\n- Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.\n- Include ALL information, competencies, achievements, and skills, for this is a wholistic summary of the candidate's qualifications. Do not miss any skills.\n- When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}\n- Return the requested information, strictly filling out the OUTPUT FORMAT.\n- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.\n- You must include \"Sections Summary: This is a summary of the {section1_name} and {section2_name} sections:\" as per the OUTPUT FORMAT BELOW\n\nOUTPUT FORMAT:\nSections Summary: This is a summary of the {section1_name} and {section2_name} sections: Wholistic summary of the sections' information, competencies, achievements, and skills.\n\n\nINPUT:\nINPUT {section1_name} section summary:\n{summary1}\n\nINPUT {section2_name} section summary:\n{summary2}\n\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "cap_letters",
+      "[S]"
+    ]
+  },
+  "sliding_window_three_sections": {
+    "call_id": "sliding_window_three_sections",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "sections": [
+        "",
+        "",
+        ""
+      ],
+      "section_names": [
+        "",
+        "",
+        ""
+      ],
+      "systems": [
+        "",
+        "",
+        ""
+      ],
+      "candidate_name": "",
+      "candidate_title": "",
+      "mode": "single",
+      "standard_calls": [
+        "summarize_section"
+      ],
+      "non_standard_calls": [
+        "batch_summarize_sections"
+      ],
+      "async_calls": [
+        "standard_ollama_call_async"
+      ],
+      "prefix_dict": {
+        "Sections Summary:": [
+          "[S]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven 3 resume section summaries, create a new summary that incorporates all two summaries, following these guidelines:\n- Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.\n- Include ALL information, competencies, achievements, and skills, for this is a wholistic summary of the candidate's qualifications. Do not miss any skills.\n- When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}\n- Return the requested information, strictly filling out the OUTPUT FORMAT.\n- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.\n- You must include \"Sections Summary: This is a summary of the {section1_name}, {section2_name} and {section2_name} sections:\" as per the OUTPUT FORMAT BELOW\n\nOUTPUT FORMAT:\nSections Summary: This is a summary of the {section1_name}, {section2_name} and {section3_name}sections: Wholistic summary of the sections' information, competencies, achievements, and skills.\n\nINPUT:\nINPUT {section1_name} section summary:\n{summary1}\n\nINPUT {section2_name} section summary:\n{summary2}\n\nINPUT {section3_name} section summary:\n{summary3}\n\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "cap_letters",
+      "[S]"
+    ]
+  },
+  "sliding_window_four_sections": {
+    "call_id": "sliding_window_four_sections",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "sections": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "section_names": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "systems": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "candidate_name": "",
+      "candidate_title": "",
+      "mode": "single",
+      "standard_calls": [
+        "summarize_section"
+      ],
+      "non_standard_calls": [
+        "batch_summarize_sections"
+      ],
+      "async_calls": [
+        "standard_ollama_call_async"
+      ],
+      "prefix_dict": {
+        "Sections Summary:": [
+          "[S]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven 4 resume section summaries, create a new summary that incorporates all two summaries, following these guidelines:\n- Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.\n- Include ALL information, competencies, achievements, and skills, for this is a wholistic summary of the candidate's qualifications. Do not miss any skills.\n- When referring to the candidate, use their name: {candidate_name} or their title: {candidate_title}\n- Return the requested information, strictly filling out the OUTPUT FORMAT.\n- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.\n- You must include \"Sections Summary: This is a summary of the {section1_name}, {section2_name}, {section3_name} and {section4_name} sections:\" as per the OUTPUT FORMAT BELOW\n\nOUTPUT FORMAT:\nSections Summary: This is a summary of the {section1_name}, {section2_name}, {section3_name} and {section4_name}sections: Wholistic summary of the sections' information, competencies, achievements, and skills.\n\n\nINPUT:\nINPUT {section1_name} section summary:\n{summary1}\n\nINPUT {section2_name} section summary:\n{summary2}\n\nINPUT {section3_name} section summary:\n{summary3}\n\nINPUT {section4_name} section summary:\n{summary4}\n\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "cap_letters",
+      "[S]"
+    ]
+  },
+  "prune_experiences": {
+    "call_id": "prune_experiences",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "experiences": "",
+      "job_description_summary": "",
+      "section": "vl_w_p",
+      "reference_dct": {},
+      "standard_calls": [
+        "step0_prune_experiences"
+      ],
+      "prefix_dict": {}
+    },
+    "prompt_in": "",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "flexible",
+      "digits",
+      "[0]Volunteering and Leadership:",
+      "[1]Role:",
+      "[1]Organization:",
+      "[1]Location:",
+      "[1]Duration:",
+      "[1]Description:",
+      "[1]Skills:",
+      "[0]Work Experience:",
+      "[1]Job Title:",
+      "[1]Company:",
+      "[0]Projects:",
+      "[1]Project Title:",
+      "[1]URL:",
+      "[1]Type:"
+    ]
+  },
+  "slide_summary": {
+    "call_id": "slide_summary",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "sections_dct_list": [],
+      "systems": [],
+      "skill_section": false,
+      "windows": 2,
+      "mode": "single",
+      "standard_calls": [
+        "summarize_general_info",
+        "summarize_skills"
+      ],
+      "non_standard_calls": [
+        "sliding_window_two_sections",
+        "sliding_window_three_sections",
+        "sliding_window_four_sections"
+      ],
+      "prefix_dict": {}
+    },
+    "prompt_in": "",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": []
+  },
+  "step0_tailor_summary": {
+    "call_id": "step0_tailor_summary",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "raw_cv_data": "",
+      "systems": [],
+      "skill_section": false,
+      "windows": 2,
+      "mode": "single",
+      "standard_calls": [],
+      "non_standard_calls": [
+        "slide_summary"
+      ],
+      "prefix_dict": {
+        "Summary:": [
+          "[0]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven all summarized sections of a resume, create a wholistic summary of all of them, following these guidelines:\n- Include the candidate's contact information, as well as their title and name.\n- Include any certifications or qualifications.\n- Include all education.\n- Include all projects, work experience, and volunteering and leadership roles.\n- Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.\n- Maintain the context and flow between the sections.\n- Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.\n- When filling out the output format, do not forget to include the \"Summary:\" text before the actual summary.\n- Return the requested information, strictly filling out the OUTPUT FORMAT.\n- Output must be only 1 line long and it must start with \"Summary:\", as per the OUTPUT FORMAT.\n\nOUTPUT FORMAT:\nSummary: Wholistic summary of all sections, presented as a single continuous string of text.\n\n\nINPUT:\nINPUT summarized sections of a resume:\n{slides_txt}\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "digits",
+      "[0]Summary:"
+    ]
+  },
+  "tailor_summary": {
+    "call_id": "tailor_summary",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "raw_cv_data": "",
+      "systems": [],
+      "skill_section": false,
+      "job_description": "",
+      "windows": 2,
+      "mode": "single",
+      "standard_calls": [
+        "step1_tailor_summary"
+      ],
+      "non_standard_calls": [
+        "step0_tailor_summary"
+      ],
+      "prefix_dict": {}
+    },
+    "prompt_in": "",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "digits",
+      "[0]Summary:"
+    ]
+  },
+  "new_vs_old_resume": {
+    "call_id": "new_vs_old_resume",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "old_resume_txt": "",
+      "new_resume_txt": "",
+      "standard_calls": [
+        "new_vs_old_section"
+      ],
+      "non_standard_calls": [],
+      "prefix_dct": {}
+    },
+    "prompt_in": "",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "flexible",
+      "digits",
+      "[0]Comparative Analysis:"
+    ]
+  },
+  "consistency_checker_vs_cv_cv": {
+    "call_id": "consistency_checker_vs_cv_cv",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "cv_data": "",
+      "cv_data_orig": "",
+      "system_s": "",
+      "standard_calls": [],
+      "non_standard_calls": [
+        "new_vs_old_resume"
+      ],
+      "prefix_dict": {
+        "Consistency Checker Vs Original Resume:": [
+          "[0]",
+          false
+        ],
+        "Inconsistencies With Original Resume:": [
+          "[1]",
+          true
+        ],
+        "Suggestions for Improvement:": [
+          "[1]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "REQUEST:\nGiven a list containing a per-section analysis of a two resumes, comparing the synthesized data in the new resume (which has been tailored to a particular job description) against the original, synthesize a report which extracts the following data from the list of analyses:\n- Whether the new resume is consistent with the original resume, meaning that all information in the new resume is present in the original resume, even if paraphrased.\n- Whether the new resume is consistent with itself, meaning that there should be no contradictions or inconsistencies in the information provided.\nThe report should follow these guidelines:\n- Be mindful not to include any line breaks in  the content of any of the sections/subsections.\n- Be as objective as possible, and if you must make assumptions, make very conservative assumptions\n- Do not create nor imagine any data that is not present in the original data.\n- Do not modify the OUTPUT FORMAT.\n- Return the requested information, strictly filling out the OUTPUT FORMAT.\n- Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.\n\nOUTPUT FORMAT:\nConsistency Checker Vs Original Resume:\nInconsistencies With Original Resume: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by \";\", not line breaks.\nInconsistencies With Self: Number of inconsistencies found (return 'None' if no inconsistencies). List of inconsistencies found, if any, must be a continuous block of text, composed of sentences separated by \";\", not line breaks.\nSuggestions for Improvement: List of suggestions for improvement, if any (return 'None' if no suggestions). must be a continuous block of text, composed of sentences separated by \";\", not line breaks.\n\n\nINPUT:\nINPUT list containing a per-section analysis of the resumes, comparing the synthesized data in the new resume against the original:\n{all_analysis}\n\n",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "digits",
+      "[0]Consistency Checker VS Original Resume:",
+      "[1]Inconsistencies With Original Resume:",
+      "[1]Inconsistencies With Self:",
+      "[1]Suggestions for Improvement:"
+    ]
+  },
+  "compose_cover_letter_dictionary": {
+    "call_id": "compose_cover_letter_dictionary",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "cv_text_summary": "",
+      "cv_text": "",
+      "job_description": "",
+      "standard_calls": [
+        "make_cover_letter_text"
+      ],
+      "non_standard_calls": [],
+      "prefix_dict": {}
+    },
+    "prompt_in": "",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "digits",
+      "[0]Name:",
+      "[0]Languages:",
+      "[0]Contact Information:",
+      "[1]Address:",
+      "[1]Phone:",
+      "[1]Email:",
+      "[1]LinkedIn:",
+      "[1]Github:",
+      "[1]Portfolio:",
+      "[0]Cover Letter:",
+      "[1]New Paragraph0:",
+      "[1]New Paragraph1:",
+      "[1]New Paragraph2:",
+      "[1]New Paragraph3:"
+    ]
+  },
+  "tailor_experiences": {
+    "call_id": "tailor_volunteering_and_leadership",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "job_description_summary": "",
+      "reference_dct": {},
+      "standard_calls": [
+        "tailor_experience"
+      ],
+      "prefix_dict": {}
+    },
+    "prompt_in": "",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "flexible",
+      "digits",
+      "[0]Volunteering and Leadership:",
+      "[1]Role:",
+      "[1]Organization:",
+      "[1]Location:",
+      "[1]Duration:",
+      "[1]Description:",
+      "[1]Skills:",
+      "[0]Work Experience:",
+      "[1]Job Title:",
+      "[1]Company:",
+      "[0]Projects:",
+      "[1]Project Title:",
+      "[1]URL:",
+      "[1]Type:"
+    ]
+  },
+  "prune_experiences_ai": {
+    "call_id": "prune_experiences_ai",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "experiences": "",
+      "job_description_summary": "",
+      "section": "vl_w_p",
+      "reference_dct": {},
+      "standard_calls": [
+        "step0_prune_experiences"
+      ],
+      "prefix_dict": {}
+    },
+    "prompt_in": "",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "flexible",
+      "digits",
+      "[0]Volunteering and Leadership:",
+      "[1]Role:",
+      "[1]Organization:",
+      "[1]Location:",
+      "[1]Duration:",
+      "[1]Description:",
+      "[1]Skills:",
+      "[0]Work Experience:",
+      "[1]Job Title:",
+      "[1]Company:",
+      "[0]Projects:",
+      "[1]Project Title:",
+      "[1]URL:",
+      "[1]Type:"
+    ]
+  },
+  "standard_ollama_call_async": {
+    "call_id": "standard_ollama_call_async",
+    "payload_in": {
+      "model": "llama3:8b",
+      "system": "",
+      "stream": false,
+      "temperature": 0.1
+    },
+    "format": {
+      "prefix_dict": {
+        "Section Summary:": [
+          "[S]",
+          true
+        ],
+        "Dummy:": [
+          "[BIG DUMMY]"
+        ]
+      }
+    },
+    "prompt_in": "",
+    "ollama_url": "http://localhost:11434",
+    "sample_starts": [
+      "strict",
+      "cap_letters",
+      "[S]Section Summary:"
+    ]
+  }
+}
