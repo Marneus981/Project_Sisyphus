@@ -1,5 +1,7 @@
 {
-  "PAYLOADS":{
+  "PAYLOADS": {
+    "DEFAULT_MODEL": "llama3:8b",
+    "DEFAULT_URL": "http://localhost:11434",
     "STANDARD": [
       "tailor_experience",
       "summarize_job_description",
@@ -22,8 +24,8 @@
       "tailor_courses",
       "consistency_checker_vs_cv_cl"
     ],
-    "ASYNC" : [
-        "standard_ollama_call_async"
+    "ASYNC": [
+      "standard_ollama_call_async"
     ]
   },
   "JOB_SUMM_PRECISION": 4,

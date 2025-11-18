@@ -7,7 +7,8 @@ PAYLOADS= {
                        "model": "llama3:8b", #Set at runtime
                        "system": "",  #Set at runtime
                        "stream": False,
-                       "temperature": 0.7
+                       "temperature": 0.7 #Set at runtime
+
                        },
         "format": {#Set at runtime
                    "cv_data": "",
@@ -59,7 +60,8 @@ INPUT wholistic summary of the resume meant to accompany the above cover letter 
                        "model": "llama3:8b", #Set at runtime
                        "system": "",  #Set at runtime
                        "stream": False,
-                       "temperature": 0.7
+                       "temperature": 0.7 #Set at runtime
+                       
                        },
         "format": {#Set at runtime
                    "job_description": "",
@@ -127,7 +129,8 @@ INPUT job description:
                        "model": "llama3:8b", #Set at runtime
                        "system": "",  #Set at runtime
                        "stream": False,
-                       "temperature": 0.7
+                       "temperature": 0.7 #Set at runtime
+                       
                        },
         "format": {#Set at runtime
                    #"job_keywords": "",
@@ -165,7 +168,8 @@ INPUT "Description" subsection of a resume experience:
                        "model": "llama3:8b", #Set at runtime
                        "system": "",  #Set at runtime
                        "stream": False,
-                       "temperature": 0.7
+                       "temperature": 0.7 #Set at runtime
+                       
                        },
         "format": {#Set at runtime
                    "raw_cv_data": "",
@@ -213,7 +217,8 @@ INPUT job description:
                        "model": "llama3:8b", #Set at runtime
                        "system": "",  #Set at runtime
                        "stream": False,
-                       "temperature": 0.7
+                       "temperature": 0.7 #Set at runtime
+                       
                        },
         "format": {#Set at runtime
                    "experience": "",
@@ -264,7 +269,8 @@ INPUT "Description" and "Skills" attributes of a role belonging to the "Voluntee
             "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": 0.7
+            "temperature": 0.7 #Set at runtime
+                       
         },
         "format": {
             "raw_cv_data": "",
@@ -313,7 +319,8 @@ INPUT job description:
             "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": 0.7
+            "temperature": 0.7 #Set at runtime
+                       
         },
         "format": {
             "experience": "",
@@ -364,7 +371,8 @@ INPUT "Description" and "Skills" subsections of a role belonging to the "Work Ex
             "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": 0.7
+            "temperature": 0.7 #Set at runtime
+                       
         },
         "format": {
             "raw_cv_data": "",
@@ -413,7 +421,8 @@ INPUT job description:
             "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": 0.7
+            "temperature": 0.7 #Set at runtime
+                       
         },
         "format": {
             "experience": "",
@@ -465,7 +474,8 @@ INPUT "Description" and "Skills" subsections of a project belonging to the "Proj
             "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": 0.7
+            "temperature": 0.7 #Set at runtime
+                       
         },
         "format": {
             "experiences": "",
@@ -513,7 +523,8 @@ INPUT experiences from 3 resume sections (Volunteering and Leadership, Work Expe
             "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": 0.7
+            "temperature": 0.7 #Set at runtime
+                       
         },
         "format": {
             "section": "",
@@ -552,7 +563,8 @@ INPUT section from a resume:
             "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": 0.7
+            "temperature": 0.7 #Set at runtime
+                       
         },
         "format": {
             "general_info_text": "",
@@ -588,7 +600,8 @@ INPUT general information from a resume:
             "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": 0.7
+            "temperature": 0.7 #Set at runtime
+                       
         },
         "format": {
             "skill_section": "",
@@ -623,7 +636,8 @@ INPUT "Skills" section from a resume:
             "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": 0.7
+            "temperature": 0.7 #Set at runtime
+                       
         },
         "format": {
             "prev_summary": "",
@@ -668,7 +682,8 @@ INPUTjob description:
             "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": 0.7
+            "temperature": 0.7 #Set at runtime
+                       
         },
         "format": {
             "cv_data": "",
@@ -723,7 +738,8 @@ INPUT "Skills" section from resume:
             "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": 0.7
+            "temperature": 0.7 #Set at runtime
+                       
         },
         "format": {
             "old_resume_s_txt": "",
@@ -767,7 +783,8 @@ INPUT already tailored resumesection:
             "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": 0.7
+            "temperature": 0.7 #Set at runtime
+                       
         },
         "format": {
             "cv_data": "",
@@ -822,7 +839,8 @@ INPUT summary of the job description it has been tailored to:
             "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": 0.7
+            "temperature": 0.7 #Set at runtime
+                       
         },
         "format": {
             "cv_data": "",
@@ -868,7 +886,8 @@ INPUT job description the aforementioned resume has been tailored to:
             "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": 0.7
+            "temperature": 0.7 #Set at runtime
+                       
         },
         "format": {
             "cv_data": "",
@@ -914,7 +933,8 @@ INPUT job description the aforementioned resume has been tailored to:
             "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": 0.7
+            "temperature": 0.7 #Set at runtime
+                       
         },
         "format": {
             "courses": "",
@@ -960,7 +980,8 @@ INPUT job description:
         "payload_in": {"model": "llama3:8b",
                        "system": "",
                        "stream": False,
-                        "temperature": 0.7}, 
+                        "temperature": 0.7 #Set at runtime
+                       }, 
         "format": {
             "courses": "",
             "job_description": "",
@@ -981,7 +1002,8 @@ INPUT job description:
             "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": 0.7
+            "temperature": 0.7 #Set at runtime
+                       
         },
         "format": {
             "sections": [],
@@ -1020,7 +1042,8 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
         "payload_in": {"model": "llama3:8b",
                        "system": "",
                        "stream": False,
-                        "temperature": 0.7}, 
+                        "temperature": 0.7 #Set at runtime
+                       }, 
         "format": {
             "cv_data": "",
             "job_description": "",
@@ -1050,7 +1073,8 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
         "payload_in": {"model": "llama3:8b",
                        "system": "",
                        "stream": False,
-                         "temperature": 0.7}, 
+                         "temperature": 0.7 #Set at runtime
+                       }, 
         "format": {
             "raw_cv_data": "",
             "job_description_summary": "",
@@ -1071,7 +1095,8 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
         "payload_in": {"model": "llama3:8b",
                        "system": "",
                        "stream": False,
-                         "temperature": 0.7}, 
+                         "temperature": 0.7 #Set at runtime
+                       }, 
         "format": {
             "raw_cv_data": "",
             "job_description_summary": "",
@@ -1091,7 +1116,8 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
         "payload_in": {"model": "llama3:8b",
                        "system": "",
                        "stream": False,
-                       "temperature": 0.7}, 
+                       "temperature": 0.7 #Set at runtime
+                       }, 
         "format": {
             "raw_cv_data": "",
             "job_description_summary": "",
@@ -1114,7 +1140,8 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
             "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": 0.7}, 
+            "temperature": 0.7 #Set at runtime
+                       }, 
         "format": {
             "sections" : ["", ""],
             "section_names":  ["", ""],
@@ -1163,7 +1190,8 @@ INPUT {section2_name} section summary:
             "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": 0.7}, 
+            "temperature": 0.7 #Set at runtime
+                       }, 
         "format": {
             "sections" : ["", "", ""],
             "section_names":  ["", "", ""],
@@ -1214,7 +1242,8 @@ INPUT {section3_name} section summary:
             "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": 0.7}, 
+            "temperature": 0.7 #Set at runtime
+                       }, 
         "format": {
             "sections" : ["", "", "", ""],
             "section_names":  ["", "", "", ""],
@@ -1269,7 +1298,8 @@ INPUT {section4_name} section summary:
         "payload_in": {"model": "llama3:8b",
                        "system": "",
                        "stream": False,
-                       "temperature": 0.7}, 
+                       "temperature": 0.7 #Set at runtime
+                       }, 
         "format": {
             "experiences": "",
             "job_description_summary": "",
@@ -1291,7 +1321,8 @@ INPUT {section4_name} section summary:
         "payload_in": {"model": "llama3:8b", #model="llama3:8b",
                         "system": "", # #system="",
                         "stream": False,
-                        "temperature": 0.7}, 
+                        "temperature": 0.7 #Set at runtime
+                       }, 
         "format": {
             "sections_dct_list" : [], #sections_dct_list=[]
             "systems": [], #(min size: 3) system1="", system2="", system3="", system4="", system_s="",
@@ -1314,7 +1345,8 @@ INPUT {section4_name} section summary:
         "payload_in": {"model": "llama3:8b", #model="llama3:8b",
                         "system": "", # #system="",
                         "stream": False,
-                        "temperature": 0.7}, 
+                        "temperature": 0.7 #Set at runtime
+                       }, 
         "format": {
             "raw_cv_data" : "", #raw_cv_data = ""
             "systems": [], #(min size: 4) , system0 = "", system1 = "", system2 = "", system3 = "", system4 = "",system_s = ""
@@ -1360,7 +1392,8 @@ INPUT summarized sections of a resume:
         "payload_in": {"model": "llama3:8b", #model="llama3:8b",
                         "system": "", # #system="",
                         "stream": False,
-                        "temperature": 0.7}, 
+                        "temperature": 0.7 #Set at runtime
+                       }, 
         "format": {
             "raw_cv_data" : "", #raw_cv_data = ""
             "systems": [], # system0="",system1="", system2="", system3="", system4="", system_s="",
@@ -1383,7 +1416,8 @@ INPUT summarized sections of a resume:
         "payload_in": {"model": "llama3:8b", #model="llama3:8b",
                         "system": "", # #system="",
                         "stream": False,
-                        "temperature": 0.7}, 
+                        "temperature": 0.7 #Set at runtime
+                       }, 
         "format": {
             "old_resume_txt" : "", #old_resume_txt = ""
             "new_resume_txt": "", # new_resume_txt = ""
@@ -1401,7 +1435,8 @@ INPUT summarized sections of a resume:
         "payload_in": {"model": "llama3:8b", #model="llama3:8b",
                         "system": "", # #system="",
                         "stream": False,
-                        "temperature": 0.7}, 
+                        "temperature": 0.7 #Set at runtime
+                       }, 
         "format": {
             "cv_data" : "", #old_resume_txt = ""
             "cv_data_orig": "", # new_resume_txt = ""
@@ -1449,7 +1484,8 @@ INPUT list containing a per-section analysis of the resumes, comparing the synth
         "payload_in": {"model": "llama3:8b", #model="llama3:8b",
                         "system": "", # #Empty
                         "stream": False,
-                        "temperature": 0.7}, 
+                        "temperature": 0.7 #Set at runtime
+                       }, 
         "format": {
             "cv_text_summary":"",
             "cv_text":"",
@@ -1470,7 +1506,8 @@ INPUT list containing a per-section analysis of the resumes, comparing the synth
         "payload_in": {"model": "llama3:8b",
                        "system": "",
                        "stream": False,
-                         "temperature": 0.7}, 
+                         "temperature": 0.7 #Set at runtime
+                       }, 
         "format": {
             "job_description_summary": "",
             "reference_dct": {},
@@ -1490,7 +1527,8 @@ INPUT list containing a per-section analysis of the resumes, comparing the synth
         "payload_in": {"model": "llama3:8b",
                        "system": "",
                        "stream": False,
-                       "temperature": 0.7}, 
+                       "temperature": 0.7 #Set at runtime
+                       }, 
         "format": {
             "experiences": "",
             "job_description_summary": "",
@@ -1514,7 +1552,8 @@ INPUT list containing a per-section analysis of the resumes, comparing the synth
             "model": "llama3:8b",
             "system": "",
             "stream": False,
-            "temperature": 0.7}, 
+            "temperature": 0.7 #Set at runtime
+                       }, 
         "format": {
             "prefix_dict": {
                 "Section Summary:" : ["[S]",True],

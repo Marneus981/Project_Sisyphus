@@ -2,6 +2,9 @@ import json
 import importlib.util
 import sys
 import os
+import logging
+
+print = logging.info
 
 def clean(obj):
     if isinstance(obj, dict):

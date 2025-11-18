@@ -16,9 +16,10 @@ from rapidfuzz import process, fuzz, utils
 import rapidfuzz
 from operator import itemgetter
 from copy import deepcopy
+from config import config
 
-DEFAULT_MODEL = "llama3:8b"
-DEFAULT_URL = "http://localhost:11434"
+DEFAULT_MODEL = config.CONFIG["PAYLOADS"]["DEFAULT_MODEL"]
+DEFAULT_URL = config.CONFIG["PAYLOADS"]["DEFAULT_URL"]
 
 template_call_info = {
     "call_id": "", 

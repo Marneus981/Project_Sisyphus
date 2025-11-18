@@ -40,6 +40,7 @@ print = logging.info
 
 @log_time
 def check_summaries(update_job_desc = False, update_resume = False):
+    config.LOAD
     selected_model = model_var.get()
     system_file = system_var.get().strip()
     system_text = helpers.read_text_file(os.path.join(SISYPHUS_PATH, "systems", system_file))
@@ -358,6 +359,7 @@ def tailor_cv(root, show = True):
     global tailor_cl_button
     global result_window, result_textbox, show_output_cv_button, save_output_cv_button, save_current_cv_text_button
     global format_check_current_cv_button, filter_output_cv_button, current_cv_text
+    config.LOAD
     selected_model = model_var.get()
     cv_file = cv_var.get()
     system_file = system_var.get()    
@@ -875,6 +877,7 @@ def tailor_cl(root, show = True):
     global save_output_cl_button
     global format_check_current_cl_button
     global summarized_resume,summarized_job_desc
+    config.LOAD
     selected_model = model_var.get()  
     job_desc = job_desc_textbox.get("1.0", tk.END)
     if not job_desc.strip():
@@ -1013,6 +1016,7 @@ def format_check_input_cv_file(root, cv_file):
 @log_time
 def format_check_current_cv_text(root):
     global summarized_job_desc, summarized_resume, current_cv_text
+    config.LOAD
     try:
         if summarized_job_desc == "":
             print("Summary of job description is empty. Generating summary...")
@@ -1105,6 +1109,7 @@ def format_check_current_cv_text(root):
 @log_time
 def format_check_current_cl_text(root):
     global current_cl_text, current_cv_text, summarized_job_desc, summarized_resume
+    config.LOAD
     try:
         if summarized_job_desc == "":
             print("Summary of job description is empty. Generating summary...")
