@@ -45,21 +45,22 @@ CONFIG = {
      "PRUNING": {
         
 
-         "DISTANCE_ALGO_KEY": "token_set_ratio", 
-         "DISTANCE_ALGO_DESC": "token_set_ratio",
-         "DISTANCE_ALGO_PROG":  "token_set_ratio",
-         "DISTANCE_ALGO_TECH":  "token_set_ratio",
-         "DISTANCE_ALGO_SOFT":  "token_set_ratio",
-         "DISTANCE_ALGO_COURSES": "token_set_ratio", 
+         "DISTANCE_ALGO_KEY": "token_sort_ratio", 
+         "DISTANCE_ALGO_DESC": "token_sort_ratio",
+         "DISTANCE_ALGO_PROG":  "token_sort_ratio",
+         "DISTANCE_ALGO_TECH":  "token_sort_ratio",
+         "DISTANCE_ALGO_SOFT":  "token_sort_ratio",
+         "DISTANCE_ALGO_COURSES": "token_sort_ratio", 
          "NO_SKILLS":{
-             "PROG": 3,
-             "TECH": 5,
+             "FEED_ALL_SKILLS": False,
+             "PROG": 4,
+             "TECH": 7,
              "SOFT":4,
              "PREFERENCES_PROG":False,
              "PREFERENCES_TECH":False,
              "PREFERENCES_SOFT":False,
              "ALGO_PROG":2, #AI always fills rest unless ALGO >= MAX
-             "ALGO_TECH":2, #AI always fills rest unless ALGO >= MAX
+             "ALGO_TECH":4, #AI always fills rest unless ALGO >= MAX
              "ALGO_SOFT":2, #AI always fills rest unless ALGO >= MAX
              "ALGO_PROG_TH": 1.0,
              "ALGO_TECH_TH": 1.0,
@@ -74,10 +75,12 @@ CONFIG = {
          "NO_COURSES":{
              "MAX":5,
              "PREFERENCES":False,
-             "ALGO":2, #AI always fills rest unless ALGO >= MAX
+             "ALGO":3, #AI always fills rest unless ALGO >= MAX
              "ALGO_TH":1.0
          },
          "NO_EXPERIENCES":{
+             "TITLE_MATCHING": True,
+             "DESCRIPTION_MATCHING": False,
              "MAX":5,
              "PER_SECTION": 1,
              "PREFERENCES": False,
@@ -108,11 +111,11 @@ CONFIG = {
              "COURSES": 70.0
          },
          "DUAL_SCORING":{ #take highest score when performing the DISTANCE_ALGO both ways
-             "PROG": True,
-             "TECH": True,
-             "SOFT": True,
-             "EXP": True,
-             "COURSES": True
+             "PROG": False,
+             "TECH": False,
+             "SOFT": False,
+             "EXP": False,
+             "COURSES": False
          },
          "PREFS":{
              "V": [

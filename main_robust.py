@@ -732,7 +732,9 @@ def tailor_cv(root, show = True):
         sk_text = parsers.inv_parse_cv_out(final_final_split_dicts[-1])
         print("sk_text:", sk_text)
 
-        
+        if config.CONFIG["PRUNING"]["NO_SKILLS"]["FEED_ALL_SKILLS"]:
+            raw_split_dicts = parsers.dict_spliter(cv_dict_complete)
+            sk_text = parsers.inv_parse_cv_out(raw_split_dicts[-1])
         print("Tailoring skills section...")
         ollama_func_name = "tailor_skills_robust"
         runtime_info_temp = {

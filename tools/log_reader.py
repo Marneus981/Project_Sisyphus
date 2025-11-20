@@ -15,7 +15,7 @@ FG_COLOR = "#ffa013"
 SAVE_PATH = r"C:\CodeProjects\Sisyphus\tools\log_reader_output"
 
 # UI setup
-def process_log(processed = "",by_iter = True, by_step  = False, rsrv_trcbck = True):
+def process_log(processed = "",by_iter = True, by_step  = False, rsrv_trcbck = True, rsrv_heuristic = False):
     # global progressbar
     if processed == "":
         raise ValueError("[ERROR]Empty log file")
@@ -24,6 +24,7 @@ def process_log(processed = "",by_iter = True, by_step  = False, rsrv_trcbck = T
     by_step_list = []
     current_step = ""
     rsrv_trcbck_list = []
+    rsrv_heuristic_list = []
     lines = processed.splitlines()
     lines_l = len(lines)
     # steps = 0
@@ -64,23 +65,31 @@ def process_log(processed = "",by_iter = True, by_step  = False, rsrv_trcbck = T
             for step in by_step_list:
                 if "Traceback:" in step:
                     rsrv_trcbck_list.append(step)
+                if "[HEURISTIC]" in step:
+                    rsrv_heuristic_list.append(step)
                 progress_bar_1.update(1)
         elif by_iter:
-            progress_bar_2 = tqdm.tqdm(total=len(by_step_list))
+            progress_bar_2 = tqdm.tqdm(total=len(by_iter_list))
             for iter in by_iter_list:
                 if "Traceback:" in iter:
                     rsrv_trcbck_list.append(iter)
+                if "[HEURISTIC]" in iter:
+                    rsrv_heuristic_list.append(iter)
                 progress_bar_2.update(1)
     else:
         if by_step:
             progress_bar_1 = tqdm.tqdm(total=len(by_step_list))
             for step in by_step_list:
                 rsrv_trcbck_list.append(step)
+                if "[HEURISTIC]" in step:
+                    rsrv_heuristic_list.append(step)
                 progress_bar_1.update(1)
         elif by_iter:
-            progress_bar_2 = tqdm.tqdm(total=len(by_step_list))
+            progress_bar_2 = tqdm.tqdm(total=len(by_iter_list))
             for iter in by_iter_list:
                 rsrv_trcbck_list.append(iter)
+                if "[HEURISTIC]" in iter:
+                    rsrv_heuristic_list.append(iter)
                 progress_bar_2.update(1)
     date= datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     folder_name = f"folder_{date}"
@@ -100,8 +109,23 @@ def process_log(processed = "",by_iter = True, by_step  = False, rsrv_trcbck = T
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write(traceback)
         no = no + 1
+    if rsrv_heuristic:
+        if os.path.exists(os.path.join(folder_path, "heuristic_logs")):
+            print(f"[WARNING]{os.path.join(folder_path, 'heuristic_logs')} already exists.")
+        else:
+            os.mkdir(os.path.join(folder_path, "heuristic_logs"))
+        no = 0
+        for heuristic in rsrv_heuristic_list:
+            #Keep from the first occurrence of [HEURISTIC] to the end
+            index = heuristic.find("[HEURISTIC]")
+            filtered_heuristic = heuristic[index:] if index != -1 else heuristic
+            output_name = f"{no}_heuristic_log.txt"
+            file_path = os.path.join(folder_path, "heuristic_logs", output_name)
+            with open(file_path, 'w', encoding='utf-8') as f:
+                f.write(filtered_heuristic)
+            no = no + 1
     # progressbar.step(100)
-    print(f"[INFO]by_iter_list LENGTH: {len(by_iter_list)}; by_step_list LENGTH: {len(by_step_list)}; rsrv_trcbck_list LENGTH: {len(rsrv_trcbck_list)};")
+    print(f"[INFO]by_iter_list LENGTH: {len(by_iter_list)}; by_step_list LENGTH: {len(by_step_list)}; rsrv_trcbck_list LENGTH: {len(rsrv_trcbck_list)}; rsrv_heuristic_list LENGTH: {len(rsrv_heuristic_list)}")
     return
 
 class LogProcessorApp:
@@ -113,7 +137,8 @@ class LogProcessorApp:
         self.file_path = tk.StringVar()
         self.split_by_iter_var = tk.BooleanVar()
         self.split_by_step_var = tk.BooleanVar()
-        self.reserve_tracebacks = tk.BooleanVar()
+        self.reserve_tracebacks_var = tk.BooleanVar()
+        self.reserve_heuristic_var = tk.BooleanVar()
 
         # File selection field
         tk.Label(root, text="Select Text File:", bg=BG_COLOR, fg=FG_COLOR).grid(row=0, column=0, padx=10, pady=10)
@@ -127,16 +152,20 @@ class LogProcessorApp:
         self.split_by_iter.grid(row=1, column=1, sticky="w", padx=10)
 
         # Checkbox for splitting by iteration
-        self.split_by_iter = tk.Checkbutton(root, text="Split log by STEP", variable=self.split_by_step_var, bg=BG_COLOR, fg=FG_COLOR, selectcolor=BG_COLOR)
-        self.split_by_iter.grid(row=2, column=1, sticky="w", padx=10)
+        self.split_by_step = tk.Checkbutton(root, text="Split log by STEP", variable=self.split_by_step_var, bg=BG_COLOR, fg=FG_COLOR, selectcolor=BG_COLOR)
+        self.split_by_step.grid(row=2, column=1, sticky="w", padx=10)
 
         # Checkbox for splitting by iteration
-        self.split_by_iter = tk.Checkbutton(root, text="Reserve tracebacks", variable=self.reserve_tracebacks, bg=BG_COLOR, fg=FG_COLOR, selectcolor=BG_COLOR)
-        self.split_by_iter.grid(row=3, column=1, sticky="w", padx=10)
+        self.reserve_tracebacks_check = tk.Checkbutton(root, text="Reserve tracebacks", variable=self.reserve_tracebacks_var, bg=BG_COLOR, fg=FG_COLOR, selectcolor=BG_COLOR)
+        self.reserve_tracebacks_check.grid(row=3, column=1, sticky="w", padx=10)
+
+        #Checkbox for Highlight Heuristic
+        self.reserve_heuristic_check = tk.Checkbutton(root, text="Highlight Heuristic", variable=self.reserve_heuristic_var, bg=BG_COLOR, fg=FG_COLOR, selectcolor=BG_COLOR)
+        self.reserve_heuristic_check.grid(row=4, column=1, sticky="w", padx=10)
 
         # Process button
         process_btn = tk.Button(root, text="Process File", command=self.process_file, bg=BG_COLOR, fg=FG_COLOR)
-        process_btn.grid(row=4, column=0, columnspan=3, pady=20)
+        process_btn.grid(row=5, column=0, columnspan=3, pady=20)
 
         # # Progress bar
         # progressbar = ttk.Progressbar(orient=tk.HORIZONTAL, length=320)
@@ -169,8 +198,9 @@ class LogProcessorApp:
             processed = text.strip()
             by_iter = self.split_by_iter_var.get()
             by_step = self.split_by_step_var.get()
-            rsrv_trcbck = self.reserve_tracebacks.get()
-            process_log(processed,by_iter, by_step,rsrv_trcbck)
+            rsrv_trcbck = self.reserve_tracebacks_var.get()
+            rsrv_heuristic = self.reserve_heuristic_var.get()
+            process_log(processed,by_iter, by_step,rsrv_trcbck, rsrv_heuristic)
             messagebox.showinfo("[SUCCESS]", "Check log_reader_output folder.")
         except Exception as e:
             messagebox.showerror("[ERROR]", f"Failed to process log file: {e}")

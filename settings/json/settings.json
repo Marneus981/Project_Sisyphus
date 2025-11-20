@@ -49,6 +49,7 @@
     "DISTANCE_ALGO_SOFT": "token_set_ratio",
     "DISTANCE_ALGO_COURSES": "token_set_ratio",
     "NO_SKILLS": {
+      "FEED_ALL_SKILLS": false,
       "PROG": 3,
       "TECH": 5,
       "SOFT": 4,
@@ -75,6 +76,8 @@
       "ALGO_TH": 1.0
     },
     "NO_EXPERIENCES": {
+      "TITLE_MATCHING": true,
+      "DESCRIPTION_MATCHING": false,
       "MAX": 5,
       "PER_SECTION": 1,
       "PREFERENCES": false,

@@ -1111,25 +1111,35 @@ def experience_scoring(exps, keywords):
     function_desc = getattr(rapidfuzz.fuzz, config.CONFIG["PRUNING"]["DISTANCE_ALGO_DESC"])
     function_key = getattr(rapidfuzz.fuzz, config.CONFIG["PRUNING"]["DISTANCE_ALGO_KEY"])
     scoring_mode = config.CONFIG["PRUNING"]["DUAL_SCORING"]["EXP"]
+    title_matching = config.CONFIG["PRUNING"]["NO_EXPERIENCES"]["TITLE_MATCHING"]
+    description_matching = config.CONFIG["PRUNING"]["NO_EXPERIENCES"]["DESCRIPTION_MATCHING"]
     exps_cpy =exps.copy()
     for exp in exps_cpy:
         for keyword in keywords:
-            if not scoring_mode:
-                exp["experience"][1].append((keyword,function_desc(keyword, exp["experience"][0], processor=utils.default_process)))
-                exp["description"][1].append((keyword,function_desc(keyword, exp["description"][0], processor=utils.default_process)))
+            if title_matching:
+                if not scoring_mode:
+                    exp["experience"][1].append((keyword,function_desc(keyword, exp["experience"][0], processor=utils.default_process)))
+                else:
+                    way1_exp = function_desc(keyword, exp["experience"][0], processor=utils.default_process)
+                    way2_exp = function_desc( exp["experience"][0],keyword, processor=utils.default_process)
+                    if way1_exp > way2_exp:
+                        exp["experience"][1].append((keyword, way1_exp))
+                    else:
+                        exp["experience"][1].append((keyword, way2_exp))
             else:
-                way1_exp = function_desc(keyword, exp["experience"][0], processor=utils.default_process)
-                way1_desc = function_desc(keyword, exp["description"][0], processor=utils.default_process)
-                way2_exp = function_desc( exp["experience"][0],keyword, processor=utils.default_process)
-                way2_desc = function_desc(exp["description"][0],keyword,  processor=utils.default_process)
-                if way1_exp > way2_exp:
-                    exp["experience"][1].append((keyword, way1_exp))
+                exp["experience"][1].append((keyword, 0.0))
+            if description_matching:
+                if not scoring_mode:
+                    exp["description"][1].append((keyword,function_desc(keyword, exp["description"][0], processor=utils.default_process)))
                 else:
-                    exp["experience"][1].append((keyword, way2_exp))
-                if way1_desc > way2_desc:
-                    exp["description"][1].append((keyword, way1_desc))
-                else:
-                    exp["description"][1].append((keyword, way2_desc))
+                    way1_desc = function_desc(keyword, exp["description"][0], processor=utils.default_process)
+                    way2_desc = function_desc(exp["description"][0],keyword,  processor=utils.default_process)
+                    if way1_desc > way2_desc:
+                        exp["description"][1].append((keyword, way1_desc))
+                    else:
+                        exp["description"][1].append((keyword, way2_desc))
+            else:
+                exp["description"][1].append((keyword, 0.0))
 
             for prog in exp["skills"]["programming_languages"]:
                 if not scoring_mode:

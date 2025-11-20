@@ -487,12 +487,13 @@ INPUT "Description" and "Skills" subsections of a project belonging to the "Proj
         },
         "prompt_in": 
 """REQUEST:
-Given the all experiences across 3 resume sections (Volunteering and Leadership, Work Experience, and Projects) and a job description, select up to 5 experiences based on the job description. When selecting:
-- If the total number of experiences/roles is less than or equal to 5, return all of them.
-- If the total number of experiences/roles is greater than or equal to 5 before selection: 
-    - Select the most relevant 5 experiences/roles based on the job description (you still must return exactly 5).
+Given a set of experiences across 3 resume sections (Volunteering and Leadership, Work Experience, and Projects) and a job description, select and rank relevant experiences based on the job description.
+When selecting and ranking the experiences, follow these criteria: 
+- Firstly and topmost of the OUTPUT FORMAT place experiences that match relevant skills and keywords explicitly present in the job description.
+- Secondly, place experiences with "related" skills and keywords (e.g. "software quality assurance" is related to "software"; "accounting" is not considered related to "software")
+- Lastly, place all other experience titles in order of descending perceived "technical complexity"
+When filling out the OUTPUT FORMAT following the above criteria, take these formatting guidelines into account:
 - Do not change the name of the experiences/roles.
-- Prioritize Projects that match relevant skills and experience present in the job description.
 - While filling out the output format, do not change the experience text, and do not include any text before or after the experience title text.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
@@ -503,6 +504,7 @@ Experience:Experience Title 2
 Experience:Experience Title 3
 Experience:Experience Title 4
 Experience: Experience Title 5
+...
 
 
 INPUT:

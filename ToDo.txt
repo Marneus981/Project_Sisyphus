@@ -1,22 +1,10 @@
 [1.0 DEV RELEASE CHECKBOX]
     [][1.0 DEV PUBLIC RELEASE] Clean code and prompt engineer a bit; make a single UI window;deal with debug prints in "a way"
         [WIP]
-            [0]
-                for skills:
-                    make a toggle for feeding all skills vs just the ones from selected expereinces
-            [1]
-                for experiences:
-                    make toggle omitting title/desc matching
-            [2]
-                Show keyword analysis alongside resume
-            [3]
-                make config file into text
-            [4]
-                for all 3:
-                    change selection function/directionality
-            [5]
-                prompt engineering:
-                    0/8
+            [CONSTANT]
+                tune functions
+                tune directionality
+                prompt eng
             [LAST]
                 Dynamic template system
             [LATER]
@@ -24,6 +12,9 @@
                     either amalgam, average or score?
                 dynamic algorithm importance?
                 Add deletion of INFO: in debug tools
+                check what gets fed to tailor_experiences
+                maybe make a function to capitalized skills displayed?
+                make detailed keyword/skill/course analysis summary?
         [NOTES]
             [TACKLED?]
                 Check explicit declaration of Javscript usage.
