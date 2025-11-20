@@ -544,6 +544,7 @@ Given a section from a resume, summarize the sections in a wholistic manner whil
 - Return the summarized information as a single continuous string of text, following the output format strictly. 
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
+- If the section is empty or contains no relevant information, return "Section Summary:".
 
 OUTPUT FORMAT:
 Section Summary: {section_name} Summary; Wholistic summary of the section's information.
@@ -1034,6 +1035,7 @@ Given a number of sections from a resume, summarize the sections in a wholistic 
 - The only field name allowed is "Section Summary:", do NOT include a separate "Summary:" section as this will result in an error.
 - There must be 1 "Section Summary:" per section given, in this case the sections given are {no_sections}:
     - {section_names}
+- If the section is empty or contains no relevant information, return "Section Summary:".
 """,
         "ollama_url": "http://localhost:11434",
         "sample_starts": ["flexible", "cap_letters", "[S]Section Summary:"]

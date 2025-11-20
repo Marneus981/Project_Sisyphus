@@ -1327,7 +1327,7 @@ def experience_heuristics(exps_scored):
         }
         """
         if config.DEBUG["HEURISTIC_LOGGING"]:
-            print(f"[HEURISTIC][EXPERIENCES]{function_name}:HEURISTIC REPORT")
+            print(f"[HEURISTIC][EXPERIENCES][STEP0]{function_name}:HEURISTIC REPORT")
             print(f"[HEURISTIC]{function_name}: experience: {exp["experience"][0]}; with title score: {exp["scores"]["experience"]}; title weight: {weights["EXP"]}")
             print(f"[HEURISTIC]{function_name}: description: {exp["description"][0]}; with description score: {exp["scores"]["description"]}; description weight: {weights["DESC"]}")
             print(f"[HEURISTIC]{function_name}: prog score: {exp["scores"]["prog"]}; prog weight: {weights["PROG"]}")
@@ -1461,8 +1461,8 @@ def experience_pruning_algorithm(job_desc,text,v_list,w_list,p_list):
     if config.DEBUG["INFO_LOGGING"]:
             print(f"[INFO]{function_name}: pruned text: {return_txt}")
     if config.DEBUG["HEURISTIC_LOGGING"]:
-        print(f"[HEURISTIC][EXPERIENCES][STEP0]{function_name}:HEURISTIC REPORT")
-        print(f"[HEURISTIC]{function_name}: algorithm-selected experiences, including preferrences(v,w,p): {len(sorted_v_list_cpy)}, {len(sorted_w_list_cpy)}, {len(sorted_p_list_cpy)}")
+        print(f"[HEURISTIC][EXPERIENCES][STEP1]{function_name}:HEURISTIC REPORT")
+        print(f"[HEURISTIC]{function_name}: algorithm-selected experiences (v,w,p): {len(sorted_v_list_cpy)}, {len(sorted_w_list_cpy)}, {len(sorted_p_list_cpy)}")
         for item in sorted_v_list_cpy:
             print(f"    [HEURISTIC]{function_name}: sorted v item: '{str(item)}'")
         for item in sorted_w_list_cpy:
@@ -2113,7 +2113,7 @@ def prune_experiences(call_info = template_call_info):
     }
     max_exps = config.CONFIG["PRUNING"]["NO_EXPERIENCES"]["MAX"]
     if config.DEBUG["HEURISTIC_LOGGING"]:
-        print(f"[HEURISTIC][EXPERIENCES][STEP1]{function_name}:HEURISTIC REPORT")
+        print(f"[HEURISTIC][EXPERIENCES]{function_name}:HEURISTIC REPORT")
         print(f"[HEURISTIC]{function_name}: max_exps: {max_exps}")
     step1 = experience_pruning_algorithm(job_desc = job_description_summary,text = step0,v_list = v_list,w_list = w_list,p_list = p_list)
     step1_ai = ollama_call(runtime_info= runtime_info_temp)

@@ -42,22 +42,22 @@
     "RETRIES": 2
   },
   "PRUNING": {
-    "DISTANCE_ALGO_KEY": "token_set_ratio",
-    "DISTANCE_ALGO_DESC": "token_set_ratio",
-    "DISTANCE_ALGO_PROG": "token_set_ratio",
-    "DISTANCE_ALGO_TECH": "token_set_ratio",
-    "DISTANCE_ALGO_SOFT": "token_set_ratio",
-    "DISTANCE_ALGO_COURSES": "token_set_ratio",
+    "DISTANCE_ALGO_KEY": "token_sort_ratio",
+    "DISTANCE_ALGO_DESC": "token_sort_ratio",
+    "DISTANCE_ALGO_PROG": "token_sort_ratio",
+    "DISTANCE_ALGO_TECH": "token_sort_ratio",
+    "DISTANCE_ALGO_SOFT": "token_sort_ratio",
+    "DISTANCE_ALGO_COURSES": "token_sort_ratio",
     "NO_SKILLS": {
       "FEED_ALL_SKILLS": false,
-      "PROG": 3,
-      "TECH": 5,
+      "PROG": 4,
+      "TECH": 7,
       "SOFT": 4,
       "PREFERENCES_PROG": false,
       "PREFERENCES_TECH": false,
       "PREFERENCES_SOFT": false,
       "ALGO_PROG": 2,
-      "ALGO_TECH": 2,
+      "ALGO_TECH": 4,
       "ALGO_SOFT": 2,
       "ALGO_PROG_TH": 1.0,
       "ALGO_TECH_TH": 1.0,
@@ -72,15 +72,15 @@
     "NO_COURSES": {
       "MAX": 5,
       "PREFERENCES": false,
-      "ALGO": 2,
+      "ALGO": 3,
       "ALGO_TH": 1.0
     },
     "NO_EXPERIENCES": {
       "TITLE_MATCHING": true,
       "DESCRIPTION_MATCHING": false,
-      "MAX": 5,
+      "MAX": 7,
       "PER_SECTION": 1,
-      "PREFERENCES": false,
+      "PREFERENCES": true,
       "ALGO": 3,
       "ALGO_TH": 1.0
     },
@@ -108,11 +108,11 @@
       "COURSES": 70.0
     },
     "DUAL_SCORING": {
-      "PROG": true,
-      "TECH": true,
-      "SOFT": true,
-      "EXP": true,
-      "COURSES": true
+      "PROG": false,
+      "TECH": false,
+      "SOFT": false,
+      "EXP": false,
+      "COURSES": false
     },
     "PREFS": {
       "V": [],

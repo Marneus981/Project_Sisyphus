@@ -81,9 +81,9 @@ CONFIG = {
          "NO_EXPERIENCES":{
              "TITLE_MATCHING": True,
              "DESCRIPTION_MATCHING": False,
-             "MAX":5,
+             "MAX":7,
              "PER_SECTION": 1,
-             "PREFERENCES": False,
+             "PREFERENCES": True,
              "ALGO":3, #AI always fills rest unless ALGO >= MAX
              "ALGO_TH": 1.0
          },
