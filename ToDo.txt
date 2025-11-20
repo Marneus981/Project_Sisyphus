@@ -5,8 +5,7 @@
                 tune functions
                 tune directionality
                 prompt eng
-            [LAST]
-                Dynamic template system
+                tune template
             [LATER]
                 give in precision parameter for ai generation ON ALL 3
                     either amalgam, average or score?

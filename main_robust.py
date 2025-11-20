@@ -1286,18 +1286,12 @@ def refresh_options_callback():
 @log_time
 def dynamic_template_path(template_name, cv_dict):
     #Depending on wether or not certain keys are non empty in the cv_dict, modify the template path
-    v = False
-    w = False
-    p = False
     variant = ""
     if cv_dict["volunteering_and_leadership"] != None or cv_dict["volunteering_and_leadership"] != []:
-        v = True
         variant += "v_"
     if cv_dict["work_experience"] != None or cv_dict["work_experience"] != []:
-        w = True
         variant += "w_"
     if cv_dict["projects"] != None or cv_dict["projects"] != []:
-        p = True
         variant += "p_"
     #remove trailing underscore
     variant = variant.rstrip("_")
@@ -1647,7 +1641,7 @@ def main():
 
 
     #Output file Textbox (now at row 10)
-    ttk.Label(root, text="Output CV Name:").grid(row=10, column=2)
+    ttk.Label(root, text="Output CV File Name:").grid(row=10, column=2)
     out_file_textbox = tk.Text(root, height=1, width=20)
     out_file_textbox.grid(row=10, column=3)
 
