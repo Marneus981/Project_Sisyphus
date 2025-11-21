@@ -28,6 +28,9 @@
       "standard_ollama_call_async"
     ]
   },
+  "TEMPLATES": {
+    "DYNAMIC_TEMPLATES": true
+  },
   "JOB_SUMM_PRECISION": 4,
   "WINDOWS": 4,
   "SUMMARY_MODE": "batch",

@@ -1296,12 +1296,13 @@ def dynamic_template_path(template_name, cv_dict):
     #remove trailing underscore
     variant = variant.rstrip("_")
 
-    return os.path.join(SISYPHUS_PATH, "templates", f"{template_name}_{variant}")
+    return os.path.join(SISYPHUS_PATH, "templates", f"{template_name.replace(".docx", "")}_{variant}.docx")
     
     
 @log_time
-def save_output_cv(template_name,output_name, dynamic = False):
+def save_output_cv(template_name,output_name):
     #If dynamic is True, use a dynamic template path, taking the current template as the base
+    dynamic = config.CONFIG["TEMPLATES"]["DYNAMIC_TEMPLATES"]
     output_n = output_name
     template_n = template_name.get().strip()
     if output_n == "":
@@ -1699,7 +1700,7 @@ def main():
     format_check_current_cv_button.grid(row=11, column=3)
 
     # Save Output CV Button (initially disabled)
-    save_output_cv_button = ttk.Button(root, text="Save Output CV to DOCX", command=lambda:save_output_cv(template_name= template_var,output_name= out_file_textbox.get("1.0", tk.END).strip(), dynamic=False), state="disabled")
+    save_output_cv_button = ttk.Button(root, text="Save Output CV to DOCX", command=lambda:save_output_cv(template_name= template_var,output_name= out_file_textbox.get("1.0", tk.END).strip()), state="disabled")
     save_output_cv_button.grid(row=11, column=4)
 
     # Save Current CV Text Button to text file (disabled if no text in current_cv_text)

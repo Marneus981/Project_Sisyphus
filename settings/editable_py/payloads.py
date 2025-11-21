@@ -540,7 +540,8 @@ INPUT experiences from 3 resume sections (Volunteering and Leadership, Work Expe
 """REQUEST:
 Given a section from a resume, summarize the sections in a wholistic manner while following these guidelines:
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
-- Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
+- Include all information, competencies, achievements; this is a summary meant to show all of the candidate's qualifications.
+- Include all mentioned skills, technologies, programming languages, tools, soft skills, etc.
 - Return the summarized information as a single continuous string of text, following the output format strictly. 
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
@@ -661,6 +662,7 @@ Given a wholistic summary of a resume and a job description, tailor a Summary se
 - Return only the revised summary and strictly follow the output format, filling in the parts that have **fill-in:"text"**
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field name "Summary:", as per the OUTPUT FORMAT.
+- Do not make use of brackets or any other special characters in the summary.
 
 OUTPUT FORMAT:
 Summary: Despite limited work experience, I bring strong work ethic, adaptability and curiosity. Experienced in **fill-in specific relevant technical skills"**. Now seeking a position that offers growth and learning opportunities.
@@ -1028,7 +1030,8 @@ INPUT sections from a resume:
 """REQUEST:
 Given a number of sections from a resume, summarize the sections in a wholistic manner while following these guidelines:
 - Be very concise but detail-driven as well, which means that you must include as many relevant details as possible with minimal fluff.
-- Include all information, competencies, achievements, and skills, this is a wholistic summary of the candidate's qualifications.
+- Include all information, competencies, achievements; this is a summary meant to show all of the candidate's qualifications.
+- Include all mentioned skills, technologies, programming languages, tools, soft skills, etc.
 - Keep in mind that these summaries will be used in a "Sliding Window" approach to summarize the entire resume effectively, so include information that is relevant for the overall context of the resume.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.

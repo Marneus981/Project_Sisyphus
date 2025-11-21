@@ -29,6 +29,9 @@ CONFIG = {
             "standard_ollama_call_async"
         ]
     },
+    "TEMPLATES": {
+        "DYNAMIC_TEMPLATES": True
+    },
      "JOB_SUMM_PRECISION": 4,
      "WINDOWS": 4,
      "SUMMARY_MODE": "batch", # Options: "single", "batch" or "parallel"
