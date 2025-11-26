@@ -31,7 +31,7 @@
   "TEMPLATES": {
     "DYNAMIC_TEMPLATES": true
   },
-  "JOB_SUMM_PRECISION": 4,
+  "JOB_SUMM_PRECISION": 5,
   "WINDOWS": 4,
   "SUMMARY_MODE": "batch",
   "SUMMARY_REQUESTS": 2,
@@ -42,9 +42,14 @@
   },
   "MODELS": {
     "TEMPERATURE": 0.1,
-    "RETRIES": 2
+    "RETRIES": 4
   },
   "PRUNING": {
+    "AI_PRECISION": {
+      "COURSES": 3,
+      "EXPERIENCES": 3,
+      "SKILLS": 3
+    },
     "DISTANCE_ALGO_KEY": "token_sort_ratio",
     "DISTANCE_ALGO_DESC": "token_sort_ratio",
     "DISTANCE_ALGO_PROG": "token_sort_ratio",
@@ -73,7 +78,7 @@
       "COPY_LEN_SOFT": 1
     },
     "NO_COURSES": {
-      "MAX": 5,
+      "MAX": 10,
       "PREFERENCES": false,
       "ALGO": 3,
       "ALGO_TH": 1.0
@@ -81,10 +86,10 @@
     "NO_EXPERIENCES": {
       "TITLE_MATCHING": true,
       "DESCRIPTION_MATCHING": false,
-      "MAX": 7,
+      "MAX": 10,
       "PER_SECTION": 1,
       "PREFERENCES": true,
-      "ALGO": 3,
+      "ALGO": 4,
       "ALGO_TH": 1.0
     },
     "EXP_H_WEIGHTS": {

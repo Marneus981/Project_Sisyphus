@@ -1287,11 +1287,11 @@ def refresh_options_callback():
 def dynamic_template_path(template_name, cv_dict):
     #Depending on wether or not certain keys are non empty in the cv_dict, modify the template path
     variant = ""
-    if cv_dict["volunteering_and_leadership"] != None or cv_dict["volunteering_and_leadership"] != []:
+    if cv_dict["volunteering_and_leadership"] != []:
         variant += "v_"
-    if cv_dict["work_experience"] != None or cv_dict["work_experience"] != []:
+    if cv_dict["work_experience"] != []:
         variant += "w_"
-    if cv_dict["projects"] != None or cv_dict["projects"] != []:
+    if cv_dict["projects"] != []:
         variant += "p_"
     #remove trailing underscore
     variant = variant.rstrip("_")

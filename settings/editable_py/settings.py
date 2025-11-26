@@ -32,7 +32,7 @@ CONFIG = {
     "TEMPLATES": {
         "DYNAMIC_TEMPLATES": True
     },
-     "JOB_SUMM_PRECISION": 4,
+     "JOB_SUMM_PRECISION": 5,
      "WINDOWS": 4,
      "SUMMARY_MODE": "batch", # Options: "single", "batch" or "parallel"
      "SUMMARY_REQUESTS": 2,
@@ -43,11 +43,15 @@ CONFIG = {
      },
      "MODELS": {
          "TEMPERATURE": 0.1,
-         "RETRIES": 2
+         "RETRIES": 4
      },
      "PRUNING": {
         
-
+         "AI_PRECISION":{
+             "COURSES":3,
+             "EXPERIENCES":3,
+             "SKILLS":3
+         },
          "DISTANCE_ALGO_KEY": "token_sort_ratio", 
          "DISTANCE_ALGO_DESC": "token_sort_ratio",
          "DISTANCE_ALGO_PROG":  "token_sort_ratio",
@@ -76,7 +80,7 @@ CONFIG = {
              "COPY_LEN_SOFT":1,
          },
          "NO_COURSES":{
-             "MAX":5,
+             "MAX":10,
              "PREFERENCES":False,
              "ALGO":3, #AI always fills rest unless ALGO >= MAX
              "ALGO_TH":1.0
@@ -84,10 +88,10 @@ CONFIG = {
          "NO_EXPERIENCES":{
              "TITLE_MATCHING": True,
              "DESCRIPTION_MATCHING": False,
-             "MAX":7,
+             "MAX":10,
              "PER_SECTION": 1,
              "PREFERENCES": True,
-             "ALGO":3, #AI always fills rest unless ALGO >= MAX
+             "ALGO":4, #AI always fills rest unless ALGO >= MAX
              "ALGO_TH": 1.0
          },
          "EXP_H_WEIGHTS": {

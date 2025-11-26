@@ -6,6 +6,9 @@
                 tune directionality
                 prompt eng
                 tune template
+            [TOOLS]
+                make LinkedIn page scrapper
+                make Indeed page scrapper
             [LATER]
                 give in precision parameter for ai generation ON ALL 3
                     either amalgam, average or score?

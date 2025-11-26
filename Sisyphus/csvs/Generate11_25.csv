@@ -1,0 +1,962 @@
+Job Title,Job Description,Models,Temperatures
+IT Co-op Student,"Position: IT Co-op Student; Company: FlatironDragados; What You Will Be Doing
+
+     Provide first-level IT support, including troubleshooting hardware and software issues, and supporting daily IT operations for all employees 
+     Install and support PC hardware and software, ensuring that all systems are functioning optimally 
+     Engage with end-users to collect requirements for feature enhancements aimed at optimizing system performance, improving processing speed, and enhancing overall user experience and interface usability 
+     Conduct system tests, troubleshoot customer issues and help correct software defects 
+     Create customer software manuals and project documentation Create user guides, training materials, and documentation for common IT issues 
+     Continuously improve the knowledge base to empower employees to resolve basic issues independently 
+     Manage hardware assets in the asset management system, keeping accurate records of all equipment 
+     Identify areas for improvement in IT processes and systems 
+     Stay updated on emerging technologies and suggest enhancements 
+     Be proactive in preventing potential IT issues and optimizing existing workflows 
+     Assist in creating reports, dashboards, and other visualizations to clearly articulate progress, statuses, and risks 
+     Perform other duties as assigned 
+
+What We Are Looking For
+
+     Pursuing a diploma (preferred) or university degree in one of the following areas: Computer Networking, Computer Science, Management Information Systems, Software Engineering, or other related discipline 
+     Project coordination or customer service experience will be considered a definite asset 
+     Excellent interpersonal skills and ability to work well with all levels of internal management and staff, as well as outside clients and vendors 
+     Flexibility 
+     Excellent problem-solving and analytical skills for figuring out how different software components work together 
+     Ability to easily work with abstract and highly technical concepts, as well as explain complex functionality to non-technical users and staff 
+     Ability to prioritize issues ",llama3:8b,0.1
+Backend Python Engineer,"Position: Backend Python Engineer; Company: EPAM Systems; We are seeking an experienced Backend Python Engineer to join our client's team working on their global Biologics Discovery Platform (BDP). This innovative platform aims to accelerate drug discovery in the biologics space, contributing to groundbreaking developments in pharmaceutical research.
+
+Req#882435811
+
+ 
+
+Responsibilities
+
+    Design, code, test, debug and document Python applications
+    Write clean, efficient, maintainable, and reusable code
+    Build robust, scalable, and secure backend services and APIs
+    Implement software improvements and suggest optimizations
+    Troubleshoot and fix bugs in existing applications
+    Integrate various data storage solutions and databases
+    Develop and maintain RESTful or GraphQL APIs
+    Implement automated testing and continuous integration processes
+    Optimize application performance and improve code efficiency
+    Deploy and maintain applications in development and production environments
+    Implement security and data protection measures
+
+ 
+
+Requirements
+
+    Strong proficiency in Python backend development
+    Experience with large data volume processing and management
+    Willingness to learn and work with additional technologies (Java, ReactJS)
+    Knowledge of API development, database management, and cloud infrastructure
+    Experience with scientific or biotech applications is advantageous
+    Bachelor's degree or higher in Computer Science, Engineering, or related field
+    Demonstrated experience in backend development with Python
+    Strong problem-solving skills and attention to detail
+    Hybrid - onsite 2-3 days per week in Mississauga office
+    Innovative mindset with ability to propose creative solutions
+    Collaborative team player comfortable in cross-functional environments
+    Adaptable to learning new technologies and methodologies
+    Self-motivated with excellent communication skills
+    Interested candidates should apply with their resume and a brief cover letter describing relevant experience with Python backend development and working with large datasets",llama3:8b,0.1
+Junior Web Developer,"Position: Junior Web Developer; Company: Cheil Canada; Cheil Canada is a full-service agency based out of Mississauga, Ontario and part of the Cheil Worldwide network, offering a variety of marketing & advertising solutions. We are a full-service data-driven company, rooted firmly in customer experience and performance. We work across the entire customer journey, creating connections that result in relevant and meaningful personalization through:
+
+     Data & Insight
+     Retail Marketing & Shopper Marketing
+     Digital and Social Marketing
+     eCommerce & eRetailer Marketing
+
+Job Summary
+
+We are looking for a motivated and detail-oriented Junior Web Publisher to join our dynamic team. In this role, you will be responsible for publishing, updating, and maintaining content across our web platforms. The ideal candidate has a strong understanding of web publishing processes and front-end technologies, and experience working with content management systems (CMS). This is an excellent opportunity for someone with 1–3 years of experience looking to further develop their skills in a collaborative environment.
+
+Key Responsibilities:
+
+Publish, update, and maintain content across web platforms using a CMS.
+
+Collaborate with designers, developers, and other teams to ensure content is displayed accurately and optimized for user experience.
+
+Troubleshoot and resolve content-related issues on the website.
+
+Ensure website consistency in terms of layout, style, and branding.
+
+Test and validate content updates for various browsers and devices.
+
+Adhere to SEO best practices when publishing content.
+
+Assist in monitoring website performance and work on performance improvements.
+
+Stay up to date with web publishing trends and emerging technologies.
+
+Required Skills & Qualifications:
+
+1–3 years of experience in web publishing, web content management, or a similar role.
+
+Proficiency in HTML, CSS, and JavaScript.
+
+Experience with content management systems (e.g., WordPress, Drupal, Joomla, or any proprietary CMS).
+
+Strong attention to detail and the ability to manage multiple tasks and deadlines.
+
+Basic understanding of SEO and web analytics tools (e.g., Google Analytics).
+
+Good communication skills and a team player.
+
+Eagerness to learn and adapt to new technologies.
+
+Preferred Qualifications:
+
+Familiarity with front-end frameworks like Bootstrap or similar.
+
+Experience working with version control systems (e.g., Git).
+
+Basic design skills or experience with graphic editing tools (e.g., Photoshop, Figma, etc.).",llama3:8b,0.1
+Bilingual (English/French) .Net Developer,"Position: Bilingual (English/French) .Net Developer ; Company: Systematix; We are Systematix and we’re currently seeking an intermediate to senior level, Bilingual .Net/C# Developer for our client, a major Canadian media company – must be fluent in English and French! This role is mostly REMOTE, requiring only one day per week on-site in either downtown Toronto or Montreal.
+
+
+Project description:
+
+Our client’s Media and Special Events team is looking for an Application Developer to contribute to the development of a web application. The application is developed using the standard technology environment of the Application Solution Group (see Mandate Skills). More specifically, the application allows the Media Library and Archives teams to enrich MAM (Media Asset Management) data using other systems or other data sources available internally. We are looking for a full-stack candidate who is comfortable with the front-end and back-end portion.
+
+ 
+
+Responsibilities related to the mandate:
+
+The candidate will have to:
+
+    Contribute as a member of multidisciplinary teams to the design of new systems, the modification of existing systems or the implementation of purchased or customized systems;
+    Contribute to the delivery of new applications and the maintenance and enhancement of existing applications, and be the primary responsibility for technical matters;
+    Analyze and revise, as appropriate, existing difficulties with the logic of the system.
+    Code and test complex programs;
+    Perform programming, development and maintenance tasks on existing or new applications;
+    Ensure backup, version control and quality of source code;
+    Provide constant support for applications to production, problem solving complex technical techniques and software modification support;
+    Provides leadership, advice and training to less experienced employees; overseeing their work on system components;
+    Understand and know client-server applications as well as web development, databases, tools, and infrastructure
+
+
+Qualifications:
+
+Candidate Profile:
+
+    Language requirements: French mandatory, English an asset
+    University degree or equivalent experience;
+    Experience as a .Net developer;
+    Mastery and recent experiences of these technologies:
+    Angular 8+
+    C#, .NET 8
+    Typescript
+    WebAPI/REST
+    Must be aware of accessibility (HTML, Fonts, Screen readers, etc.).
+    Proficiency in MSSQL databases,
+    Knowledge of Mongo, an asset;
+    Knowledge of one or more of these technologies: EntityFramework, LINQ;
+    Knowledge of IMT or other source control system;
+    Experience in an AGILE environment (scrum) an asset;
+    Knowledge of Cloud, Azure or other environments an asset;
+    Good general knowledge and high intellectual curiosity (acquire and develop new knowledge and skills);
+    Critical thinking (question and propose new ideas);
+    Strong interest in major trends and issues of the web;
+    Rigour, autonomy and resourcefulness;
+    Excellent stress and priority management.",llama3:8b,0.1
+Junior Software Engineer,"Position: Junior Software Engineer ; Company: Achievers; The opportunity: 
+
+A great opportunity for you to grow your skills with various tools and areas of the full software development lifecycle! Receive ongoing mentorship and coaching from experienced Engineers invested in your growth.
+
+Build innovative product features and solutions that scale to millions of users. Help us continuously evolve the platform with modern, scalable, and focused enhancements that deliver a personalized and cohesive experience for end users.
+
+This is a full-stack hybrid role with 2 days per week in our Liberty Village office downtown.
+
+What you`ll be doing:
+
+    Join a collaborative team of Engineers who shape the communication and content experience across our platform.
+    Contribute to full-stack projects and use a variety of modern technologies: Python, Go, PHP, Kubernetes, Docker, Pub/Sub, GraphQL, microservices and more!
+    Continuously integrate clean, scalable, robust, and testable code.
+    Be hands-on with our codebase and deeply involved in code reviews - a great opportunity to receive regular feedback from experienced Engineers and to grow your skills!
+    Contribute to design and architecture discussions led by Senior and Staff Engineers - you proactively identify and manage dependencies and share your ideas! 
+    Stay up to date on emerging technologies and engineering guidelines, best practices, processes and tools.
+
+What we`re looking for:
+
+    Bachelor’s degree in Computer Science or related field. 
+    Advanced/professional verbal and written English language skills.
+    You want to be part of a collaborative team that supports each other and helps each other grow. 
+    1-3 years of professional experience working on back-end or full-stack projects with languages such as Python, PHP, or GO. That can include internships or co-ops you completed during your studies. 
+    You are proactive and take initiative to continuously grow and develop. 
+    You communicate regularly with your team and stakeholders and proactively flag risks and challenges.
+    You are open and excited to to learn new emerging technologies. 
+
+",llama3:8b,0.1
+Junior Data Engineer,"Position: Junior Data Engineer; Company: Mave; We’re building the next generation of our platform: AI agents with memory - smart, persistent, and built for the real world. That’s where you come in.
+
+
+As a Jr. Data Engineer at Mave, you’ll play a key role in designing and maintaining the data pipelines that power our AI agents. You’ll work alongside senior engineers and product managers to collect, clean, and organize data that fuels our models, insights, and customer experiences. This is an exciting opportunity to grow your data engineering skills in a fast-paced AI startup environment.
+
+
+About You
+
+    1 - 2 years of experience in data engineering, analytics engineering, or a related field (or equivalent academic project experience).
+    Proficient in Python (Pandas, NumPy, or similar libraries).
+    Familiar with SQL and relational databases such as PostgreSQL or MySQL.
+    Understanding of data pipelines, ETL/ELT workflows, and data modeling concepts.
+    Exposure to cloud platforms (AWS, GCP, or Azure) and data storage tools like BigQuery or S3.
+    Curious about AI technologies, LLMs, and how structured data supports intelligent systems.
+    Comfortable working with APIs and integrating third-party data sources.
+    Detail-oriented, collaborative, and eager to learn new tools and concepts quickly.
+    Strong communicator who enjoys solving problems and improving processes.
+
+
+
+Outcomes
+
+    Support the design and development of reliable data pipelines to feed Mave’s AI models and analytics systems.
+    Work closely with senior engineers to automate data collection, cleaning, and validation.
+    Help monitor data quality and integrity across systems.
+    Build and maintain internal dashboards and metrics to support product and business decisions.
+    Contribute to improving documentation, reproducibility, and team data best practices.",llama3:8b,0.1
+Data Engineer (Co-op),"Position: Data Engineer (Co-op); Company: League; Data Engineer
+
+Launch Your Data Engineering Career! Join our team and gain hands-on experience in building and maintaining data pipelines. You'll learn the fundamentals of ETL processes, data warehousing, software development, working with large datasets, and AI systems. Participate in designing and implementing data solutions, contributing to data quality initiatives, and exploring cutting-edge data technologies. This co-op is your chance to build a strong foundation in a rapidly growing field.
+
+Some Things The Data Team Works On
+
+    Learning about real-time and batch pipelines with Python and SQL
+    Software Development, Terraform Deployment for fault-tolerant, scalable systems
+    Root cause analysis of production issues, performance tuning and optimization
+
+Some of the technologies we use on the data engineering team include:
+
+    GCP, python/SQL, Airflow, Terraform, Looker
+
+Your Career Experience So Far May Include
+
+    Exposure to data engineering projects and technologies
+    Hands on software development 
+    Previous engineering co-op experience
+
+Security-related Responsibilities
+
+    Compliance with Information Security Policies
+    Compliance with League’s secure coding practice
+    Responsibility and accountability for executing League's policies and procedures
+    Notification of HR, Legal, Compliance & Security of any incidents, breaches or policy violations
+
+",llama3:8b,0.1
+Full Stack Developer,"Position: Full Stack Developer; Company: Magna International; Group Summary
+
+The Magna Exteriors portfolio of products includes access systems such as liftgates, exterior trim, modular systems, front-end modules including fascia, active aerodynamic systems and other lightweight structural components for automotive, commercial truck and other industrial markets.
+
+Recognized globally as an innovator in all aspects of vehicle exteriors, Magna provides everything needed, from materials development and design through manufacturing and assembly, to help automakers create sleek, state-of-the-art vehicles across the world.
+
+Job Responsibilities
+
+The Full Stack Developer at Co-Ex-Tec is responsible for designing, developing, and maintaining scalable web and executable applications and services. This role involves writing clean, efficient, and well-documented code, conducting code reviews, and ensuring software functionality and reliability through rigorous testing and debugging. The Software Engineer will collaborate closely with data scientists, engineers, and other stakeholders to understand requirements and deliver solutions that integrate seamlessly with existing technologies. Additionally, the role includes staying updated with the latest trends and technologies in Industry 4.0/5.0 and AI, identifying opportunities for process improvements, and providing technical support for deployed solutions
+
+    Development & Implementation: Design, develop, and maintain scalable web and executable applications and services.
+
+Write clean, efficient, and well-documented code using appropriate programming languages and frameworks.
+
+Conduct code reviews to ensure code quality and adherence to best practices.
+
+    Testing & Debugging: Develop and execute unit tests, integration tests, and system tests to ensure software functionality and reliability.
+
+Identify and fix bugs and performance issues in the software.
+
+    Collaboration: Work closely with data scientists, engineers, and other stakeholders to understand requirements and deliver solutions.
+
+Collaborate with cross-functional teams to ensure seamless integration of new technologies.
+
+    Innovation & Optimization: Stay updated with the latest trends and technologies in Industry 4.0/5.0, AI, and best practices in software development.
+
+Identify opportunities for process improvements and automation within the manufacturing environment.
+
+    Maintenance & Support: Ensure the reliability, performance, and security of developed applications.
+
+Provide technical support and troubleshooting for deployed solutions.
+
+Education & Professional Experience
+
+    Bachelor’s or Master’s degree in Computer Science, Engineering, or a related field.
+    Education and Experience in Industry 4.0 Technologies, and software development.
+    Strong understanding of manufacturing processes and the use of technology to optimize operations
+    Hands-on experience with: Python, REST API, PyQt, Tkinter, C++, React, Node.js, Django/Flask
+    Basics familiarity with basic AI technologies like CV, NLP, LLMs, and predictive analytics.
+    Proficient in front-end frameworks (React, Angular, or Vue) and responsive UI design.
+    Strong knowledge of back-end technologies (Node.js, Python, Java, or .NET) and API development.
+    Databases (SQL, NoSQL) and data modeling.
+    Familiarity with DevOps practices, containerization (Docker/Kubernetes), and cloud deployment.
+    Strong problem-solving skills, debugging, and code optimization
+    Strong English communications both verbal and written
+
+",llama3:8b,0.1
+Engineer,"Position: Engineer; Company: 7shifts; As the AI Solutions Architect at 7shifts, reporting to the Director of IT, you’ll guide leaders and individual contributors in understanding what’s possible with AI. You’ll help architect scalable solutions, adopt cutting-edge tools, and build the next generation of intelligent applications. At 7shifts, we view AI as a way to accelerate work and free up time for higher-value thinking, not as a replacement for people. We’re committed to using AI responsibly and ethically, ensuring that the tools we adopt make work easier, fairer, and more human. By blending technical expertise with a focus on solving real business challenges, you’ll empower teams to boost productivity, drive transformation, and become more comfortable with AI.
+
+
+What you’ll do:
+
+    Evaluate and prototype GCP tools like Agentspace ADK to identify the best fit for our needs
+    Build and maintain internal AI tools and workflows, acting as the go-to contact for support requests
+    Implement and manage an internal AI agent/workflow manager (e.g., Agentspace or similar), including access controls and change management
+    Manage projects related to data sources and AI-powered tools, focusing first on internal productivity gains, with learnings later applied to customer-facing tools
+    Lead technical discovery sessions with different departments to uncover high-impact AI use cases
+    Translate complex technical strategies into plain language for non-technical stakeholders
+    Partner with IT, Engineering, People, and leadership teams to roll out solutions that scale
+
+
+What you bring:
+
+    You’ve worked directly with AI or LLM technologies and are excited to help others understand and adopt them in practical, responsible ways
+    You have a background in computer science, software engineering, or a related technical field, and have applied that knowledge to real-world problems
+    You’ve deployed and maintained cloud-based applications or automations, with a focus on security, access, and collaboration
+    You’re comfortable leading projects end-to-end, with a track record of documenting requirements, test plans, and deployments in a clear, structured way
+    You know your way around APIs, connectors, and integration strategies, ideally with Google Cloud Platform or AWS
+    You’ve worked with identity and access management protocols (OAuth, OIDC, SAML) and understand how to keep systems secure
+    You’re an excellent communicator who can bridge technical and non-technical teams, making complex ideas easy to understand
+
+
+It’d be even cooler if you had:
+
+    Experience with Retrieval-Augmented Generation (RAG) pipelines
+    Strong Python and SQL programming skills
+    Experience with containerized workloads, CI/CD pipelines, and monitoring tools
+    Experience managing Model Context Protocol (MCP) servers",llama3:8b,0.1
+Associate Software Developer,"Position: Associate Software Developer; Company: Euna Solutions; Software Developers in Euna Procurement deliver effective and robust solutions to new and existing technical challenges in a timely manner. Software developers also contribute to their team’s success through the effective execution of engineering processes and best practices and continuously improving their own skillset.
+
+Key Responsibilities
+
+    Tackle real-world customer challenges and ship impactful solutions quickly, crafting front-end web apps or back-end services by working from detailed designs to implement rich user experiences. 
+    Develop effective tests and metrics to ensure successful delivery and monitor and analyze the real-time performance of our platform. 
+    Work with the product and support teams to understand our customers' needs and participate in solution development from vision through delivery. 
+    Contribute to your team's success with thoughtful code reviews, thorough documentation, and open knowledge sharing. 
+    Demonstrate the effective execution of SDLC best practices. 
+    Apply and support security best practices. 
+
+Essential Qualifications
+
+    Bachelor's or Master's degree in Computer Science or a related field, or equivalent experience. 
+    Minimum 1 years of experience in software development, with a proven track record of delivering robust software in JavaScript, TypeScript, C#, or a similar language. 
+    Clear technical experience in one or more technologies in our tech stack: React, AngularJS, PHP, Typescript, Node.JS, Python, MySQL. 
+    Familiarity with development collaboration tools such as JIRA and git, and development processes like scrum or Kanban. 
+    Familiarity with web testing and accessibility tools (Jest, Mocha, Cypress, axe, etc) 
+    Experience in a cloud environment, such as AWS. 
+    Familiarity with SQL. 
+    A passion for building beautiful and functional UIs and APIs. 
+
+",llama3:8b,0.1
+AI Engineer (Co-op),"Position: AI Engineer (Co-op); Company: League; Join our team and gain hands-on experience building intelligent systems and scalable machine learning infrastructure. You’ll learn the fundamentals of AI model development, deployment, and monitoring — while contributing to real-world projects that bring machine learning to life at League. This co-op is your chance to develop a strong foundation in a rapidly evolving field at the intersection of data, software, and intelligence.
+
+What You’ll Work On
+
+You’ll collaborate with our AI and data teams to:
+
+    Design, build, and optimize machine learning pipelines for training and inference
+    Work with large-scale datasets to improve data quality, feature engineering, and model performance
+    Experiment with LLMs (Large Language Models), NLP, and other applied AI techniques
+    Contribute to deploying AI services in production with monitoring, scalability, and reliability in mind
+    Support model evaluation, fine-tuning, and documentation for AI-powered systems
+
+Security-related Responsibilities
+
+    Compliance with Information Security Policies
+    Compliance with League’s secure coding practice
+    Responsibility and accountability for executing League's policies and procedures
+    Notification of HR, Legal, Compliance & Security of any incidents, breaches or policy violations
+
+Technologies You’ll Learn and Use
+
+Some of the technologies and tools we work with include:
+
+    Languages & Frameworks: Python, SQL, PyTorch, TensorFlow, scikit-learn
+    Cloud & Infrastructure: GCP (Vertex AI, BigQuery), Airflow, Terraform
+    Monitoring & Visualization: Looker, Weights & Biases, MLflow
+
+Your Experience So Far Might Include
+
+    Exposure to AI, data science, or machine learning projects
+    Hands-on software development experience (Python preferred)
+    Familiarity with cloud-based data or ML platforms
+    Previous engineering co-op or internship experience
+
+",llama3:8b,0.1
+AI Engineer - Generative & Agentic AI,"Position: AI Engineer - Generative & Agentic AI; Company: BDO Canada; We are seeking an experienced AI Engineer with a strong foundation in software engineering and a proven track record of building Generative and Agentic AI solutions. This role is ideal for someone who thrives at the intersection of software development, applied AI research, and practical solution design. You will be responsible for designing, implementing, and deploying production-grade AI systems that leverage the latest in large language models (LLMs), orchestration frameworks, and agentic architectures.
+
+Key Responsibilities
+
+    Design & Development
+        Build scalable and robust AI-driven applications using LLMs and agentic frameworks.
+        Implement vector database solutions to enable semantic search, RAG (retrieval augmented generation), and knowledge management.
+        Develop orchestration pipelines with frameworks like LangChain, Semantic Kernel, AutoGen, or emerging agentic frameworks such as Agno and Parlant.
+    Automation & Integration
+        Integrate workflow automation platforms (n8n, dify.ai Power Automate, etc.) with AI systems to deliver end-to-end business solutions.
+        Ensure seamless integration with existing enterprise software ecosystems and APIs.
+    Quality & Evaluation
+        Apply or contribute to LLM evaluation methodologies, leveraging platforms like Arize, DeepEval, or IBM WatsonX for model benchmarking, monitoring, and continuous improvement.
+        Establish best practices for testing, performance tuning, and evaluation of agentic/LLM-based workflows.
+    Collaboration & Delivery
+        Work closely with cross-functional teams including data scientists, software engineers, and product owners.
+        Translate business requirements into technical designs and deliver working AI-powered applications in production environments.
+
+Required Skills & Qualifications
+
+    Strong background in software engineering (e.g., system design, distributed systems, APIs, CI/CD).
+    Proven experience in building Generative AI and/or agentic systems.
+    Hands-on expertise with:
+        LLMs and model fine-tuning or integration.
+        Vector databases (e.g., Pinecone, Weaviate, Milvus, FAISS, etc.).
+        LLM orchestration frameworks (LangChain, Semantic Kernel, AutoGen, etc.).
+        Agentic frameworks (Pydantic AI, Agno, Parlant, or similar).
+    Proficiency in at least one major programming language such as Python or .NET (strong engineering fundamentals matter more than specific syntax).
+    Hands-on experience architecting, deploying, and operating cloud-native solutions on one or more major hyperscale platforms (Azure, AWS, or GCP)
+    Experience with workflow automation tools like n8n, dify.ai, Power Automate, or similar platforms.
+
+Nice-to-Have Skills
+
+    Familiarity with LLM evaluation frameworks (Arize, DeepEval, IBM WatsonX).
+    Contributions to open-source AI frameworks or communities.
+    Experience in MLOps, monitoring, and model deployment pipelines.
+
+
+Who You Are
+
+    A problem-solver with strong engineering rigor and curiosity for cutting-edge AI.
+    Comfortable moving between architecture, coding, and deployment.
+    Passionate about transforming abstract business needs into intelligent, production-ready systems.
+
+
+",llama3:8b,0.1
+Technical Intern,"Position: Technical Intern; Company: SS&C Technologies; Job Description
+
+Job Title: Intern - Technical
+
+Location(s): Toronto
+
+Get To Know The Team:
+
+SS&C is leading the way. We continue to look for today’s and tomorrow’s brightest talent, those that embody a spirit to improve not only their lives, but those around them. From college students to seasoned and experienced professionals, we encourage you to reach out and apply to our welcoming and inclusive environment.
+
+SS&C prides itself on hiring diverse, honest, dynamic individuals, who value collaboration, accountability, integrity, and innovation to name a few. We are a fast-paced environment, who promote flexibility, authenticity and offer a hybrid working model to ensure employees can manage their day and meet both work and personal commitments.
+
+Why You Will Love It Here! 
+
+    Flexibility: Hybrid Work Model & a Business Casual Dress Code, including jeans
+    Your Future: RRSP Matching Program, Professional Development Reimbursement
+    Work/Life Balance: Flexible Personal/Vacation Time Off, Sick Leave, Paid Holidays
+    Your Wellbeing: Medical, Dental, Vision, Employee Assistance Program, Parental Leave
+    Diversity & Inclusion: Committed to Welcoming, Celebrating and Thriving on Diversity
+    Training: Hands-On, Team-Customized, including SS&C Learning Institute
+    Extra Perks: Discounts on fitness clubs, travel and more!
+
+What You Will Get To Do: 
+
+    You will work on real projects on our production system as part of our standard scrum team. All interns will have the opportunity to write and test software in a web application framework, while partnering with a group of experienced software engineers who help and challenge them they work on projects that matter to our customers. Work with a product owner within an agile team to define, develop, and estimate user stories and epics.
+
+What You Will Bring:
+
+    Front End: Angular, VueJS, HTML5, CSS3, JavaScript, TypeScript, Bootstrap, ExtJS, Node JS
+    Front End Testing: Jasmine, Karma, PostMan 
+    Backend: Java, Spring, SpringBoot, RESTapi, Nodejs, SQL, MongoDB, Postgres
+    Backend testing: Junit, PowerMock
+
+",llama3:8b,0.1
+Application Support Developer (C/C++),"Position: Application Support Developer (C/C++); Company: CGI; We are seeking a skilled and proactive Application Support Developer with strong expertise in C/C++ and SQL to join our team. This role combines development and support responsibilities, requiring the candidate to handle support tasks. The ideal candidate will be comfortable working in a hybrid environment and possess a solid understanding of application support.
+
+Your future duties and responsibilities
+
+     Provide application support for critical systems.
+     Develop and maintain applications using C/C++, ensuring high performance and reliability.
+     Troubleshoot and resolve technical issues across development and production environments.
+     Collaborate with cross-functional teams to ensure smooth deployment and support of applications.
+     Write and optimize SQL queries for data retrieval and manipulation.
+     Participate in Agile ceremonies and contribute to sprint planning and execution.
+     Document support procedures, technical specifications, and system configurations.
+     Engage in root cause analysis and implement preventive measures for recurring issues.
+     Support integration and maintenance of systems such as TANGO, BASE24 EPS/Classic, and Connex (if applicable).
+     Coordinate with stakeholders during client-facing activities, including in-person interviews and meetings.
+
+Required Qualifications To Be Successful In This Role
+
+     Strong hands-on experience with C/C++ and SQL.
+     Familiarity with XML and GoLang (nice to have).
+     Exposure to Azure and Azure DevOps (preferred but not mandatory).
+     Experience working in an Agile SDLC environment.
+     Knowledge of VISA/MC Card Networks is a plus.
+     Excellent problem-solving and communication skills.
+     Ability to work independently and manage multiple priorities.
+
+",llama3:8b,0.1
+Software Development Engineer - Database Development ,"Position: Software Development Engineer - Database Development; Company: AMD; AMD is looking for an influential software engineer who is passionate about improving the performance of key applications and benchmarks. You will be a member of a core team of incredibly talented industry specialists and will work with the very latest hardware and software technology.
+
+The Person
+
+We are seeking a highly skilled Software Development Engineer with strong expertise in database design and optimization. This role is critical for building robust, scalable, and high-performance data solutions that power our applications. The ideal candidate will design efficient database schemas, optimize for memory and performance, and define API interfaces to enable seamless data access.
+
+Key Responsibilities
+
+    Work closely with Profiling tools teams and Product Management to define the tools requirement
+    Collaborate with 3rd Party Open-Source for development
+    Design normalized and optimized database schemas for new and existing applications. 
+    Implement indexing, partitioning, and caching strategies to ensure efficient data retrieval
+    Conduct profiling and tuning of queries, stored procedures, and database configurations. 
+    Optimize database systems for low latency, high throughput, and minimal memory footprint.
+    Define and implement APIs for secure and efficient database access.
+    Implement robust data validation, backup, and recovery strategies. 
+    Ensure compliance with security standards and best practices for data protection.
+    Work closely with software engineers, architects, and product teams to align database solutions with business requirements. 
+    Maintain comprehensive documentation for database structures, APIs, and operational procedures.
+    This is an hybrid role as the hiring team will require the candidate to work for 3 days in the Markham office.
+
+
+Preferred Experience
+
+    Advanced C++ knowledge.
+    Software development with a focus on database engineering
+    Hands-on experience in designing APIs and integrating them with large-scale applications.
+    Experience in custom tools development on Open-Source platforms
+    Strong database skills 
+    Familiarity with Python
+    Familiarity with Linux and Github development environment.
+
+
+Academic Credentials
+
+    Bachelor’s or Master's degree in Computer Science, Computer Engineering, Electrical Engineering, or equivalent 
+
+
+",llama3:8b,0.1
+Software Development Engineer,"Position: Software Development Engineer; Company: AMD; We are looking for a dynamic, upbeat software engineer to join our growing team. If you have an affinity for computer architecture, thrive in a team environment and strive to improve everything around you, we offer the opportunity to bring up new APUs and GPUs years before they hit the market, implement support for the latest OS versions, and work on cutting edge display technologies.
+
+The Person
+
+The ideal candidate possesses an innovative and problem-solving mindset, has a keen eye for Software engineering development, and is diligent and passionate about Technology.
+
+    Is a proven C++ programmer and problem-solver
+    Is a great communicator and collaborator
+    Understands Object-Oriented design
+    Can surmount the steepest learning curves
+
+
+Key Responsibilities
+
+    Validate new SW features before releasing them to customers 
+    Contribute to a high-functioning feature team 
+    Development of Windows Kernel Mode Driver (KMD) support for future APU and dGPUs
+    System level development, and debug of hardware & software features
+    Development of tools, techniques and processes that aid in KMD debug & development on APU-based systems
+    Collaborating with HW/SW/FW developers in other teams to drive complex cross-domain issues to resolution
+
+
+Preferred Experience
+
+    Very large code base
+    Kernel debugging and driver development
+    Hardware programming and bringup
+    Operating systems and computer architecture
+    Some working knowledge of Windows OS
+    System-level design & debug on APU-based systems
+    Good knowledge and hands-on experience in C, C++ 
+    Good analytical and problem-solving skills 
+
+
+Academic Credentials
+
+    Bachelor’s or Master’s degree in Computer/Software Engineering, Computer Science, or related technical discipline 
+
+
+",llama3:8b,0.1
+AI Engineer Consultant,"Position: AI Engineer Consultant; Company: Avanade; Avanade’s AI Engineer role is responsible for developing scalable AI solutions aligned to a business strategy and benefits case. The role will be to work as part of a team to impact real world problems by delivering technical AI work. To be successful in this role you will need to be passionate about Data & AI, a continuous learner, and a strong team player.As an AI Engineer, you will be based in Avanade’s AI Studio and will help clients understand and extract insight and value from their data using Machine Learning and AI techniques. Working as part of a team, you will be involved in all phases of analytics projects including question formulation, design, research and development, implementation, and testing. This role will explore and understand data and build advanced solutions that could be predictive, prescriptive, or optimize.Key responsabilities:Customer onboarding, nominations, and vetting processes Proof of Concept design, lab scheduling, and monitoring of overall governance of AI Studio Provide Studio tours, manage demo showcase, and process improvements Conduct customer satisfaction surveys and share key learnings, run customer engagement reports and project retrospective reports as well as provide Studio summary for customer & logging product bugs with engineering team Produce innovative solutions for Avanade`s clients driven by exploratory data analysis from complex and high-dimensional datasets, both structured and unstructured, applying advanced statistical, machine-learning and AI techniques. Use a flexible, analytical approach to design, develop, and evaluate predictive models and advanced algorithms that lead to optimal value extraction from the data. Communicate insights and deliver plans that steer business strategy and decision-making for one or more business segments.",llama3:8b,0.1
+Software Engineer,"Position: Software Engineer; Company: Scotiabank; We are looking for an enthusiastic individual to innovate and collaborate on the value-driven goals in delivering customer value. You will engage in a fast-paced and stimulating environment, with opportunities to build new relationships and learn how you can make an impact in the competitive, trillion-dollar, Payments industry. You will be exposed to a wide range of businesses both internally and externally, then leveraging Scotiabank’s strong technology base, build and develop on strategic, forward-looking infrastructure.
+
+Is this role right for you
+
+    Be at the forefront of technology and enable your team to be a highly functioning technology power house that enables transformation.
+    Advanced knowledge in multiple system/application areas of increasing complexity
+    Working knowledge of an entire application/system; Engineers software solutions that meet the needs of stakeholders while focusing on continually reducing technical debt
+    Can accomplish more complex goals independently
+    Identifies and manages risks versus opportunities and articulates impact towards deliverables
+    Actively participates in customer discovery and solution discovery sessions
+    Participates in merging, integrating, versioning, and promoting code through environments and version control
+    Triaging and problem-solving production incidents to restore services with follow up on root cause and restore efforts
+    Collaborates to provide estimation and break down of work to enable small and frequent releases to production
+    Proactively provide guidance and recommendation for the software design
+    Actively participates in knowledge exchange forums (i.e. Engineering Communities of Practice, Industry Forums, Open Source Communities, Universities, etc.)
+    Consistently demonstrates behaviours aligned with the organizations valued mindsets
+    Embrace and initiate change for continuous improvement
+
+Do you have the skills that will enable you to succeed in this role
+
+    Desire for innovation and drive for innovation through problem solving, leveraging resourcefulness as a key skill; have a learning mindset while intrinsically motivated to learning new tools and techniques
+    Technical understanding – as a standard Software Engineer there will be expectations that you are able to lead technical discussions, challenge design and strategy
+    Working experience with IBM tools (Websphere, ACE, IIB, RSA, MQ, DB2) 
+    Familiar with languages, frameworks, and databases (such as Java/Spring, XML, ESQL, Node.js/Express.js, Python, MySQL, PostgreSQL, MongoDB, DB2)
+    Use of analytics to enable day-to-day conversations and decision making
+    Good to have experience and/or certifications with Google Cloud, AWS, Azure, or other cloud-based development stacks
+    Good to have experience with containerization and orchestration (such as Docker, Kubernetes) and DevOp tools (such as Bitbucket, Git, Ansible, Jenkins)
+    Leveraging Google based AI tools, experience with GitHub Copilot
+
+",llama3:8b,0.1
+Associate Software Engineer,"Position: Associate Software Engineer; Company: Veeva Systems; We are hiring recent university graduates to grow the next generation of Software Engineers through our Engineering Development Program.
+
+We believe in pushing high potential people to achieve excellence. Our program is specifically designed to provide a challenging environment to learn quickly and deliver value early, equipping you with the resources to become an excellent engineer.
+
+REQUIREMENTS | We are looking for graduates who meet the following requirements:
+
+    Bachelor’s degree in computer science or related field from an accredited 4 year university with a 3.0 to 4.0 GPA
+    Must have taken relevant C.S. classes, including at least one Compilers or Operating Systems class. The Fundamentals are important at Veeva
+    High work ethic. Veeva is a hard-working company
+    High integrity and honesty. Veeva is a PBC and a “do the right thing” company. We expect that from all employees
+    Excellent verbal and written English communication skills. Engineering is not all about the code, it’s also about communication
+    0-2 years of professional software experience. We have other jobs for more experienced hires, but EDP is designed for those just getting going in their careers
+    Ability and desire to work in office 4 days/week for your first two years. After 2 years, you will have the flexibility to Work Anywhere
+
+OUR TECHNOLOGY | We have a variety of different products and codebases, but in general, we use this tech stack:
+
+    System software is Java or Rust
+    Application logic is Java, Python, TypeScript
+    Front end is JavaScript, React, TypeScript
+    Mobile is Swift, Kotlin, React Native
+
+",llama3:8b,0.1
+Game Developer (Gacha Role-Playing Games),"Position: Game Developer (Gacha Role-Playing Games); Company: Tier 9 Game Studios; Role Overview: As a Game Developer at Tier 9 Game Studios, you will play a key role in designing, implementing, and optimizing game mechanics, features, and systems. The nature of your job is highly technical but at times you might assist in other areas of development as well.
+
+
+Responsibilities:
+
+    Take ownership over assigned work from start to finish.
+    Designing and implementing new systems to achieve project goals.
+    Learning and working with existing systems.
+    Ensuring that code meets quality and performance standards for release.
+    Identifying and addressing issues or areas of improvement proactively
+    Supporting and helping teammates when necessary.
+
+
+Qualifications:
+
+    Bachelor's degree in Computer Science, Software Engineering or equivalent.
+    Proficiency in C# and/or Java with a commitment to software engineering principles and code quality. OOP expertise is a must and ECS experience is a bonus, as part of our new game is built with this architecture pattern!
+    Past experience as a player of online role-playing games (AFK Arena, Path of Exile, Maplestory, Runescape, World of Warcraft, etc.)
+    Experience in Unity or other similar game engine.
+    Ability to rapidly prototype and polish to high standards.
+    Great communication, organizational, and time management skills.
+    Strong debugging, optimization, and testing skills.
+    Proactive and independently motivated.
+    Time flexibility for fixing urgent issues in production, although we try to avoid this where possible.
+    Positive attitude and passion for creating great mobile games!",llama3:8b,0.1
+Software Engineer I,"Position: Software Engineer I; Company: Okta; Okta is seeking a highly technical Software Engineer to join a team of engineers working on Okta’s on-premises agents . These products provide multi-factor authentication (MFA) for third-party agents, adding an additional level of security to our customers’ systems. Okta’s agents are an important complement to the overall product offering and are leveraged by some of Okta’s most important partners. They are strategic products that not only stand on their own as a valuable component of our customers’ infrastructure, but also unlock ongoing value for our customers by enabling use of other aspects of Okta’s ecosystem.
+
+What You’ll Be Doing
+
+    Design and develop software components and unit/functional tests utilizing Java/C#/C/C++
+    Review software design and peers' code
+    Interface with QA, Product Management, Technical Support, Documentation, and UX
+    Contribute to security compliance by addressing vulnerabilities in the platform and helping to identify areas for future improvement
+    Lead the effort to diagnose and troubleshoot customer escalations
+
+What You’ll Bring To The Role
+
+    2+ years programming experience with Java and C#
+    2+ years experience using and developing on the Windows platform, Linux development experience is a strong plus
+    Strong understanding of Computer Science fundamentals and concepts involving Data Structures and Algorithms
+    Enthusiastic learner and ability to context switch between development platforms
+    Experience working in an Agile software development teams leveraging continuous integration and deployment practices
+    Bachelor’s degree in Computer Science or equivalent experience
+
+And extra credit if you have experience in any of the following! 
+
+    Experience with AD, ADFS
+
+",llama3:8b,0.1
+Software Developer,"Position: Software Developer; Company: Rockwell Automation;  We are looking for a Software Developer to join one of our micro-service development teams. This is an excellent opportunity for an early-career developer who is willing to participate in professional development activities to stay current on industry knowledge and grow within a collaborative engineering environment. You'll work with senior developers in your team to design micro-services that power our CMMS platform. You enjoy learning new technologies, researching solutions, and valuing mentorship and feedback as part of your growth journey. You will report to Manager of Software Engineering. For the right candidate, this role can be worked remotely from any location in Canada.
+
+Your Responsibilities
+
+    Contribute to the development and maintenance of scalable micro-services.
+    Collaborate with senior developers and teammates on design discussions, code reviews, and deployment processes.
+    Write clean, maintainable, and testable code under guidance from senior team members.
+    Perform independent research to understand new tools, frameworks, and patterns.
+    Participate in daily stand-ups, sprint planning, and retrospectives.
+    Help integrate micro-services with frontend applications and other backend systems.
+    Support testing, debugging, and troubleshooting of services in development and production.
+
+The Essentials - You Will Have
+
+    Bachelor's Degree or Equivalent Years of Relevant Work Experience.
+    Legal authorization to work in the Canada is required. We will not sponsor individuals for employment visas, now or in the future, for this job opening.
+
+The Preferred - You Might Also Have
+
+    1+ years experience with Java, C#, or another general-purpose programming language.
+    Understanding of object-oriented programming and RESTful API principles.
+    Basic familiarity with version control systems (e.g., Git).
+    Exposure to AWS services (Lambda, ECS, S3, etc.).
+    Understanding of Infrastructure as Code (IaC) concepts using tools like Terraform.
+    Familiarity with Angular and TypeScript.
+    Experience working in an Agile or DevOps environment.
+",llama3:8b,0.1
+Junior Software Engineer,"Position: Junior Software Engineer; Company: FDM Group; About this role
+
+
+We welcome all candidates from all degree backgrounds, no STEM experience required. Show us your passion for tech and we’ll show you the skills for success on your career journey.
+
+
+You’ll join FDM as a Consultant within our Software Engineering Practice, where you’ll start your journey developing key skills in a practice-based learning environment for 6-12 weeks. You will then be able to start delivering projects for our clients across a wide range of industries. Client assignments could provide you with the opportunity to take on the role of Software Engineer, Quality Engineer, Cloud Developer and more. You'll have the chance to develop your career, whether linear or non-linear, as our Skills Lab offers numerous upskilling opportunities to enhance your abilities or explore new areas.
+
+
+Where ambition meets opportunity
+
+
+At FDM we find driven people from diverse backgrounds. Dedicated to your continuous growth, we offer a non-linear career journey with our Skills Lab helping guide you to the future you want.
+
+Your skill sets will grow. Clients will value your increased expertise. And your career will thrive exponentially.
+
+
+About You
+
+
+What we look for
+
+· Bachelor’s degree
+
+· Ability to code in OOP languages, such as Java or C#.
+
+· Familiarity with cloud platforms (GCP preferred, AWS or Azure also welcome)
+
+· Willingness to learn CI/CD, containerization, and cloud-native development
+
+· Excellent problem-solving and communication skills
+
+· Commitment to work with FDM for a minimum of two years post-training
+
+· Eligibility to work in Canada
+
+Please note all client assignments require hybrid working in client offices in, but not limited to, Toronto and Montreal.",llama3:8b,0.1
+Entry-Level Software Engineer,"Position: Entry-Level Software Engineer; Company: DoorDash; About The Role
+
+Our product engineers implement and operate technological solutions to improve the experiences of our merchants, dashers, and consumers. From creating beautiful, user-friendly flows to crafting scalable backend architectures, we strive to deliver reliant, performant technology that delights our customers.
+
+You're excited about this opportunity because you will…
+
+    Develop, maintain and ship technical elements with the support of your mentor, manager, and team members
+    Act on feedback, coaching, and mentorship from your mentor and team members
+    Actively learn about the elements to which you contribute
+    Make a direct impact on our business by collaborating with your team to solve problems for our customers
+
+We're excited about you because you have…
+
+    B.S., M.S. in Computer Science or related disciplines
+    At least 2 previous Software Engineering internships or equivalent work experience, with no more than 2 years of full-time work experience
+    Experience working with databases (e.g. SQL)
+    Solid understanding of algorithms and data structures
+    Experience working with at least one object-oriented programming language (e.g. Python, Java, Kotlin, etc.)
+    Experience writing clean code, working with version control, and unit testing
+
+Nice to Haves:
+
+    Able to analyze and improve efficiency, scalability, and stability of various systems
+    Excited to develop, release, and run large-scale web applications
+    Experience with solutions for systems monitoring, live deployments, and continuous integration
+    Experience with real-time technology problems
+    Experience working with service oriented architecture, writing APIs, and designing systems
+
+",llama3:8b,0.1
+Entry Level Software Engineer,"Position: Entry Level Software Engineer; Company: Konrad; About The Role
+
+As an entry level Software Developer you'll be tasked with working on both mobile and web applications. Working within the software development team, your duties will require you to assist in the development of consumer and enterprise applications. This role is ideal for entry level developers who feel confident in their technical ability and want to be a part of the highly-skilled development team at Konrad. Our graduate program includes an exciting digital training and onboarding program during the first 3 months of employment.
+
+This cohort will commence on July 7, 2026.
+
+What You'll Do
+
+    Write maintainable, testable, and performant software in collaboration with our world class team 
+    Participate in code review and performing extensive testing to ensure high quality software 
+    Research new technology and tools and share those findings with the team
+    Communicate clearly and effectively with all members of our team
+
+Qualifications
+
+    Graduated from a Computer Science, Software Engineering, or similar program in a University or College
+    Strong command of important programming and computer science concepts
+    Ability to understand a web application and how it's built from end-to-end
+    Fundamental knowledge of core web principals (HTTP, the DOM, SSL, web servers)
+    Fluency with databases (schema design, querying, optimization etc.)
+    Great interpersonal skills - we work very closely together as a team and require a lot of communication
+    Proactive personality and a desire to deliver your best work.
+
+",llama3:8b,0.1
+New Grad Software Engineer,"Position: New Grad Software Engineer; Company: Stripe; Responsibilities
+
+    Work on cross-functional projects, directly collaborating with other engineers
+    Give meaningful feedback on code reviews and technical designs
+    Ensure that the systems your team operates continue running well and can scale to meet the needs of our users
+    Build the skills to own a project from beginning to end, learning project management and technical leadership skills
+
+
+Who you are
+
+We’re looking for someone who meets the minimum requirements to be considered for the role. If you meet these requirements, you are encouraged to apply. The preferred qualifications are a bonus, not a requirement.
+
+Minimum Requirements
+
+    A Bachelor’s or Master’s degree in computer science or a directly related field, obtained by summer 2026, or equivalent work experience
+    Some experience and familiarity with programming, either through side projects or classwork. We work mostly in Java, Ruby, JavaScript, Scala, and Go. We believe new programming languages can be learned if the fundamentals and general knowledge are present
+    Experience from either previous internships or working collaboratively on multi-person coding projects (in a university or professional setting)
+    Ability to learn unfamiliar systems and form an understanding of those systems, through independent research and working with a mentor and subject matter experts
+
+
+Preferred Qualifications
+
+    One or more areas of specialized knowledge balanced with general skills and knowledge, such as knowing more frontend technologies and, at a high level, how a service handles an HTTP request
+    Experience in code review practices, and an understanding of how to safely update production systems
+    Familiarity with navigating and managing work in large code bases
+
+
+",llama3:8b,0.1
+AI Engineer,"Position: AI Engineer; Company: BMO; Join our dynamic API and Integration team, responsible for designing and developing cutting-edge API and integration solutions across diverse domains, including retail payments, financial crimes and AML integrations, cards, and lending. As we establish our AI practice to build AI/ML capabilities across the organization, you will help enhance our API and integration offerings through innovative AI solutions.
+
+Leveraging the AWS technology stack, we build scalable and secure APIs to enable seamless integration between applications and drive innovation. As a junior AI Engineer, you will contribute to developing and deploying AI solutions that seamlessly integrate with our AWS-based technology stack. This is an excellent opportunity for someone with 1+ years of AI/ML exploration looking to build a career in the AI/ML space within a fast-paced, innovation-driven environment.
+
+## Main Responsibilities
+
+     Develop and implement proof-of-concepts (POCs) using Generative AI, RAG (Retrieval Augmented Generation), MCP, and Agentic AI technologies
+     Build and deploy AI/ML models and solutions that enhance API and integration capabilities across payment, financial crimes, cards, and lending domains
+     Collaborate with senior engineers to package and deploy models into production using AWS services
+     Support the development of real-time and batch inference pipelines for API integration scenarios
+     Work with cross-functional teams to translate business requirements into AI-powered API solutions
+     Assist in creating monitoring and maintenance plans for AI solutions in production environments
+     Research and experiment with emerging AI/ML technologies and AWS services to support business use cases
+     Contribute to the overall design of AI solutions that meet business and technical requirements
+     Support the integration of AI capabilities into existing API infrastructure
+
+
+## About You
+
+    Required
+
+    Qualifications:
+    **
+     Bachelor's degree in Computer Science, Engineering, Mathematics, Data Science, or related technical field
+     1-3 years of experience in software engineering, AI/ML, or related field
+     Basic understanding of AI/ML concepts and technologies with 1+ years of hands-on exploration
+     Strong programming experience in Python, NodeJS, and Java
+     Good knowledge of AWS cloud services and technologies
+     Understanding of API design and integration principles
+     Familiarity with Generative AI concepts and applications
+    Preferred
+
+    Qualifications:
+    **
+     Experience with AWS AI/ML services (SageMaker, Bedrock, Lambda, S3, Step Functions)
+     Basic understanding of RAG (Retrieval Augmented Generation) implementations
+     Familiarity with AI frameworks such as LangChain or similar
+     Knowledge of Agentic AI concepts including orchestration and tool use
+     AWS certifications are a plus
+     Experience with RESTful APIs and microservices architecture
+    Skills & Attributes:**
+     Strong analytical and problem-solving skills
+     Excellent collaboration and communication abilities
+     Passion for innovation and learning new technologies
+     Ability to work effectively in a fast-paced, agile environment
+     Eagerness to research, learn, and share knowledge
+     Growth mindset with desire to build expertise in AI/ML space
+
+
+",llama3:8b,0.1
+Junior Java Developer,"Position: Junior Java Developer; Company: Tata Consultancy Services; About TCS:
+
+
+TCS is an IT services, consulting, and business solutions organization that has been partnering with many of the world’s largest businesses in their transformation journeys for over 55 years. Its consulting-led, cognitive-powered portfolio of business, technology, and engineering services and solutions is delivered through its unique Location Independent Agile™ delivery model, recognized as a benchmark of excellence in software development. A part of the Tata group, India's largest multinational business group, TCS operates in 55 countries and employs over 607,000 highly skilled individuals, including more than 10,000 in Canada. The company generated consolidated revenues of US $ 30 billion in the fiscal year ended March 31, 2025, and is listed on the BSE and the NSE in India. TCS' proactive stance on climate change and award-winning work with communities across the world have earned it a place in leading sustainability indices such as the MSCI Global Sustainability Index and the FTSE4Good Emerging Index.
+
+
+Skills and Responsibilities:
+
+
+ • Be a member of the Agile Scrum team to develop enterprise level websites and mobile Analyze user requirements to understand business objectives, system features and functionality 
+
+ • Participate in Design, implement and maintain Java-based applications that can be high-volume and low-latency 
+
+ • Write re-usable and testable code in Java Java EE, JS, HTML, CSS, JavaScript framework, Bootstrap, Angular or React code. 
+
+ • Integration using RESTful web APIs or web services using Angular React Angular React another framework 
+
+ • Basic understanding of SQL and database concepts Troubleshoot problems with existing applications 
+
+ • Develop user manual documentation to help users Transforming requirements into stipulations Prepare and produce releases of software components 
+
+ • Support continuous improvement, investigating alternatives and technologies, and presenting for architectural review Work with QA team to ensure our websites and apps are error free Skillset University 
+
+ • Degree (preferably in Computer Science, Engineering or Information Technology or equivalent experience) 
+
+ • Experience in developing responsive websites and apps using Bootstrap or other framework Advanced knowledge of Java JEE HTML5, JavaScript (ES6), CSS3 and other client-side frameworks RDMS database and SQL 
+
+ • Working experience in Version control tool platforms like GitHub, Git, Jenkins, etc. Experience working in a multi-team and Agile development environment",llama3:8b,0.1
+"Engineer I, Artificial Intelligence","Position: Engineer I, Artificial Intelligence; Company: Tucows Domains; About The Opportunity
+
+We’re looking for a passionate Software Engineer specializing in Artificial Intelligence to join our growing team. In this role, you’ll help shape and build innovative AI-powered systems that transform how users interact with domain-related tools and services. You’ll work both with your team of forward-thinking engineers and with colleagues across business functions to prototype, develop, and deploy intelligent solutions using open-source models and modern infrastructure.
+
+This is a hybrid position, requiring 3 days a week in office for collaboration.
+
+What You’ll Do
+
+    Design and build AI-driven features for our domain services platform using Python and Golang.
+    Integrate and fine-tune open-source models such as LLaMA 3.2 and similar cutting-edge architectures via tools like Ollama.
+    Research, evaluate, and implement emerging AI technologies that align with our vision for smarter, more intuitive products and services.
+    Collaborate with internal stakeholders and fellow engineers to rapidly prototype and iterate on machine learning and LLM-based features.
+    Contribute to a modern AI development stack, ensuring scalability, performance, and ethical usage of models.
+    Actively participate in the open-source ecosystem and bring relevant tools and techniques back to the team.
+
+
+Key Skills And Experience
+
+    Bachelor degree in software development with strong proficiency in Python; experience with Golang is a plus.
+    Solid understanding of modern AI/ML/LLM concepts, particularly around transformer-based architectures and open-source models.
+    Hands-on experience with frameworks like Tensorflow, Hugging Face, or similar.
+    Experience working with and adapting open-source models (e.g., LLaMA, Mistral, Mixtral, etc.) for production use.
+    A working knowledge of neural networks, including their architectures, training methods, and applications.
+    A basic understanding of Fuzzy Inference Systems.
+    Familiarity with containerization, APIs, and cloud-native tooling.
+    A collaborative mindset, strong communication skills, and enthusiasm for innovation. 
+
+
+",llama3:8b,0.1
+Entry Level AI Specialist,"Position: Entry Level AI Specialist; Company: IBM; Your Role And Responsibilities
+
+An AI Specialist at IBM is not just a job title - it's a mindset. You'll leverage the watsonx platform to co-create AI value with clients, focusing on technology patterns to enhance repeatability and delight clients.
+
+Success is our passion, and your accomplishments will reflect this, driving your career forward, propelling your team to success, and helping our clients to thrive.
+
+Your primary responsibilities will include, but not be limited to:
+
+     Pre and Post Sales Pilots: Develop pilots to validate and highlight the feasibility and effectiveness of the proposed AI solutions. Collaborate with cross-functional teams to implement and iterate on pilots, ensuring alignment with customer requirements and expectations while adhering to best practices and quality standards.
+     Solution Optimization and Performance: Continuously monitor and optimize the performance of AI solutions, including foundation models and large language models. Identify opportunities to enhance efficiency, accuracy, and speed through fine-tuning, algorithmic improvements, or infrastructure optimization to meet performance requirements.
+     Collaboration and Project Management: Collaborate with cross-functional teams, including AI engineers, platforms engineers, and members of the sales team, to ensure smooth execution and successful delivery of AI solutions. Effectively communicate project progress, risks, and dependencies to stakeholders.
+     Industry Trends and Innovation: Stay up to date with the latest trends and advancements in AI, foundation models, and large language models. Evaluate emerging technologies, tools, and frameworks to assess their potential impact on solution design and implementation.
+
+To Be Successful In This Role, You Will Need
+
+     Confidence to contact and engage potential new customers and deliver an elevated experience.
+     Motivation to achieve sales, business objectives and high client satisfaction.
+     Strong analytic, problem solving, and troubleshooting skills combined with an agile process.
+     Embrace curiosity and a growth mindset.
+
+Readiness to travel up to 50% annually.
+
+Preferred Education
+
+Bachelor's Degree
+
+Required Technical And Professional Expertise
+
+     Technical Education: B.S./M.S. in Computer Science, Artificial Intelligence, Data Science, Math, Statistics, Engineering or equivalent technical degree/experience.
+     Programming: Working knowledge in Python, R, Java or language in similar discipline.
+     Tech Savvy: Conversant about AI technology, latest industry trends and how it is being applied to address business challenges.
+     Team Player: Demonstrates team collaboration and can navigate different communication styles.
+     Excellent Communication Skills: Possess verbal, written, and interpersonal skills that are engaging, compelling and influential.
+     Self-Starter: Motivated to work with clients and can lead projects independently.
+
+Preferred Technical And Professional Experience
+
+     Knowledge of AI frameworks such as TensorFlow, PyTorch, Keras or Hugging Face.
+     Experience with LLM and foundational models.
+     Understanding in the usage of libraries such as SciKit Learn, Pandas, Matplotlib, etc.
+     Familiarity with open source technology, automation and legacy coding (Cobol, C, Assembler) is a plus.",llama3:8b,0.1

@@ -95,6 +95,7 @@ When filling out the OUTPUT FORMAT, follow these guidelines:
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 - If no information matching a given OUTPUT FORMAT field is found, return the field as empty and continue unto filling out the next field.
+- If a field of requested information is not present in the job description, return it as empty; do not write things like "Not specified" or "None".
 On the "Keywords" section of the OUTPUT FORMAT, you have to include the following as single words or small phrases (less than 3 words long each):
 - The job position (e.g. the job title)
 - The name of technologies required (e.g. object oriented programming, etc)
@@ -480,6 +481,7 @@ INPUT "Description" and "Skills" subsections of a project belonging to the "Proj
         "format": {
             "experiences": "",
             "job_description": "",
+            "min_section": "1",
             "prefix_dict": {
                 "Experience:" : ["[E]",True],
                 "Dummy:" : ["[BIG DUMMY]"]
@@ -487,8 +489,8 @@ INPUT "Description" and "Skills" subsections of a project belonging to the "Proj
         },
         "prompt_in": 
 """REQUEST:
-Given a set of experiences across 3 resume sections (Volunteering and Leadership, Work Experience, and Projects) and a job description, select and rank relevant experiences based on the job description.
-When selecting and ranking the experiences, follow these criteria: 
+Given a set of experiences across 3 resume sections (Volunteering and Leadership, Work Experience, and Projects) and a job description, rank all experiences on a resume based on the job description.
+When ranking the experiences, follow these criteria: 
 - Firstly and topmost of the OUTPUT FORMAT place experiences that match relevant skills and keywords explicitly present in the job description.
 - Secondly, place experiences with "related" skills and keywords (e.g. "software quality assurance" is related to "software"; "accounting" is not considered related to "software")
 - Lastly, place all other experience titles in order of descending perceived "technical complexity"
@@ -497,6 +499,8 @@ When filling out the OUTPUT FORMAT following the above criteria, take these form
 - While filling out the output format, do not change the experience text, and do not include any text before or after the experience title text.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
+- Do not explain your selections, just return the selected and ranked experiences.
+- You must include all experiences found in the INPUT sections, but in order of relevance to the job description.
 
 OUTPUT FORMAT:
 Experience:Experience Title 1
@@ -659,13 +663,13 @@ Given a wholistic summary of a resume and a job description, tailor a Summary se
 - Do not line break the summary section, it should be a continuous block of text.
 - When mentioning specific qualifications, these must be relevant to the job description:
     -  Preferably mention qualifications and keywords that appear on both the resume and the job description, particularly those which demonstrate the candidate's technical expertise.
-- Return only the revised summary and strictly follow the output format, filling in the parts that have **fill-in:"text"**
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field name "Summary:", as per the OUTPUT FORMAT.
 - Do not make use of brackets or any other special characters in the summary.
+- Only fill in the parts that have **fill-in:"text"**
 
 OUTPUT FORMAT:
-Summary: Despite limited work experience, I bring strong work ethic, adaptability and curiosity. Experienced in **fill-in specific relevant technical skills"**. Now seeking a position that offers growth and learning opportunities.
+Summary: Despite limited work experience, I bring strong work ethic, adaptability and curiosity. Experienced in **fill-in with specific skills relevant to the job description**. Now seeking a position that offers growth and learning opportunities.
 
 
 INPUT:
@@ -678,7 +682,7 @@ INPUTjob description:
 
 """,
         "ollama_url": "http://localhost:11434",
-        "sample_starts": ["strict", "digits", "[0]Summary:"]
+        "sample_starts": ["strict", "digits", "[0]Summary: Despite limited work experience,"]
     },
     "tailor_skills": #DONE
     {
@@ -709,14 +713,15 @@ INPUTjob description:
         "prompt_in": 
 """REQUEST:
 Given a job description and the "Skills" section from a resume:
-Extract the "Programming Languages","Technical Skills", and "Soft Skills" relevant to the INPUT job description from the INPUT "Skills" resume section,following the guidelines below:
+Rank the "Programming Languages","Technical Skills", and "Soft Skills" from a INPUT "Skills" resume section in order of relevance to the INPUT job description,following the guidelines below:
 - Do not line break any line containing the relevant skills, it should follow the format below strictly.
-- If either the "Programming Languages", "Technical Skills", or "Soft Skills" sections are empty (which means no relevant skills of said cathegory were found), return them as an empty section (without any extra text to denote its empty status).
+- If either the "Programming Languages", "Technical Skills", or "Soft Skills" sections are empty, return them as an empty section (without any extra text to denote its empty status).
 - Aside from the information requested, do not include any additional text or explanations.
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
 - Do not break down any OUTPUT FORMAT lines into multiple instances(e.g. do not output 2 lines labeled "Technical Skills:", one is sufficient as per the format)
 - The skills you extract MUST be present in the INPUT "Skills" resume section.
+- Include all skills from the INPUT "Skills" resume section and its subsections, but place them in order of relevance to the job description.
 
 OUTPUT FORMAT:
 Skills:
@@ -952,7 +957,7 @@ INPUT job description the aforementioned resume has been tailored to:
         },
         "prompt_in": 
 """REQUEST:
-Given a list of courses taken on a given program and a job description, extract the {no_courses} most relevant courses that match the skills and requirements outlined in the job description.
+Given a list of courses taken on a given program and a job description, rank all the courses in order of relevance to the job description.
 Follow these guidelines when extracting courses and returning them:
 - Do not include any courses not present in the original courses list.
 - Do not use line breaks inside any subsection.
@@ -960,6 +965,7 @@ Follow these guidelines when extracting courses and returning them:
 - Return the requested information, strictly filling out the OUTPUT FORMAT.
 - Be mindful that courses may or may not have a course code (represented by "XXX001" in the OUTPUT FORMAT section)
 - Do not forget to include the field names at the start of each line, as per the OUTPUT FORMAT.
+- Include all courses from the INPUT list, but place them in order of relevance to the job description.
 
 OUTPUT FORMAT:
 Courses: XXX001 Course Name1, XXX002 Course Name2, XXX003 Course Name3...

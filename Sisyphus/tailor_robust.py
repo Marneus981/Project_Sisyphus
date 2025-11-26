@@ -1677,13 +1677,47 @@ def tailor_skills_robust(call_info = template_call_info):
         print(f"[INFO]{function_name}: ai-powered pruning initiated")
         print(f"[INFO]{function_name}: ai-powered pruning input:")
         print(f"{cv_data}")
+    precision = config.CONFIG["PRUNING"]["AI_PRECISION"]["SKILLS"]
+    ai_list_p = []
+    ai_list_t = []
+    ai_list_s = []
+    for i in range(0,precision):
 
-    sk_ollama = ollama_call(runtime_info=runtime_info_temp)
-    if config.DEBUG["INFO_LOGGING"]: 
-        print(f"[INFO]{function_name}: ai-powered pruning completed")
-        print(f"[INFO]{function_name}: ai-powered pruning output:")
-        print(f"{sk_ollama}")
-    sk_ollama_dct = parsers.parse_cv_out(sk_ollama)
+        sk_ollama_tmp = ollama_call(runtime_info=runtime_info_temp)
+        if config.DEBUG["INFO_LOGGING"]: 
+            print(f"[INFO]{function_name}: ai-powered pruning completed")
+            print(f"[INFO]{function_name}: ai-powered pruning output:")
+            print(f"{sk_ollama_tmp}")
+        sk_ollama_dct_tmp = parsers.parse_cv_out(sk_ollama_tmp)
+        ai_list_p.append(sk_ollama_dct_tmp["skills"]["programming_languages"])
+        ai_list_t.append(sk_ollama_dct_tmp["skills"]["technical_skills"])
+        ai_list_s.append(sk_ollama_dct_tmp["skills"]["soft_skills"])
+    ai_dct_p = {}
+    for sublist in ai_list_p:
+        for idx, item in enumerate(sublist):
+            if item not in ai_dct_p:
+                ai_dct_p[item] = idx
+            ai_dct_p[item] = ai_dct_p[item] + idx
+    ai_dct_t = {}
+    for sublist in ai_list_t:
+        for idx, item in enumerate(sublist):
+            if item not in ai_dct_t:
+                ai_dct_t[item] = idx
+            ai_dct_t[item] = ai_dct_t[item] + idx
+    ai_dct_s = {}
+    for sublist in ai_list_s:
+        for idx, item in enumerate(sublist):
+            if item not in ai_dct_s:
+                ai_dct_s[item] = idx
+            ai_dct_s[item] = ai_dct_s[item] + idx
+    
+    sk_ollama_dct = {
+        "skills":{
+            "programming_languages":sorted(ai_dct_p, key=ai_dct_p.get),
+            "technical_skills":sorted(ai_dct_t, key=ai_dct_t.get),
+            "soft_skills":sorted(ai_dct_s, key=ai_dct_s.get)
+        }
+    } 
     skills_dct = parsers.parse_cv_out(cv_data)
     
     #ALGORITHMIC PRUNING (MAIN)
@@ -2040,13 +2074,24 @@ def tailor_courses_robust(call_info = template_call_info):
             "ollama_url":ollama_url
         }
         ##
-        courses_ollama_txt = ollama_call(runtime_info=runtime_info_temp)
-        step0 = courses_ollama_txt.replace("[1]Courses:","").strip()
-        if step0 != "":
-            step1 = [item.strip() for item in step0.split(",")]
+        precision = config.CONFIG["PRUNING"]["AI_PRECISION"]["COURSES"]
+        ai_list = []
+        for i in range(0,precision):
+            temp_txt = ollama_call(runtime_info=runtime_info_temp).replace("[1]Courses:","").strip()
+            temp_list = []
+            if temp_txt != "":
+                temp_list = [item.strip() for item in temp_txt.split(",")]
+            ai_list.append(temp_list)
+        ai_dct = {}
+        for sublist in ai_list:
+            for idx, item in enumerate(sublist):
+                if item not in ai_dct:
+                    ai_dct[item] = idx
+                ai_dct[item] = ai_dct[item] + idx
+        step1 = sorted(ai_dct, key=ai_dct.get)
         ai_courses = []
         for item in step1:
-            if step1 != "":
+            if item != "":
                 ai_courses.append(item)
         final_courses = list(set(deepcopy(algo_courses) + deepcopy(ai_courses)))
         if config.DEBUG["HEURISTIC_LOGGING"]:
@@ -2105,6 +2150,7 @@ def prune_experiences(call_info = template_call_info):
                           "format": {
                               "experiences": step0,
                               "job_description": job_description_summary,
+                              "min_section": config.CONFIG["PRUNING"]["NO_EXPERIENCES"]["PER_SECTION"]
                           },
                           "payload_in":{
                               "system":system1,
@@ -2116,16 +2162,30 @@ def prune_experiences(call_info = template_call_info):
         print(f"[HEURISTIC][EXPERIENCES]{function_name}:HEURISTIC REPORT")
         print(f"[HEURISTIC]{function_name}: max_exps: {max_exps}")
     step1 = experience_pruning_algorithm(job_desc = job_description_summary,text = step0,v_list = v_list,w_list = w_list,p_list = p_list)
-    step1_ai = ollama_call(runtime_info= runtime_info_temp)
+    precision = config.CONFIG["PRUNING"]["AI_PRECISION"]["EXPERIENCES"]
+    ai_list = []
+    for i in range(0,precision):
+        ai_list.append(clean_first_step(ollama_call(runtime_info= runtime_info_temp)).strip().splitlines())
+    step1_ai_dct = {}
+    for sublist in ai_list:
+        for idx, item in enumerate(sublist):
+            if item not in step1_ai_dct:
+                step1_ai_dct[item] = idx
+            step1_ai_dct[item] = step1_ai_dct[item] + idx
+    #sort in ascending order of index values (lower index means higher priority)
+    step1_ai_sorted = sorted(step1_ai_dct, key=step1_ai_dct.get)
+    step1_clean_ai = "\n".join(step1_ai_sorted)
+    # step1_ai = ollama_call(runtime_info= runtime_info_temp)
+    # step1_clean_ai = clean_first_step(step1_ai).strip()
     #step1 = step0_prune_experiences(model=model, system1=system1, ollama_url=ollama_url, experiences=step0, job_description=job_description_summary)
     if config.DEBUG["HEURISTIC_LOGGING"]: 
         print(f"[HEURISTIC]{function_name}: step1:\n" + step1)
-        print(f"[HEURISTIC][OLLAMA]{function_name}: step1_ai:\n" + step1_ai)
+        #print(f"[HEURISTIC][OLLAMA]{function_name}: step1_ai:\n" + step1_ai)
     step1_clean = clean_first_step(step1).strip()
-    step1_clean_ai = clean_first_step(step1_ai).strip()
+    #step1_clean_ai = clean_first_step(step1_ai).strip()
     if config.DEBUG["HEURISTIC_LOGGING"]: 
-        print(f"[HEURISTIC]{function_name}: step1:\n" + step1_clean)
-        print(f"[HEURISTIC][OLLAMA]{function_name}: step1_ai:\n" + step1_clean_ai)
+        print(f"[HEURISTIC]{function_name}: step1_clean:\n" + step1_clean)
+        print(f"[HEURISTIC][OLLAMA]{function_name}: step1_clean_ai:\n" + step1_clean_ai)
     step1_split = step1_clean.splitlines()
     step1_split_ai = step1_clean_ai.splitlines()
     for line in step1_split:
