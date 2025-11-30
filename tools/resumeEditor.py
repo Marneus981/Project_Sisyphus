@@ -49,7 +49,7 @@ def clear_frame(frame):
         widget.destroy()
 
 def browse_file(type = ""):
-    global EditFileResume, RefFileResume, EditFilePathVar, EditFileText, RefFilePathVar, RefFileText
+    global EditFileScrollableFrame, RefFileScrollableFrame, EditFileResume, RefFileResume, EditFilePathVar, EditFileText, RefFilePathVar, RefFileText
     if type == "edit":
         default_dir = os.path.join(os.path.dirname(__file__), '..',"Sisyphus", 'saved_outputs')
         default_dir = os.path.abspath(default_dir)
@@ -60,8 +60,6 @@ def browse_file(type = ""):
         EditFileText = helpers.read_text_file(str(EditFilePathVar.get()))
         resume_dct = parsers.parse_cv(EditFileText)
         resume_sk_dct = parsers.parse_cv_out(EditFileText)
-        print("resume_dct:", resume_dct)
-        print("resume_sk_dct:", resume_sk_dct)
         clear_frame(EditFileScrollableFrame)
         EditFileResume = StandardResume(name="Editable Resume", resume_data=resume_dct, resume_data_sk=resume_sk_dct)
         EditFileResume.draw_self(EditFileScrollableFrame)
@@ -75,8 +73,6 @@ def browse_file(type = ""):
         RefFileText = helpers.read_text_file(str(RefFilePathVar.get()))
         ref_resume_dct = parsers.parse_cv(RefFileText)
         ref_resume_sk_dct = parsers.parse_cv_out(RefFileText)
-        print("resume_dct:", ref_resume_dct)
-        print("resume_sk_dct:", ref_resume_sk_dct)
         clear_frame(RefFileScrollableFrame)
         RefFileResume = StandardResume(name="Reference Resume", resume_data=ref_resume_dct, resume_data_sk=ref_resume_sk_dct)
         RefFileResume.draw_self(RefFileScrollableFrame)
@@ -172,11 +168,26 @@ class ResumeSubSection:
         return f"SubSection(title={self.title}: {str(self.content)})"
 
     def draw_self(self, container):
-        frame = add_frame(container, type="pack", side="top", fill="x")
-        print("Drawing SubSection:", self.title)
-        print("Content:", self.content)
-        add_label(frame, label_text=self.title)
-        add_entry(frame, text_var=self.content.get())
+        frame = ttk.Frame(container)
+        frame.pack(side='top', fill='both', expand=True)
+        frame.columnconfigure(0, weight=1)
+        frame.columnconfigure(1, weight=1)
+        # frame.columnconfigure(2, weight=1)
+        frame.rowconfigure(0, weight=1)
+        frame_title = ttk.Frame(frame)
+        frame_title.grid(column=0, row=0, sticky="nsew")
+        frame_edit = ttk.Frame(frame)
+        frame_edit.grid(column=1, row=0, sticky="nsew")
+        # frame_txt = ttk.Frame(frame)
+        # frame_txt.grid(column=2, row=0, sticky="nsew")
+        title = ttk.Label(frame_title, text=self.title)
+        title.pack(padx=10, pady=10, side="left")
+        editable_entry = ttk.Entry(frame_edit, width=50, textvariable=self.content)
+        editable_entry.pack(padx=10, pady=10, side="left")
+        # text_label = ttk.Label(frame_txt, textvariable=self.content)
+        # text_label.pack(padx=10, pady=10, side="left")
+        
+        
 
 class ResumeSection:
     def __init__(self, title = "SectionPlaceholder", value=None):
@@ -198,28 +209,43 @@ class ResumeSection:
         return f"Section(title={self.title} : {str(self.value)})\n" + f"{additional}"
     
     def draw_self(self, container):
-        frame = add_frame(container, type="pack", side="top", fill="x")
-        print("Drawing Section:", self.title)
-        add_label(frame, label_text=self.title)
-        print("Value:", self.value)
-        if self.value and isinstance(self.value, str):
-            print("Value is a string.")
-            print("Value:", self.value)
-            add_entry(frame, text_var=str(self.value))
-        elif self.value and isinstance(self.value, dict):
-            print("Value is a dict with", len(self.value), "items.")
-            for key, val in self.value.items():
-                print("Key:", key, "Value:", val)
-                if hasattr(val, "draw_self"):
-                    val.draw_self(frame)
-        elif isinstance(self.value, list):
-            print("Value is a list with", len(self.value), "items.")
-            for item in self.value:
-                if hasattr(item, "draw_self"):
-                    item.draw_self(frame)
+        print(f"Drawing Section: {self.title}")
+        SectionFrame = ttk.Frame(container)
+        SectionFrame.pack(padx=10, pady=10, anchor="nw")
+
+        SectionTitle = ttk.Label(SectionFrame, text=self.title, font=("Arial", 16))
+        SectionTitle.pack(padx=10, pady=10, anchor="nw")
+
+        if isinstance(self.value, tk.StringVar):
+            print(f"Section value is a tk.StringVar: {self.value.get()}")
+            ContentFrame = ttk.Frame(SectionFrame)
+            ContentFrame.pack(side='top', fill='both', expand=True)
+            ContentFrame.columnconfigure(0, weight=1)
+            ContentFrame.columnconfigure(1, weight=1)
+            
+            ContentEntryFrame = ttk.Frame(ContentFrame)
+            ContentEntryFrame.grid(column=0, row=0,sticky="ew")
+            ContentEntry = ttk.Entry(ContentEntryFrame, textvariable=self.value)
+            ContentEntry.pack(padx=10, pady=10, side="left", anchor="nw")
+
+            ContentTextFrame = ttk.Frame(ContentFrame)
+            ContentTextFrame.grid(column=1, row=0,sticky="ew")
+            ContentText = ttk.Label(ContentTextFrame, textvariable=self.value)
+            ContentText.pack(padx=10, pady=10, side="left", anchor="nw")
+
+        elif isinstance(self.value,list):
+            print(f"Section value is a list with len: {len(self.value)}")
+            for section in self.value:
+                if hasattr(section, "draw_self"):
+                    print(f"Recursive: Drawing Section {section.title} inside {self.title}")
+                    section.draw_self(SectionFrame)
+
         for subsection in self.__dict__.values():
-            if subsection != self.title and subsection != self.value:
-                subsection.draw_self(frame)
+            if hasattr(subsection, "draw_self"):
+                print("Drawing SubSection:", subsection.title)
+                print("Content:", subsection.content)
+                subsection.draw_self(SectionFrame)
+        
                       
 class Resume:
     def __init__(self, name ="ResumePlaceholder"):
@@ -236,11 +262,16 @@ class Resume:
         return f"Resume(title={self.title})\n" + f"{additional}"
 
     def draw_self(self, container):
-        add_label(container, label_text=self.title)
+        resume_label = ttk.Label(container, text=self.title, font=("Arial", 16, "bold"))
+        resume_label.pack(padx=10, pady=10, anchor="nw")
+        resume_frame = ttk.Frame(container)
+        resume_frame.pack(padx=10, pady=10, anchor="nw")
         for section in self.__dict__.values():
-            if section != self.title:
-                section.draw_self(container)
+            if hasattr(section, "draw_self"):
+                print(f"Section: {section.title} has draw_self attibute, drawing...")
+                section.draw_self(resume_frame)
         
+
 
 class StandardResume(Resume):
     def __init__(self, name="Standard Resume", resume_data={}, resume_data_sk = {}):
@@ -268,12 +299,12 @@ class StandardResume(Resume):
         print(f"Projects: {resume_data.get("projects", [])}")
         self.add_section("Projects", Projects(value=resume_data.get("projects", [])))
         print(f"Skills: {resume_data_sk.get("skills", {})}")
-        self.add_section("Skills", Skills(skills=resume_data_sk.get("skills", {})))
+        self.add_section("Skills", Skills(value=resume_data_sk.get("skills", {})))
 
 class Name(ResumeSection):
-    def __init__(self, title="Name", value=""):
+    def __init__(self, title="Name", value=None):
         super().__init__(title)
-        self.value = value
+        self.value = tk.StringVar(value= value)
 class ContactInfo(ResumeSection):
     def __init__(self, title="Contact Information", value={}):
         super().__init__(title)
@@ -287,17 +318,17 @@ class ContactInfo(ResumeSection):
             if key not in {"address", "phone", "email", "linkedin", "github", "portfolio"}:
                 self.add_subsection(key, value=val)
 class Title(ResumeSection): 
-    def __init__(self, title="Title", value=""):
+    def __init__(self, title="Title", value=None):
         super().__init__(title)
-        self.value = value
+        self.value = tk.StringVar(value= value)
 class Summary(ResumeSection):
-    def __init__(self, title="Summary", value=""):
+    def __init__(self, title="Summary", value=None):
         super().__init__(title)
-        self.value = value
+        self.value = tk.StringVar(value= value)
 class Languages(ResumeSection): 
     def __init__(self, title="Languages", value=[]):
         super().__init__(title)
-        self.value = value
+        self.value = tk.StringVar(value= str(value))
 class EducationObject(ResumeSection):
     def __init__(self, title="Education Object", education_info={}):
         super().__init__(title)
@@ -409,7 +440,7 @@ class ProjectsObject(ResumeSection):
         self.add_subsection("Description", value=value.get("description", ""))
         self.add_subsection("Skills", value=value.get("skills", ""))
         for key, val in value.items():
-            if key not in {"project_title", "description", "type", "location", "duration", "skills"}:
+            if key not in {"project_title", "description", "type", "location", "duration", "skills", "url"}:
                 self.add_subsection(key, value=val)
 class Projects(ResumeSection):
     def __init__(self, title="Projects", value=[]): #list of dicts as input
@@ -422,11 +453,11 @@ class Projects(ResumeSection):
             tmp_project_list.append(tmp_project)
         self.value = tmp_project_list
 class Skills(ResumeSection):
-    def __init__(self, title="Skills", skills={}): #dict as input
+    def __init__(self, title="Skills", value={}): #dict as input
         super().__init__(title)
-        self.add_subsection("Programming Languages", value=skills.get("programming_languages", []))
-        self.add_subsection("Technical Skills", value=skills.get("technical_skills", []))
-        self.add_subsection("Soft Skills", value=skills.get("soft_skills", []))
+        self.add_subsection("Programming Languages", value=value.get("programming_languages", []))
+        self.add_subsection("Technical Skills", value=value.get("technical_skills", []))
+        self.add_subsection("Soft Skills", value=value.get("soft_skills", []))
         
 
 #Application code
