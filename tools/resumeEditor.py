@@ -110,33 +110,60 @@ def drop(event, type = "edit"):
             JobDescText = helpers.read_text_file(JobDescPathVar)
             print("Job description file dropped:", file_path)
 
+def resume_to_dict(resume_obj):
+    result = {}
+    name = str(resume_obj.title).lower().replace(" ", "_")
+    if isinstance(resume_obj, ResumeSubSection):
+        if isinstance(resume_obj,SkillSubSection):
+            for key, section in resume_obj.__dict__.items():
+                if hasattr(section, "draw_self"):
+                    name_tmp = str(section.title).lower().replace(" ", "_")
+                    result[name_tmp] = resume_to_dict(section)
+            return result
+        else:
+            #if isinstance(section.content,tk.StringVar):
+            str_tmp = str(resume_obj.content.get())
+            if str_tmp.startswith("[") and str_tmp.endswith("]"):
+                str_tmp = str_tmp.strip().replace("'","").replace("[","").replace("]","").split(",")
+                str_tmp = [item.strip() for item in str_tmp]
+                return str_tmp
+            else:
+                return str_tmp
+    elif isinstance(resume_obj,ResumeSection):
+        #with str:Name, Title,Summary
+            #into list: Languages
+        if isinstance(resume_obj.value, tk.StringVar):
+            str_tmp = str(resume_obj.value.get())
+            print(f"resume_to_dict: Processing tk.StringVar value: {str_tmp}")
+            if str_tmp.startswith("[") and str_tmp.endswith("]"):
+                str_tmp = str_tmp.strip().replace("'","").replace("[","").replace("]","").split(",")
+                str_tmp = [item.strip() for item in str_tmp]
+                return str_tmp
+            else:
+                return str_tmp
+        #with self.value list: Education,Certifications,AwardsAndScholarships...
+        elif isinstance(resume_obj.value, list):
+            tmp_list = []
+            for item in resume_obj.value:
+                tmp_list.append(resume_to_dict(item))
+            return tmp_list
+        #with subsections:Contact Information, EducationObject,CertificationsObject,AwardsAndScholarshipsObject..., Skills
+        else:
+            for key, section in resume_obj.__dict__.items():
+                if hasattr(section, "draw_self"):
+                    name = str(section.title).lower().replace(" ", "_")
+                    result[name] = resume_to_dict(section)
+            return result
+    elif isinstance(resume_obj,Resume):
+        for key, section in resume_obj.__dict__.items():
+            if hasattr(section, "draw_self"):
+                name = section.title.lower().replace(" ", "_")
+                result[name] = resume_to_dict(section)
+        return result
+        
+
 def update_resume_text_vars(type = "edit"):
     global EditFileResume, RefFileResume, EditFileText, RefFileText
-    def resume_to_dict(resume_obj):
-        result = {}
-        for key, section in resume_obj.__dict__.items():
-            if key == "title" or key.startswith("_"):
-                continue
-            if hasattr(section, "value"):
-                val = section.value
-                # Handle tk.StringVar
-                if isinstance(val, tk.StringVar):
-                    result[key.lower().replace(" ", "_")] = val.get()
-                # Handle list of sections
-                elif isinstance(val, list):
-                    result[key.lower().replace(" ", "_")] = [
-                        resume_to_dict(item) if hasattr(item, "__dict__") else item
-                        for item in val
-                    ]
-                # Handle dict
-                elif isinstance(val, dict):
-                    result[key.lower().replace(" ", "_")] = val
-                else:
-                    result[key.lower().replace(" ", "_")] = val
-            else:
-                result[key.lower().replace(" ", "_")] = str(section)
-        return result
-
     if type == "edit":
         if EditFileResume is not None:
             resume_dict = resume_to_dict(EditFileResume)
@@ -517,7 +544,7 @@ class Skills(ResumeSection):
         self.add_subsection("Soft Skills", value=value.get("soft_skills", []))
         
 class SkillSubSection(ResumeSubSection):
-    def __init__(self, title="Skill SubSection", value={}):
+    def __init__(self, title="Skills", value={}):
         super().__init__(title,value)
         for key, val in value.items():
             key_formatted = key.replace("_", " ").title()
