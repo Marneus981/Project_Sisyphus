@@ -248,9 +248,15 @@ class ResumeSubSection:
             # frame_txt.grid(column=2, row=0, sticky="nsew")
             title = ttk.Label(frame_title, text=self.title)
             title.pack(padx=10, pady=10, side="left")
-            if isinstance(self.content,tk.StringVar):
-                editable_entry = ttk.Entry(frame_edit, width=50, textvariable=self.content)
-                editable_entry.pack(padx=10, pady=10, side="left")
+            if isinstance(self.content, tk.StringVar):
+                content_str = self.content.get()
+                num_lines = max(1, content_str.count("\n") + 1)
+                text_widget = tk.Text(frame_edit, width=max(10, min(100, max(len(line) for line in content_str.split("\n")) + 2)), height=num_lines, wrap='word')
+                text_widget.insert('1.0', content_str)
+                text_widget.pack(padx=10, pady=10, side="top", fill='both', expand=True)
+                def update_var(event, var=self.content, widget=text_widget):
+                    var.set(widget.get('1.0', 'end-1c'))
+                text_widget.bind('<KeyRelease>', update_var)
             for subsection in self.__dict__.values():
                 if hasattr(subsection, "draw_self"):
                     print("Drawing SubSection:", subsection.title)
@@ -298,20 +304,18 @@ class ResumeSection:
 
         if isinstance(self.value, tk.StringVar):
             print(f"Section value is a tk.StringVar: {self.value.get()}")
+            content_str = self.value.get()
+            num_lines = max(1, content_str.count("\n") + 1)
             ContentFrame = ttk.Frame(SectionFrame)
             ContentFrame.pack(side='top', fill='both', expand=True)
-            # ContentFrame.columnconfigure(0, weight=1)
-            # ContentFrame.columnconfigure(1, weight=1)
-            
             ContentEntryFrame = ttk.Frame(ContentFrame)
-            ContentEntryFrame.pack(side='top', fill='both', expand=True)    #grid(column=0, row=0,sticky="ew")
-            ContentEntry = ttk.Entry(ContentEntryFrame, textvariable=self.value)
-            ContentEntry.pack(padx=10, pady=10, side="left", anchor="nw")
-
-            # ContentTextFrame = ttk.Frame(ContentFrame)
-            # ContentTextFrame.grid(column=1, row=0,sticky="ew")
-            # ContentText = ttk.Label(ContentTextFrame, textvariable=self.value)
-            # ContentText.pack(padx=10, pady=10, side="left", anchor="nw")
+            ContentEntryFrame.pack(side='top', fill='both', expand=True)
+            text_widget = tk.Text(ContentEntryFrame, width=max(10, min(100, max(len(line) for line in content_str.split("\n")) + 2)), height=num_lines, wrap='word')
+            text_widget.insert('1.0', content_str)
+            text_widget.pack(padx=10, pady=10, side="top", fill='both', expand=True)
+            def update_var(event, var=self.value, widget=text_widget):
+                var.set(widget.get('1.0', 'end-1c'))
+            text_widget.bind('<KeyRelease>', update_var)
 
         elif isinstance(self.value,list):
             print(f"Section value is a list with len: {len(self.value)}")
@@ -519,7 +523,6 @@ class ProjectsObject(ResumeSection):
         self.add_subsection("Project Title", value=value.get("project_title", ""))
         self.add_subsection("URL", value=value.get("url", ""))
         self.add_subsection("Type", value=value.get("type", ""))
-        self.add_subsection("Location", value=value.get("location", ""))
         self.add_subsection("Duration", value=value.get("duration", ""))
         self.add_subsection("Description", value=value.get("description", ""))
         self.add_skill_subsection("Skills", value=value.get("skills", {}))
