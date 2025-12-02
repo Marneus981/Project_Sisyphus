@@ -226,7 +226,11 @@ class ResumeSubSection:
     def __init__(self, title = "SubSectionPlaceholder", content = None):
         self.title = title
         if not isinstance(content,dict) and content != None:
-            self.content = tk.StringVar(value=str(content))
+            if isinstance(content,list):
+                content_str = ", ".join(content)
+                self.content = tk.StringVar(value=content_str)
+            else:
+                self.content = tk.StringVar(value=str(content))
         else:
             self.content = content
     def __repr__(self):
@@ -247,11 +251,17 @@ class ResumeSubSection:
             # frame_txt = ttk.Frame(frame)
             # frame_txt.grid(column=2, row=0, sticky="nsew")
             title = ttk.Label(frame_title, text=self.title)
-            title.pack(padx=10, pady=10, side="left")
+            title.pack(padx=10, pady=10, fill='both', expand=True)
             if isinstance(self.content, tk.StringVar):
                 content_str = self.content.get()
-                num_lines = max(1, content_str.count("\n") + 1)
-                text_widget = tk.Text(frame_edit, width=max(10, min(100, max(len(line) for line in content_str.split("\n")) + 2)), height=num_lines, wrap='word')
+                if self.title not in ["Technical Skills", "Soft Skills","Programming Languages"]:
+                    width = max(10, min(100, max(len(line) for line in content_str.split("\n")) + 2))
+                    approx_lines = max(1, (len(content_str) // width) + 1)
+                    text_widget = tk.Text(frame_edit, width=width, height=approx_lines, wrap='word')
+                else:
+                    width = max(10, min(100, max(len(line) for line in content_str.split("\n")) + 2))
+                    approx_lines = max(1, (len(content_str) // width) + 1)
+                    text_widget = tk.Text(frame_edit, height=approx_lines, wrap='word')
                 text_widget.insert('1.0', content_str)
                 text_widget.pack(padx=10, pady=10, side="top", fill='both', expand=True)
                 def update_var(event, var=self.content, widget=text_widget):
@@ -297,10 +307,10 @@ class ResumeSection:
     def draw_self(self, container):
         print(f"Drawing Section: {self.title}")
         SectionFrame = ttk.Frame(container)
-        SectionFrame.pack(padx=10, pady=10, anchor="nw")
+        SectionFrame.pack(side='top', fill='both', expand=True)
 
         SectionTitle = ttk.Label(SectionFrame, text=self.title, font=("Arial", 16))
-        SectionTitle.pack(padx=10, pady=10, anchor="nw")
+        SectionTitle.pack(padx=10, pady=10, anchor="nw", fill='both', expand=True)
 
         if isinstance(self.value, tk.StringVar):
             print(f"Section value is a tk.StringVar: {self.value.get()}")
@@ -310,7 +320,9 @@ class ResumeSection:
             ContentFrame.pack(side='top', fill='both', expand=True)
             ContentEntryFrame = ttk.Frame(ContentFrame)
             ContentEntryFrame.pack(side='top', fill='both', expand=True)
-            text_widget = tk.Text(ContentEntryFrame, width=max(10, min(100, max(len(line) for line in content_str.split("\n")) + 2)), height=num_lines, wrap='word')
+            width = max(10, min(100, max(len(line) for line in content_str.split("\n")) + 2))
+            approx_lines = max(1, (len(content_str) // width) + 1)
+            text_widget = tk.Text(ContentEntryFrame, width=width, height=approx_lines, wrap='word')
             text_widget.insert('1.0', content_str)
             text_widget.pack(padx=10, pady=10, side="top", fill='both', expand=True)
             def update_var(event, var=self.value, widget=text_widget):
@@ -347,9 +359,9 @@ class Resume:
 
     def draw_self(self, container):
         resume_label = ttk.Label(container, text=self.title, font=("Arial", 16, "bold"))
-        resume_label.pack(padx=10, pady=10, anchor="nw")
+        resume_label.pack(padx=10, pady=10, anchor="nw",fill='both', expand=True)
         resume_frame = ttk.Frame(container)
-        resume_frame.pack(padx=10, pady=10, anchor="nw")
+        resume_frame.pack(side = 'top', fill='both', expand=True)
         for section in self.__dict__.values():
             if hasattr(section, "draw_self"):
                 print(f"Section: {section.title} has draw_self attibute, drawing...")
@@ -415,7 +427,8 @@ class Summary(ResumeSection):
 class Languages(ResumeSection): 
     def __init__(self, title="Languages", value=[]):
         super().__init__(title)
-        self.value = tk.StringVar(value= str(value))
+        val_tmp = ", ".join(value)
+        self.value = tk.StringVar(value= val_tmp)
 class EducationObject(ResumeSection):
     def __init__(self, title="Education Object", education_info={}):
         super().__init__(title)
@@ -423,7 +436,9 @@ class EducationObject(ResumeSection):
         self.add_subsection("University", value=education_info.get("university", ""))
         self.add_subsection("Location", value=education_info.get("location", ""))
         self.add_subsection("Duration", value=education_info.get("duration", ""))
-        self.add_subsection("Courses", value=education_info.get("courses", []))
+        courses_tmp = education_info.get("courses", [])
+        courses_tmp = ", ".join(courses_tmp)
+        self.add_subsection("Courses", value=courses_tmp)
 class Education(ResumeSection): 
     def __init__(self, title="Education", value=[]): #list of dicts as input
         super().__init__(title)
@@ -479,7 +494,9 @@ class VolunteeringAndLeadershipObject(ResumeSection):
         self.add_subsection("Organization", value=value.get("organization", ""))
         self.add_subsection("Location", value=value.get("location", ""))
         self.add_subsection("Duration", value=value.get("duration", ""))
-        self.add_subsection("Description", value=value.get("description", ""))
+        desc_tmp = value.get("description", [])
+        desc_tmp = ". ".join(desc_tmp)
+        self.add_subsection("Description", value=desc_tmp)
         self.add_skill_subsection("Skills", value=value.get("skills", {}))
         for key, val in value.items():
             if key not in {"role", "organization", "duration", "location", "description", "skills"}:
@@ -502,7 +519,9 @@ class WorkExperienceObject(ResumeSection):
         self.add_subsection("Company", value=value.get("company", ""))
         self.add_subsection("Location", value=value.get("location", ""))
         self.add_subsection("Duration", value=value.get("duration", ""))
-        self.add_subsection("Description", value=value.get("description", []))
+        desc_tmp = value.get("description", [])
+        desc_tmp = ". ".join(desc_tmp)
+        self.add_subsection("Description", value=desc_tmp)
         self.add_skill_subsection("Skills", value=value.get("skills", {}))
         for key, val in value.items():
             if key not in {"job_title", "company", "location", "duration", "description", "skills"}:
@@ -524,7 +543,9 @@ class ProjectsObject(ResumeSection):
         self.add_subsection("URL", value=value.get("url", ""))
         self.add_subsection("Type", value=value.get("type", ""))
         self.add_subsection("Duration", value=value.get("duration", ""))
-        self.add_subsection("Description", value=value.get("description", ""))
+        desc_tmp = value.get("description", [])
+        desc_tmp = ". ".join(desc_tmp)
+        self.add_subsection("Description", value=desc_tmp)
         self.add_skill_subsection("Skills", value=value.get("skills", {}))
         for key, val in value.items():
             if key not in {"project_title", "description", "type", "location", "duration", "skills", "url"}:
@@ -551,6 +572,8 @@ class SkillSubSection(ResumeSubSection):
         super().__init__(title,value)
         for key, val in value.items():
             key_formatted = key.replace("_", " ").title()
+            if isinstance(val, list):
+                val = ", ".join(val)
             self.add_subsection(key_formatted, value=val)
         
 #Application code
