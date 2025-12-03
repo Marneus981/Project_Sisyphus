@@ -7,6 +7,7 @@ import darkdetect
 import pywinstyles
 import sys
 import os
+from copy import deepcopy
 from tkinterdnd2 import DND_FILES, TkinterDnD
 
 # Add the parent directory to sys.path
@@ -81,7 +82,7 @@ def browse_file(type = ""):
         clear_frame(EditFileScrollableFrame)
         clear_frame(RefFileScrollableFrame)
         RefFileResume = StandardResume(name="Reference Resume", resume_data=ref_resume_dct, separate_sk=False)
-        RefFileResume.draw_self(RefFileScrollableFrame)
+        RefFileResume.draw_self(RefFileScrollableFrame, type="ref")
         EditFileResume.draw_self(EditFileScrollableFrame)
     else:
         file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt")])
@@ -112,7 +113,7 @@ def drop(event, type = "edit"):
             clear_frame(RefFileScrollableFrame)
             clear_frame(EditFileScrollableFrame)
             RefFileResume = StandardResume(name="Reference Resume", resume_data=ref_resume_dct, resume_data_sk=ref_resume_sk_dct)
-            RefFileResume.draw_self(RefFileScrollableFrame)
+            RefFileResume.draw_self(RefFileScrollableFrame, type="ref")
             EditFileResume.draw_self(EditFileScrollableFrame)
             print("Reference file dropped:", file_path)
     else:
@@ -135,9 +136,13 @@ def resume_to_dict(resume_obj):
             #if isinstance(section.content,tk.StringVar):
             str_tmp = str(resume_obj.content.get())
             if str_tmp.startswith("[") and str_tmp.endswith("]"):
-                str_tmp = str_tmp.strip().replace("'","").replace("[","").replace("]","").split(",")
-                str_tmp = [item.strip() for item in str_tmp]
-                return str_tmp
+                str_tmp = str_tmp.strip().replace("'","").replace("[","").replace("]","")
+                if "," in str_tmp:
+                    str_tmp = str_tmp.split(",")
+                    str_tmp = [item.strip() for item in str_tmp]
+                    return str_tmp
+                else:
+                    return [str_tmp]
             else:
                 return str_tmp
     elif isinstance(resume_obj,ResumeSection):
@@ -147,9 +152,13 @@ def resume_to_dict(resume_obj):
             str_tmp = str(resume_obj.value.get())
             print(f"resume_to_dict: Processing tk.StringVar value: {str_tmp}")
             if str_tmp.startswith("[") and str_tmp.endswith("]"):
-                str_tmp = str_tmp.strip().replace("'","").replace("[","").replace("]","").split(",")
-                str_tmp = [item.strip() for item in str_tmp]
-                return str_tmp
+                str_tmp = str_tmp.strip().replace("'","").replace("[","").replace("]","")
+                if "," in str_tmp:
+                    str_tmp = str_tmp.split(",")
+                    str_tmp = [item.strip() for item in str_tmp]
+                    return str_tmp
+                else:
+                    return [str_tmp]
             else:
                 return str_tmp
         #with self.value list: Education,Certifications,AwardsAndScholarships...
@@ -315,7 +324,8 @@ class ResumeSection:
                 additional += f"    {subsection}\n"
         return f"Section(title={self.title} : {str(self.value)})\n" + f"{additional}"
     
-    def draw_self(self, container, parent=None, section_name=None):
+    def draw_self(self, container, parent=None, section_name=None, type="edit"):
+        global RefFileResume, EditFileScrollableFrame
         print(f"Drawing Section: {self.title}")
         SectionFrame = ttk.Frame(container, style='Rounded.TFrame', borderwidth=1, relief='solid')
         SectionFrame.pack(side='top', fill='both', expand=True, padx=6, pady=6)
@@ -327,6 +337,11 @@ class ResumeSection:
         if parent and section_name is not None:
             delete_btn = ttk.Button(top_row, text=" - ", command=lambda: self.delete_section(SectionFrame, parent, section_name))
             delete_btn.pack(padx=10, pady=10, side='right')
+        if RefFileResume is not None and type == "edit":
+            add_frame = ttk.Frame(top_row)
+            add_frame.pack(side='right')
+            add_subsection_btn = ttk.Button(top_row, text=" + ", command=lambda: self.check_reference_match(add_frame, EditFileScrollableFrame))
+            add_subsection_btn.pack(padx=10, pady=10, side='right')
 
         if isinstance(self.value, tk.StringVar):
             print(f"Section value is a tk.StringVar: {self.value.get()}")
@@ -370,7 +385,134 @@ class ResumeSection:
                 pass
         elif hasattr(parent, section_name):
             delattr(parent, section_name)
-        
+    def check_reference_match(self, menu_container, resume_container):
+        global RefFileResume, EditFileResume
+        if type(self) not in {Education,Certifications,AwardsAndScholarships,WorkExperience,Projects,VolunteeringAndLeadership}:
+            return
+        for widget in menu_container.winfo_children():
+            widget.destroy()
+        objects = []
+        comparison_obj = None
+        #Search for attribute in RefFileResume that has matching type as self
+        for key, section in RefFileResume.__dict__.items():
+            if isinstance(section, type(self)):
+                comparison_obj = section
+                break
+        if comparison_obj is None:
+            return
+        for item in comparison_obj.value:
+            if hasattr(item, "draw_self"):
+                if item.title not in [i.title for i in self.value]:
+                    objects.append(item)
+        objs_dct = {obj.title: obj for obj in objects}
+        if objs_dct != {}:
+            def add_object_callback(selected_title):
+                selected_object = objs_dct[selected_title]
+                if type(self) in {WorkExperience,Projects,VolunteeringAndLeadership}:
+                    #Remove Skills subsection from selected_object before adding
+                    skills_selected = getattr(selected_object, "Skills", None)
+                    skills_edit = getattr(EditFileResume, "Skills",None)
+                    prog_txt_edit = ""
+                    soft_txt_edit = ""
+                    tech_txt_edit = ""
+                    prog_txt_selected = ""
+                    soft_txt_selected = ""
+                    tech_txt_selected = ""
+                    if skills_edit:
+                        
+                        prog_skills_edit = getattr(skills_edit, "Programming Languages", None)
+                        if prog_skills_edit:
+                            prog_txt_edit = prog_skills_edit.content.get()
+                        soft_skills_edit = getattr(skills_edit, "Soft Skills", None)
+                        
+                        if soft_skills_edit:
+                            soft_txt_edit = soft_skills_edit.content.get()
+                        tech_skills_edit = getattr(skills_edit, "Technical Skills", None)
+                        
+                        if tech_skills_edit:
+                            tech_txt_edit = tech_skills_edit.content.get()
+                    if skills_selected:
+                        
+                        prog_skills_selected = getattr(skills_selected, "Programming Languages", None)
+                        if prog_skills_selected:
+                            prog_txt_selected = prog_skills_selected.content.get()
+                        
+                        soft_skills_selected = getattr(skills_selected, "Soft Skills", None)
+                        if soft_skills_selected:
+                            soft_txt_selected = soft_skills_selected.content.get()
+                        
+                        tech_skills_selected = getattr(skills_selected, "Technical Skills", None)
+                        if tech_skills_selected:
+                            tech_txt_selected = tech_skills_selected.content.get()
+
+                    combo_prog = [p.strip() for p in prog_txt_edit.split(",")] + [p.strip() for p in prog_txt_selected.split(",")]
+                    combo_prog = ", ".join(sorted(set(combo_prog)))
+                    combo_tech = [p.strip() for p in tech_txt_edit.split(",")] + [p.strip() for p in tech_txt_selected.split(",")]
+                    combo_tech = ", ".join(sorted(set(combo_tech)))
+                    combo_soft = [p.strip() for p in soft_txt_edit.split(",")] + [p.strip() for p in soft_txt_selected.split(",")]
+                    combo_soft = ", ".join(sorted(set(combo_soft)))
+                    #Update Skills subsections
+                    if not hasattr(EditFileResume, "Skills") :
+                        EditFileResume.add_section("Skills", Skills(value = {
+                            "programming_languages": sorted(set(combo_prog.split(", "))), "technical_skills": sorted(set(combo_tech.split(", "))), "soft_skills": sorted(set(combo_soft.split(", ")))
+                        }))
+                    else:
+                        delattr(EditFileResume, "Skills")
+                        EditFileResume.add_section("Skills", Skills(value = {
+                            "programming_languages": sorted(set(combo_prog.split(", "))), "technical_skills": sorted(set(combo_tech.split(", "))), "soft_skills": sorted(set(combo_soft.split(", ")))
+                        }))
+                    if hasattr(selected_object, "Skills"):
+                        delattr(selected_object, "Skills")
+                self.value.append(selected_object)
+                #Refresh display
+                clear_frame(resume_container)
+                EditFileResume.draw_self(resume_container)
+            object_titles = list(objs_dct.keys())
+            selected_object = tk.StringVar()
+            selected_object.set(object_titles[0])  # Set default value
+            dropdown = ttk.OptionMenu(menu_container, selected_object, object_titles[0], *object_titles)
+            dropdown.pack(side='left', padx=10, pady=10)
+            add_button = ttk.Button(menu_container, text="Add", command=lambda: add_object_callback(selected_object.get()))
+            add_button.pack(side='left', padx=10, pady=10)
+
+
+
+        #Check if Section exists in RefFileResume
+        #If so, 
+
+    def order_subsections(self):
+        type = str(type(self.value))
+        if type not in {"Education","Certifications","AwardsAndScholarships","WorkExperience","Projects","VolunteeringAndLeadership"}:
+            pass
+        education_order = ["Degree", "University", "Location", "Duration", "Courses"]
+        certification_order = ["Certification Name", "Issuing Organization", "Issue Date"]
+        award_order = ["Award Name", "Issuing Organization", "Date"]
+        work_experience_order = ["Job Title", "Company", "Location", "Duration", "Description","Skills"]
+        project_order = ["Project Title", "URL", "Type", "Duration", "Description","Skills"]
+        volunteering_order = ["Role", "Organization", "Location", "Duration", "Description","Skills"]
+        order_dict = {
+            "Education": education_order,
+            "Certifications": certification_order,
+            "AwardsAndScholarships": award_order,
+            "WorkExperience": work_experience_order,
+            "Projects": project_order,
+            "VolunteeringAndLeadership": volunteering_order
+        }
+        ordered_subsections = {}
+        for subsection_name in order_dict[type]:
+            if hasattr(self, subsection_name):
+                ordered_subsections[subsection_name] = getattr(self, subsection_name)
+        #Add any remaining sections that were not in the standard order
+        for key, subsection in self.__dict__.items():
+            if key not in ordered_subsections and hasattr(subsection, "draw_self"):
+                ordered_subsections[key] = subsection
+        #Reassign sections in the new order
+        for key in list(self.__dict__.keys()):
+            if hasattr(self, key) and hasattr(getattr(self, key), "draw_self"):
+                delattr(self, key)
+        for key, section in ordered_subsections.items():
+            setattr(self, key, section)
+
                       
 class Resume:
     def __init__(self, name ="ResumePlaceholder"):
@@ -386,14 +528,14 @@ class Resume:
                 additional += f"    {section}\n"
         return f"Resume(title={self.title})\n" + f"{additional}"
 
-    def draw_self(self, container):
+    def draw_self(self, container, type = "edit"):
         global RefFileResume, EditFileScrollableFrame
         top_frame = ttk.Frame(container)
 
         top_frame.pack(fill='x',padx=1, pady=1)
         resume_label = ttk.Label(top_frame, text=self.title, font=("Arial", 16, "bold"))
         resume_label.pack(padx=10, pady=10, anchor="nw", fill='both', expand=True, side='left')
-        if RefFileResume is not None:
+        if RefFileResume is not None and type == "edit":
             add_frame = ttk.Frame(top_frame)
             add_frame.pack(side='right')
             add_section_btn = ttk.Button(top_frame, text=" + ", command=lambda: self.check_reference_match(add_frame, EditFileScrollableFrame))
@@ -405,7 +547,7 @@ class Resume:
         for key, section in self.__dict__.items():
             if hasattr(section, "draw_self"):
                 print(f"Section: {section.title} has draw_self attibute, drawing...")
-                section.draw_self(resume_frame, parent=self, section_name=key)
+                section.draw_self(resume_frame, parent=self, section_name=key, type=type)
     def check_reference_match(self, menu_container, sections_container):
         global RefFileResume
         for widget in menu_container.winfo_children():
