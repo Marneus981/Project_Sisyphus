@@ -78,9 +78,11 @@ def browse_file(type = ""):
         RefFileText = helpers.read_text_file(str(RefFilePathVar.get()))
         ref_resume_dct = parsers.parse_cv(RefFileText)
         # ref_resume_sk_dct = parsers.parse_cv_out(RefFileText)
+        clear_frame(EditFileScrollableFrame)
         clear_frame(RefFileScrollableFrame)
         RefFileResume = StandardResume(name="Reference Resume", resume_data=ref_resume_dct, separate_sk=False)
         RefFileResume.draw_self(RefFileScrollableFrame)
+        EditFileResume.draw_self(EditFileScrollableFrame)
     else:
         file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt")])
         if file_path:
@@ -108,8 +110,10 @@ def drop(event, type = "edit"):
             ref_resume_dct = parsers.parse_cv(RefFileText)
             ref_resume_sk_dct = parsers.parse_cv_out(RefFileText)
             clear_frame(RefFileScrollableFrame)
+            clear_frame(EditFileScrollableFrame)
             RefFileResume = StandardResume(name="Reference Resume", resume_data=ref_resume_dct, resume_data_sk=ref_resume_sk_dct)
             RefFileResume.draw_self(RefFileScrollableFrame)
+            EditFileResume.draw_self(EditFileScrollableFrame)
             print("Reference file dropped:", file_path)
     else:
         if file_path.endswith('.txt'):
@@ -383,15 +387,76 @@ class Resume:
         return f"Resume(title={self.title})\n" + f"{additional}"
 
     def draw_self(self, container):
-        resume_label = ttk.Label(container, text=self.title, font=("Arial", 16, "bold"))
-        resume_label.pack(padx=10, pady=10, anchor="nw",fill='both', expand=True)
+        global RefFileResume, EditFileScrollableFrame
+        top_frame = ttk.Frame(container)
+
+        top_frame.pack(fill='x',padx=1, pady=1)
+        resume_label = ttk.Label(top_frame, text=self.title, font=("Arial", 16, "bold"))
+        resume_label.pack(padx=10, pady=10, anchor="nw", fill='both', expand=True, side='left')
+        if RefFileResume is not None:
+            add_frame = ttk.Frame(top_frame)
+            add_frame.pack(side='right')
+            add_section_btn = ttk.Button(top_frame, text=" + ", command=lambda: self.check_reference_match(add_frame, EditFileScrollableFrame))
+            add_section_btn.pack(padx=10, pady=10, side='right')
         resume_frame = ttk.Frame(container)
         resume_frame.pack(side = 'top', fill='both', expand=True)
+        
+        
         for key, section in self.__dict__.items():
             if hasattr(section, "draw_self"):
                 print(f"Section: {section.title} has draw_self attibute, drawing...")
                 section.draw_self(resume_frame, parent=self, section_name=key)
+    def check_reference_match(self, menu_container, sections_container):
+        global RefFileResume
+        for widget in menu_container.winfo_children():
+            widget.destroy()
+        #Meant to be called by a button
+        #Compares resume sections vs reference sections
+        #On call: Displays dropdown of missing sections
+            #On dropdown selection: adds the missing section to the resume
+                #Call draw_self on resume to refresh display
+        sections = {}
+        for key, section in RefFileResume.__dict__.items():
+            if hasattr(section, "draw_self"):
+                if not hasattr(self, key):
+                    sections[key] = section
+        if sections != {}:
+            def add_section_callback(selected_key):
+                selected_section = sections[selected_key]
+                self.add_section(selected_key, selected_section)
+                #Refresh display
+                clear_frame(sections_container)
+                self.order_sections()
+                self.draw_self(sections_container)
+                
+
+            section_names = list(sections.keys())
+            selected_section = tk.StringVar()
+            selected_section.set(section_names[0])  # Set default value
+
+            dropdown = ttk.OptionMenu(menu_container, selected_section, section_names[0], *section_names)
+            dropdown.pack(side='left', padx=10, pady=10)
+
+            add_button = ttk.Button(menu_container, text="Add Section", command=lambda: add_section_callback(selected_section.get()))
+            add_button.pack(side='left', padx=10, pady=10)
         
+    def order_sections(self):
+        #Reorders sections to a standard order
+        standard_order = ["Name", "Contact Information", "Title", "Summary", "Languages", "Education", "Certifications", "Awards and Scholarships", "Volunteering and Leadership", "Work Experience", "Projects", "Skills"]
+        ordered_sections = {}
+        for section_name in standard_order:
+            if hasattr(self, section_name):
+                ordered_sections[section_name] = getattr(self, section_name)
+        #Add any remaining sections that were not in the standard order
+        for key, section in self.__dict__.items():
+            if key not in ordered_sections and hasattr(section, "draw_self"):
+                ordered_sections[key] = section
+        #Reassign sections in the new order
+        for key in list(self.__dict__.keys()):
+            if hasattr(self, key) and hasattr(getattr(self, key), "draw_self"):
+                delattr(self, key)
+        for key, section in ordered_sections.items():
+            setattr(self, key, section)
 
 
 class StandardResume(Resume):
@@ -423,7 +488,7 @@ class StandardResume(Resume):
         self.add_section("Projects", Projects(value=resume_data.get("projects", []),separate_sk=separate_sk))
         if separate_sk:
             print(f"Skills: {resume_data.get("skills", {})}")
-            self.add_section("Skills", Skills(value=resume_data.get("skills", {})))
+            self.add_section("Skills", Skills(value=resume_data.get("skills", {}))) 
 
 class Name(ResumeSection):
     def __init__(self, title="Name", value=None):
@@ -603,7 +668,6 @@ class SkillSubSection(ResumeSubSection):
             if isinstance(val, list):
                 val = ", ".join(val)
             self.add_subsection(key_formatted, value=val)
-        
 #Application code
 MainWindow = TkinterDnD.Tk()
 MainWindow.title("Sisyphus Resume Editor")
