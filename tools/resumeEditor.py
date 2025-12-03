@@ -59,6 +59,8 @@ def browse_file(type = ""):
         if file_path:
             print("Selected file:", file_path)
         EditFilePathVar.set(file_path)
+        #Clear previous resume object
+        EditFileResume = None
         EditFileText = helpers.read_text_file(str(EditFilePathVar.get()))
         # resume_dct = parsers.parse_cv(EditFileText)
         resume_sk_dct = parsers.parse_cv_out(EditFileText)
@@ -72,6 +74,7 @@ def browse_file(type = ""):
         if file_path:
             print("Selected file:", file_path)
         RefFilePathVar.set(file_path)
+        RefFileResume = None
         RefFileText = helpers.read_text_file(str(RefFilePathVar.get()))
         ref_resume_dct = parsers.parse_cv(RefFileText)
         # ref_resume_sk_dct = parsers.parse_cv_out(RefFileText)
@@ -89,6 +92,7 @@ def drop(event, type = "edit"):
     if type == "edit":
         if file_path.endswith('.txt'):
             EditFilePathVar.set(file_path)
+            EditFileResume = None
             EditFileText = helpers.read_text_file(str(EditFilePathVar.get()))
             resume_dct = parsers.parse_cv(EditFileText)
             resume_sk_dct = parsers.parse_cv_out(EditFileText)
@@ -99,6 +103,7 @@ def drop(event, type = "edit"):
     elif type == "ref":
         if file_path.endswith('.txt'):
             RefFilePathVar.set(file_path)
+            RefFileResume = None
             RefFileText = helpers.read_text_file(str(RefFilePathVar.get()))
             ref_resume_dct = parsers.parse_cv(RefFileText)
             ref_resume_sk_dct = parsers.parse_cv_out(RefFileText)
@@ -306,24 +311,28 @@ class ResumeSection:
                 additional += f"    {subsection}\n"
         return f"Section(title={self.title} : {str(self.value)})\n" + f"{additional}"
     
-    def draw_self(self, container):
+    def draw_self(self, container, parent=None, section_name=None):
         print(f"Drawing Section: {self.title}")
         SectionFrame = ttk.Frame(container, style='Rounded.TFrame', borderwidth=1, relief='solid')
         SectionFrame.pack(side='top', fill='both', expand=True, padx=6, pady=6)
 
-        SectionTitle = ttk.Label(SectionFrame, text=self.title, font=("Arial", 16))
-        SectionTitle.pack(padx=10, pady=10, anchor="nw", fill='both', expand=True)
+        top_row = ttk.Frame(SectionFrame)
+        top_row.pack(fill='x',padx=1, pady=1)
+        SectionTitle = ttk.Label(top_row, text=self.title, font=("Arial", 16))
+        SectionTitle.pack(padx=10, pady=10, anchor="nw", fill='both', expand=True, side='left')
+        if parent and section_name is not None:
+            delete_btn = ttk.Button(top_row, text=" - ", command=lambda: self.delete_section(SectionFrame, parent, section_name))
+            delete_btn.pack(padx=10, pady=10, side='right')
 
         if isinstance(self.value, tk.StringVar):
             print(f"Section value is a tk.StringVar: {self.value.get()}")
             content_str = self.value.get()
-            num_lines = max(1, content_str.count("\n") + 1)
+            width = max(10, min(100, max(len(line) for line in content_str.split("\n")) + 2))
+            approx_lines = max(1, (len(content_str) // width) + 1)
             ContentFrame = ttk.Frame(SectionFrame)
             ContentFrame.pack(side='top', fill='both', expand=True, padx=1, pady=1)
             ContentEntryFrame = ttk.Frame(ContentFrame)
             ContentEntryFrame.pack(side='top', fill='both', expand=True)
-            width = max(10, min(100, max(len(line) for line in content_str.split("\n")) + 2))
-            approx_lines = max(1, (len(content_str) // width) + 1)
             text_widget = tk.Text(ContentEntryFrame, width=width, height=approx_lines, wrap='word')
             text_widget.insert('1.0', content_str)
             text_widget.pack(padx=10, pady=10, side="top", fill='both', expand=True)
@@ -331,18 +340,32 @@ class ResumeSection:
                 var.set(widget.get('1.0', 'end-1c'))
             text_widget.bind('<KeyRelease>', update_var)
 
-        elif isinstance(self.value,list):
+        elif isinstance(self.value, list):
             print(f"Section value is a list with len: {len(self.value)}")
-            for section in self.value:
+            for idx, section in enumerate(self.value):
                 if hasattr(section, "draw_self"):
                     print(f"Recursive: Drawing Section {section.title} inside {self.title}")
-                    section.draw_self(SectionFrame)
+                    section.draw_self(SectionFrame, parent=self, section_name=idx)
 
-        for subsection in self.__dict__.values():
+        for key, subsection in self.__dict__.items():
             if hasattr(subsection, "draw_self"):
                 print("Drawing SubSection:", subsection.title)
                 print("Content:", subsection.content)
                 subsection.draw_self(SectionFrame)
+
+    def delete_section(self, frame, parent, section_name):
+        frame.destroy()
+        # Remove from parent (works for both attribute and list index)
+        if isinstance(parent, Resume):
+            if hasattr(parent, section_name):
+                delattr(parent, section_name)
+        elif isinstance(parent, ResumeSection) and isinstance(section_name, int) and isinstance(parent.value, list):
+            try:
+                parent.value.pop(section_name)
+            except Exception:
+                pass
+        elif hasattr(parent, section_name):
+            delattr(parent, section_name)
         
                       
 class Resume:
@@ -364,10 +387,10 @@ class Resume:
         resume_label.pack(padx=10, pady=10, anchor="nw",fill='both', expand=True)
         resume_frame = ttk.Frame(container)
         resume_frame.pack(side = 'top', fill='both', expand=True)
-        for section in self.__dict__.values():
+        for key, section in self.__dict__.items():
             if hasattr(section, "draw_self"):
                 print(f"Section: {section.title} has draw_self attibute, drawing...")
-                section.draw_self(resume_frame)
+                section.draw_self(resume_frame, parent=self, section_name=key)
         
 
 
@@ -393,11 +416,11 @@ class StandardResume(Resume):
         print(f"Awards and Scholarships: {resume_data.get("awards_and_scholarships", [])}")
         self.add_section("Awards and Scholarships", AwardsAndScholarships(value=resume_data.get("awards_and_scholarships", [])))
         print(f"Volunteering and Leadership: {resume_data.get("volunteering_and_leadership", [])}")
-        self.add_section("Volunteering and Leadership", VolunteeringAndLeadership(value=resume_data.get("volunteering_and_leadership", [])))
+        self.add_section("Volunteering and Leadership", VolunteeringAndLeadership(value=resume_data.get("volunteering_and_leadership", []),separate_sk=separate_sk))
         print(f"Work Experience: {resume_data.get("work_experience", [])}")
-        self.add_section("Work Experience", WorkExperience(value=resume_data.get("work_experience", [])))
+        self.add_section("Work Experience", WorkExperience(value=resume_data.get("work_experience", []),separate_sk=separate_sk))
         print(f"Projects: {resume_data.get("projects", [])}")
-        self.add_section("Projects", Projects(value=resume_data.get("projects", [])))
+        self.add_section("Projects", Projects(value=resume_data.get("projects", []),separate_sk=separate_sk))
         if separate_sk:
             print(f"Skills: {resume_data.get("skills", {})}")
             self.add_section("Skills", Skills(value=resume_data.get("skills", {})))
@@ -490,7 +513,7 @@ class AwardsAndScholarships(ResumeSection):
             tmp_award_list.append(tmp_award)
         self.value = tmp_award_list
 class VolunteeringAndLeadershipObject(ResumeSection):
-    def __init__(self, title="Volunteering and Leadership Object", value={}):
+    def __init__(self, title="Volunteering and Leadership Object", value={}, separate_sk=True):
         super().__init__(title)
         self.add_subsection("Role", value=value.get("role", ""))
         self.add_subsection("Organization", value=value.get("organization", ""))
@@ -499,23 +522,24 @@ class VolunteeringAndLeadershipObject(ResumeSection):
         desc_tmp = value.get("description", [])
         desc_tmp = ". ".join(desc_tmp)
         self.add_subsection("Description", value=desc_tmp)
-        self.add_skill_subsection("Skills", value=value.get("skills", {}))
+        if not separate_sk:
+            self.add_skill_subsection("Skills", value=value.get("skills", {}))
         for key, val in value.items():
             if key not in {"role", "organization", "duration", "location", "description", "skills"}:
                 self.add_subsection(key, value=val)
 
 class VolunteeringAndLeadership(ResumeSection):
-    def __init__(self, title="Volunteering and Leadership", value=[]): #list of dicts as input
+    def __init__(self, title="Volunteering and Leadership", value=[], separate_sk=True): #list of dicts as input
         super().__init__(title)
         i = 0
         tmp_vol_list = []
         for vol in value:
-            tmp_vol = VolunteeringAndLeadershipObject(title=f"{vol.get("role", f"Volunteering/Leadership{i+1}")}", value=vol)
+            tmp_vol = VolunteeringAndLeadershipObject(title=f"{vol.get("role", f"Volunteering/Leadership{i+1}")}", value=vol, separate_sk=separate_sk)
             i += 1
             tmp_vol_list.append(tmp_vol)
         self.value = tmp_vol_list
 class WorkExperienceObject(ResumeSection):
-    def __init__(self, title="Work Experience Object", value={}):
+    def __init__(self, title="Work Experience Object", value={},separate_sk=True):
         super().__init__(title)
         self.add_subsection("Job Title", value=value.get("job_title", ""))
         self.add_subsection("Company", value=value.get("company", ""))
@@ -524,22 +548,23 @@ class WorkExperienceObject(ResumeSection):
         desc_tmp = value.get("description", [])
         desc_tmp = ". ".join(desc_tmp)
         self.add_subsection("Description", value=desc_tmp)
-        self.add_skill_subsection("Skills", value=value.get("skills", {}))
+        if not separate_sk:
+            self.add_skill_subsection("Skills", value=value.get("skills", {}))
         for key, val in value.items():
             if key not in {"job_title", "company", "location", "duration", "description", "skills"}:
                 self.add_subsection(key, value=val)
 class WorkExperience(ResumeSection):
-    def __init__(self, title="Work Experience", value=[]): #list of dicts as input
+    def __init__(self, title="Work Experience", value=[], separate_sk=True): #list of dicts as input
         super().__init__(title)
         i = 0
         tmp_work_list = []
         for work in value:
-            tmp_work = WorkExperienceObject(title=f"{work.get("job_title", f"WorkExperience{i+1}")}", value=work)
+            tmp_work = WorkExperienceObject(title=f"{work.get("job_title", f"WorkExperience{i+1}")}", value=work, separate_sk=separate_sk)
             i += 1
             tmp_work_list.append(tmp_work)
         self.value = tmp_work_list
 class ProjectsObject(ResumeSection):
-    def __init__(self, title="Project Object", value={}):
+    def __init__(self, title="Project Object", value={}, separate_sk=True):
         super().__init__(title)
         self.add_subsection("Project Title", value=value.get("project_title", ""))
         self.add_subsection("URL", value=value.get("url", ""))
@@ -548,17 +573,18 @@ class ProjectsObject(ResumeSection):
         desc_tmp = value.get("description", [])
         desc_tmp = ". ".join(desc_tmp)
         self.add_subsection("Description", value=desc_tmp)
-        self.add_skill_subsection("Skills", value=value.get("skills", {}))
+        if not separate_sk:
+            self.add_skill_subsection("Skills", value=value.get("skills", {}))
         for key, val in value.items():
             if key not in {"project_title", "description", "type", "location", "duration", "skills", "url"}:
                 self.add_subsection(key, value=val)
 class Projects(ResumeSection):
-    def __init__(self, title="Projects", value=[]): #list of dicts as input
+    def __init__(self, title="Projects", value=[], separate_sk=True): #list of dicts as input
         super().__init__(title)
         i = 0
         tmp_project_list = []
         for project in value:
-            tmp_project = ProjectsObject(title=f"{project.get("project_title", f"Project{i+1}")}", value=project)
+            tmp_project = ProjectsObject(title=f"{project.get("project_title", f"Project{i+1}")}", value=project, separate_sk=separate_sk)
             i += 1
             tmp_project_list.append(tmp_project)
         self.value = tmp_project_list
