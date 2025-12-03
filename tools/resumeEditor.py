@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, filedialog
 import sv_ttk
+import tkinter.ttk as ttk
+
 import darkdetect
 import pywinstyles
 import sys
@@ -239,7 +241,7 @@ class ResumeSubSection:
     def draw_self(self, container):
         if self.content != {}:
             frame = ttk.Frame(container)
-            frame.pack(side='top', fill='both', expand=True)
+            frame.pack(side='top', fill='both', expand=True, padx=1, pady=1)
             frame.columnconfigure(0, weight=1)
             frame.columnconfigure(1, weight=1)
             # frame.columnconfigure(2, weight=1)
@@ -306,8 +308,8 @@ class ResumeSection:
     
     def draw_self(self, container):
         print(f"Drawing Section: {self.title}")
-        SectionFrame = ttk.Frame(container)
-        SectionFrame.pack(side='top', fill='both', expand=True)
+        SectionFrame = ttk.Frame(container, style='Rounded.TFrame', borderwidth=1, relief='solid')
+        SectionFrame.pack(side='top', fill='both', expand=True, padx=6, pady=6)
 
         SectionTitle = ttk.Label(SectionFrame, text=self.title, font=("Arial", 16))
         SectionTitle.pack(padx=10, pady=10, anchor="nw", fill='both', expand=True)
@@ -317,7 +319,7 @@ class ResumeSection:
             content_str = self.value.get()
             num_lines = max(1, content_str.count("\n") + 1)
             ContentFrame = ttk.Frame(SectionFrame)
-            ContentFrame.pack(side='top', fill='both', expand=True)
+            ContentFrame.pack(side='top', fill='both', expand=True, padx=1, pady=1)
             ContentEntryFrame = ttk.Frame(ContentFrame)
             ContentEntryFrame.pack(side='top', fill='both', expand=True)
             width = max(10, min(100, max(len(line) for line in content_str.split("\n")) + 2))
@@ -445,7 +447,7 @@ class Education(ResumeSection):
         i = 0
         tmp_edu_list = []
         for edu in value:
-            tmp_edu = EducationObject(title=f"Education{i+1}", education_info=edu)
+            tmp_edu = EducationObject(title=f"{edu.get("degree", f"Education{i+1}")}", education_info=edu)
             i += 1
             tmp_edu_list.append(tmp_edu)
         self.value = tmp_edu_list
@@ -464,7 +466,7 @@ class Certifications(ResumeSection):
         i = 0
         tmp_cert_list = []
         for cert in value:
-            tmp_cert = CertificationsObject(title=f"Certification{i+1}", value=cert)
+            tmp_cert = CertificationsObject(title=f"{cert.get("certification_name", f"Certification{i+1}")}", value=cert)
             i += 1
             tmp_cert_list.append(tmp_cert)
         self.value = tmp_cert_list
@@ -483,7 +485,7 @@ class AwardsAndScholarships(ResumeSection):
         i = 0
         tmp_award_list = []
         for award in value:
-            tmp_award = AwardsAndScholarshipsObject(title=f"Award/Scholarship{i+1}", value=award)
+            tmp_award = AwardsAndScholarshipsObject(title=f"{award.get("award_name", f"Award{i+1}")}", value=award)
             i += 1
             tmp_award_list.append(tmp_award)
         self.value = tmp_award_list
@@ -508,7 +510,7 @@ class VolunteeringAndLeadership(ResumeSection):
         i = 0
         tmp_vol_list = []
         for vol in value:
-            tmp_vol = VolunteeringAndLeadershipObject(title=f"Volunteering/Leadership{i+1}", value=vol)
+            tmp_vol = VolunteeringAndLeadershipObject(title=f"{vol.get("role", f"Volunteering/Leadership{i+1}")}", value=vol)
             i += 1
             tmp_vol_list.append(tmp_vol)
         self.value = tmp_vol_list
@@ -532,7 +534,7 @@ class WorkExperience(ResumeSection):
         i = 0
         tmp_work_list = []
         for work in value:
-            tmp_work = WorkExperienceObject(title=f"WorkExperience{i+1}", value=work)
+            tmp_work = WorkExperienceObject(title=f"{work.get("job_title", f"WorkExperience{i+1}")}", value=work)
             i += 1
             tmp_work_list.append(tmp_work)
         self.value = tmp_work_list
@@ -556,7 +558,7 @@ class Projects(ResumeSection):
         i = 0
         tmp_project_list = []
         for project in value:
-            tmp_project = ProjectsObject(title=f"Project{i+1}", value=project)
+            tmp_project = ProjectsObject(title=f"{project.get("project_title", f"Project{i+1}")}", value=project)
             i += 1
             tmp_project_list.append(tmp_project)
         self.value = tmp_project_list
@@ -579,6 +581,16 @@ class SkillSubSection(ResumeSubSection):
 #Application code
 MainWindow = TkinterDnD.Tk()
 MainWindow.title("Sisyphus Resume Editor")
+# Custom style for rounded border frames
+style = ttk.Style()
+style.configure('Rounded.TFrame', background='#f8f8f8', borderwidth=1, relief='solid')
+try:
+    style.element_create('RoundedFrame', 'from', 'clam')
+    style.layout('Rounded.TFrame', [
+        ('RoundedFrame', {'sticky': 'nswe'})
+    ])
+except Exception:
+    pass  # fallback if not supported
 
 #UI Elements (UI elements must be boxed in and clearly separated from one another)
 #"Parameters"
