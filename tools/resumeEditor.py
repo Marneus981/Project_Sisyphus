@@ -57,6 +57,7 @@ def clear_frame(frame):
 
 def browse_file(type = ""):
     global EditFileScrollableFrame, RefFileScrollableFrame, EditFileResume, RefFileResume, EditFilePathVar, EditFileText, RefFilePathVar, RefFileText
+    # global EditFileCanvas, RefFileCanvas
     if type == "edit":
         default_dir = os.path.join(os.path.dirname(__file__), '..',"Sisyphus", 'saved_outputs')
         default_dir = os.path.abspath(default_dir)
@@ -184,7 +185,7 @@ def resume_to_dict(resume_obj):
                 name = section.title.lower().replace(" ", "_")
                 result[name] = resume_to_dict(section)
         return result
-        
+
 
 def update_resume_text_vars(type = "edit"):
     global EditFileResume, RefFileResume, EditFileText, RefFileText
@@ -218,7 +219,7 @@ def save_as(file_type = "edit"):
             if file_type == "ref":
                 f.write(RefFileText)  # Replace with your actual content
             else:
-                f.write(EditFileText) 
+                f.write(EditFileText)
 
 def save_to_doc():
     global EditFileText
@@ -244,7 +245,7 @@ def save_to_doc():
     )
     tmp_dct = parsers.parse_cv_out(EditFileText)
     fileGenerator.generate_docx(dir_template, tmp_dct, dir_save)
-    
+
     print("Input file:", dir_save)
     print("Output dir:", default_dir_save)
     print("File exists:", os.path.exists(dir_save))
@@ -353,7 +354,7 @@ class ResumeSubSection:
     def add_subsection(self, name, value):
         subsec = ResumeSubSection(title=name, content=value)
         setattr(self, name, subsec)
-        
+
 
 class ResumeSection:
     def __init__(self, title = "SectionPlaceholder", value=None):
@@ -362,22 +363,22 @@ class ResumeSection:
             self.value = tk.StringVar(value=value)
         else:
             self.value = value
-    
+
     def add_subsection(self, name, value):
         subsec = ResumeSubSection(title=name, content=value)
         setattr(self, name, subsec)
-    
+
     def add_skill_subsection(self, name, value):
         subsec = SkillSubSection(title=name, value=value)
         setattr(self, name, subsec)
-    
+
     def __repr__(self):
         additional = ""
         for subsection in self.__dict__.values():
             if subsection != self.title and subsection != self.value:
                 additional += f"    {subsection}\n"
         return f"Section(title={self.title} : {str(self.value)})\n" + f"{additional}"
-    
+
     def draw_self(self, container, parent=None, section_name=None, type="edit"):
         global RefFileResume, EditFileScrollableFrame
         print(f"Drawing Section: {self.title}")
@@ -473,28 +474,28 @@ class ResumeSection:
                     soft_txt_selected = ""
                     tech_txt_selected = ""
                     if skills_edit:
-                        
+
                         prog_skills_edit = getattr(skills_edit, "Programming Languages", None)
                         if prog_skills_edit:
                             prog_txt_edit = prog_skills_edit.content.get()
                         soft_skills_edit = getattr(skills_edit, "Soft Skills", None)
-                        
+
                         if soft_skills_edit:
                             soft_txt_edit = soft_skills_edit.content.get()
                         tech_skills_edit = getattr(skills_edit, "Technical Skills", None)
-                        
+
                         if tech_skills_edit:
                             tech_txt_edit = tech_skills_edit.content.get()
                     if skills_selected:
-                        
+
                         prog_skills_selected = getattr(skills_selected, "Programming Languages", None)
                         if prog_skills_selected:
                             prog_txt_selected = prog_skills_selected.content.get()
-                        
+
                         soft_skills_selected = getattr(skills_selected, "Soft Skills", None)
                         if soft_skills_selected:
                             soft_txt_selected = soft_skills_selected.content.get()
-                        
+
                         tech_skills_selected = getattr(skills_selected, "Technical Skills", None)
                         if tech_skills_selected:
                             tech_txt_selected = tech_skills_selected.content.get()
@@ -532,7 +533,7 @@ class ResumeSection:
 
 
         #Check if Section exists in RefFileResume
-        #If so, 
+        #If so,
 
     def order_subsections(self):
         type = str(type(self.value))
@@ -567,7 +568,7 @@ class ResumeSection:
         for key, section in ordered_subsections.items():
             setattr(self, key, section)
 
-                      
+
 class Resume:
     def __init__(self, name ="ResumePlaceholder"):
         self.title = name
@@ -596,8 +597,8 @@ class Resume:
             add_section_btn.pack(padx=10, pady=10, side='right')
         resume_frame = ttk.Frame(container)
         resume_frame.pack(side = 'top', fill='both', expand=True)
-        
-        
+
+
         for key, section in self.__dict__.items():
             if hasattr(section, "draw_self"):
                 print(f"Section: {section.title} has draw_self attibute, drawing...")
@@ -624,7 +625,7 @@ class Resume:
                 clear_frame(sections_container)
                 self.order_sections()
                 self.draw_self(sections_container)
-                
+
 
             section_names = list(sections.keys())
             selected_section = tk.StringVar()
@@ -635,7 +636,7 @@ class Resume:
 
             add_button = ttk.Button(menu_container, text="Add Section", command=lambda: add_section_callback(selected_section.get()))
             add_button.pack(side='left', padx=10, pady=10)
-        
+
     def order_sections(self):
         #Reorders sections to a standard order
         standard_order = ["Name", "Contact Information", "Title", "Summary", "Languages", "Education", "Certifications", "Awards and Scholarships", "Volunteering and Leadership", "Work Experience", "Projects", "Skills"]
@@ -684,7 +685,7 @@ class StandardResume(Resume):
         self.add_section("Projects", Projects(value=resume_data.get("projects", []),separate_sk=separate_sk))
         if separate_sk:
             print(f"Skills: {resume_data.get("skills", {})}")
-            self.add_section("Skills", Skills(value=resume_data.get("skills", {}))) 
+            self.add_section("Skills", Skills(value=resume_data.get("skills", {})))
 
 class Name(ResumeSection):
     def __init__(self, title="Name", value=None):
@@ -702,7 +703,7 @@ class ContactInfo(ResumeSection):
         for key, val in value.items():
             if key not in {"address", "phone", "email", "linkedin", "github", "portfolio"}:
                 self.add_subsection(key, value=val)
-class Title(ResumeSection): 
+class Title(ResumeSection):
     def __init__(self, title="Title", value=None):
         super().__init__(title)
         self.value = tk.StringVar(value= value)
@@ -710,7 +711,7 @@ class Summary(ResumeSection):
     def __init__(self, title="Summary", value=None):
         super().__init__(title)
         self.value = tk.StringVar(value= value)
-class Languages(ResumeSection): 
+class Languages(ResumeSection):
     def __init__(self, title="Languages", value=[]):
         super().__init__(title)
         val_tmp = ", ".join(value)
@@ -725,7 +726,7 @@ class EducationObject(ResumeSection):
         courses_tmp = education_info.get("courses", [])
         courses_tmp = ", ".join(courses_tmp)
         self.add_subsection("Courses", value=courses_tmp)
-class Education(ResumeSection): 
+class Education(ResumeSection):
     def __init__(self, title="Education", value=[]): #list of dicts as input
         super().__init__(title)
         i = 0
@@ -763,7 +764,7 @@ class AwardsAndScholarshipsObject(ResumeSection):
         for key, val in value.items():
             if key not in {"award_name", "issuing_organization", "issue_date"}:
                 self.add_subsection(key, value=val)
-class AwardsAndScholarships(ResumeSection): 
+class AwardsAndScholarships(ResumeSection):
     def __init__(self, title="Awards and Scholarships", value=[]): #list of dicts as input
         super().__init__(title)
         i = 0
@@ -855,7 +856,7 @@ class Skills(ResumeSection):
         self.add_subsection("Programming Languages", value=value.get("programming_languages", []))
         self.add_subsection("Technical Skills", value=value.get("technical_skills", []))
         self.add_subsection("Soft Skills", value=value.get("soft_skills", []))
-        
+
 class SkillSubSection(ResumeSubSection):
     def __init__(self, title="Skills", value={}):
         super().__init__(title,value)
@@ -886,7 +887,7 @@ TopMenu.pack(side='top', fill='x')
 ####
 
 JobDescVar = tk.StringVar(value="Enter Job Description")  # Default text
-AIKeywordsVar  = tk.StringVar(value="Enter comma-separated list of Job Description keywords")  # Default text 
+AIKeywordsVar  = tk.StringVar(value="Enter comma-separated list of Job Description keywords")  # Default text
 EditFilePathVar = tk.StringVar()
 RefFilePathVar = tk.StringVar()
 JobDescPathVar = tk.StringVar()
@@ -925,7 +926,7 @@ JobDescTextField.pack(padx=10, pady=10, side="left")
         #"Generate Keywords(AI)" button
 GenerateAIKeywords = ttk.Button(JobDescContainer, text="Generate AI Keywords", cursor="hand2")
 GenerateAIKeywords.pack(padx=10, pady=10, side="left")
-        #Text Field (Writeable, updates on "Generate Keywords(AI)" button) 
+        #Text Field (Writeable, updates on "Generate Keywords(AI)" button)
 AIKeywordsTextField = ttk.Entry(JobDescContainer, width=50, textvariable=AIKeywordsVar)
 AIKeywordsTextField.pack(padx=10, pady=10, side="left")
     #"Load Files"
@@ -949,20 +950,23 @@ RefFileBrowse.dnd_bind('<<Drop>>', lambda event: drop(event, "ref"))
 HideMenu = ttk.Button(MainWindow, text="Toggle Menu", command=lambda:toggle_menu(), cursor="hand2")
 HideMenu.pack(side='top', anchor='w')
 
-#"Editable/Reference Display"
+
+
+# Editable/Reference Display
 EditorContainer = ttk.Frame(MainWindow)
 EditorContainer.pack(side='top', fill='both', expand=True)
 EditorContainer.columnconfigure(0, weight=1)
 EditorContainer.columnconfigure(1, weight=1)
 EditorContainer.rowconfigure(0, weight=1)
 
-#Test Button
-# TrialButton = ttk.Button(EditorContainer, text="Click me!", cursor="hand2")
-# TrialButton.pack()
 EditorContainerEditFile = ttk.Frame(EditorContainer)
 EditorContainerEditFile.grid(column=0, row=0, sticky="nsew")
+EditorContainerEditFile.columnconfigure(0, weight=1)
+EditorContainerEditFile.rowconfigure(0, weight=1)
 EditFileCanvas = tk.Canvas(EditorContainerEditFile)
+EditFileCanvas.pack(side='left', fill='both', expand=True)
 EditFileScrollbar = ttk.Scrollbar(EditorContainerEditFile, orient='vertical', command=EditFileCanvas.yview)
+EditFileScrollbar.pack(side='right', fill='y')
 EditFileScrollableFrame = ttk.Frame(EditFileCanvas)
 EditFileScrollableFrame.bind(
     "<Configure>",
@@ -970,15 +974,21 @@ EditFileScrollableFrame.bind(
         scrollregion=EditFileCanvas.bbox("all")
     )
 )
-EditFileCanvas.create_window((0, 0), window=EditFileScrollableFrame, anchor='nw')
+EditWindow = EditFileCanvas.create_window((0, 0), window=EditFileScrollableFrame, anchor='nw')
 EditFileCanvas.configure(yscrollcommand=EditFileScrollbar.set)
-EditFileCanvas.pack(side='left', fill='both', expand=True)
-EditFileScrollbar.pack(side='right', fill='y')
+def resize_edit_canvas(event):
+    EditFileCanvas.itemconfig(EditWindow, width=event.width)
+EditorContainerEditFile.bind("<Configure>", resize_edit_canvas)
+#EditFileScrollableFrame.pack(fill='both', expand=True)
 
 EditorContainerRefFile = ttk.Frame(EditorContainer)
 EditorContainerRefFile.grid(column=1, row=0, sticky="nsew")
+EditorContainerRefFile.columnconfigure(0, weight=1)
+EditorContainerRefFile.rowconfigure(0, weight=1)
 RefFileCanvas = tk.Canvas(EditorContainerRefFile)
+RefFileCanvas.pack(side='left', fill='both', expand=True)
 RefFileScrollbar = ttk.Scrollbar(EditorContainerRefFile, orient='vertical', command=RefFileCanvas.yview)
+RefFileScrollbar.pack(side='right', fill='y')
 RefFileScrollableFrame = ttk.Frame(RefFileCanvas)
 RefFileScrollableFrame.bind(
     "<Configure>",
@@ -986,10 +996,12 @@ RefFileScrollableFrame.bind(
         scrollregion=RefFileCanvas.bbox("all")
     )
 )
-RefFileCanvas.create_window((0, 0), window=RefFileScrollableFrame, anchor='nw')
+RefWindow = RefFileCanvas.create_window((0, 0), window=RefFileScrollableFrame, anchor='nw')
 RefFileCanvas.configure(yscrollcommand=RefFileScrollbar.set)
-RefFileCanvas.pack(side='left', fill='both', expand=True)
-RefFileScrollbar.pack(side='right', fill='y')
+def resize_ref_canvas(event):
+    RefFileCanvas.itemconfig(RefWindow, width=event.width)
+EditorContainerRefFile.bind("<Configure>", resize_ref_canvas)
+#RefFileScrollableFrame.pack(fill='both', expand=True)
 
 EditFileResume = None
 RefFileResume = None
@@ -998,23 +1010,23 @@ RefFileResume = None
     #Display editable text in a per field/subfield basis (editable) according to dict hierarchy (can add subfields depending on hierarchy + available subfields):
         #Example:
             #Work Experience:
-                #Job Title: 
+                #Job Title:
                     #PEY VR Technical Assistant
-                #Company: 
+                #Company:
                     #Medica Providencia Clinic
                 #Location:
                     #Tuxtla Gtz, CS, Mexico
-                #Duration: 
+                #Duration:
                     #2022/12 - 2023/03
-                #Description: 
+                #Description:
                     #Performed hardware troubleshooting on Oculus Quest VR equipment, reducing weekly downtime through systematic diagnostics and repairs. Collaborated with healthcare professionals during the testing process, resulting in a more patient-centred approach and improved satisfaction scores.
-                #Skills: 
+                #Skills:
                     #Programming Languages:
                         #[BUTTON: PLUS SIGN(text field + drop down with AI generated suggestions, if generated)]
-                    #Technical Skills: 
+                    #Technical Skills:
                         #VR Technologies, Hardware Troubleshooting, Software Troubleshooting, Oculus Quest VR equipment, Repairs, Neurodivergent Testing
                         #[BUTTON: PLUS SIGN(text field + drop down with AI generated suggestions, if generated)]
-                    #Soft Skills: 
+                    #Soft Skills:
                         #Teamwork, Analytical Problem Solving, Good Written and Communication Skills, Problem Solving
                         #[BUTTON: PLUS SIGN(text field + drop down with AI generated suggestions, if generated)]
                     #[BUTTON: PLUS SIGN(displays drop down with list of available "Skills" subsections)]
@@ -1023,9 +1035,9 @@ RefFileResume = None
 
 
 #Apply theme
-MainWindow.state('zoomed') 
+MainWindow.state('zoomed')
 sv_ttk.set_theme(darkdetect.theme())
 apply_theme_to_titlebar(MainWindow)
 MainWindow.mainloop()
 
-    
+
