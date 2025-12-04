@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, filedialog
+from unittest import result
 import sv_ttk
 import tkinter.ttk as ttk
 
@@ -9,6 +10,8 @@ import sys
 import os
 from copy import deepcopy
 from tkinterdnd2 import DND_FILES, TkinterDnD
+import subprocess
+import pypandoc
 
 # Add the parent directory to sys.path
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -16,6 +19,7 @@ sys.path.append(parent_dir)
 
 from Sisyphus import helpers  # Now you can import
 from Sisyphus import parsers
+from Sisyphus import fileGenerator
 #Resume Editor Tool (opened at the end of a tailor or batch tailor cycle)
     #[ToBeImplementedAtALaterDate]"Separate Skills" on write toggle?
     #[ToBeImplementedAtALaterDate]Scrap LinkedIn page(s)
@@ -217,7 +221,57 @@ def save_as(file_type = "edit"):
                 f.write(EditFileText) 
 
 def save_to_doc():
-    pass  # To be implemented
+    global EditFileText
+    update_resume_text_vars(type="edit")
+    if EditFileText is None or EditFileText.strip() == "":
+        return
+    default_dir_save = os.path.join(os.path.dirname(__file__), '..',"Sisyphus", 'saved_docs')
+    #If it does not exit, make it
+    os.makedirs(default_dir_save, exist_ok=True)
+    default_dir_template = os.path.join(os.path.dirname(__file__), '..',"Sisyphus", 'templates')
+    os.makedirs(default_dir_template, exist_ok=True)
+    dir_template = filedialog.askopenfilename(
+        defaultextension=".docx",
+        filetypes=[("Word Document", "*.docx")],
+        title="Select Template .docx File",
+        initialdir=default_dir_template
+    )
+    dir_save = filedialog.asksaveasfilename(
+        defaultextension=".docx",
+        filetypes=[("Word Document", "*.docx")],
+        title="Save As...",
+        initialdir=default_dir_save
+    )
+    tmp_dct = parsers.parse_cv_out(EditFileText)
+    fileGenerator.generate_docx(dir_template, tmp_dct, dir_save)
+    
+    print("Input file:", dir_save)
+    print("Output dir:", default_dir_save)
+    print("File exists:", os.path.exists(dir_save))
+    #pypandoc.convert_file(dir_save, 'pdf', outputfile=dir_save.replace('.docx', '.pdf'))
+    #subprocess.run(['pandoc', dir_save, '-o', dir_save.replace('.docx', '.pdf')])
+    # trial_path = os.path.abspath(r"C:\CodeProjects\Sisyphus\Sisyphus\saved_docs\0MarcosMadrigalResume.docx")
+    # result = subprocess.run([
+    #     "soffice",
+    #     "--headless",
+    #     "--convert-to", "pdf",
+    #     os.path.abspath(trial_path),
+    #     "--outdir", os.path.abspath(default_dir_save)
+    # ], capture_output=True, text=True)
+    # print(result.stdout)
+    # print(result.stderr)
+    proc = subprocess.Popen(['soffice', os.path.abspath(dir_save)])
+    proc.wait()  # This will block until LibreOffice is closed
+    result = subprocess.run([
+        "soffice",
+        "--headless",
+        "--convert-to", "pdf",
+        os.path.abspath(dir_save),
+        "--outdir", os.path.abspath(default_dir_save)
+    ], capture_output=True, text=True)
+    print(result.stdout)
+    print(result.stderr)
+
 
 def add_label(container, label_text = "",padx=5, pady=5):
     label = ttk.Label(container, text=label_text)
@@ -836,9 +890,9 @@ AIKeywordsVar  = tk.StringVar(value="Enter comma-separated list of Job Descripti
 EditFilePathVar = tk.StringVar()
 RefFilePathVar = tk.StringVar()
 JobDescPathVar = tk.StringVar()
-EditFileText = str()
-RefFileText = str()
-JobDescText = str()
+EditFileText = ""
+RefFileText = ""
+JobDescText = ""
     #"Save/Export"
 SaveExportContainer = ttk.Frame(TopMenu)
 SaveExportContainer.pack(side='top', fill='x')
@@ -852,7 +906,7 @@ SaveRefFile = ttk.Button(SaveExportContainer, text="Save Reference Resume As..."
 SaveRefFile.pack(padx=10, pady=10, side="left")
         #Save to odt or docx button
             #Save dir dafaults to Sisyphus\saved_docs
-SaveToDocButton = ttk.Button(SaveExportContainer, text="Save Editable Resume to .docx/.odt", command=lambda: save_to_doc(), cursor="hand2")
+SaveToDocButton = ttk.Button(SaveExportContainer, text="Save Editable Resume to DOCX and PDF", command=lambda: save_to_doc(), cursor="hand2")
 SaveToDocButton.pack(padx=10, pady=10, side="left")
 
     #""Job Description and AI Keywords"
