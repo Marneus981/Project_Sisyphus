@@ -69,7 +69,41 @@ def browse_file(type = ""):
         EditFileResume = None
         EditFileText = helpers.read_text_file(str(EditFilePathVar.get()))
         # resume_dct = parsers.parse_cv(EditFileText)
+        non_edit = False
         resume_sk_dct = parsers.parse_cv_out(EditFileText)
+        if "skills" not in resume_sk_dct:
+            print("No separate skills section found, compiling skills from other sections...")
+            non_edit = True
+        if non_edit:
+            resume_sk_dct_temp = parsers.parse_cv(EditFileText)
+            sk_dict = {
+                "skills":{
+                    "programming_languages": [],
+                    "technical_skills": [],
+                    "soft_skills": []
+                }
+            }
+            iter_list = ["volunteering_and_leadership","work_experience","projects"]
+            for field in iter_list:
+                for key in resume_sk_dct:
+                    print(f"Checking field: {field} against resume_sk_dct key: {key}")
+                print(f"Compiling skills from section: {field}")
+                for exp in resume_sk_dct_temp[field]:
+                    if "skills" in exp:
+                        print(f"Found skills in {field}: {str(exp['skills'])}")
+                        for key in sk_dict["skills"]:
+                            sk_list = exp["skills"][key] if key in exp["skills"] else []
+                            print(f"Adding skills for {key}: {sk_list}")
+                            sk_dict["skills"][key] = sk_dict["skills"][key] + sk_list
+                            print(f"Updated skills for {key}: {sk_dict['skills'][key]}")
+            #Remove duplicates
+            for key in sk_dict["skills"]:
+                sk_dict["skills"][key] = sorted(set(sk_dict["skills"][key]))
+            #Assign to resume_sk_dct
+            resume_sk_dct["skills"] = sk_dict["skills"]
+        
+            #Iterate through all volunteering_and_leadership, work_experience, projects and append its skill subsections
+
         clear_frame(EditFileScrollableFrame)
         EditFileResume = StandardResume(name="Editable Resume", resume_data=resume_sk_dct, separate_sk=True)
         EditFileResume.draw_self(EditFileScrollableFrame)
